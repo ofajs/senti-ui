@@ -1,0 +1,99 @@
+<!-- st-dialog 验收页（ofa.js 页面模块），由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
+    section { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+    /* 面板定制：原生 ::part() 选择器 */
+    st-dialog.wide::part(panel) { width: min(40em, 100%); border-radius: 1em; }
+    st-dialog.fullscreen::part(panel) {
+      width: 100%; height: 100%; max-height: 100%; border-radius: 0;
+      background: var(--md-sys-color-surface);
+    }
+  </style>
+
+  <section>
+    <h3>基础用法</h3>
+    <st-button id="open-basic" variant="outlined">打开基础对话框</st-button>
+    <st-button id="open-autoclose" variant="outlined">打开 auto-close 对话框</st-button>
+  </section>
+
+  <section>
+    <h3>定制（::part(panel)，auto-close 关闭后可再打开）</h3>
+    <st-button id="open-wide" variant="outlined">Wide 圆角 14px</st-button>
+    <st-button id="open-fs" variant="outlined">Fullscreen</st-button>
+    <st-button id="open-small" variant="outlined">font-size 12px（全面板等比缩小）</st-button>
+  </section>
+
+  <p style="margin:0; font-size:14px; color: var(--md-sys-color-on-surface-variant);">
+    close 事件计数：<span class="code" style="font-family: ui-monospace, monospace;">{{closeCount}}</span>
+    （点遮罩 / Escape 关闭 +1）
+  </p>
+
+  <st-dialog id="dlg-basic">
+    <h2 slot="headline">基础对话框</h2>
+    <p>没有 auto-close：点击遮罩与 Escape 都不会关闭，只能用下面的按钮。</p>
+    <div slot="actions">
+      <st-button variant="text" id="close-basic">知道了</st-button>
+    </div>
+  </st-dialog>
+
+  <st-dialog id="dlg-autoclose" auto-close>
+    <h2 slot="headline">auto-close 对话框</h2>
+    <p>点击遮罩或按 Escape 试试，关闭时会派发 close 事件。</p>
+    <div slot="actions">
+      <st-button variant="text">取消</st-button>
+      <st-button>确定</st-button>
+    </div>
+  </st-dialog>
+
+  <st-dialog id="dlg-wide" class="wide" auto-close>
+    <h2 slot="headline">Wide 定制面板</h2>
+    <p>width: min(40em, 100%)、border-radius: 1em —— 全部通过原生 ::part(panel) 选择器覆盖。</p>
+  </st-dialog>
+
+  <st-dialog id="dlg-fs" class="fullscreen" auto-close>
+    <h2 slot="headline">Fullscreen</h2>
+    <p>width/height 100%、无圆角，正文区超高时内部滚动。</p>
+    <p>1</p><p>2</p><p>3</p><p>4</p><p>5</p><p>6</p><p>7</p><p>8</p><p>9</p><p>10</p>
+    <p>11</p><p>12</p><p>13</p><p>14</p><p>15</p><p>16</p><p>17</p><p>18</p><p>19</p><p>20</p>
+  </st-dialog>
+
+  <st-dialog id="dlg-small" auto-close style="font-size: 12px;">
+    <h2 slot="headline">12px 缩放</h2>
+    <p>宿主 font-size: 12px，面板 padding/圆角/宽度全部等比缩小。</p>
+    <div slot="actions">
+      <st-button variant="text">关闭</st-button>
+    </div>
+  </st-dialog>
+
+  <script>
+    export default async () => ({
+      data: { closeCount: 0 },
+      ready() {
+        // ofa 页面模块内不依赖 $ 包装：原生 addEventListener + setAttribute 即可驱动组件
+        const sr = this.ele.shadowRoot;
+        const dlg = (id) => sr.querySelector("#" + id);
+        const bind = (btnId, dialogId) => {
+          sr.querySelector("#" + btnId).addEventListener("click", () => {
+            dlg(dialogId).setAttribute("open", "");
+          });
+        };
+        bind("open-basic", "dlg-basic");
+        bind("open-autoclose", "dlg-autoclose");
+        bind("open-wide", "dlg-wide");
+        bind("open-fs", "dlg-fs");
+        bind("open-small", "dlg-small");
+
+        sr.querySelector("#close-basic").addEventListener("click", () => {
+          dlg("dlg-basic").removeAttribute("open");
+        });
+        // close 事件计数（bubbles + composed）
+        ["dlg-autoclose", "dlg-wide", "dlg-fs", "dlg-small"].forEach((id) => {
+          dlg(id).addEventListener("close", () => { this.closeCount += 1; });
+        });
+      },
+      proto: {},
+    });
+  </script>
+</template>

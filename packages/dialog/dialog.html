@@ -1,0 +1,136 @@
+<!--
+  st-dialog — Senti-UI 对话框组件（基于 ofa.js）
+  语义属性：open（显示）/ auto-close（点击遮罩或 Escape 关闭）
+  结构：宿主为全屏遮罩层（grid 居中），面板在 shadow 内（part="panel"），见 README.md
+-->
+<template component>
+  <style>
+    /* 坑 #20：:host 内嵌 :not() 不生效，用"默认隐藏 + 正向启用"的反向逻辑 */
+    :host { display: none; }
+    :host([open]) {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: grid;
+      place-items: center;
+      box-sizing: border-box;
+      padding: 1.43em;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    /* M3 规范 scrim 常量（#000 @ 32%），不随主题配色变化，故不走角色变量 */
+    .scrim {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.32);
+    }
+
+    /* 面板：视觉默认值全用 em（随 font-size 等比缩放）。
+       外部定制宽高/圆角/底色用原生 ::part(panel) 选择器（见 README） */
+    .panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 1.14em;
+      box-sizing: border-box;
+      width: min(34.29em, 100%); /* 480px @ 14px，M3 对话框最大宽度 */
+      max-height: 100%;
+      padding: 1.43em;
+      border-radius: 1.714em; /* 24px，M3 extra-large 圆角 */
+      background: var(--md-sys-color-surface-container-high);
+      color: var(--md-sys-color-on-surface);
+      /* M3 elevation level 3 常量 */
+      box-shadow: 0 1em 2.857em -0.714em rgba(0, 0, 0, 0.3);
+    }
+    /* 焦点由面板内部可交互元素承载（各自有 focus ring），容器本身不画圈 */
+    .panel:focus { outline: none; }
+
+    ::slotted([slot="headline"]) {
+      margin: 0;
+      font-size: 1.143em; /* 16px */
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    /* 内容区超高时内部滚动，headline / actions 固定 */
+    .body {
+      overflow: auto;
+      min-height: 0;
+      line-height: 1.7;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.571em;
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <div class="scrim"></div>
+  <div class="panel" part="panel" tabindex="-1">
+    <div class="headline"><slot name="headline"></slot></div>
+    <div class="body"><slot></slot></div>
+    <div class="actions"><slot name="actions"></slot></div>
+  </div>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-dialog",
+      attrs: {
+        open: null,
+        autoClose: null,
+      },
+      watch: {
+        open() {
+          // 打开时把焦点移到面板容器（tabindex=-1），键盘用户随后可 Tab 进内部控件
+          if (this.open !== null) {
+            const panel = this.ele.shadowRoot.querySelector(".panel");
+            // setAttribute 的 watch 异步触发，等面板可见后再聚焦
+            requestAnimationFrame(() => panel.focus());
+          }
+        },
+      },
+      ready() {
+        const ele = this.ele;
+        const sr = ele.shadowRoot;
+
+        // headline / actions 未分发内容时隐藏对应区块，避免空区块参与 gap 布局
+        ["headline", "actions"].forEach((name) => {
+          const slot = sr.querySelector(`slot[name="${name}"]`);
+          const wrap = slot.parentElement;
+          const sync = () => {
+            const has = slot.assignedNodes().length > 0;
+            wrap.style.display = has ? "" : "none";
+          };
+          slot.addEventListener("slotchange", sync);
+          sync();
+        });
+
+        // 点击遮罩关闭（受 auto-close 约束）
+        sr.querySelector(".scrim").addEventListener("click", () => this.closeSelf());
+
+        // Escape 关闭（受 auto-close 约束）
+        this._onKeydown = (e) => {
+          if (e.key === "Escape") this.closeSelf();
+        };
+        document.addEventListener("keydown", this._onKeydown);
+      },
+      detached() {
+        document.removeEventListener("keydown", this._onKeydown);
+      },
+      proto: {
+        // 关闭（仅在 auto-close 时允许交互触发），并派发 close 事件供外部监听
+        closeSelf() {
+          if (this.autoClose === null || this.open === null) return;
+          this.ele.removeAttribute("open");
+          this.ele.dispatchEvent(new Event("close", { bubbles: true, composed: true }));
+        },
+      },
+    });
+  </script>
+</template>

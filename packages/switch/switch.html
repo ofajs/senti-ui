@@ -29,19 +29,20 @@
       height: 2.286em; /* 32px */
       flex-shrink: 0;
       border-radius: 2.286em;
-      background: var(--md-sys-color-surface-container-highest);
+      background: var(--md-sys-color-surface-container-highest); /* 未选中底色，恒定 */
     }
 
-    /* 描边/填充统一层：未选中 = 2px outline 描边，选中 = 边框扩展成实心底。
-       只保留这一层带边框的元素（track 无边框），避免两层描边间的亚像素缝隙；
-       也不能直接做在 track 上——边框会内缩绝对定位子元素的包含块，把拇指推出轨道 */
+    /* 描边/填充统一层：描边宽度恒定（2px），选中态用背景色过渡填充。
+       不用"边框扩展成实心底"技巧——宽度动画/取整会在轨道正中露出缝隙行
+       （切换瞬间与小数字号下都可见）；背景色过渡中心永远被覆盖，无任何暴露行 */
     .bg {
       position: absolute;
       inset: 0;
       box-sizing: border-box;
       border-radius: inherit;
       border: 0.143em solid var(--md-sys-color-outline);
-      transition: border-color 0.3s ease;
+      background: transparent;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
     }
 
     /* 拇指：未选中 outline 灰 + scale(0.6) 收缩，选中复原并滑到右侧 */
@@ -148,7 +149,6 @@
         applyState() {
           const sr = this.ele.shadowRoot;
           const input = sr.querySelector(".native");
-          const track = sr.querySelector(".track");
           const thumb = sr.querySelector(".thumb");
           const on = this.checked !== null;
 
@@ -165,18 +165,13 @@
 
           const bg = sr.querySelector(".bg");
           if (on) {
-            // bg 层边框扩展为半轨道高度（描边 → 实心底），单层无缝；
-            // track 底色同步为主题色——em 小数像素取整时上下边框间可能残留 1px 内容区，
-            // 不同步会在正中露出浅灰细线（12px/20px 字号下可见）
-            bg.style.borderWidth = "1.143em";
+            bg.style.background = main;
             bg.style.borderColor = main;
-            track.style.backgroundColor = main;
             thumb.style.background = onMain;
             thumb.style.color = main; // 对勾颜色 = 角色色（拇指底为 on-角色色）
           } else {
-            bg.style.borderWidth = "";
+            bg.style.background = "";
             bg.style.borderColor = "";
-            track.style.backgroundColor = "";
             thumb.style.background = "";
             thumb.style.color = "";
           }

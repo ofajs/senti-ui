@@ -58,10 +58,11 @@ document.querySelector("st-dialog").addEventListener("close", () => {
 
 ## 内建行为
 
+- **M3 emphasized 动效**：打开时遮罩淡入（250ms）+ 面板 `scale(0.9)` 上移入场（300ms，M3 emphasized 曲线）；关闭时反向退出（200ms），动画播完后才彻底隐藏。系统开启"减少动态效果"（`prefers-reduced-motion`）时动画时长自动趋零
 - 打开时焦点自动移入面板容器（`tabindex="-1"`），键盘用户可直接 Tab 到内部控件；面板本身不画 focus ring（由内部交互元素各自承载）
 - Escape / 遮罩点击仅在 `auto-close` 存在时生效；多个对话框同时打开时各管各的
-- 关闭后组件仍留在 DOM（`display: none`），状态由外部管理
-- 组件从 DOM 移除时自动清理 document 级键盘监听
+- 关闭后组件仍留在 DOM（`display: none`），状态由外部管理；快速关闭再打开会立即取消退出动画重新入场
+- 组件从 DOM 移除时自动清理 document 级键盘监听与关闭动画定时器
 
 ## 外观定制：原生 CSS `::part(panel)`
 
@@ -101,7 +102,7 @@ st-dialog::part(panel) {
 |------|--------|
 | `z-index` | `1000` |
 | `padding` | `1.43em`（面板与视口的留白） |
-| 遮罩色 | rgba(0,0,0,0.32)（M3 scrim 规范常量，不随配色变化） |
+| 遮罩 | 轻磨砂玻璃：rgba(0,0,0,0.28) + `backdrop-filter: blur(0.357em)`（= 5px，M3 scrim 规范基色的变体，不随配色变化） |
 
 ## 主题
 

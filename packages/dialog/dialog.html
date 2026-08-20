@@ -5,9 +5,11 @@
 -->
 <template component>
   <style>
-    /* 坑 #20：:host 内嵌 :not() 不生效，用"默认隐藏 + 正向启用"的反向逻辑 */
+    /* 坑 #20：:host 内嵌 :not() 不生效，用"默认隐藏 + 正向启用"的反向逻辑。
+       closing 是 JS 短暂添加的过渡态：open 移除后保留 250ms 播完退出动画再隐藏 */
     :host { display: none; }
-    :host([open]) {
+    :host([open]),
+    :host([closing]) {
       position: fixed;
       inset: 0;
       z-index: 1000;
@@ -19,11 +21,50 @@
       font-family: inherit;
     }
 
-    /* M3 规范 scrim 常量（#000 @ 32%），不随主题配色变化，故不走角色变量 */
+    /* 轻磨砂遮罩（M3 scrim 基色 + 轻度 backdrop blur），不随主题配色变化，故不走角色变量 */
     .scrim {
       position: absolute;
       inset: 0;
-      background: rgba(0, 0, 0, 0.32);
+      /* 轻磨砂遮罩：M3 scrim（黑 @ 28%）+ 轻度 backdrop 磨砂（一点点，不抢内容戏），
+         模糊半径用 em 随 font-size 缩放 */
+      background: rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      opacity: 0;
+    }
+
+    /* M3 emphasized 动效：进入 fade + scale(0.9) 上移入场 300ms，
+       退出 fade + scale(0.95) 收缩 200ms（均为 M3 emphasized 曲线）。
+       用 animation 而非 transition：display none→grid 切换时 animation 自动重播 */
+    :host([open]) .scrim {
+      animation: st-dlg-scrim-in 0.25s ease forwards;
+    }
+    :host([closing]) .scrim {
+      animation: st-dlg-scrim-out 0.2s ease forwards;
+    }
+    :host([open]) .panel {
+      animation: st-dlg-in 0.3s cubic-bezier(0.2, 0, 0, 1) forwards;
+    }
+    :host([closing]) .panel {
+      animation: st-dlg-out 0.2s cubic-bezier(0.2, 0, 0, 1) forwards;
+    }
+    @keyframes st-dlg-scrim-in { to { opacity: 1; } }
+    @keyframes st-dlg-scrim-out { from { opacity: 1; } }
+    @keyframes st-dlg-in {
+      from { opacity: 0; transform: scale(0.9) translateY(-1.14em); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes st-dlg-out {
+      from { opacity: 1; }
+      to { opacity: 0; transform: scale(0.95) translateY(-0.57em); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      :host([open]) .scrim,
+      :host([closing]) .scrim,
+      :host([open]) .panel,
+      :host([closing]) .panel {
+        animation-duration: 0.01ms;
+      }
     }
 
     /* 面板：视觉默认值全用 em（随 font-size 等比缩放）。
@@ -87,11 +128,22 @@
       },
       watch: {
         open() {
-          // 打开时把焦点移到面板容器（tabindex=-1），键盘用户随后可 Tab 进内部控件
+          const ele = this.ele;
+          clearTimeout(this._closingTimer);
           if (this.open !== null) {
-            const panel = this.ele.shadowRoot.querySelector(".panel");
+            // 打开：撤掉残留的退出过渡态，焦点移到面板容器（tabindex=-1），
+            // 键盘用户随后可 Tab 进内部控件
+            this._wasOpen = true;
+            ele.removeAttribute("closing");
+            const panel = ele.shadowRoot.querySelector(".panel");
             // setAttribute 的 watch 异步触发，等面板可见后再聚焦
             requestAnimationFrame(() => panel.focus());
+          } else if (this._wasOpen) {
+            // 关闭：短暂保留 closing 态播完退出动画（200ms），再彻底隐藏。
+            // ofa 初始化时也会以初始值 null 触发一次 watch，用 _wasOpen 区分（非关闭场景）
+            this._wasOpen = false;
+            ele.setAttribute("closing", "");
+            this._closingTimer = setTimeout(() => ele.removeAttribute("closing"), 250);
           }
         },
       },
@@ -122,6 +174,7 @@
       },
       detached() {
         document.removeEventListener("keydown", this._onKeydown);
+        clearTimeout(this._closingTimer);
       },
       proto: {
         // 关闭（仅在 auto-close 时允许交互触发），并派发 close 事件供外部监听

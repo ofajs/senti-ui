@@ -139,3 +139,62 @@ test("::part(panel) 原生 CSS 可定制面板", async ({ page }) => {
   expect(style.width).toBe("320px");
   expect(style.radius).toBe("4px");
 });
+
+test("M3 动效：进入入场动画，关闭后短暂保留 closing 态播退出动画再隐藏", async ({ page }) => {
+  await page.evaluate(() => document.querySelector("#dlg-autoclose").setAttribute("open", ""));
+  // setAttribute 的 watch 异步触发（坑 #18），入场动画开始后处于动画中
+  await page.waitForTimeout(100);
+  const entering = await page.evaluate(() => {
+    const dlg = document.querySelector("#dlg-autoclose");
+    const panel = dlg.shadowRoot.querySelector(".panel");
+    return {
+      animationName: getComputedStyle(panel).animationName,
+      display: getComputedStyle(dlg).display,
+    };
+  });
+  expect(entering.animationName).toContain("st-dlg-in");
+  expect(entering.display).toBe("grid");
+
+  // 关闭：watch 异步添加 closing，退出动画期间仍可见（display 保持 grid）
+  await page.evaluate(() => document.querySelector("#dlg-autoclose").removeAttribute("open"));
+  await page.waitForTimeout(150);
+  const exiting = await page.evaluate(() => {
+    const dlg = document.querySelector("#dlg-autoclose");
+    const panel = dlg.shadowRoot.querySelector(".panel");
+    return {
+      closing: dlg.hasAttribute("closing"),
+      animationName: getComputedStyle(panel).animationName,
+      display: getComputedStyle(dlg).display,
+    };
+  });
+  expect(exiting.closing).toBe(true);
+  expect(exiting.animationName).toContain("st-dlg-out");
+  expect(exiting.display).toBe("grid");
+
+  // 250ms 后 closing 移除，彻底隐藏
+  await page.waitForTimeout(300);
+  expect(
+    await page.evaluate(() => getComputedStyle(document.querySelector("#dlg-autoclose")).display)
+  ).toBe("none");
+});
+
+test("关闭动画期间重新打开：立即取消退出、重新入场", async ({ page }) => {
+  const dlg = page.locator("#dlg-autoclose");
+  await page.evaluate(() => document.querySelector("#dlg-autoclose").setAttribute("open", ""));
+  await page.waitForTimeout(100);
+  await page.evaluate(() => document.querySelector("#dlg-autoclose").removeAttribute("open"));
+  await page.waitForTimeout(100); // 进入退出动画
+  await page.evaluate(() => document.querySelector("#dlg-autoclose").setAttribute("open", ""));
+  await page.waitForTimeout(150);
+  const state = await page.evaluate(() => {
+    const d = document.querySelector("#dlg-autoclose");
+    return {
+      open: d.hasAttribute("open"),
+      closing: d.hasAttribute("closing"),
+      display: getComputedStyle(d).display,
+    };
+  });
+  expect(state.open).toBe(true);
+  expect(state.closing).toBe(false);
+  expect(state.display).toBe("grid");
+});

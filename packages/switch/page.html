@@ -29,18 +29,17 @@
 
   <section>
     <h3>change 事件计数：<span class="code" style="font-family: ui-monospace, monospace;">{{count}}</span></h3>
-    <st-switch id="sw-count">点我</st-switch>
+    <st-switch on:change="onCountChange">点我</st-switch>
   </section>
 
   <script>
     export default async () => ({
       data: { count: 0 },
-      ready() {
-        this.ele.shadowRoot.querySelector("#sw-count").addEventListener("change", () => {
+      proto: {
+        onCountChange() {
           this.count += 1;
-        });
+        },
       },
-      proto: {},
     });
   </script>
 </template>

@@ -7,17 +7,17 @@
   </style>
 
   <h3>点击切换（指示条动画跟随，禁用项不可选）</h3>
-  <st-tab-bar id="bar">
-    <st-tab-item active><span slot="icon">📧</span>邮件</st-tab-item>
-    <st-tab-item><span slot="icon">📞</span>通话</st-tab-item>
-    <st-tab-item><span slot="icon">⭐</span>收藏</st-tab-item>
+  <st-tab-bar>
+    <st-tab-item attr:active="current === 0" on:click="select(0)"><span slot="icon">📧</span>邮件</st-tab-item>
+    <st-tab-item attr:active="current === 1" on:click="select(1)"><span slot="icon">📞</span>通话</st-tab-item>
+    <st-tab-item attr:active="current === 2" on:click="select(2)"><span slot="icon">⭐</span>收藏</st-tab-item>
     <st-tab-item disabled><span slot="icon">💬</span>聊天（禁用）</st-tab-item>
   </st-tab-bar>
 
-  <div class="panel">当前页：{{current}}</div>
+  <div class="panel">当前页：{{currentLabel}}</div>
 
   <h3>等比缩放（font-size 12px）</h3>
-  <st-tab-bar id="bar-sm" style="font-size: 12px;">
+  <st-tab-bar style="font-size: 12px;">
     <st-tab-item active>A</st-tab-item>
     <st-tab-item>B</st-tab-item>
     <st-tab-item>C</st-tab-item>
@@ -25,19 +25,16 @@
 
   <script>
     export default async () => ({
-      data: { current: "邮件" },
-      ready() {
-        const sr = this.ele.shadowRoot;
-        sr.querySelectorAll("#bar st-tab-item").forEach((item) => {
-          item.addEventListener("click", () => {
-            if (item.hasAttribute("disabled")) return;
-            sr.querySelectorAll("#bar st-tab-item").forEach((t) => t.removeAttribute("active"));
-            item.setAttribute("active", "");
-            this.current = item.textContent.trim();
-          });
-        });
+      data: { current: 0, labels: ["邮件", "通话", "收藏"] },
+      proto: {
+        // 计算属性：proto 上的 get（只依赖同步已有 data，getter 安全）
+        get currentLabel() {
+          return this.labels[this.current] || "";
+        },
+        select(i) {
+          this.current = i;
+        },
       },
-      proto: {},
     });
   </script>
 </template>

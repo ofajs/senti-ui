@@ -28,18 +28,17 @@
 
   <section>
     <h3>change 事件计数：<span class="code" style="font-family: ui-monospace, monospace;">{{count}}</span></h3>
-    <st-radio name="fruit" id="rd-count">点我</st-radio>
+    <st-radio name="fruit" on:change="onCountChange">点我</st-radio>
   </section>
 
   <script>
     export default async () => ({
       data: { count: 0 },
-      ready() {
-        this.ele.shadowRoot.querySelector("#rd-count").addEventListener("change", () => {
+      proto: {
+        onCountChange() {
           this.count += 1;
-        });
+        },
       },
-      proto: {},
     });
   </script>
 </template>

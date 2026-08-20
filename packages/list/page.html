@@ -7,7 +7,7 @@
 
   <h3>基础列表（button 项 + 副文本 + hr 分隔）</h3>
   <st-list>
-    <st-list-item button id="li-inbox">
+    <st-list-item button on:click="onInbox">
       <span slot="prefix">📥</span>
       <div>收件箱<span secondary>12 封未读</span></div>
       <span slot="suffix">→</span>
@@ -60,12 +60,11 @@
   <script>
     export default async () => ({
       data: { lastClick: "（无）" },
-      ready() {
-        this.ele.shadowRoot.querySelector("#li-inbox").addEventListener("click", () => {
+      proto: {
+        onInbox() {
           this.lastClick = "收件箱";
-        });
+        },
       },
-      proto: {},
     });
   </script>
 </template>

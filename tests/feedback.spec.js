@@ -55,6 +55,24 @@ test("snackbar：hide() 手动关闭派发 close，removeAttribute 不派发", a
   expect(await page.evaluate(() => window.events)).toEqual([{ id: "sb-manual", type: "close" }]);
 });
 
+test("snackbar：color 属性底色等于对应角色色", async ({ page }) => {
+  await page.waitForFunction(() => {
+    const el = document.querySelector("#sb-color");
+    return el && getComputedStyle(el).display === "inline-flex";
+  });
+  const { errorBg, sbBg } = await page.evaluate(() => {
+    const token = getComputedStyle(document.documentElement).getPropertyValue("--md-sys-color-error").trim();
+    return {
+      errorBg: token,
+      sbBg: getComputedStyle(document.querySelector("#sb-color")).backgroundColor,
+    };
+  });
+  const hex = errorBg.replace("#", "");
+  expect(sbBg).toBe(
+    `rgb(${parseInt(hex.slice(0, 2), 16)}, ${parseInt(hex.slice(2, 4), 16)}, ${parseInt(hex.slice(4, 6), 16)})`
+  );
+});
+
 // ---------- st-collapse ----------
 
 test("collapse：hide 属性高度为 0，移除后展开为内容高度", async ({ page }) => {

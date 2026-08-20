@@ -32,18 +32,17 @@
 
   <section>
     <h3>change 事件计数：<span class="code" style="font-family: ui-monospace, monospace;">{{count}}</span></h3>
-    <st-checkbox id="cb-count">点我</st-checkbox>
+    <st-checkbox on:change="onCountChange">点我</st-checkbox>
   </section>
 
   <script>
     export default async () => ({
       data: { count: 0 },
-      ready() {
-        this.ele.shadowRoot.querySelector("#cb-count").addEventListener("change", () => {
+      proto: {
+        onCountChange() {
           this.count += 1;
-        });
+        },
       },
-      proto: {},
     });
   </script>
 </template>

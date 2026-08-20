@@ -8,31 +8,27 @@
   </style>
 
   <h3>点击切换（药丸背景动画跟随）</h3>
-  <st-nav-bar id="bar">
-    <st-nav-item active><span slot="icon">🏠</span>首页</st-nav-item>
-    <st-nav-item><span slot="icon">🔍</span>发现</st-nav-item>
-    <st-nav-item><span slot="icon">➕</span>发布</st-nav-item>
-    <st-nav-item><span slot="icon">👤</span>我的</st-nav-item>
+  <st-nav-bar>
+    <st-nav-item attr:active="current === 0" on:click="select(0)"><span slot="icon">🏠</span>首页</st-nav-item>
+    <st-nav-item attr:active="current === 1" on:click="select(1)"><span slot="icon">🔍</span>发现</st-nav-item>
+    <st-nav-item attr:active="current === 2" on:click="select(2)"><span slot="icon">➕</span>发布</st-nav-item>
+    <st-nav-item attr:active="current === 3" on:click="select(3)"><span slot="icon">👤</span>我的</st-nav-item>
     <st-nav-item disabled><span slot="icon">⚙️</span>设置（禁用）</st-nav-item>
   </st-nav-bar>
 
-  <div class="panel">当前页：{{current}}</div>
+  <div class="panel">当前页：{{currentLabel}}</div>
 
   <script>
     export default async () => ({
-      data: { current: "首页" },
-      ready() {
-        const sr = this.ele.shadowRoot;
-        sr.querySelectorAll("#bar st-nav-item").forEach((item) => {
-          item.addEventListener("click", () => {
-            if (item.hasAttribute("disabled")) return;
-            sr.querySelectorAll("#bar st-nav-item").forEach((t) => t.removeAttribute("active"));
-            item.setAttribute("active", "");
-            this.current = item.textContent.trim();
-          });
-        });
+      data: { current: 0, labels: ["首页", "发现", "发布", "我的"] },
+      proto: {
+        get currentLabel() {
+          return this.labels[this.current] || "";
+        },
+        select(i) {
+          this.current = i;
+        },
       },
-      proto: {},
     });
   </script>
 </template>

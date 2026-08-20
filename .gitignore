@@ -144,3 +144,8 @@ vite.config.ts.timestamp-*
 
 # Playwright MCP 临时文件（快照/日志）
 .playwright-mcp/
+
+# Playwright 测试产物
+test-results/
+playwright-report/
+blob-report/

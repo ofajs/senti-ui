@@ -157,6 +157,10 @@
           this.value = ta.value;
           if (this.autosize !== null) this.adjustHeight();
         });
+        // 原生 change 不是 composed，穿不出 shadow，需转发到宿主（bubbles + composed）
+        ta.addEventListener("change", () => {
+          ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
+        });
         if (this.autosize !== null) this.adjustHeight();
         // autosize：height:auto 时量 scrollHeight 再设回；rows 属性即最小高度。
         // ResizeObserver 兜底外部改 font-size 等引起的行高变化

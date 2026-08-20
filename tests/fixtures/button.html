@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>st-button test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-init.js"></script>
+  <l-m src="/packages/button/button.html"></l-m>
+</head>
+<body>
+  <st-button id="btn-default">Default</st-button>
+  <st-button id="btn-outlined" variant="outlined">Outlined</st-button>
+  <st-button id="btn-text" variant="text">Text</st-button>
+  <st-button id="btn-color" color="error">Error</st-button>
+  <st-button id="btn-disabled" disabled>Disabled</st-button>
+  <st-button id="btn-loading" loading>Loading</st-button>
+  <st-button id="btn-submit" type="submit">Submit</st-button>
+  <st-button id="btn-slots"><span slot="prefix">🔍</span><span slot="suffix">⏎</span>WithSlots</st-button>
+
+  <script>
+    window.events = [];
+    document.querySelectorAll("st-button").forEach((btn) => {
+      btn.addEventListener("click", () => window.events.push(btn.id));
+    });
+  </script>
+</body>
+</html>

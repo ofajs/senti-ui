@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>st-input test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-init.js"></script>
+  <l-m src="/packages/input/input.html"></l-m>
+</head>
+<body>
+  <st-input id="in-basic" placeholder="basic placeholder"></st-input>
+  <st-input id="in-default-value" default-value="init value"></st-input>
+  <st-input id="in-password" type="password"></st-input>
+  <st-input id="in-disabled" disabled></st-input>
+  <st-input id="in-readonly" readonly default-value="ro"></st-input>
+  <st-input id="in-color" color="error"></st-input>
+
+  <script>
+    window.events = [];
+    document.querySelectorAll("st-input").forEach((el) => {
+      ["input", "change", "focusin", "focusout"].forEach((type) => {
+        el.addEventListener(type, () =>
+          window.events.push({ id: el.id, type, value: el.value })
+        );
+      });
+    });
+  </script>
+</body>
+</html>

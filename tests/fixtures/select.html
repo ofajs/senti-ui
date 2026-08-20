@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>st-select test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-init.js"></script>
+  <l-m src="/packages/select/select.html"></l-m>
+</head>
+<body>
+  <st-select id="sel-basic" placeholder="请选择">
+    <option value="apple">苹果</option>
+    <option value="banana">香蕉</option>
+    <option value="cherry">樱桃</option>
+  </st-select>
+  <st-select id="sel-default" default-value="banana" placeholder="请选择">
+    <option value="a">甲</option>
+    <option value="b">乙</option>
+  </st-select>
+  <st-select id="sel-disabled" disabled placeholder="禁用">
+    <option value="x">X</option>
+  </st-select>
+
+  <script>
+    window.events = [];
+    document.querySelectorAll("st-select").forEach((el) => {
+      ["change", "focusin", "focusout"].forEach((type) => {
+        el.addEventListener(type, () =>
+          window.events.push({ id: el.id, type, value: el.value })
+        );
+      });
+    });
+  </script>
+</body>
+</html>

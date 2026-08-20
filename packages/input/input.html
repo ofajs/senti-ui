@@ -154,6 +154,10 @@
         });
         // 输入时同步 ofa data（:value 单向绑定只管 data → input，反向靠这里）
         input.addEventListener("input", () => { this.value = input.value; });
+        // 原生 change 不是 composed，穿不出 shadow，需转发到宿主（bubbles + composed）
+        input.addEventListener("change", () => {
+          ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
+        });
       },
       proto: {
         // color 接受 M3 角色名或 color 模块自定义变量名，控制 caret 与 focus 描边/底线颜色

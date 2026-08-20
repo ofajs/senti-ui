@@ -4,7 +4,8 @@
   "description": "Senti-UI — an AI-first component library built on ofa.js with Material Design 3 color system",
   "type": "module",
   "scripts": {
-    "dev": "http-server . -p 8642 -c-1 --cors"
+    "dev": "http-server . -p 8642 -c-1 --cors",
+    "test": "playwright test"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,7 @@
   },
   "homepage": "https://github.com/ofajs/senti-ui#readme",
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "http-server": "^14.1.1"
   }
 }

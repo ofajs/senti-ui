@@ -96,9 +96,20 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 ### 测试/验证类坑（非 ofa.js）
 
 24. **外部脚本无法直接调用 o-page 页面模块的 proto 方法**——`document.querySelector('o-page').setRole(...)` 报 `not a function`（proto 方法挂在 ofa 实例上，宿主原生元素不可见）；自动化验证时改用真实交互触发（如 Playwright 对 `input[type=color]` fill 色值、直接 click 按钮），ofa 的 `on:input` / `on:click` 处理器正常响应
+25. **原生 `<input>`/`<textarea>` 的 `change` 事件不是 composed，穿不出 shadow DOM**——`input` 事件 composed:true 可直接在宿主监听，但 `change`（bubbles:true、composed:false）只到 shadow 边界为止，在宿主/页面监听不到（Playwright 实测确认）；正确写法：组件 ready 里转发 `input.addEventListener("change", () => ele.dispatchEvent(new Event("change", { bubbles: true, composed: true })))`。st-input / st-textarea 已加此转发
+26. **Playwright 断言 `page.evaluate(...)` 返回值必须 `await`**——`expect(page.evaluate(...))` 收到的是 Promise 对象，断言必失败且报错信息晦涩（"Received: Promise {}"）；正确写法 `expect(await page.evaluate(...))`
+
+## 测试
+
+Playwright 端到端测试（无构建，走真实浏览器）：
+
+- 用例：`tests/{button,input,textarea,select}.spec.js`；fixture 页：`tests/fixtures/*.html`（引 CDN ofa.js + st-init.js + l-m，`window.events` 记录事件）
+- 运行：`npm test`（自动起 `http-server` :8642，禁缓存；须先 `npx playwright install chromium`）
+- CI：`.github/workflows/test.yml`（push/PR 时跑 chromium）
+- 已知注意：st-input/st-textarea 宿主本身不可聚焦（无 tabindex），焦点在内部 `.native` 上，`el.focus()` 原生调用无效（坑 #24），测试用真实点击聚焦；焦点事件断言用 `focusin`/`focusout`（原生 focus/blur 不冒泡）
 
 ## 下一步可能的方向
 
-- 按同样范式扩展组件（input、dialog、menu 等，参考 st-button 的三件套结构）
+- 按同样范式扩展组件（dialog、menu 等，参考 st-button 的三件套结构）
 - 将本文档封装为 Agent Skill（`SKILL.md`），供 Claude Code / ZCode 等工具按需加载
-- 引入 sibyl-test 做浏览器自动化测试
+- ~~引入浏览器自动化测试~~ 已落地：Playwright 端到端测试（见「测试」章节）+ GitHub Actions CI

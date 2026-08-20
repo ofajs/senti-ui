@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>st-dialog test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-init.js"></script>
+  <l-m src="/packages/dialog/dialog.html"></l-m>
+  <l-m src="/packages/button/button.html"></l-m>
+</head>
+<body>
+  <st-dialog id="dlg-basic">
+    <h2 slot="headline">基础标题</h2>
+    <p>正文内容</p>
+    <div slot="actions">
+      <st-button variant="text" id="btn-close">关闭</st-button>
+    </div>
+  </st-dialog>
+
+  <st-dialog id="dlg-autoclose" auto-close>
+    <h2 slot="headline">自动关闭</h2>
+    <p>正文内容</p>
+    <div slot="actions">
+      <st-button id="btn-confirm">确定</st-button>
+    </div>
+  </st-dialog>
+
+  <st-dialog id="dlg-bare"></st-dialog>
+
+  <script>
+    window.events = [];
+    document.querySelectorAll("st-dialog").forEach((el) => {
+      el.addEventListener("close", () => window.events.push({ id: el.id, type: "close" }));
+    });
+  </script>
+</body>
+</html>

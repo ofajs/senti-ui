@@ -1,0 +1,115 @@
+<!--
+  st-tab-item — Senti-UI 标签项组件（基于 ofa.js）
+  语义属性：active / disabled；插槽 icon / 默认（文字）；click 事件冒泡到宿主，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 3.429em; /* 48px */
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      z-index: 1;
+    }
+
+    /* M3 state layer：currentColor 半透明叠加 */
+    .layer {
+      position: absolute;
+      inset: 0;
+      border-radius: 0.571em;
+      background: currentColor;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+    :host(:hover) .layer { opacity: 0.08; }
+    :host(:active) .layer { opacity: 0.12; }
+
+    .container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.571em;
+      padding: 0 1.143em;
+    }
+
+    .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.286em;
+    }
+    ::slotted([slot="icon"]) { display: inline-flex; }
+
+    .label {
+      font-size: 0.929em; /* 13px，M3 tab */
+      font-weight: 500;
+      white-space: nowrap;
+      color: var(--md-sys-color-on-surface-variant);
+      transition: color 0.2s ease;
+    }
+    :host([active]) .label,
+    :host([active]:hover) .label {
+      color: var(--md-sys-color-primary);
+    }
+    :host(:hover) .label { color: var(--md-sys-color-on-surface); }
+
+    :host([disabled]) {
+      cursor: not-allowed;
+      opacity: 0.38;
+    }
+
+    /* 内部透明原生 button：承载点击/键盘/焦点语义 */
+    .native {
+      all: unset;
+      position: absolute;
+      inset: 0;
+      z-index: 2; /* 盖住 position:relative 的兄弟元素，保证点击/键盘都落在语义元素上 */
+      cursor: pointer;
+      border-radius: 0.571em;
+    }
+    .native:focus-visible ~ .layer {
+      outline: 2px solid var(--md-sys-color-on-surface);
+      outline-offset: 2px;
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <l-m src="../ripple/ripple.html"></l-m>
+
+  <button class="native" type="button"></button>
+  <span class="layer"></span>
+  <div class="container">
+    <div class="icon"><slot name="icon"></slot></div>
+    <div class="label"><slot></slot></div>
+  </div>
+  <st-ripple></st-ripple>
+<script>
+  import "../color/st-init.js";
+  export default async () => ({
+    tag: "st-tab-item",
+    attrs: {
+      active: null,
+      disabled: null,
+    },
+    watch: {
+      disabled() { this.applyDisabled(); },
+    },
+    ready() {
+      const sr = this.ele.shadowRoot;
+      // disabled 同步到内部原生 button：原生 disabled 天然阻断点击/键盘/焦点
+      this.applyDisabled = () => {
+        sr.querySelector(".native").disabled = this.disabled !== null;
+      };
+      this.applyDisabled();
+    },
+    proto: {},
+  });
+</script>
+</template>

@@ -1,0 +1,33 @@
+<!-- st-collapse 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 12px; padding: 40px; align-content: start; max-width: 480px; }
+    st-collapse div { padding: 12px; color: var(--md-sys-color-on-surface-variant); }
+  </style>
+
+  <st-button variant="outlined" on:click="toggle">展开 / 收起</st-button>
+
+  <st-collapse attr:hide="hidden">
+    <div>
+      折叠内容：高度动画由 ResizeObserver 量取，内容变化自动跟随。<br>
+      再来一行文字验证多行高度。
+      <o-fill :value="lines"><br>动态第 {{$data}} 行</o-fill>
+    </div>
+  </st-collapse>
+
+  <st-button variant="text" on:click="addLine">往内容里加一行</st-button>
+
+  <script>
+    export default async () => ({
+      data: { hidden: true, lines: [] },
+      proto: {
+        toggle() {
+          this.hidden = !this.hidden;
+        },
+        addLine() {
+          this.lines.push(this.lines.length + 3);
+        },
+      },
+    });
+  </script>
+</template>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>st-textarea test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-init.js"></script>
+  <l-m src="/packages/textarea/textarea.html"></l-m>
+</head>
+<body>
+  <st-textarea id="ta-basic" placeholder="ta placeholder"></st-textarea>
+  <st-textarea id="ta-default-value" default-value="init ta"></st-textarea>
+  <st-textarea id="ta-rows" rows="6"></st-textarea>
+  <st-textarea id="ta-disabled" disabled></st-textarea>
+  <st-textarea id="ta-readonly" readonly default-value="ro"></st-textarea>
+
+  <script>
+    window.events = [];
+    document.querySelectorAll("st-textarea").forEach((el) => {
+      ["input", "change", "focusin", "focusout"].forEach((type) => {
+        el.addEventListener(type, () =>
+          window.events.push({ id: el.id, type, value: el.value })
+        );
+      });
+    });
+  </script>
+</body>
+</html>

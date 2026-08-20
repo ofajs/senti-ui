@@ -1,0 +1,306 @@
+<!-- M3 颜色体系生成器（ofa.js 页面模块），由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; font-family: system-ui, sans-serif; }
+    h1 { font-size: 20px; margin: 0; }
+    p.desc { margin: 0; font-size: 13px; color: var(--md-sys-color-on-surface-variant); }
+
+    .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    input[type="color"] {
+      width: 48px; height: 40px; padding: 0; border: none;
+      border-radius: 8px; background: none; cursor: pointer;
+    }
+    input[type="text"] {
+      height: 40px; padding: 0 12px; border-radius: 8px; font: inherit;
+      border: 1px solid var(--md-sys-color-outline);
+      background: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-on-surface);
+      width: 120px;
+      box-sizing: border-box;
+    }
+    button {
+      height: 40px; padding: 0 16px; border-radius: 20px; font: inherit; font-weight: 500;
+      border: 1px solid var(--md-sys-color-outline); background: transparent;
+      color: var(--md-sys-color-primary); cursor: pointer;
+    }
+    button:hover { background: rgb(0 0 0 / 0.04); }
+
+    .roles { display: grid; gap: 8px; }
+    .role-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+    .role {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--md-sys-color-surface-container);
+      border-radius: 10px; padding: 8px 12px; font-size: 13px;
+    }
+    .role input[type="color"] { width: 36px; height: 32px; border-radius: 6px; }
+    .role .tag {
+      font-size: 11px; padding: 2px 8px; border-radius: 999px;
+      background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container);
+    }
+    .role .reset {
+      border: none; background: none; padding: 2px 6px; height: auto; border-radius: 6px;
+      color: var(--md-sys-color-on-surface-variant); font-size: 12px;
+    }
+    .role input[type="text"].var-name {
+      width: 110px; height: 32px; padding: 0 8px; border-radius: 6px; font-size: 12px;
+    }
+
+    .schemes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 800px) { .schemes { grid-template-columns: 1fr; } }
+    .scheme {
+      background: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-on-surface);
+      border-radius: 12px; padding: 16px; display: grid; gap: 12px;
+    }
+    .scheme h2 { font-size: 14px; margin: 0; }
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+    }
+    .swatch {
+      border-radius: 10px; overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.06);
+    }
+    .swatch .block {
+      height: 56px;
+      display: flex; align-items: flex-end; justify-content: flex-end;
+      padding: 6px 8px; font-size: 11px;
+      font-family: ui-monospace, monospace;
+    }
+    .swatch .meta {
+      padding: 6px 8px; font-size: 11px; line-height: 1.4;
+      background: var(--md-sys-color-surface-container-low);
+      color: var(--md-sys-color-on-surface-variant);
+      font-family: ui-monospace, monospace; word-break: break-all;
+    }
+
+    pre {
+      background: var(--md-sys-color-surface-container);
+      border-radius: 12px; padding: 16px; margin: 0;
+      font-size: 12px; line-height: 1.6; overflow: auto; max-height: 320px;
+    }
+  </style>
+
+  <div>
+    <h1>M3 颜色体系生成器</h1>
+    <p class="desc">选择种子色，自动生成 Material Design 3 完整颜色体系（浅色 + 深色），并即时应用到当前页面。所有配置自动保存到 localStorage，引入 `st-init.js` 的页面（同域）自动跟随这套配色。</p>
+  </div>
+
+  <div class="controls">
+    <label style="font-size:13px;">种子色</label>
+    <input type="color" id="seed-picker" :value="seed.toLowerCase()" on:input="setSeed($event.target.value)" />
+    <input type="text" :value="seed" spellcheck="false" on:change="setSeed($event.target.value.trim())" />
+    <button on:click="copyCss">复制 CSS</button>
+    <button on:click="resetAll">重置全部</button>
+    <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant);">{{status}}</span>
+  </div>
+
+  <div class="roles">
+    <p class="desc">核心角色默认由种子色自动生成，可单独手动指定；配对 token（on-*/container）按 M3 tone 规则自动推导。success 为内置扩展角色（M3 规范外的补充语义色），默认绿色、不随种子色变化，同样可覆盖。</p>
+    <div class="role-grid">
+      <label class="role">
+        <input type="color" :value="roleColors.primary" on:input="setRole('primary', $event.target.value)" />
+        <span>primary</span>
+        <span class="tag">{{overrides.primary ? '手动' : '自动'}}</span>
+        <button class="reset" on:click="resetRole('primary')" title="恢复由种子色自动生成">↺</button>
+      </label>
+      <label class="role">
+        <input type="color" :value="roleColors.secondary" on:input="setRole('secondary', $event.target.value)" />
+        <span>secondary</span>
+        <span class="tag">{{overrides.secondary ? '手动' : '自动'}}</span>
+        <button class="reset" on:click="resetRole('secondary')" title="恢复由种子色自动生成">↺</button>
+      </label>
+      <label class="role">
+        <input type="color" :value="roleColors.tertiary" on:input="setRole('tertiary', $event.target.value)" />
+        <span>tertiary</span>
+        <span class="tag">{{overrides.tertiary ? '手动' : '自动'}}</span>
+        <button class="reset" on:click="resetRole('tertiary')" title="恢复由种子色自动生成">↺</button>
+      </label>
+      <label class="role">
+        <input type="color" :value="roleColors.error" on:input="setRole('error', $event.target.value)" />
+        <span>error</span>
+        <span class="tag">{{overrides.error ? '手动' : '自动'}}</span>
+        <button class="reset" on:click="resetRole('error')" title="恢复由种子色自动生成">↺</button>
+      </label>
+      <label class="role">
+        <input type="color" :value="roleColors.success" on:input="setRole('success', $event.target.value)" />
+        <span>success</span>
+        <span class="tag">{{overrides.success ? '手动' : '默认'}}</span>
+        <button class="reset" on:click="resetRole('success')" title="恢复默认绿色">↺</button>
+      </label>
+    </div>
+  </div>
+
+  <div class="roles">
+    <p class="desc">自定义颜色变量：追加到生成的主题（:root）中，随 CSS 一起导出。</p>
+    <div class="role-grid">
+      <o-fill :value="customs">
+        <div class="role">
+          <input type="text" class="var-name" placeholder="变量名，如 brand" :value="$data.name"
+            on:input="$host.renameCustom($index, $event.target.value)" />
+          <input type="color" :value="$data.color.toLowerCase()" on:input="$host.recolorCustom($index, $event.target.value)" />
+          <span style="font-family:ui-monospace,monospace;font-size:12px;opacity:.7">{{$data.color.toUpperCase()}}</span>
+          <button class="reset" on:click="$host.removeCustom($index)" title="删除该变量">✕</button>
+        </div>
+      </o-fill>
+    </div>
+    <button on:click="addCustom" style="align-self: flex-start; font-size: 13px;">＋ 添加变量</button>
+  </div>
+
+  <div class="schemes">
+    <div class="scheme" id="light-panel">
+      <h2>Light 浅色</h2>
+      <div class="swatch-grid">
+        <o-fill :value="lightSwatches">
+          <div class="swatch" :title="$data.varName + ': ' + $data.hex">
+            <div class="block" :style.background="$data.hex" :style.color="$data.text">{{$data.hex}}</div>
+            <div class="meta">{{$data.name}}</div>
+          </div>
+        </o-fill>
+      </div>
+    </div>
+    <div class="scheme" id="dark-panel">
+      <h2>Dark 深色</h2>
+      <div class="swatch-grid">
+        <o-fill :value="darkSwatches">
+          <div class="swatch" :title="$data.varName + ': ' + $data.hex">
+            <div class="block" :style.background="$data.hex" :style.color="$data.text">{{$data.hex}}</div>
+            <div class="meta">{{$data.name}}</div>
+          </div>
+        </o-fill>
+      </div>
+    </div>
+  </div>
+
+  <pre :text="cssText" style="font-family: ui-monospace, monospace;"></pre>
+
+  <script>
+    export default async () => {
+      // 生成器模块由 index.html 预加载挂到 window（页面脚本内相对路径 import 不可用）
+      // 注意：o-page 升级可能早于 index.html 的内联 module 执行，__m3Ready 尚不存在，需轮询等待
+      if (window.__m3Ready) { await window.__m3Ready; }
+      else { while (!window.__sentiM3) { await new Promise((r) => setTimeout(r, 10)); } }
+      const { generateM3Theme, themeToCss, applyTheme, expandCustoms, TOKEN_NAMES, OVERRIDABLE_ROLES, EXTENDED_ROLES } = window.__sentiM3;
+
+      const STORAGE_KEY = "st-color-config";
+      const defaults = () => ({ seed: "#0061A4", overrides: {}, customs: [] });
+
+      const contrastColor = (hex) => {
+        const n = parseInt(hex.slice(1), 16);
+        const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+        return (r * 299 + g * 587 + b * 114) / 1000 > 128 ? "#000" : "#fff";
+      };
+
+      // customs 数组 → 传给生成器的对象
+      const customsToObject = (customs) =>
+        Object.fromEntries(
+          customs
+            .filter((c) => c.name.trim() && /^#[0-9a-fA-F]{6}$/.test(c.color))
+            .map((c) => [c.name.trim(), c.color])
+        );
+
+      // token 对象 → swatch 渲染数组（自定义变量按 M3 规则展开为 4 个配对 token，插在内置角色块之后）
+      const toSwatches = (scheme, expandedCustoms) => {
+        const customItems = Object.entries(expandedCustoms || {}).map(([varName, hex]) => ({
+          varName, name: varName.replace(/^--/, ""), hex: hex.toLowerCase(), text: contrastColor(hex),
+        }));
+        const items = [];
+        for (const name of TOKEN_NAMES) {
+          const hex = scheme[name].toLowerCase();
+          items.push({
+            varName: "--md-sys-color-" + name.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase()),
+            name: name.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase()),
+            hex, text: contrastColor(hex),
+          });
+          if (name === "onSuccessContainer") items.push(...customItems);
+        }
+        return items;
+      };
+
+      return {
+        data: {
+          seed: "#0061A4",
+          overrides: {},
+          customs: [],
+          status: "",
+          cssText: "",
+          roleColors: { primary: "", secondary: "", tertiary: "", error: "", success: "" },
+          lightSwatches: [],
+          darkSwatches: [],
+        },
+        ready() {
+          // 从 localStorage 恢复配置
+          try {
+            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+            Object.assign(this, {
+              seed: saved.seed || this.seed,
+              overrides: saved.overrides || {},
+              customs: saved.customs || [],
+            });
+          } catch {}
+          this.rebuild();
+        },
+        proto: {
+          save() {
+            localStorage.setItem(
+              STORAGE_KEY,
+              JSON.stringify({ seed: this.seed, overrides: this.overrides, customs: this.customs })
+            );
+          },
+          rebuild() {
+            if (!/^#[0-9a-fA-F]{6}$/.test(this.seed)) {
+              this.status = "种子色格式应为 #RRGGBB";
+              return;
+            }
+            this.status = "";
+            const customs = customsToObject(this.customs);
+            const expanded = expandCustoms(customs);
+            const { light, dark } = applyTheme(this.seed, this.overrides, customs);
+            this.cssText = themeToCss(this.seed, this.overrides, customs);
+            this.lightSwatches = toSwatches(light, expanded.light);
+            this.darkSwatches = toSwatches(dark, expanded.dark);
+            // 未覆盖的角色回显生成值（核心角色回显种子生成的值，success 回显默认/覆盖后的绿色）
+            const auto = generateM3Theme(this.seed).light;
+            for (const role of [...Object.keys(OVERRIDABLE_ROLES), ...Object.keys(EXTENDED_ROLES)]) {
+              this.roleColors[role] = (this.overrides[role] || auto[role]).toLowerCase();
+            }
+            // 每个面板用各自 scheme 的 surface 色做背景
+            this.applyPanelVars("#light-panel", light);
+            this.applyPanelVars("#dark-panel", dark);
+          },
+          applyPanelVars(selector, scheme) {
+            const el = this.ele.shadowRoot.querySelector(selector);
+            if (!el) return;
+            const s = el.style;
+            s.setProperty("--md-sys-color-surface-container", scheme.surfaceContainer);
+            s.setProperty("--md-sys-color-surface-container-low", scheme.surfaceContainerLow);
+            s.setProperty("--md-sys-color-on-surface", scheme.onSurface);
+            s.setProperty("--md-sys-color-on-surface-variant", scheme.onSurfaceVariant);
+          },
+          setSeed(v) { this.seed = v; this.save(); this.rebuild(); },
+          setRole(role, hex) { this.overrides[role] = hex.toUpperCase(); this.save(); this.rebuild(); },
+          resetRole(role) { delete this.overrides[role]; this.save(); this.rebuild(); },
+          addCustom() {
+            this.customs.push({ name: `custom-${this.customs.length + 1}`, color: "#7FDBFF" });
+            this.save(); this.rebuild();
+          },
+          renameCustom(i, name) { this.customs[i].name = name; this.save(); this.rebuild(); },
+          recolorCustom(i, color) { this.customs[i].color = color.toUpperCase(); this.save(); this.rebuild(); },
+          removeCustom(i) { this.customs.splice(i, 1); this.save(); this.rebuild(); },
+          resetAll() {
+            localStorage.removeItem(STORAGE_KEY);
+            const d = defaults();
+            this.seed = d.seed; this.overrides = {}; this.customs = [];
+            this.rebuild();
+          },
+          async copyCss(e) {
+            await navigator.clipboard.writeText(this.cssText);
+            e.target.textContent = "已复制 ✓";
+            setTimeout(() => (e.target.textContent = "复制 CSS"), 1500);
+          },
+        },
+      };
+    };
+  </script>
+</template>

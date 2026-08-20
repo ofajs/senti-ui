@@ -1,0 +1,60 @@
+<!-- st-textarea 验收页（ofa.js 页面模块），由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 20px; justify-items: start; }
+    section { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+    p { margin: 0; font-size: 13px; color: var(--md-sys-color-on-surface-variant); }
+    .code { font-family: ui-monospace, monospace; color: var(--md-sys-color-on-surface); }
+  </style>
+
+  <section>
+    <h3>两种 variant</h3>
+    <st-textarea placeholder="Outlined 多行输入"></st-textarea>
+    <st-textarea variant="filled" placeholder="Filled 多行输入"></st-textarea>
+  </section>
+
+  <section>
+    <h3>语义状态与 rows</h3>
+    <st-textarea placeholder="Disabled" default-value="不可编辑" disabled></st-textarea>
+    <st-textarea placeholder="Readonly" default-value="只读内容" readonly></st-textarea>
+    <st-textarea rows="6" placeholder="rows=6"></st-textarea>
+    <st-textarea rows="2" placeholder="rows=2"></st-textarea>
+  </section>
+
+  <section>
+    <h3>color 属性（caret / focus 描边与底线色）</h3>
+    <st-textarea color="error" placeholder="校验错误态"></st-textarea>
+    <st-textarea color="success" placeholder="校验通过态"></st-textarea>
+    <st-textarea variant="filled" color="error" placeholder="Filled error"></st-textarea>
+  </section>
+
+  <section>
+    <h3>纯 style 定制（原生 CSS 属性，无预设）</h3>
+    <st-textarea style="font-size: 12px;" placeholder="Scale 12px"></st-textarea>
+    <st-textarea style="font-size: 16px;" placeholder="Scale 16px"></st-textarea>
+    <st-textarea style="width: 360px;" placeholder="固定宽度 360px"></st-textarea>
+    <st-textarea style="border-radius: 1em;" placeholder="圆角 1em"></st-textarea>
+  </section>
+
+  <section>
+    <h3>autosize：根据内容自动撑开高度</h3>
+    <st-textarea autosize rows="2" placeholder="输入回车换行试试，高度自动跟随内容"></st-textarea>
+    <st-textarea autosize variant="filled" default-value="预置多行内容：&#10;第二行&#10;第三行——初始即撑开"></st-textarea>
+  </section>
+
+  <section>
+    <h3>事件与 value 同步</h3>
+    <st-textarea placeholder="输入试试，下方实时显示 value" on:input="onInput"></st-textarea>
+    <p>value: <span class="code">{{demoValue}}</span></p>
+  </section>
+
+  <script>
+    export default async () => ({
+      data: { demoValue: "" },
+      proto: {
+        onInput(e) { this.demoValue = e.target.value; },
+      },
+    });
+  </script>
+</template>

@@ -1,0 +1,87 @@
+<!--
+  st-ripple — 点击波纹组件（基于 ofa.js）
+  放在任意 position: relative 的父元素内，点击父元素区域会产生扩散波纹。
+  波纹色为 currentColor（继承文字色，自动与任意配色协调）。
+-->
+<template component>
+  <style>
+    :host {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background-color: currentColor;
+      opacity: 0.28;
+      transform: scale(0);
+      animation: st-ripple-spread 0.35s ease-out forwards;
+    }
+    @keyframes st-ripple-spread {
+      to {
+        transform: scale(1);
+        opacity: 0;
+      }
+    }
+  </style>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-ripple",
+      ready() {
+        // 监听目标：优先取 shadow 宿主（组件被嵌入其他组件 shadow 时），否则取父元素
+        const root = this.ele.getRootNode();
+        const target = root.host || this.ele.parentElement;
+        if (!target) return;
+
+        // 事件若源自嵌套的自定义组件（如子列表项、项内套的 st-button），
+        // 交给该组件自己的 ripple 处理，宿主不再叠加波纹（否则一次点击多层涟漪）
+        const fromNested = (e) => {
+          for (const node of e.composedPath()) {
+            if (node === target) return false;
+            if (node instanceof Element && node.tagName.includes("-")) return true;
+          }
+          return false;
+        };
+
+        target.addEventListener("pointerdown", (e) => {
+          if (fromNested(e)) return;
+          const rect = this.ele.getBoundingClientRect();
+          this.spawn(e.clientX - rect.left, e.clientY - rect.top, rect);
+        });
+        // 键盘激活（Enter/Space 产生的 click 无坐标，detail 为 0）：从中心扩散
+        target.addEventListener("click", (e) => {
+          if (e.detail !== 0 || fromNested(e)) return;
+          const rect = this.ele.getBoundingClientRect();
+          this.spawn(rect.width / 2, rect.height / 2, rect);
+        });
+      },
+      proto: {
+        // 在 (x, y) 处产生一个波纹，覆盖整个区域（直径 = 到最远角的距离 × 2）
+        spawn(x, y, rect) {
+          const size = 2 * Math.max(
+            Math.hypot(x, y),
+            Math.hypot(rect.width - x, y),
+            Math.hypot(x, rect.height - y),
+            Math.hypot(rect.width - x, rect.height - y)
+          );
+          const dot = document.createElement("span");
+          dot.className = "ripple";
+          dot.style.width = dot.style.height = size + "px";
+          dot.style.left = x - size / 2 + "px";
+          dot.style.top = y - size / 2 + "px";
+          // 必须插入 shadowRoot：appendChild 到 host 会落入 light DOM、无处分发而不可见
+          this.ele.shadowRoot.appendChild(dot);
+          // 移除不能只靠 animationend：祖先 display:none（如菜单面板关闭）会暂停 CSS 动画，
+          // animationend 永不触发、波纹残留，面板再显示时会"续播"旧动画——定时器兜底移除
+          dot.addEventListener("animationend", () => dot.remove());
+          setTimeout(() => dot.remove(), 400);
+        },
+      },
+    });
+  </script>
+</template>

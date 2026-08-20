@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M3 颜色体系生成器 — Senti-UI</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="./st-init.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 32px;
+      font-family: system-ui, sans-serif;
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+    }
+  </style>
+</head>
+<body>
+  <!-- 预加载生成器模块并挂到 window（ofa 页面脚本内动态 import 相对路径不可用） -->
+  <script type="module">
+    window.__m3Ready = (async () => {
+      window.__sentiM3 = await import("./m3-theme.js?v=2");
+    })();
+  </script>
+  <o-page src="./page.html"></o-page>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>st-checkbox / st-switch / st-radio test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-init.js"></script>
+  <l-m src="/packages/checkbox/checkbox.html"></l-m>
+  <l-m src="/packages/switch/switch.html"></l-m>
+  <l-m src="/packages/radio/radio.html"></l-m>
+</head>
+<body>
+  <st-checkbox id="cb-basic">勾选</st-checkbox>
+  <st-checkbox id="cb-init" checked>初始选中</st-checkbox>
+  <st-checkbox id="cb-ind" indeterminate>不确定</st-checkbox>
+  <st-checkbox id="cb-disabled" disabled>禁用</st-checkbox>
+  <st-checkbox id="cb-color" color="error" checked>错误色</st-checkbox>
+
+  <st-switch id="sw-basic">开关</st-switch>
+  <st-switch id="sw-init" checked>初始开</st-switch>
+  <st-switch id="sw-disabled" disabled>禁用</st-switch>
+
+  <div id="radio-group">
+    <st-radio id="rd-a" name="fruit" checked>A</st-radio>
+    <st-radio id="rd-b" name="fruit">B</st-radio>
+    <st-radio id="rd-c" name="fruit" disabled>C</st-radio>
+  </div>
+
+  <script>
+    window.events = [];
+    document.querySelectorAll("st-checkbox, st-switch, st-radio").forEach((el) => {
+      el.addEventListener("change", () =>
+        window.events.push({ id: el.id, checked: el.hasAttribute("checked") })
+      );
+    });
+  </script>
+</body>
+</html>

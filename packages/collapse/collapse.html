@@ -1,0 +1,89 @@
+<!--
+  st-collapse — Senti-UI 折叠容器组件（基于 ofa.js）
+  语义属性：hide（折叠收起）；展开/收起带高度过渡动画（M3 emphasized 300ms）
+  内容尺寸变化由 ResizeObserver 跟随，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: block;
+      position: relative;
+      overflow: hidden;
+      /* M3 emphasized 曲线；默认时长 0s——ResizeObserver 跟随内容高度的变化必须瞬时，
+        否则嵌套折叠时外层会"追帧式"追赶内层动画，表现为奇怪的缓慢；
+        用户切换 hide 时由 JS 临时启用 0.3s 过渡（见 watch） */
+      /* 注意 shorthand 中第一个时间是 duration：写成 "0.3s ... 0s" 时 0s 是 delay，
+         时长仍是 0.3s（曾因此让 RO 跟随也被动画化、二级折叠诡异缓慢） */
+      transition: height 0s cubic-bezier(0.2, 0, 0, 1);
+    }
+    /* 显隐高度完全由 JS 驱动（watch hide 先启用过渡再设高度）：
+       若用 :host([hide]) height:0 !important 强制，高度变化发生在异步 watch 设置
+       transitionDuration 之前，会直接瞬跳、动画失效 */
+    .container {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
+    /* 顶部 0.1px 防止 margin 折叠导致高度量取偏小 */
+    .content { padding-top: 0.1px; }
+  </style>
+
+  <div class="container">
+    <div class="content"><slot></slot></div>
+  </div>
+
+  <script>
+    export default async () => ({
+      tag: "st-collapse",
+      attrs: {
+        hide: null,
+      },
+      proto: {
+        // watch 初始化也会以初始值触发一次（坑 #27），refreshHeight 无副作用，天然安全
+        refreshHeight(height) {
+          const ele = this.ele;
+          const content = ele.shadowRoot?.querySelector(".content");
+          if (!content) return; // watch 初始触发可能早于 shadow 就绪（坑 #27）
+          if (this.hide !== null) {
+            ele.style.height = "0px";
+            return;
+          }
+          const target = height ?? content.scrollHeight;
+          ele.style.height = target + "px";
+        },
+      },
+      watch: {
+        hide() {
+          // watch 初始化也会以初始值触发一次（坑 #27）：首次只同步高度、不做动画
+          if (this._hideInited === undefined) {
+            this._hideInited = true;
+            this.refreshHeight();
+            return;
+          }
+          // 用户切换 hide：临时启用 0.3s 过渡，播完（或超时兜底）恢复 0s
+          const ele = this.ele;
+          clearTimeout(this._animTimer);
+          ele.style.transitionDuration = "0.3s";
+          this._animTimer = setTimeout(() => {
+            ele.style.transitionDuration = "";
+          }, 400);
+          this.refreshHeight();
+          // watch 异步触发：切换后内容高度可能也变了（如展开后子内容才渲染），延迟复测一次
+          requestAnimationFrame(() => this.refreshHeight());
+        },
+      },
+      attached() {
+        const content = this.ele.shadowRoot.querySelector(".content");
+        this.refreshHeight();
+        this._resizeObserver = new ResizeObserver((entries) => {
+          this.refreshHeight(entries[0].contentRect.height);
+        });
+        this._resizeObserver.observe(content);
+      },
+      detached() {
+        this._resizeObserver?.disconnect();
+      },
+    });
+  </script>
+</template>

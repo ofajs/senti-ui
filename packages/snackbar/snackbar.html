@@ -1,0 +1,113 @@
+<!--
+  st-snackbar — Senti-UI 消息条组件（基于 ofa.js）
+  语义属性：open（显示）/ duration（毫秒，设置后自动关闭并派发 close）
+  视觉在 :host 上（默认 secondary 次级色底，color 属性可换角色色），可直接用原生 CSS 属性覆盖，见 README.md
+-->
+<template component>
+  <style>
+    /* 坑 #20：默认隐藏 + 正向启用 */
+    :host { display: none; }
+    :host([open]) {
+      display: inline-flex;
+      align-items: center;
+      box-sizing: border-box;
+      min-width: 14.286em; /* 200px */
+      max-width: 34.286em; /* 480px */
+      padding: 0.857em 1em;
+      border-radius: 0.286em; /* 4px */
+      font-size: 14px;
+      font-family: inherit;
+      line-height: 1.4;
+      background: var(--md-sys-color-secondary);
+      color: var(--md-sys-color-on-secondary);
+      box-shadow: 0 0.143em 0.571em rgba(0, 0, 0, 0.2);
+      animation: st-sb-in 0.2s cubic-bezier(0.2, 0, 0, 1);
+    }
+    @keyframes st-sb-in {
+      from { opacity: 0; transform: translateY(1em); }
+      to { opacity: 1; transform: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      :host([open]) { animation-duration: 0.01ms; }
+    }
+
+    .content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 0.571em;
+      margin-left: 1.43em;
+      /* 操作区继承文字色（跟随默认底色或 color 属性自动配对） */
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <span class="content"><slot></slot></span>
+  <span class="actions"><slot name="action"></slot></span>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-snackbar",
+      attrs: {
+        open: null,
+        duration: null,
+        color: null,
+      },
+      watch: {
+        // watch 初始化也会以初始值触发一次（坑 #27），用 open !== null 判断真实打开
+        open() {
+          clearTimeout(this._hideTimer);
+          if (this.open !== null && this.duration !== null) {
+            const ms = Number(this.duration);
+            if (ms > 0) {
+              this._hideTimer = setTimeout(() => this.hide(), ms);
+            }
+          }
+        },
+        color() { this.applyColor(); },
+      },
+      ready() {
+        const ele = this.ele;
+        // proto 方法挂在 ofa 实例上，原生元素不可见（坑 #24），桥接 hide 到宿主 property
+        ele.hide = () => this.hide();
+        this.applyColor();
+      },
+      ready() {
+        const ele = this.ele;
+        // proto 方法挂在 ofa 实例上，原生元素不可见（坑 #24），桥接 hide 到宿主 property
+        ele.hide = () => this.hide();
+      },
+      detached() {
+        clearTimeout(this._hideTimer);
+      },
+      proto: {
+        // color 接受 M3 角色名或 color 模块自定义变量名（如 color="error" → error 底 + on-error 字），
+        // 未设置时用默认主题次级色（secondary / on-secondary）
+        applyColor() {
+          const s = this.ele.style;
+          const name = this.color;
+          if (!name) {
+            s.background = "";
+            s.color = "";
+            return;
+          }
+          s.background = `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-secondary)))`;
+          s.color = `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-secondary)))`;
+        },
+        // 关闭（自动或 JS 调用）并派发 close 事件
+        hide() {
+          if (this.open === null) return;
+          clearTimeout(this._hideTimer);
+          this.ele.removeAttribute("open");
+          this.ele.dispatchEvent(new Event("close", { bubbles: true, composed: true }));
+        },
+      },
+    });
+  </script>
+</template>

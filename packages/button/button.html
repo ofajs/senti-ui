@@ -1,0 +1,162 @@
+<!--
+  st-button — Senti-UI 按钮组件（基于 ofa.js）
+  语义属性：variant(filled|outlined|text) / disabled / loading
+  视觉全部在 :host 上，直接用原生 CSS 属性（style="height:32px; border-radius:8px; ..."）定制，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      /* 视觉样式全部定义在 host 上，外部 style 可直接覆盖任何原生属性 */
+      /* 尺寸类默认值用 em：改 font-size 即可整体等比缩放 */
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.571em;
+      box-sizing: border-box;
+      position: relative;
+      height: 2.857em;
+      min-width: 3.429em;
+      padding: 0 1.429em; /* = 圆角半径：文字刚好落在圆角转弯处 */
+      border: 1px solid transparent;
+      border-radius: 1.429em;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      line-height: 1;
+      background-color: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :host([variant="outlined"]) {
+      background-color: transparent;
+      color: var(--md-sys-color-primary);
+      border-color: var(--md-sys-color-outline);
+    }
+
+    :host([variant="text"]) {
+      background-color: transparent;
+      color: var(--md-sys-color-primary);
+    }
+
+    /* M3 state layer：currentColor 半透明叠加，无需额外变量 */
+    .layer {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background-color: currentColor;
+      opacity: 0;
+      pointer-events: none;
+    }
+    :host(:hover) .layer { opacity: 0.08; }
+    :host(:active) .layer { opacity: 0.12; }
+
+    :host([disabled]) {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
+    :host([disabled]) .layer { opacity: 0; }
+
+    /* l-m 加载占位不是内容，不能参与 flex/gap 布局（否则左侧多一个 gap） */
+    l-m { display: none; }
+
+    /* 内部透明原生 button：只负责语义（点击/键盘/焦点/disabled），不承载视觉 */
+    .native {
+      all: unset;
+      position: absolute;
+      inset: 0;
+      cursor: inherit;
+      border-radius: inherit;
+    }
+    .native:focus-visible {
+      /* 不用 currentColor：filled 按钮文字为白色时白圈画在浅色页面上不可见 */
+      outline: 2px solid var(--md-sys-color-on-surface);
+      outline-offset: 2px;
+    }
+
+    ::slotted([slot="prefix"]),
+    ::slotted([slot="suffix"]) {
+      display: inline-flex;
+    }
+
+    /* loading spinner：尺寸随 font-size（1.2em），颜色随 currentColor */
+    .loader {
+      display: none;
+      width: 1.2em;
+      height: 1.2em;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-right-color: currentColor;
+      animation: st-btn-spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    :host([loading]) .loader { display: inline-flex; }
+    @keyframes st-btn-spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+
+  <span class="layer"></span>
+  <l-m src="../ripple/ripple.html"></l-m>
+  <st-ripple></st-ripple>
+  <slot name="prefix"></slot>
+  <span class="loader"></span>
+  <slot></slot>
+  <slot name="suffix"></slot>
+  <button class="native" attr:type="type" :disabled="disabled !== null || loading !== null" tabindex="0"></button>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-button",
+      attrs: {
+        variant: "filled",
+        type: "button",
+        color: null,
+        disabled: null,
+        loading: null,
+      },
+      watch: {
+        color() { this.applyColor(); },
+        variant() { this.applyColor(); },
+      },
+      ready() {
+        this.applyColor();
+      },
+      proto: {
+        // color 接受 M3 角色名（primary/secondary/tertiary/error…）或 color 模块的自定义变量名
+        // （如 color="brand" → 消费 --brand / --on-brand，st-init 动态注入）。
+        // 必须按 variant 分派后再写内联样式：内联样式会压过 :host([variant]) 的 CSS 规则，
+        // 若无条件设置背景色，outlined/text 会被强制变成 filled 外观
+        applyColor() {
+          const s = this.ele.style;
+          const name = this.color;
+          if (!name) {
+            s.background = "";
+            s.color = "";
+            s.borderColor = "";
+            return;
+          }
+          const main = `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`;
+          const on = `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-primary)))`;
+          if (this.variant === "outlined") {
+            s.background = "";
+            s.color = main;
+            s.borderColor = main;
+          } else if (this.variant === "text") {
+            s.background = "";
+            s.color = main;
+            s.borderColor = "";
+          } else {
+            s.background = main;
+            s.color = on;
+            s.borderColor = "";
+          }
+        },
+      },
+    });
+  </script>
+</template>

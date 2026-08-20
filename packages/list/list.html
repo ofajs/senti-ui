@@ -1,0 +1,33 @@
+<!--
+  st-list — Senti-UI 列表容器组件（基于 ofa.js）
+  纵向排布 st-list-item，分隔线用原生 <hr>；无语义属性，视觉在 :host 上可直接覆盖，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: flex;
+      flex-direction: column;
+      gap: 0.143em; /* 2px */
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--md-sys-color-on-surface);
+    }
+    ::slotted(hr) {
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      border: none;
+      border-top: 1px solid var(--md-sys-color-outline-variant);
+      margin: 0;
+    }
+    l-m { display: none; }
+  </style>
+
+  <l-m src="./list-item.html"></l-m>
+  <slot></slot>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({ tag: "st-list" });
+  </script>
+</template>

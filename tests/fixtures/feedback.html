@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>st-snackbar / st-collapse test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-init.js"></script>
+  <l-m src="/packages/snackbar/snackbar.html"></l-m>
+  <l-m src="/packages/collapse/collapse.html"></l-m>
+</head>
+<body>
+  <st-snackbar id="sb-auto" duration="300">自动关闭</st-snackbar>
+  <st-snackbar id="sb-manual">手动关闭</st-snackbar>
+  <st-snackbar id="sb-color" color="error" open>错误色</st-snackbar>
+
+  <st-collapse id="cl-demo" hide>
+    <div style="padding:20px;">折叠内容</div>
+  </st-collapse>
+
+  <script>
+    window.events = [];
+    document.querySelectorAll("st-snackbar").forEach((el) => {
+      el.addEventListener("close", () => window.events.push({ id: el.id, type: "close" }));
+    });
+  </script>
+</body>
+</html>

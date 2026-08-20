@@ -1,0 +1,194 @@
+<!--
+  st-textarea — Senti-UI 多行输入框组件（基于 ofa.js）
+  语义属性：variant(filled|outlined) / rows / autosize / default-value / placeholder / color / disabled / readonly
+  value 是运行时状态（ofa data），通过 el.value 读写，不作为标签属性
+  视觉全部在 :host 上，直接用原生 CSS 属性定制，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      /* 视觉样式全部定义在 host 上，外部 style 可直接覆盖任何原生属性 */
+      /* 尺寸类默认值用 em：改 font-size 即可整体等比缩放 */
+      display: inline-block;
+      position: relative; /* 聚焦描边/底线浮层的定位基准 */
+      box-sizing: border-box;
+      min-width: 16.429em; /* = 230px @ 14px 字号 */
+      padding: 0.857em 1em;
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: 0.5em;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--md-sys-color-on-surface);
+      background-color: transparent;
+    }
+
+    /* M3 filled 变体：无全边框，仅底边分隔线，容器底色 */
+    :host([variant="filled"]) {
+      background-color: var(--md-sys-color-surface-container-highest);
+      border-color: transparent;
+      border-bottom-color: var(--md-sys-color-on-surface-variant);
+      border-radius: 0.5em 0.5em 0 0;
+    }
+
+    /* focus 描边/底线：绝对定位浮层，不挤占布局，由 CSS 过渡呈现动画 */
+    .outline-ring {
+      position: absolute;
+      inset: -1px; /* 盖在 1px 边框外侧，视觉 = 边框加粗到 2px */
+      border: 2px solid var(--md-sys-color-primary);
+      border-radius: inherit;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 150ms ease;
+    }
+    :host(:focus-within) .outline-ring { opacity: 1; }
+    :host([variant="filled"]) .outline-ring { display: none; }
+
+    /* filled 聚焦底线：裁剪容器跟随宿主圆角，2px 线在内部从左到右展开盖在 1px 底边框上 */
+    .line-clip {
+      display: none;
+      position: absolute;
+      inset: -1px; /* 扩到边框外沿，底线才能盖住 1px 底边框 */
+      border-radius: inherit; /* 宿主覆写 border-radius（如 pill）时底线随之裁剪 */
+      overflow: hidden;
+      pointer-events: none;
+    }
+    :host([variant="filled"]) .line-clip { display: block; }
+    .bottom-line {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 2px;
+      width: 0;
+      background-color: var(--md-sys-color-primary);
+      transition: width 200ms cubic-bezier(0.2, 0, 0, 1);
+    }
+    :host(:focus-within) .bottom-line { width: 100%; }
+
+    :host([disabled]) {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
+    :host([disabled]) .outline-ring,
+    :host([disabled]) .line-clip { display: none; }
+
+    /* 内部透明原生 textarea：只负责语义（输入/键盘/焦点/rows/拖拽），不承载视觉 */
+    .native {
+      all: unset;
+      display: block;
+      box-sizing: border-box;
+      width: 100%;
+      font: inherit;
+      line-height: 1.7;
+      color: inherit;
+      caret-color: var(--md-sys-color-primary);
+      cursor: inherit;
+      resize: none; /* 默认关闭拖拽手柄，高度由 rows/内容/style 决定 */
+    }
+    .native:focus { outline: none; }
+    .native::placeholder {
+      color: var(--md-sys-color-on-surface-variant);
+      opacity: 1;
+    }
+
+    /* autosize：高度由内容撑开，隐藏溢出滚动 */
+    :host([autosize]) .native {
+      overflow: hidden;
+      height: auto;
+    }
+  </style>
+
+  <span class="outline-ring"></span>
+  <span class="line-clip"><span class="bottom-line"></span></span>
+  <textarea class="native"
+    attr:rows="rows"
+    attr:placeholder="placeholder"
+    :value="value === null ? '' : value"
+    :disabled="disabled !== null"></textarea>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-textarea",
+      attrs: {
+        variant: "outlined",
+        rows: "3",
+        autosize: null,
+        placeholder: null,
+        color: null,
+        disabled: null,
+        readonly: null,
+      },
+      data: {
+        value: null, // 运行时输入值，attached 时由 default-value 属性初始化
+      },
+      watch: {
+        color() { this.applyColor(); },
+        autosize() { if (this.autosize !== null) this.adjustHeight(); },
+        // 外部改 this.value（data）时兜底同步并按 autosize 撑高
+        value() {
+          const ta = this.ele.shadowRoot.querySelector(".native");
+          if (this.value !== null && ta.value !== this.value) {
+            ta.value = this.value;
+            if (this.autosize !== null) this.adjustHeight();
+          }
+        },
+        // ofa 属性绑定写不对 camelCase 的 readOnly，改在 JS 里同步
+        readonly() {
+          this.ele.shadowRoot.querySelector(".native").readOnly = this.readonly !== null;
+        },
+      },
+      ready() {
+        this.applyColor();
+        const ta = this.ele.shadowRoot.querySelector(".native");
+        const ele = this.ele;
+        ta.readOnly = this.readonly !== null;
+        // attached 时读取 default-value 属性作为初始值写入 data.value
+        const dv = ele.getAttribute("default-value");
+        ta.value = dv === null ? "" : dv;
+        this.value = ta.value;
+        // 宿主 value 用 getter/setter 反射到内部 textarea（ofa 的 data 不在原生属性上，
+        // 页面侧 on:input 里读 e.target.value、外部读写 el.value 都依赖这里的反射）
+        Object.defineProperty(ele, "value", {
+          get: () => ta.value,
+          set: (v) => { ta.value = v == null ? "" : v; this.value = ta.value; },
+        });
+        // 输入时同步 ofa data 并按内容撑高（:value 单向绑定只管 data → textarea，反向靠这里）
+        ta.addEventListener("input", () => {
+          this.value = ta.value;
+          if (this.autosize !== null) this.adjustHeight();
+        });
+        // 原生 change 不是 composed，穿不出 shadow，需转发到宿主（bubbles + composed）
+        ta.addEventListener("change", () => {
+          ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
+        });
+        if (this.autosize !== null) this.adjustHeight();
+        // autosize：height:auto 时量 scrollHeight 再设回；rows 属性即最小高度。
+        // ResizeObserver 兜底外部改 font-size 等引起的行高变化
+        new ResizeObserver(() => { if (this.autosize !== null) this.adjustHeight(); }).observe(ta);
+      },
+      proto: {
+        // autosize 模式下按内容撑开高度（rows 为最小高度）
+        adjustHeight() {
+          const ta = this.ele.shadowRoot.querySelector(".native");
+          ta.style.height = "auto";
+          ta.style.height = ta.scrollHeight + "px";
+        },
+        // color 接受 M3 角色名或 color 模块自定义变量名，控制 caret 与 focus 描边/底线颜色
+        applyColor() {
+          const name = this.color;
+          this.ele.style.caretColor = name
+            ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
+            : "";
+          const active = name
+            ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
+            : "";
+          const sr = this.ele.shadowRoot;
+          sr.querySelector(".outline-ring").style.borderColor = active; // 空串 = 回退 CSS 默认 primary
+          sr.querySelector(".bottom-line").style.backgroundColor = active;
+        },
+        focus() { this.ele.shadowRoot.querySelector(".native").focus(); },
+        blur() { this.ele.shadowRoot.querySelector(".native").blur(); },
+      },
+    });
+  </script>
+</template>

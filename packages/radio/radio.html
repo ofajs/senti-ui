@@ -1,0 +1,137 @@
+<!--
+  st-radio — Senti-UI 单选按钮组件（基于 ofa.js）
+  语义属性：name（分组键，组件手动管理同组互斥）/ checked / disabled / color（M3 角色名）
+  注意：原生 radio 的同 name 分组不跨 shadow root，互斥由组件在同一容器内查询同 name 兄弟实现
+  视觉默认值全用 em（宿主改 font-size 等比缩放），见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      font-size: 14px;
+      vertical-align: middle;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :host([disabled]) {
+      cursor: not-allowed;
+      opacity: 0.38;
+    }
+
+    .circle {
+      box-sizing: border-box;
+      position: relative;
+      width: 1.571em; /* 22px */
+      height: 1.571em;
+      flex-shrink: 0;
+      border: 0.143em solid var(--md-sys-color-on-surface-variant);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      transition: border-color 0.16s ease;
+    }
+    :host([checked]) .circle {
+      border-color: var(--md-sys-color-primary);
+    }
+
+    /* 选中圆点：宽度弹性入场（M3 emphasized 曲线） */
+    .dot {
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: var(--md-sys-color-primary);
+      transition: width 0.2s cubic-bezier(0.2, 0, 0, 1), height 0.2s cubic-bezier(0.2, 0, 0, 1);
+    }
+    :host([checked]) .dot {
+      width: 0.714em; /* 10px */
+      height: 0.714em;
+    }
+
+    .label {
+      margin-left: 0.857em;
+    }
+    :host(:empty) .label { display: none; }
+
+    /* 内部透明原生 radio：承载点击/键盘/焦点语义，覆盖整个组件（点文字也能选中） */
+    .native {
+      all: unset;
+      position: absolute;
+      inset: 0;
+      z-index: 2; /* 盖住 position:relative 的兄弟元素，保证点击/键盘都落在语义元素上 */
+      cursor: inherit;
+    }
+    .native:focus-visible ~ .circle {
+      outline: 2px solid var(--md-sys-color-on-surface);
+      outline-offset: 2px;
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <input class="native" type="radio" tabindex="0">
+  <span class="circle"><span class="dot"></span></span>
+  <span class="label"><slot></slot></span>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-radio",
+      attrs: {
+        name: null,
+        checked: null,
+        disabled: null,
+        color: null,
+      },
+      watch: {
+        checked() { this.applyState(); },
+        disabled() { this.applyState(); },
+        color() { this.applyState(); },
+      },
+      ready() {
+        const ele = this.ele;
+        const input = ele.shadowRoot.querySelector(".native");
+
+        // 交互：选中 → 同组互斥（原生 radio 分组不跨 shadow root，手动取消兄弟）
+        input.addEventListener("change", () => {
+          if (!input.checked) return;
+          ele.setAttribute("checked", "");
+          if (this.name) {
+            const scope = ele.closest("st-list, st-menu, fieldset, form, div, section") || document;
+            scope.querySelectorAll(`st-radio[name="${this.name}"]`).forEach((sib) => {
+              if (sib !== ele && sib.hasAttribute("checked")) sib.removeAttribute("checked");
+            });
+          }
+          ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
+        });
+
+        this.applyState();
+      },
+      proto: {
+        // watch 初始化也会触发一次（坑 #27），applyState 无副作用，天然安全
+        applyState() {
+          const sr = this.ele.shadowRoot;
+          const input = sr.querySelector(".native");
+          const circle = sr.querySelector(".circle");
+          const dot = sr.querySelector(".dot");
+
+          input.checked = this.checked !== null;
+          input.disabled = this.disabled !== null;
+
+          const name = this.color;
+          if (this.checked !== null && name) {
+            const main = `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`;
+            circle.style.borderColor = main;
+            dot.style.background = main;
+          } else {
+            circle.style.borderColor = "";
+            dot.style.background = "";
+          }
+        },
+      },
+    });
+  </script>
+</template>

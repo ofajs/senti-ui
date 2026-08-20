@@ -1,0 +1,44 @@
+<!-- st-radio 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 20px; padding: 40px; align-content: start; }
+    section { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+  </style>
+
+  <section>
+    <h3>同组互斥（name="fruit"）</h3>
+    <st-radio name="fruit" checked>苹果</st-radio>
+    <st-radio name="fruit">香蕉</st-radio>
+    <st-radio name="fruit" disabled>樱桃（禁用）</st-radio>
+  </section>
+
+  <section>
+    <h3>另一组（name="size"，color="tertiary"）</h3>
+    <st-radio name="size" color="tertiary" checked>S</st-radio>
+    <st-radio name="size" color="tertiary">M</st-radio>
+    <st-radio name="size" color="tertiary">L</st-radio>
+  </section>
+
+  <section>
+    <h3>等比缩放 + color="error"</h3>
+    <st-radio name="err" color="error" checked style="font-size: 12px;">12px</st-radio>
+    <st-radio name="err" color="error" style="font-size: 20px;">20px</st-radio>
+  </section>
+
+  <section>
+    <h3>change 事件计数：<span class="code" style="font-family: ui-monospace, monospace;">{{count}}</span></h3>
+    <st-radio name="fruit" on:change="onCountChange">点我</st-radio>
+  </section>
+
+  <script>
+    export default async () => ({
+      data: { count: 0 },
+      proto: {
+        onCountChange() {
+          this.count += 1;
+        },
+      },
+    });
+  </script>
+</template>

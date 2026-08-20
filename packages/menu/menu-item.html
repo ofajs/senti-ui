@@ -1,0 +1,120 @@
+<!--
+  st-menu-item — Senti-UI 菜单项组件（基于 ofa.js）
+  语义属性：disabled；插槽 prefix / 默认（文字）/ suffix；视觉在 :host 上可直接覆盖，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: block;
+      position: relative; /* .native 以宿主为包含块，否则 absolute 会相对面板铺满 */
+      font-size: 14px;
+      line-height: 1.2;
+      color: var(--md-sys-color-on-surface);
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 0.714em 0.857em; /* 10px 12px */
+      border-radius: 0.571em; /* 8px */
+      box-sizing: border-box;
+      white-space: nowrap;
+    }
+
+    /* M3 state layer：currentColor 半透明叠加 */
+    .layer {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: currentColor;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+    :host(:hover) .layer { opacity: 0.08; }
+    :host(:active) .layer { opacity: 0.12; }
+
+    :host([disabled]) {
+      cursor: not-allowed;
+    }
+    :host([disabled]) .item {
+      opacity: 0.38;
+      pointer-events: none;
+    }
+
+    .prefix,
+    .suffix {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .prefix { margin-right: 0.857em; }
+    .suffix { margin-left: 0.857em; color: var(--md-sys-color-on-surface-variant); }
+
+    .label {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    ::slotted([slot="prefix"]),
+    ::slotted([slot="suffix"]) {
+      display: inline-flex;
+    }
+
+    /* 内部透明原生 button：承载点击/键盘/焦点语义 */
+    .native {
+      all: unset;
+      position: absolute;
+      inset: 0;
+      z-index: 2; /* 盖住 position:relative 的兄弟元素，保证点击/键盘都落在语义元素上 */
+      cursor: inherit;
+      border-radius: inherit;
+    }
+    .native:focus-visible ~ .item {
+      outline: 2px solid var(--md-sys-color-on-surface);
+      outline-offset: -2px;
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <l-m src="../ripple/ripple.html"></l-m>
+
+  <button class="native" type="button"></button>
+  <div class="item">
+    <span class="layer"></span>
+    <div class="prefix"><slot name="prefix"></slot></div>
+    <div class="label"><slot></slot></div>
+    <div class="suffix"><slot name="suffix"></slot></div>
+    <st-ripple></st-ripple>
+  </div>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-menu-item",
+      attrs: {
+        disabled: null,
+      },
+      watch: {
+        disabled() { this.applyDisabled(); },
+      },
+      ready() {
+        const sr = this.ele.shadowRoot;
+        // disabled 同步到内部原生 button：原生 disabled 天然阻断点击/键盘/焦点；
+        // 其余 click 天然冒泡 + composed 到宿主，menu 面板监听后自动关闭
+        this.applyDisabled = () => {
+          sr.querySelector(".native").disabled = this.disabled !== null;
+        };
+        this.applyDisabled();
+      },
+      proto: {},
+    });
+  </script>
+</template>

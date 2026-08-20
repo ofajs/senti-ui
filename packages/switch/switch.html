@@ -1,0 +1,182 @@
+<!--
+  st-switch — Senti-UI 开关组件（基于 ofa.js）
+  语义属性：checked / disabled / color（M3 角色名）
+  视觉对齐 Punch-UI 精致版：2px 描边轨道、拇指未选中收缩/选中复原并对勾描边入场，
+  选中时边框扩展填满轨道成实心底；默认值全用 em，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      font-size: 14px;
+      vertical-align: middle;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :host([disabled]) {
+      cursor: not-allowed;
+      opacity: 0.38;
+    }
+
+    .track {
+      box-sizing: border-box;
+      position: relative;
+      width: 3.714em; /* 52px */
+      height: 2.286em; /* 32px */
+      flex-shrink: 0;
+      border-radius: 2.286em;
+      background: var(--md-sys-color-surface-container-highest); /* 未选中底色，恒定 */
+    }
+
+    /* 描边/填充统一层：描边宽度恒定（2px），选中态用背景色过渡填充。
+       不用"边框扩展成实心底"技巧——宽度动画/取整会在轨道正中露出缝隙行
+       （切换瞬间与小数字号下都可见）；背景色过渡中心永远被覆盖，无任何暴露行 */
+    .bg {
+      position: absolute;
+      inset: 0;
+      box-sizing: border-box;
+      border-radius: inherit;
+      border: 0.143em solid var(--md-sys-color-outline);
+      background: transparent;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+    /* 拇指：未选中 outline 灰 + scale(0.6) 收缩，选中复原并滑到右侧 */
+    .thumb {
+      position: absolute;
+      left: 0.143em;
+      top: 50%;
+      width: 1.714em; /* 24px */
+      height: 1.714em;
+      border-radius: 50%;
+      transform: translateY(-50%) scale(0.6);
+      background: var(--md-sys-color-outline);
+      box-shadow: 0 0.071em 0.214em rgba(0, 0, 0, 0.25);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+      display: grid;
+      place-items: center;
+      color: inherit;
+    }
+    :host([checked]) .thumb {
+      transform: translateY(-50%) translateX(1.429em) scale(1);
+      background: var(--md-sys-color-on-primary);
+    }
+
+    /* 选中态对勾：stroke 描边入场（on-角色色拇指上用角色色勾） */
+    .mark {
+      width: 1.143em;
+      height: 1.143em;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    :host([checked]) .mark { opacity: 1; }
+    .mark path {
+      stroke-dasharray: 26;
+      stroke-dashoffset: 26;
+    }
+    :host([checked]) .mark path {
+      animation: st-sw-draw 0.16s ease-out forwards;
+      animation-delay: 0.16s;
+    }
+    @keyframes st-sw-draw { to { stroke-dashoffset: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .thumb, .track, .mark { transition: none; animation: none; }
+    }
+
+    .label {
+      margin-left: 0.857em;
+    }
+    :host(:empty) .label { display: none; }
+
+    /* 内部透明原生 checkbox：承载点击/键盘/焦点语义，覆盖整个组件 */
+    .native {
+      all: unset;
+      position: absolute;
+      inset: 0;
+      cursor: inherit;
+      z-index: 2; /* 盖住 position 的兄弟元素，保证点击/键盘都落在语义元素上 */
+    }
+    .native:focus-visible ~ .track {
+      outline: 2px solid var(--md-sys-color-on-surface);
+      outline-offset: 2px;
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <input class="native" type="checkbox" tabindex="0">
+  <span class="track"><span class="bg"></span><span class="thumb">
+    <svg class="mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M5 11l6 6l10 -10"/>
+    </svg>
+  </span></span>
+  <span class="label"><slot></slot></span>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-switch",
+      attrs: {
+        checked: null,
+        disabled: null,
+        color: null,
+      },
+      watch: {
+        checked() { this.applyState(); },
+        disabled() { this.applyState(); },
+        color() { this.applyState(); },
+      },
+      ready() {
+        const ele = this.ele;
+        const input = ele.shadowRoot.querySelector(".native");
+
+        // 交互：原生 input 承载点击与键盘（Space），变更后反射回宿主属性并派发 change
+        input.addEventListener("change", () => {
+          if (input.checked) ele.setAttribute("checked", "");
+          else ele.removeAttribute("checked");
+          ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
+        });
+
+        this.applyState();
+      },
+      proto: {
+        // watch 初始化也会触发一次（坑 #27），applyState 无副作用，天然安全。
+        // 选中态：边框扩展填满轨道（border-width = 轨道半高）实现实心底，拇指用 on-角色色
+        applyState() {
+          const sr = this.ele.shadowRoot;
+          const input = sr.querySelector(".native");
+          const thumb = sr.querySelector(".thumb");
+          const on = this.checked !== null;
+
+          input.checked = on;
+          input.disabled = this.disabled !== null;
+
+          const name = this.color;
+          const main = name
+            ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
+            : "var(--md-sys-color-primary)";
+          const onMain = name
+            ? `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-primary)))`
+            : "var(--md-sys-color-on-primary)";
+
+          const bg = sr.querySelector(".bg");
+          if (on) {
+            bg.style.background = main;
+            bg.style.borderColor = main;
+            thumb.style.background = onMain;
+            thumb.style.color = main; // 对勾颜色 = 角色色（拇指底为 on-角色色）
+          } else {
+            bg.style.background = "";
+            bg.style.borderColor = "";
+            thumb.style.background = "";
+            thumb.style.color = "";
+          }
+        },
+      },
+    });
+  </script>
+</template>

@@ -1,0 +1,40 @@
+<!-- st-tab-bar 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); }
+    .panel { padding: 16px; color: var(--md-sys-color-on-surface-variant); }
+  </style>
+
+  <h3>点击切换（指示条动画跟随，禁用项不可选）</h3>
+  <st-tab-bar>
+    <st-tab-item attr:active="current === 0" on:click="select(0)"><span slot="icon">📧</span>邮件</st-tab-item>
+    <st-tab-item attr:active="current === 1" on:click="select(1)"><span slot="icon">📞</span>通话</st-tab-item>
+    <st-tab-item attr:active="current === 2" on:click="select(2)"><span slot="icon">⭐</span>收藏</st-tab-item>
+    <st-tab-item disabled><span slot="icon">💬</span>聊天（禁用）</st-tab-item>
+  </st-tab-bar>
+
+  <div class="panel">当前页：{{currentLabel}}</div>
+
+  <h3>等比缩放（font-size 12px）</h3>
+  <st-tab-bar style="font-size: 12px;">
+    <st-tab-item active>A</st-tab-item>
+    <st-tab-item>B</st-tab-item>
+    <st-tab-item>C</st-tab-item>
+  </st-tab-bar>
+
+  <script>
+    export default async () => ({
+      data: { current: 0, labels: ["邮件", "通话", "收藏"] },
+      proto: {
+        // 计算属性：proto 上的 get（只依赖同步已有 data，getter 安全）
+        get currentLabel() {
+          return this.labels[this.current] || "";
+        },
+        select(i) {
+          this.current = i;
+        },
+      },
+    });
+  </script>
+</template>

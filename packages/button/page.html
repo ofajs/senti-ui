@@ -1,0 +1,125 @@
+<!-- st-button 验收页（ofa.js 页面模块），由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; }
+    section { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+  </style>
+
+  <section>
+    <h3>三种 variant</h3>
+    <st-button>Filled</st-button>
+    <st-button variant="outlined">Outlined</st-button>
+    <st-button variant="text">Text</st-button>
+  </section>
+
+  <section>
+    <h3>语义状态</h3>
+    <st-button disabled>Disabled</st-button>
+    <st-button loading>Loading</st-button>
+    <st-button attr:loading="busy" on:click="startTask">Click me → loading 1.5s</st-button>
+  </section>
+
+  <section>
+    <h3>slot</h3>
+    <st-button>
+      <span slot="prefix">🔍</span>
+      Search
+    </st-button>
+    <st-button variant="outlined">
+      Settings
+      <span slot="suffix">⚙️</span>
+    </st-button>
+  </section>
+
+  <section>
+    <h3>color 属性（M3 角色或 color 模块自定义变量，一键换色）</h3>
+    <st-button color="primary">Primary</st-button>
+    <st-button color="primary" variant="outlined">Primary</st-button>
+    <st-button color="primary" variant="text">Primary</st-button>
+    <st-button color="error">Error</st-button>
+    <st-button color="error" variant="outlined">Error</st-button>
+    <st-button color="error" variant="text">Error</st-button>
+    <st-button color="success">Success</st-button>
+    <st-button color="success" variant="outlined">Success</st-button>
+    <st-button color="success" variant="text">Success</st-button>
+    <st-button color="secondary">Secondary</st-button>
+    <st-button color="tertiary">Tertiary</st-button>
+    <st-button color="brand">Brand（自定义，需在 color 工具添加）</st-button>
+    <st-button color="error" attr:variant="demoVariant">runtime: {{demoVariant}}</st-button>
+    <st-button variant="text" on:click="cycleVariant">切换 variant ↻</st-button>
+  </section>
+
+  <section>
+    <h3>纯 style 定制（原生 CSS 属性，无预设）</h3>
+    <st-button style="font-size: 12px;">Scale 12px</st-button>
+    <st-button>Default 14px</st-button>
+    <st-button style="font-size: 16px;">Scale 16px</st-button>
+    <st-button style="font-size: 20px;">Scale 20px</st-button>
+    <st-button style="font-size: 12px; border-radius: 8px; height: 32px;">Compact 覆写</st-button>
+    <st-button style="background: var(--md-sys-color-error); color: var(--md-sys-color-on-error);">Error</st-button>
+    <st-button variant="outlined" style="border-radius: 999px; border-color: var(--md-sys-color-primary);">Pill outlined</st-button>
+    <st-button style="border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.3); background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container);">Elevated</st-button>
+  </section>
+
+  <section>
+    <h3>button-group（分组 / 连体 / 等分）</h3>
+    <st-button-group>
+      <st-button variant="outlined">左</st-button>
+      <st-button variant="outlined">中</st-button>
+      <st-button variant="outlined">右</st-button>
+    </st-button-group>
+    <st-button-group connected>
+      <st-button>新建</st-button>
+      <st-button variant="outlined">编辑</st-button>
+      <st-button color="error" variant="outlined">删除</st-button>
+    </st-button-group>
+    <st-button-group full-width style="max-width: 360px;">
+      <st-button variant="text">取消</st-button>
+      <st-button>确定</st-button>
+    </st-button-group>
+  </section>
+
+  <section>
+    <h3>split-button（主操作 + 下拉菜单，主操作点击计数 {{splitCount}}）</h3>
+    <st-split-button on:click="onMain" on:open="onMenuOpen" on:close="onMenuClose">
+      发送
+      <span slot="prefix">📤</span>
+      <st-menu-item slot="menu" on:click="pick('发送到邮箱')"><span slot="prefix">📧</span>发送到邮箱</st-menu-item>
+      <st-menu-item slot="menu" on:click="pick('发送到云盘')"><span slot="prefix">☁️</span>发送到云盘</st-menu-item>
+      <hr slot="menu">
+      <st-menu-item slot="menu" disabled>定时发送（禁用）</st-menu-item>
+    </st-split-button>
+    <st-split-button variant="outlined" color="error" menu-align="left">
+      删除
+      <st-menu-item slot="menu">移到回收站</st-menu-item>
+      <st-menu-item slot="menu">彻底删除</st-menu-item>
+    </st-split-button>
+    <st-split-button disabled>禁用</st-split-button>
+    <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant);">最近选择：{{lastPick}}</span>
+  </section>
+
+  <script>
+    export default async () => ({
+      data: { busy: false, demoVariant: "filled", splitCount: 0, lastPick: "（无）" },
+      proto: {
+        startTask() {
+          this.busy = true;
+          setTimeout(() => { this.busy = false; }, 1500);
+        },
+        cycleVariant() {
+          const order = ["filled", "outlined", "text"];
+          this.demoVariant = order[(order.indexOf(this.demoVariant) + 1) % order.length];
+        },
+        onMain() {
+          this.splitCount += 1;
+        },
+        onMenuOpen() {},
+        onMenuClose() {},
+        pick(name) {
+          this.lastPick = name;
+        },
+      },
+    });
+  </script>
+</template>

@@ -99,7 +99,7 @@ document.querySelector("st-button").addEventListener("click", () => {});
 |------|--------|
 | `height` | `2.857em`（= 40px @ 14px 字号，M3 标准） |
 | `min-width` | `3.429em`（= 48px） |
-| `padding` | `0 1.429em`（= 20px = 圆角半径，文字刚好落在圆角转弯处；text 变体 `0 0.857em`） |
+| `padding` | `0 1.429em`（= 20px = 圆角半径，文字刚好落在圆角转弯处；三种 variant 尺寸一致） |
 | `border-radius` | `1.429em`（= 20px，M3 full 圆角即高度的一半） |
 | `font-size` / `font-weight` | `14px` / `500` |
 | `gap`（内容与图标间距） | `0.571em`（= 8px） |

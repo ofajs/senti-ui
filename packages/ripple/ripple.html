@@ -76,7 +76,10 @@
           dot.style.top = y - size / 2 + "px";
           // 必须插入 shadowRoot：appendChild 到 host 会落入 light DOM、无处分发而不可见
           this.ele.shadowRoot.appendChild(dot);
+          // 移除不能只靠 animationend：祖先 display:none（如菜单面板关闭）会暂停 CSS 动画，
+          // animationend 永不触发、波纹残留，面板再显示时会"续播"旧动画——定时器兜底移除
           dot.addEventListener("animationend", () => dot.remove());
+          setTimeout(() => dot.remove(), 400);
         },
       },
     });

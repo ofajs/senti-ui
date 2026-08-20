@@ -170,6 +170,29 @@ test("ripple：点击只作用于被点组件，嵌套/相邻组件不串波纹"
   expect(after["li-sub"]).toBe(0);
 });
 
+test("menu：关闭后菜单项波纹不残留（display:none 暂停动画的兜底）", async ({ page }) => {
+  await page.locator("#menu-trigger").click();
+  await page.waitForTimeout(500);
+  await page.locator("#mi-a").click({ force: true });
+  await page.waitForTimeout(600);
+  // 点击后面板立即关闭（display:none 冻结 CSS 动画、animationend 不触发），
+  // 波纹 span 必须已由定时器兜底移除，重开面板不会"续播"旧波纹
+  const leftover = await page.evaluate(() => {
+    const r = document.querySelector("#mi-a").shadowRoot.querySelector("st-ripple");
+    return r.shadowRoot.querySelectorAll(".ripple").length;
+  });
+  expect(leftover).toBe(0);
+
+  // 重开面板无残留波纹
+  await page.locator("#menu-trigger").click();
+  await page.waitForTimeout(300);
+  const afterReopen = await page.evaluate(() => {
+    const r = document.querySelector("#mi-a").shadowRoot.querySelector("st-ripple");
+    return r.shadowRoot.querySelectorAll(".ripple").length;
+  });
+  expect(afterReopen).toBe(0);
+});
+
 // ---------- st-tab-bar / st-tab-item ----------
 
 test("tabs：指示条定位到 active 项，切换 active 后动画跟随", async ({ page }) => {

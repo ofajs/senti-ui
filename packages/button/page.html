@@ -62,9 +62,46 @@
     <st-button style="border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.3); background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container);">Elevated</st-button>
   </section>
 
+  <section>
+    <h3>button-group（分组 / 连体 / 等分）</h3>
+    <st-button-group>
+      <st-button variant="outlined">左</st-button>
+      <st-button variant="outlined">中</st-button>
+      <st-button variant="outlined">右</st-button>
+    </st-button-group>
+    <st-button-group connected>
+      <st-button>新建</st-button>
+      <st-button variant="outlined">编辑</st-button>
+      <st-button color="error" variant="outlined">删除</st-button>
+    </st-button-group>
+    <st-button-group full-width style="max-width: 360px;">
+      <st-button variant="text">取消</st-button>
+      <st-button>确定</st-button>
+    </st-button-group>
+  </section>
+
+  <section>
+    <h3>split-button（主操作 + 下拉菜单，主操作点击计数 {{splitCount}}）</h3>
+    <st-split-button on:click="onMain" on:open="onMenuOpen" on:close="onMenuClose">
+      发送
+      <span slot="prefix">📤</span>
+      <st-menu-item slot="menu" on:click="pick('发送到邮箱')"><span slot="prefix">📧</span>发送到邮箱</st-menu-item>
+      <st-menu-item slot="menu" on:click="pick('发送到云盘')"><span slot="prefix">☁️</span>发送到云盘</st-menu-item>
+      <hr slot="menu">
+      <st-menu-item slot="menu" disabled>定时发送（禁用）</st-menu-item>
+    </st-split-button>
+    <st-split-button variant="outlined" color="error" menu-align="left">
+      删除
+      <st-menu-item slot="menu">移到回收站</st-menu-item>
+      <st-menu-item slot="menu">彻底删除</st-menu-item>
+    </st-split-button>
+    <st-split-button disabled>禁用</st-split-button>
+    <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant);">最近选择：{{lastPick}}</span>
+  </section>
+
   <script>
     export default async () => ({
-      data: { busy: false, demoVariant: "filled" },
+      data: { busy: false, demoVariant: "filled", splitCount: 0, lastPick: "（无）" },
       proto: {
         startTask() {
           this.busy = true;
@@ -73,6 +110,14 @@
         cycleVariant() {
           const order = ["filled", "outlined", "text"];
           this.demoVariant = order[(order.indexOf(this.demoVariant) + 1) % order.length];
+        },
+        onMain() {
+          this.splitCount += 1;
+        },
+        onMenuOpen() {},
+        onMenuClose() {},
+        pick(name) {
+          this.lastPick = name;
         },
       },
     });

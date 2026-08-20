@@ -6,6 +6,8 @@
   <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
   <script type="module" src="/packages/color/st-init.js"></script>
   <l-m src="/packages/button/button.html"></l-m>
+  <l-m src="/packages/button/button-group.html"></l-m>
+  <l-m src="/packages/button/split-button.html"></l-m>
 </head>
 <body>
   <st-button id="btn-default">Default</st-button>
@@ -16,6 +18,23 @@
   <st-button id="btn-loading" loading>Loading</st-button>
   <st-button id="btn-submit" type="submit">Submit</st-button>
   <st-button id="btn-slots"><span slot="prefix">🔍</span><span slot="suffix">⏎</span>WithSlots</st-button>
+
+  <st-button-group id="grp">
+    <st-button variant="outlined" id="g1">左</st-button>
+    <st-button variant="outlined" id="g2">中</st-button>
+    <st-button variant="outlined" id="g3">右</st-button>
+  </st-button-group>
+  <st-button-group connected id="grp-conn">
+    <st-button id="gc1">新建</st-button>
+    <st-button id="gc2" variant="outlined">编辑</st-button>
+  </st-button-group>
+
+  <st-split-button id="split">
+    发送
+    <st-menu-item slot="menu" id="sm1">发送到邮箱</st-menu-item>
+    <st-menu-item slot="menu" id="sm2">发送到云盘</st-menu-item>
+  </st-split-button>
+  <st-split-button id="split-disabled" disabled>禁用</st-split-button>
 
   <script>
     window.events = [];

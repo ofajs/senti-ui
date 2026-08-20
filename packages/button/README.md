@@ -1,6 +1,6 @@
-# st-button 按钮组件
+# st-button 按钮组件（含 st-button-group / st-split-button）
 
-基于 ofa.js 的按钮组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size/color 类预设，也不需要自定义 CSS 变量）。
+本包包含三个相关组件：`st-button` 按钮、`st-button-group` 按钮组、`st-split-button` 分裂按钮，引入语句共用一个目录。基于 ofa.js。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size/color 类预设，也不需要自定义 CSS 变量）。
 
 组件的视觉样式全部定义在宿主元素（`:host`）上，`st-button` 本身就是一个普通的可样式化元素——`style` 写什么就生效什么。内部有一个透明的原生 `<button>` 负责语义（点击/键盘/焦点/disabled）。
 
@@ -9,6 +9,8 @@
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
 <l-m src="/packages/button/button.html"></l-m>
+<l-m src="/packages/button/button-group.html"></l-m>   <!-- st-button-group -->
+<l-m src="/packages/button/split-button.html"></l-m>   <!-- st-split-button -->
 ```
 
 组件内部已 `import "../color/st-init.js"`，加载按钮时会自动注入 `--md-sys-color-*` 颜色体系（多次 import 不冲突，模块按 URL 去重）；若你的部署不含 color 包，则需自行定义这些变量。
@@ -128,6 +130,59 @@ document.querySelector("st-button").addEventListener("click", () => {});
 
 `st-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
 
+## st-button-group 按钮组
+
+纵向无关、横向排布子 `st-button`：自动处理分组圆角（首尾外圆角 1.429em、中间 0.5em）。
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `connected` | boolean | 无 | 连体：间距归零、相邻边圆角归零 |
+| `full-width` | boolean | 无 | 占满一行（`width: 100%`），子按钮等分（`flex: 1`） |
+
+```html
+<st-button-group connected>
+  <st-button>新建</st-button>
+  <st-button variant="outlined">编辑</st-button>
+  <st-button color="error" variant="outlined">删除</st-button>
+</st-button-group>
+```
+
+子按钮自身的 variant / color / disabled 各自独立设置；点击事件在各自按钮上监听。
+
+## st-split-button 分裂按钮
+
+主操作区（默认插槽）+ 箭头区（展开菜单）二合一。点主区触发主操作（`click` 冒泡到宿主，普通按钮用法一致）；点箭头展开 `menu` 插槽中的菜单（建议放 `st-menu-item`，分隔线 `<hr slot="menu">`）。
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `"filled" \| "outlined" \| "text"` | `"filled"` | 同 st-button 三种类型 |
+| `color` | M3 角色名 / 自定义变量名 | 无 | 同 st-button 语义配色 |
+| `disabled` | boolean | 无 | 禁用整组（主区 + 箭头区原生阻断） |
+| `menu-align` | `"left" \| "right"` | `"right"` | 面板与按钮的水平对齐 |
+
+- `open` 是**运行时状态（data）**：ofa 页面用 `sync:open="xxx"` 双向绑定（选中菜单项 / 点外部 / Escape 自动关闭会回写）；兼容 `setAttribute` / `removeAttribute`
+- 插槽：`prefix`（主区前置图标）/ 默认（主操作文字）/ `menu`（菜单内容）
+- 事件：主区 `click`（冒泡 composed，业务监听它做主操作）、`open` / `close`（菜单开合）；菜单项自身的 `click` 正常冒泡供业务分发
+- 面板 fixed 定位自动翻转避让视口，与 st-menu 行为一致；键盘：主区 Enter/Space 触发主操作、箭头区 Enter/Space 开合
+
+```html
+<st-split-button on:click="send">
+  发送
+  <span slot="prefix">📤</span>
+  <st-menu-item slot="menu" on:click="sendTo('email')">发送到邮箱</st-menu-item>
+  <st-menu-item slot="menu" on:click="sendTo('cloud')">发送到云盘</st-menu-item>
+</st-split-button>
+```
+
+### st-split-button 默认值（直接覆盖即可）
+
+| 属性 | 默认值 |
+|------|--------|
+| 高度 / 圆角 / 字号 | `2.857em` / `1.429em` / `14px`（与 st-button 一致） |
+| 主区 padding | `0 1.429em` |
+| 箭头区 | 正方形（aspect-ratio 1/1），与主区分界线 currentColor 40% |
+| 面板 | 与 st-menu 面板一致（min-width 8em、圆角 0.857em、surface-container 底） |
+
 ## 注意事项与使用技巧
 
 - **给 st-button 换色必须用它的 `color` 属性，不能写内联 `style="color: ..."`**——内联色会被组件自身的配色逻辑（applyColor）覆盖；放在反色/彩色容器（如 snackbar）里时用 `color="inverse-primary"` / `color="on-error"` 这类角色名
@@ -135,6 +190,9 @@ document.querySelector("st-button").addEventListener("click", () => {});
 - 布尔属性（disabled/loading）在 JS 里用 `setAttribute` / `removeAttribute`，ofa 页面里绑定用 `attr:loading="busy"`（`:prop` 会把 false 序列化成属性字符串导致永远禁用）
 - `setAttribute` 触发组件 watch 是异步的（下一轮微任务），设置后同步读状态会得到旧值
 - loading 态自动阻断点击，不需要再叠加 disabled
+- **st-button-group 的圆角在 attached 后由 JS 按位置设置**（内联在子按钮上）——不用 `::slotted(:first-child)` 位置选择器（ofa 升级/重排 light DOM 时序下不可靠）；外部不要给子按钮单独写 `border-radius`，需整体定制在 group 宿主上覆盖字号即可等比缩放；子项增删（slotchange）自动重算
+- **st-split-button 点主区 = 主操作（click），点箭头 = 开菜单**，两者互不干扰；菜单项点击后面板自动关闭并截断冒泡，不会误触发主操作
+- st-split-button 的菜单项来自 `st-menu-item`（split-button 内部已加载，无需额外引入）
 ## 验证页面
 
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `/packages/button/`）。

@@ -36,6 +36,8 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 | 组件 | 标签 | 引入 | 文档 |
 |------|------|------|------|
 | Button 按钮 | `st-button` | `<l-m src="/packages/button/button.html"></l-m>` | [packages/button/README.md](./packages/button/README.md) |
+| Button-group 按钮组 | `st-button-group` | `<l-m src="/packages/button/button-group.html"></l-m>` | [packages/button/README.md](./packages/button/README.md) |
+| Split-button 分裂按钮 | `st-split-button` | `<l-m src="/packages/button/split-button.html"></l-m>` | [packages/button/README.md](./packages/button/README.md) |
 | Input 单行输入框 | `st-input` | `<l-m src="/packages/input/input.html"></l-m>` | [packages/input/README.md](./packages/input/README.md) |
 | Textarea 多行输入框 | `st-textarea` | `<l-m src="/packages/textarea/textarea.html"></l-m>` | [packages/textarea/README.md](./packages/textarea/README.md) |
 | Select 单选下拉框 | `st-select` | `<l-m src="/packages/select/select.html"></l-m>` | [packages/select/README.md](./packages/select/README.md) |
@@ -52,6 +54,8 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 | Ripple 波纹 | `st-ripple` | `<l-m src="/packages/ripple/ripple.html"></l-m>` | [packages/ripple/README.md](./packages/ripple/README.md) |
 
 组件包结构：`{name}.html`（组件）+ `index.html`（验收页加载器）+ `page.html`（ofa.js 页面模块，承载验收页逻辑）。
+
+**关联组件同目录原则**：与主组件强相关的子组件（如 button 的 button-group / split-button、tabs 的 tab-item、list 的 list-item）放在主组件同一目录下，共用一个 README 与验收页（page.html 里写在一起），l-m 引入语句各自独立；不要为子组件单独建目录。
 
 ### 代码层级规范（页面/验收页/示例通用）
 
@@ -93,6 +97,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 当前 15 个模块（含 4 个双标签模块），st-button 作为整个库设计范式的样板：
 
 - **st-button**（`packages/button/`）：三种 variant（filled/outlined/text）、disabled、loading、prefix/suffix 插槽；`color` 语义色属性可与 variant 自由组合（按 M3 规范分派：filled 用角色色底/on-角色色字，outlined/text 用角色色作前景与描边，运行时切换 variant 亦生效）；外观完全由原生 CSS 属性定制（视觉在 `:host` 上，内部透明 `.native` 原生 button 承载交互语义）。已在浏览器中完成功能与双主题验证。
+- **st-button-group / st-split-button**（`packages/button/`，2026-08-21 从 Punch-UI 重构）：按钮组（connected 连体/full-width 等分；**圆角在 attached 后由 JS 按位置设置**，不用 ::slotted(:first-child) 位置选择器——ofa 升级 light DOM 时序下不可靠，slotchange 自动重算）；分裂按钮（主区 click 冒泡做主操作 + 箭头区开合菜单，菜单项用 st-menu-item；open 为 data 运行时状态支持 sync:open；面板行为同 st-menu）。案例与 st-button 写在同一验收页。
 - **st-ripple**（`packages/ripple/`）：点击波纹，放在 relative 父元素内使用；已内嵌到 st-button（点击按钮有波纹效果），波纹色 currentColor。
 - **st-input**（`packages/input/`）：单行输入框，两种 variant（outlined/filled）、disabled、readonly、type、placeholder、`default-value` 初始值属性、prefix/suffix 插槽、`color` 语义色属性（控制 caret 与 focus 边框色，常用于 error/success 校验态）；**value 是运行时状态（ofa data，非标签属性），attached 时由 default-value 初始化，JS 读写用 `el.value`**；`input`/`change` 事件天然 composed 直接在宿主监听；提供 `focus()`/`blur()` 方法。视觉在 `:host` 上，内部透明 `.native` input 承载交互。
 - **st-textarea**（`packages/textarea/`）：多行输入框，与 st-input 同范式（outlined/filled、rows、default-value 初始值/color/disabled/readonly、focus 描边/底线动画；value 为运行时状态，`el.value` 读写）；内部透明 textarea 用 rows 自撑高度（拖拽手柄默认关闭）；`autosize` 属性按内容自动撑开（rows 为最小高度，ResizeObserver 兜底外部字号变化）。
@@ -151,6 +156,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
     b) **transition shorthand 里第一个时间值是 duration、第二个是 delay**——`transition: height .3s <curve> 0s` 的 `0s` 是 delay，时长仍是 .3s，写成"时长在前来 0 结尾"毫无作用；正确写法 `transition: height 0s <curve>`；
     c) **不能用 `:host([hide]) { height: 0 !important }` 之类的 CSS 强制规则配合异步 watch 设过渡**——属性变化时高度随 CSS 同步瞬变，而 watch（异步，坑 #18）里才设置的 transitionDuration 来不及生效，动画整个跳过；正确写法：去掉 CSS 强制规则，watch hide（守卫初始化触发，坑 #27）里先设 `transitionDuration=".3s"` 再由 JS 设高度（收起设 0 / 展开设内容高），超时后恢复 0s（Punch-UI 原版即此设计）
 31. **CSS 变量不能同名自引用累加**——`--x: calc(var(--x, 0px) + 1em)` 在同一元素上声明时 var 指向自身，按规范构成 guaranteed-invalid 循环，整条声明静默失效（computed value 为空，无任何报错），"沿嵌套层级累加缩进"这类需求 CSS 变量链做不到（Punch-UI 用两个变量名交替也只能固定层数）；正确写法：由父组件**自顶向下传播**——在 sublist 插槽的 slotchange 里把"深度+1"推给已分配的子 st-list 并递归通知子项（st-list-item 的嵌套缩进即此方案，每层 `calc(depth * var(--st-list-step, 1em))`），并加 rAF/setTimeout 重推兜底。**注意**：ofa 页面模块（o-page）可能重排甚至复制嵌套组件的 light DOM（parentElement 链断裂、出现同文本的残留副本），自动化验证时不要用 `textContent.includes` 匹配元素（会命中祖先或副本），要用 id 或精确匹配
+33. **依赖 light DOM 位置/结构的逻辑放 attached 而非 ready**——ready 时元素可能尚未真正进入文档/兄弟结构未稳定（ofa 渐进升级、重排 light DOM），按位置计算（如 button-group 的首尾圆角）会算错；正确写法：attached 里读取 `slot.assignedElements()` 计算并设置，slotchange 时重算。同理 ::slotted(:first-child) 等位置选择器也受此时序影响，位置相关样式改用 JS 设置内联值
 30. **ripple 类"监听宿主冒泡事件"的组件必须过滤嵌套组件的事件**——监听在宿主上的 pointerdown/click 会收到从嵌套子组件（子列表项、项内套的 st-button 等）冒泡上来的事件，导致一次点击多层涟漪；正确写法：用 `e.composedPath()` 扫描，路径中在宿主之前出现任何带连字符的自定义元素（tagName 含 "-"）即视为嵌套组件发起，直接跳过（插槽里的普通内容不受影响，仍正常波纹）
 29. **组件内同步 disabled 到内部原生元素用 `nativeEle.disabled = this.disabled !== null`**——原生 disabled 天然阻断 click/键盘/焦点，无需手动 stopPropagation；不要用 `:host([disabled]) .native { display:none }` 隐藏（隐藏后阻断逻辑整个消失，宿主级点击照常冒泡）
 

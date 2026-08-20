@@ -1,0 +1,83 @@
+<!--
+  st-button-group — Senti-UI 按钮组容器（基于 ofa.js）
+  语义属性：connected（连体：去掉间距、相邻边圆角归零）/ full-width（占满一行，子按钮等分）
+  子元素为 light DOM 的 st-button；圆角在 attached（DOM 稳定）后按位置用 JS 设置，
+  不用 ::slotted(:first-child) 位置选择器（ofa 升级 light DOM 的时序下不可靠），见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.286em; /* 4px */
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    :host([connected]) {
+      gap: 0;
+    }
+
+    :host([full-width]) {
+      display: flex;
+      width: 100%;
+    }
+
+    ::slotted(st-button) {
+      margin: 0 !important;
+    }
+    :host([full-width]) ::slotted(st-button) {
+      flex: 1;
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <l-m src="./button.html"></l-m>
+  <slot></slot>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-button-group",
+      attrs: {
+        connected: null,
+        fullWidth: null,
+      },
+      watch: {
+        // watch 初始化也会触发一次（坑 #27），apply 无副作用
+        connected() { this._applyRadii?.(); },
+      },
+      attached() {
+        const ele = this.ele;
+        const slot = ele.shadowRoot.querySelector("slot");
+
+        // 在 attached（light DOM 已稳定）后按位置设置子按钮圆角：
+        // 首尾外圆角 1.429em、中间 0.5em；connected 时相邻边归零
+        this._applyRadii = () => {
+          const btns = slot.assignedElements().filter((el) => el.tagName === "ST-BUTTON");
+          const n = btns.length;
+          const full = "1.429em";
+          const inner = this.connected !== null ? "0" : "0.5em";
+          btns.forEach((btn, i) => {
+            const first = i === 0;
+            const last = i === n - 1;
+            let r;
+            if (n === 1) {
+              r = full;
+            } else {
+              const tl = first ? full : inner;
+              const tr = last ? full : inner;
+              const br = last ? full : inner;
+              const bl = first ? full : inner;
+              r = `${tl} ${tr} ${br} ${bl}`;
+            }
+            btn.style.borderRadius = r;
+          });
+        };
+        slot.addEventListener("slotchange", () => this._applyRadii());
+        this._applyRadii();
+      },
+    });
+  </script>
+</template>

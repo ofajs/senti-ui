@@ -23,17 +23,34 @@
     </st-list-item>
   </st-list>
 
-  <h3>可折叠项（collapsible + sublist）</h3>
+  <h3>可折叠项（collapsible + sublist，嵌套层级自动缩进）</h3>
   <st-list>
     <st-list-item collapsible expanded>
       <span slot="prefix">📁</span>
       <div>文件夹</div>
       <st-list slot="sublist">
         <st-list-item button><span slot="prefix">🗂</span>工作</st-list-item>
-        <st-list-item button><span slot="prefix">🏠</span>生活</st-list-item>
+        <st-list-item collapsible expanded>
+          <span slot="prefix">🏠</span>
+          <div>生活</div>
+          <st-list slot="sublist">
+            <st-list-item button><span slot="prefix">📷</span>照片</st-list-item>
+            <st-list-item button><span slot="prefix">🎵</span>音乐</st-list-item>
+          </st-list>
+        </st-list-item>
       </st-list>
     </st-list-item>
     <st-list-item button><span slot="prefix">⭐</span>收藏</st-list-item>
+  </st-list>
+
+  <h3>自定义每层缩进量（--st-list-step: 2em）</h3>
+  <st-list style="--st-list-step: 2em;">
+    <st-list-item collapsible expanded>
+      <div>一级</div>
+      <st-list slot="sublist">
+        <st-list-item button>二级（缩进 2em）</st-list-item>
+      </st-list>
+    </st-list-item>
   </st-list>
 
   <p style="margin:0; font-size:14px; color: var(--md-sys-color-on-surface-variant);">

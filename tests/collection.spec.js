@@ -103,6 +103,73 @@ test("menu：点击外部关闭，Escape 关闭，禁用项不可点", async ({ 
   expect(await page.evaluate(() => window.events)).not.toContain("mi-x");
 });
 
+test("list-item：嵌套子列表逐级缩进，点击区保持整行宽", async ({ page }) => {
+  const box = await page.locator("#li-fold").boundingBox();
+  await page.mouse.click(box.x + box.width / 2, box.y + 15);
+  await page.waitForTimeout(500);
+
+  const geo = await page.evaluate(() => {
+    const pad = (sel) =>
+      document.querySelector(sel).shadowRoot.querySelector(".left-indent").getBoundingClientRect().width;
+    const main = (sel) =>
+      document.querySelector(sel).shadowRoot.querySelector(".main").getBoundingClientRect();
+    return {
+      top: pad("#li-btn"),
+      level1: pad("#li-sub"),
+      level2: pad("#li-sub2"),
+      topWidth: main("#li-sub").width,
+      subWidth: main("#li-sub2").width,
+    };
+  });
+  // 顶层不缩进；一级 1em(14px)；二级再 +1em
+  expect(geo.top).toBe(0);
+  expect(geo.level1).toBeCloseTo(14, 0);
+  expect(geo.level2).toBeCloseTo(28, 0);
+  // 点击区仍是整行宽（未被 margin 挤压）
+  expect(geo.topWidth).toBeGreaterThan(300);
+  expect(Math.abs(geo.topWidth - geo.subWidth)).toBeLessThan(2);
+});
+
+// ---------- st-ripple 隔离 ----------
+
+test("ripple：点击只作用于被点组件，嵌套/相邻组件不串波纹", async ({ page }) => {
+  const counts = () =>
+    page.evaluate(() => {
+      const out = {};
+      document.querySelectorAll("st-list-item").forEach((h) => {
+        const r = h.shadowRoot?.querySelector("st-ripple");
+        if (r) out[h.id] = r.shadowRoot.querySelectorAll(".ripple").length;
+      });
+      return out;
+    });
+
+  // 展开折叠项后点击子项：只有子项波纹，父折叠项不再叠加
+  const box = await page.locator("#li-fold").boundingBox();
+  await page.mouse.click(box.x + box.width / 2, box.y + 15);
+  await page.waitForTimeout(500);
+  const sub = await page.locator("#li-sub").boundingBox();
+  await page.mouse.click(sub.x + sub.width / 2, sub.y + sub.height / 2);
+  await page.waitForTimeout(150);
+  expect(await counts()).toEqual({
+    "li-btn": 0,
+    "li-plain": 0,
+    "li-disabled": 0,
+    "li-fold": 0,
+    "li-fold2": 0,
+    "li-sub": 1,
+    "li-sub2": 0,
+  });
+
+  // 普通项点击只有自身波纹
+  await page.waitForTimeout(400);
+  await page.locator("#li-btn").click();
+  await page.waitForTimeout(150);
+  const after = await counts();
+  expect(after["li-btn"]).toBe(1);
+  expect(after["li-fold"]).toBe(0);
+  expect(after["li-sub"]).toBe(0);
+});
+
 // ---------- st-tab-bar / st-tab-item ----------
 
 test("tabs：指示条定位到 active 项，切换 active 后动画跟随", async ({ page }) => {

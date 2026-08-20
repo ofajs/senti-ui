@@ -1,19 +1,16 @@
 import { test, expect } from "@playwright/test";
 
-async function ready(page, selector) {
-  await page.waitForFunction(
-    (sel) => {
-      const el = document.querySelector(sel);
-      return el && el.shadowRoot && el.shadowRoot.querySelector("input");
-    },
-    selector,
-    { timeout: 15_000 }
-  );
-}
-
 test.beforeEach(async ({ page }) => {
   await page.goto("/tests/fixtures/controls.html");
-  await ready(page, "#cb-basic");
+  // 等所有控件组件升级完成（shadowRoot + 内部 input 就位），避免偶发未就绪
+  await page.waitForFunction(
+    () =>
+      ["#cb-basic", "#sw-basic", "#rd-a"].every((sel) => {
+        const el = document.querySelector(sel);
+        return el && el.shadowRoot && el.shadowRoot.querySelector("input");
+      }),
+    { timeout: 15_000 }
+  );
 });
 
 // ---------- st-checkbox ----------

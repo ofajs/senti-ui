@@ -65,6 +65,13 @@
     .prefix { margin-right: 1em; color: var(--md-sys-color-on-surface-variant); }
     .suffix { margin-left: 0.571em; color: var(--md-sys-color-on-surface-variant); }
 
+    /* 嵌套缩进：宽度由 JS 按祖先 st-list 层数设置（层级 × --st-list-step，默认每层 1em），
+       以"行内占位"呈现——点击行/hover/波纹仍是整行宽，不像 sublist 加 margin 会挤压交互区。
+       不能用 CSS 变量沿层级累加：同名自定义属性自引用（--x: calc(var(--x) + …)）按规范整条无效 */
+    .left-indent {
+      flex-shrink: 0;
+    }
+
     .content {
       flex: 1;
       display: flex;
@@ -122,6 +129,7 @@
 
   <div class="main">
     <span class="layer"></span>
+    <div class="left-indent"></div>
     <div class="prefix"><slot name="prefix"></slot></div>
     <div class="content"><slot></slot></div>
     <div class="suffix">
@@ -155,6 +163,33 @@
       ready() {
         const ele = this.ele;
         const sr = ele.shadowRoot;
+
+        // 嵌套缩进（自顶向下传播）：父项在 sublist slot 变化时把"深度 + 1"推给已分配的
+        // 子 st-list（存 _stListDepth），并递归通知其中的子项——不依赖 parentElement /
+        // assignedSlot 祖先链（ofa 页面模块可能重排嵌套 light DOM，链路不可靠）
+        const applyDepth = () => {
+          const d = ele._stListDepth || 0;
+          sr.querySelector(".left-indent").style.width =
+            d > 0 ? `calc(${d} * var(--st-list-step, 1em))` : "";
+        };
+        ele._onListDepth = (d) => {
+          ele._stListDepth = d;
+          applyDepth();
+          pushDepth(); // 深度变化时向下一级重新传播
+        };
+        const pushDepth = () => {
+          const d = (ele._stListDepth || 0) + 1;
+          sr.querySelector('slot[name="sublist"]').assignedElements().forEach((el) => {
+            if (el.tagName === "ST-LIST") {
+              el.querySelectorAll("st-list-item").forEach((item) => item._onListDepth?.(d));
+            }
+          });
+        };
+        sr.querySelector('slot[name="sublist"]').addEventListener("slotchange", pushDepth);
+        applyDepth();
+        // 页面模块渲染可能在组件升级后才完成 slot 分配，延迟重推兜底
+        requestAnimationFrame(pushDepth);
+        setTimeout(pushDepth, 100);
 
         // collapsible 时显示展开箭头；非 collapsible 时 sublist 经 st-collapse 恒展开显示
         this._syncIcon = () => {

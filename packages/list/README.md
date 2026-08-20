@@ -32,6 +32,17 @@
 
 - `click`：点击 `button` 项时自然冒泡到宿主（原生 DOM 行为，`composed`）。`disabled` 项原生阻断、无 click；折叠项点击只切换 `expanded`，不派发 click。
 
+## 嵌套缩进
+
+子列表（`sublist`）每一层自动缩进 1em（随 `font-size` 等比），**通过列表项内部的占位元素实现**——不是给子列表加 margin，所以每一行的点击区 / hover / 波纹仍然是整行宽，不会出现交互区被挤压错位的问题。缩进深度由组件按祖先 `st-list` 层数自动计算（二级缩进 1em、三级 2em…）。
+
+每层缩进量可整体调整：在外层容器上覆盖 `--st-list-step`（默认 `1em`）。
+
+```html
+<!-- 每层缩进 2em -->
+<st-list style="--st-list-step: 2em;"> ... </st-list>
+```
+
 ## 默认值（st-list-item，直接覆盖即可）
 
 | 属性 | 默认值 |

@@ -28,7 +28,7 @@ collapse.removeAttribute("hide");    // 展开
 
 | 属性 | 默认值 |
 |------|--------|
-| 过渡 | `height 0.3s cubic-bezier(0.2, 0, 0, 1)`（M3 emphasized，宿主 style 可覆盖 transition） |
+| 过渡 | 切换 `hide` 时 `height 0.3s cubic-bezier(0.2, 0, 0, 1)`（M3 emphasized）；内容尺寸变化（ResizeObserver 跟随）瞬时无过渡——否则嵌套折叠时外层会追赶内层动画产生迟缓拖尾 |
 
 无事件；高度动画纯 CSS，内容完全透传（无样式注入）。
 

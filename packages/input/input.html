@@ -1,0 +1,179 @@
+<!--
+  st-input — Senti-UI 单行输入框组件（基于 ofa.js）
+  语义属性：variant(filled|outlined) / default-value / disabled / readonly / type / placeholder / color
+  value 是运行时状态（ofa data），通过 el.value 读写，不作为标签属性
+  视觉全部在 :host 上，直接用原生 CSS 属性定制，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      /* 视觉样式全部定义在 host 上，外部 style 可直接覆盖任何原生属性 */
+      /* 尺寸类默认值用 em：改 font-size 即可整体等比缩放 */
+      display: inline-flex;
+      align-items: center;
+      position: relative; /* 聚焦描边/底线浮层的定位基准 */
+      gap: 0.571em;
+      box-sizing: border-box;
+      height: 2.857em;
+      min-width: 13.571em; /* M3 最小填充宽度 = 190px @ 14px */
+      padding: 0 1em;
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: 0.5em; /* 默认圆角：比 M3 文本域的 4px 稍圆润 */
+      font-size: 14px;
+      font-family: inherit;
+      line-height: 1;
+      color: var(--md-sys-color-on-surface);
+      background-color: transparent;
+      cursor: text;
+    }
+
+    /* M3 filled 变体：无全边框，仅底边分隔线，容器底色 */
+    :host([variant="filled"]) {
+      background-color: var(--md-sys-color-surface-container-highest);
+      border-color: transparent;
+      border-bottom-color: var(--md-sys-color-on-surface-variant);
+      border-radius: 0.5em 0.5em 0 0;
+    }
+
+    /* focus 描边/底线：绝对定位浮层，不挤占布局，由 CSS 过渡呈现动画 */
+    .outline-ring {
+      position: absolute;
+      inset: -1px; /* 盖在 1px 边框外侧，视觉 = 边框加粗到 2px */
+      border: 2px solid var(--md-sys-color-primary);
+      border-radius: inherit;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 150ms ease;
+    }
+    :host(:focus-within) .outline-ring { opacity: 1; }
+    :host([variant="filled"]) .outline-ring { display: none; }
+
+    /* filled 聚焦底线：裁剪容器跟随宿主圆角，2px 线在内部从左到右展开盖在 1px 底边框上 */
+    .line-clip {
+      display: none;
+      position: absolute;
+      inset: -1px; /* 扩到边框外沿，底线才能盖住 1px 底边框 */
+      border-radius: inherit; /* 宿主覆写 border-radius（如 pill）时底线随之裁剪 */
+      overflow: hidden;
+      pointer-events: none;
+    }
+    :host([variant="filled"]) .line-clip { display: block; }
+    .bottom-line {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 2px;
+      width: 0;
+      background-color: var(--md-sys-color-primary);
+      transition: width 200ms cubic-bezier(0.2, 0, 0, 1);
+    }
+    :host(:focus-within) .bottom-line { width: 100%; }
+
+    :host([disabled]) {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
+    :host([disabled]) .outline-ring,
+    :host([disabled]) .line-clip { display: none; }
+
+    /* 内部透明原生 input：只负责语义（输入/键盘/焦点/disabled/readonly），不承载视觉 */
+    .native {
+      all: unset;
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+      font: inherit;
+      color: inherit;
+      caret-color: var(--md-sys-color-primary);
+      cursor: inherit;
+    }
+    .native:focus { outline: none; }
+    .native::placeholder {
+      color: var(--md-sys-color-on-surface-variant);
+      opacity: 1;
+    }
+
+    ::slotted([slot="prefix"]),
+    ::slotted([slot="suffix"]) {
+      display: inline-flex;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+  </style>
+
+  <span class="outline-ring"></span>
+  <span class="line-clip"><span class="bottom-line"></span></span>
+  <slot name="prefix"></slot>
+  <input class="native"
+    attr:type="type"
+    attr:placeholder="placeholder"
+    :value="value === null ? '' : value"
+    :disabled="disabled !== null" />
+  <slot name="suffix"></slot>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-input",
+      attrs: {
+        variant: "outlined",
+        type: "text",
+        placeholder: null,
+        color: null,
+        disabled: null,
+        readonly: null,
+      },
+      data: {
+        value: null, // 运行时输入值，attached 时由 default-value 属性初始化
+      },
+      watch: {
+        color() { this.applyColor(); },
+        // 外部改 this.value（data）时兜底同步内部 input（:value 绑定已覆盖）
+        value() {
+          const input = this.ele.shadowRoot.querySelector(".native");
+          if (this.value !== null && input.value !== this.value) input.value = this.value;
+        },
+        // ofa 属性绑定写不对 camelCase 的 readOnly，改在 JS 里同步
+        readonly() {
+          this.ele.shadowRoot.querySelector(".native").readOnly = this.readonly !== null;
+        },
+      },
+      ready() {
+        this.applyColor();
+        const input = this.ele.shadowRoot.querySelector(".native");
+        const ele = this.ele;
+        input.readOnly = this.readonly !== null;
+        // attached 时读取 default-value 属性作为初始值写入 data.value
+        const dv = ele.getAttribute("default-value");
+        input.value = dv === null ? "" : dv;
+        this.value = input.value;
+        // 宿主 value 用 getter/setter 反射到内部 input（ofa 的 data 不在原生属性上，
+        // 页面侧 on:input 里读 e.target.value、外部读写 el.value 都依赖这里的反射）
+        Object.defineProperty(ele, "value", {
+          get: () => input.value,
+          set: (v) => { input.value = v == null ? "" : v; this.value = input.value; },
+        });
+        // 输入时同步 ofa data（:value 单向绑定只管 data → input，反向靠这里）
+        input.addEventListener("input", () => { this.value = input.value; });
+      },
+      proto: {
+        // color 接受 M3 角色名或 color 模块自定义变量名，控制 caret 与 focus 描边/底线颜色
+        applyColor() {
+          const name = this.color;
+          this.ele.style.caretColor = name
+            ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
+            : "";
+          const active = name
+            ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
+            : "";
+          const sr = this.ele.shadowRoot;
+          const ring = sr.querySelector(".outline-ring");
+          const line = sr.querySelector(".bottom-line");
+          ring.style.borderColor = active; // 空串 = 回退到 CSS 默认 primary
+          line.style.backgroundColor = active;
+        },
+        focus() { this.ele.shadowRoot.querySelector(".native").focus(); },
+        blur() { this.ele.shadowRoot.querySelector(".native").blur(); },
+      },
+    });
+  </script>
+</template>

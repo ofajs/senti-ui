@@ -1,0 +1,133 @@
+# st-button 按钮组件
+
+基于 ofa.js 的按钮组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size/color 类预设，也不需要自定义 CSS 变量）。
+
+组件的视觉样式全部定义在宿主元素（`:host`）上，`st-button` 本身就是一个普通的可样式化元素——`style` 写什么就生效什么。内部有一个透明的原生 `<button>` 负责语义（点击/键盘/焦点/disabled）。
+
+## 依赖引入（使用前必须）
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+<l-m src="/packages/button/button.html"></l-m>
+```
+
+组件内部已 `import "../color/st-init.js"`，加载按钮时会自动注入 `--md-sys-color-*` 颜色体系（多次 import 不冲突，模块按 URL 去重）；若你的部署不含 color 包，则需自行定义这些变量。
+
+## 语义属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `"filled" \| "outlined" \| "text"` | `"filled"` | M3 规范的三种按钮类型 |
+| `color` | M3 角色名 / 自定义变量名 | 无 | 语义配色，见下文 |
+| `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断点击、无 hover 态 |
+| `loading` | boolean | 无 | 显示旋转 spinner 并自动禁用点击 |
+| `type` | `"button" \| "submit" \| "reset"` | `"button"` | 转发给内部原生 button |
+
+设置/取消布尔属性示例：`<st-button loading>...</st-button>`；JS 中请用 attribute 方式（直接改 property 不触发更新）：
+
+```js
+btn.setAttribute("loading", "");
+btn.removeAttribute("loading");
+```
+
+## color 属性（与 color 模块联动）
+
+`color` 接受 **M3 角色名**（`primary` / `secondary` / `tertiary` / `error` / `success` 等）或 **color 工具里定义的自定义变量名**，并与 `variant` 自由组合，配色按 M3 规范随 variant 生效。`success` 是 color 体系内置的扩展角色（M3 核心规范之外的补充语义色），默认绿色、不随种子色变化，可在 color 工具中覆盖：
+
+| `color` + variant | 背景 | 文字 | 边框 |
+|-------------------|------|------|------|
+| `filled`（默认） | 角色色 | on-角色色 | 无 |
+| `outlined` | 透明 | 角色色 | 角色色 |
+| `text` | 透明 | 角色色 | 无 |
+
+```html
+<st-button color="error">Delete</st-button>
+<st-button color="error" variant="outlined">Delete</st-button>
+<st-button color="error" variant="text">Delete</st-button>
+
+<!-- success 为内置扩展角色（默认绿色，token 由 st-init.js 自动注入，无需配置） -->
+<st-button color="success">保存</st-button>
+
+<!-- 自定义：先在 color 工具添加变量 brand（会生成 --brand / --on-brand 等配对 token 并存入 localStorage），
+     所有引入 st-init.js 的同域页面即可使用 -->
+<st-button color="brand">Brand 按钮</st-button>
+```
+
+这正是"一键换色"：在 color 工具里改种子色 / 调整 brand 颜色，所有 `color="brand"` 的按钮全站跟随变化。未定义的名称回退到 primary。需要更自由的效果仍用原生 style。
+
+## 插槽
+
+- 默认插槽：按钮文字内容
+- `prefix` / `suffix`：前置/后置图标等内容
+
+```html
+<st-button><span slot="prefix">🔍</span>Search</st-button>
+```
+
+## 事件
+
+点击事件直接在 `<st-button>` 上监听（内部原生 button 会转发）：
+
+```js
+document.querySelector("st-button").addEventListener("click", () => {});
+```
+
+## 外观定制：直接写原生 CSS 属性
+
+**没有预设，也不需要变量**。尺寸、圆角、字体、配色全部用标准 CSS 属性表达：
+
+尺寸类默认值全部用 em——**改 `font-size` 即可整体等比缩放**（高度/圆角/内边距随之联动）：
+
+```html
+<st-button style="font-size: 12px;">Scale 12px</st-button>
+<st-button style="font-size: 16px;">Scale 16px</st-button>
+<st-button style="font-size: 20px;">Scale 20px</st-button>
+
+<!-- 也可单独覆写任一属性 -->
+<st-button style="font-size: 12px; border-radius: 8px; height: 32px;">Compact 覆写</st-button>
+
+<!-- 换配色：直接用 M3 角色 -->
+<st-button style="background: var(--md-sys-color-error); color: var(--md-sys-color-on-error);">Delete</st-button>
+
+<!-- 浮起效果（M3 elevated）：box-shadow 也是原生的 -->
+<st-button style="border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.3); background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container);">Elevated</st-button>
+```
+
+### 默认值（直接覆盖即可）
+
+| 属性 | 默认值 |
+|------|--------|
+| `height` | `2.857em`（= 40px @ 14px 字号，M3 标准） |
+| `min-width` | `3.429em`（= 48px） |
+| `padding` | `0 1.429em`（= 20px = 圆角半径，文字刚好落在圆角转弯处；text 变体 `0 0.857em`） |
+| `border-radius` | `1.429em`（= 20px，M3 full 圆角即高度的一半） |
+| `font-size` / `font-weight` | `14px` / `500` |
+| `gap`（内容与图标间距） | `0.571em`（= 8px） |
+| `background` | filled: primary / outlined、text: 透明 |
+| `color` | filled: on-primary / outlined、text: primary |
+| `border` | outlined: `1px solid outline` / 其余: 透明 |
+
+### 内建行为（不需要写、也覆盖不掉的）
+
+- hover / active：M3 state layer（currentColor 8% / 12% 半透明叠加，自动与文字颜色协调）
+- 点击波纹：内嵌 st-ripple 组件（从点击处扩散，键盘激活时从中心扩散），波纹色 currentColor
+- 键盘焦点：focus-visible 时显示 `on-surface` 色 2px 外圈（不用 currentColor——浅色页面上白字按钮的白色外圈不可见）
+- loading spinner：尺寸 `1.2em` 随 font-size 缩放，颜色 currentColor
+
+## 三种 variant 的默认配色
+
+| variant | 背景 | 内容 | 边框 |
+|---------|------|------|------|
+| `filled` | primary | on-primary | 无 |
+| `outlined` | 透明 | primary | outline |
+| `text` | 透明 | primary | 无 |
+
+设置 `color` 属性后，配色按上文「color 属性」一节的表分派。
+
+## 主题
+
+`st-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
+
+## 验证页面
+
+`index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `/packages/button/`）。

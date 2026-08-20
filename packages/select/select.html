@@ -1,0 +1,392 @@
+<!--
+  st-select — Senti-UI 单选下拉框组件（基于 ofa.js）
+  语义属性：variant(filled|outlined) / default-value / placeholder / color / disabled
+  value 是运行时状态（ofa data），通过 el.value 读写，不作为标签属性
+  选项写在 light DOM：<st-select><option value="x">Label</option>...</st-select>
+  视觉全部在 :host 上，直接用原生 CSS 属性定制，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      /* 视觉样式全部定义在 host 上，外部 style 可直接覆盖任何原生属性 */
+      /* 尺寸类默认值用 em：改 font-size 即可整体等比缩放 */
+      display: inline-flex;
+      align-items: center;
+      position: relative; /* 聚焦描边/底线浮层与下拉弹层的定位基准 */
+      gap: 0.571em;
+      box-sizing: border-box;
+      height: 2.857em;
+      min-width: 13.571em; /* M3 最小填充宽度 = 190px @ 14px */
+      padding: 0 1em;
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: 0.5em;
+      font-size: 14px;
+      font-family: inherit;
+      line-height: 1;
+      color: var(--md-sys-color-on-surface);
+      background-color: transparent;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* M3 filled 变体：无全边框，仅底边分隔线，容器底色 */
+    :host([variant="filled"]) {
+      background-color: var(--md-sys-color-surface-container-highest);
+      border-color: transparent;
+      border-bottom-color: var(--md-sys-color-on-surface-variant);
+      border-radius: 0.5em 0.5em 0 0;
+    }
+
+    /* focus 描边/底线：绝对定位浮层，不挤占布局，由 CSS 过渡呈现动画 */
+    .outline-ring {
+      position: absolute;
+      inset: -1px; /* 盖在 1px 边框外侧，视觉 = 边框加粗到 2px */
+      border: 2px solid var(--md-sys-color-primary);
+      border-radius: inherit;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 150ms ease;
+    }
+    :host(:focus-within) .outline-ring { opacity: 1; }
+    :host([variant="filled"]) .outline-ring { display: none; }
+
+    .line-clip {
+      display: none;
+      position: absolute;
+      inset: -1px; /* 扩到边框外沿，底线才能盖住 1px 底边框 */
+      border-radius: inherit;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    :host([variant="filled"]) .line-clip { display: block; }
+    .bottom-line {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 2px;
+      width: 0;
+      background-color: var(--md-sys-color-primary);
+      transition: width 200ms cubic-bezier(0.2, 0, 0, 1);
+    }
+    :host(:focus-within) .bottom-line { width: 100%; }
+
+    :host([disabled]) {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
+    :host([disabled]) .outline-ring,
+    :host([disabled]) .line-clip { display: none; }
+
+    /* 选中值 / 占位文本 */
+    .label {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: start;
+    }
+    .label.placeholder { color: var(--md-sys-color-on-surface-variant); }
+
+    /* 下拉箭头（CSS chevron），展开时旋转 180° */
+    .arrow {
+      width: 0.571em;
+      height: 0.571em;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg) translateY(-0.1em);
+      transition: transform 200ms ease;
+      flex-shrink: 0;
+      opacity: 0.8;
+    }
+    :host([open]) .arrow { transform: rotate(225deg) translateY(-0.1em); }
+
+    /* 下拉弹层：挂在 shadow 内（宿主须不被 overflow 裁剪的祖先包裹） */
+    .listbox {
+      display: none;
+      position: absolute;
+      top: calc(100% + 0.286em);
+      left: -1px;
+      right: -1px;
+      min-width: 100%;
+      max-height: 15em;
+      overflow-y: auto;
+      padding: 0.286em;
+      box-sizing: border-box;
+      background-color: var(--md-sys-color-surface-container);
+      border-radius: 0.5em;
+      box-shadow: 0 0.2em 0.8em rgb(0 0 0 / 0.2);
+      z-index: 10;
+    }
+    :host([open]) .listbox { display: block; }
+
+    .opt {
+      display: flex;
+      align-items: center;
+      gap: 0.571em;
+      padding: 0.786em 0.714em; /* 视觉行高 2.286em @ 14px */
+      border-radius: 0.357em;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .opt:hover { background-color: var(--md-sys-color-surface-container-high); }
+    .opt[data-active] { background-color: var(--md-sys-color-surface-container-high); }
+    .opt[data-selected] {
+      background-color: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+    }
+    .opt .check {
+      display: none;
+      width: 0.5em;
+      height: 0.286em;
+      border-left: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(-45deg);
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .opt[data-selected] .check { display: inline-block; }
+
+    /* light DOM 里的 <option> 只作数据源，不参与渲染 */
+    slot { display: none; }
+  </style>
+
+  <span class="outline-ring"></span>
+  <span class="line-clip"><span class="bottom-line"></span></span>
+  <span class="label" id="st-label"></span>
+  <span class="arrow"></span>
+  <div class="listbox" id="st-listbox"></div>
+  <slot id="st-slot"></slot>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-select",
+      attrs: {
+        variant: "outlined",
+        placeholder: null,
+        color: null,
+        disabled: null,
+        options: null, // 动态选项数组入口：:options="[{value,label}]" 绑定或 el.options = [...]，
+        // 经宿主 property setter 存入内部 _opts（不走 ofa attr data，避免数组被序列化成字符串）
+      },
+      data: {
+        value: null, // 运行时选中值，attached 时由 default-value 属性初始化
+      },
+      watch: {
+        color() { this.applyColor(); },
+        // 外部改 this.value（data / el.value）时刷新选中态
+        value() { this.syncSelected(false); },
+        // :options 绑定会把数组 JSON 序列化写入 attribute，这里解析后重建列表
+        options() {
+          let list = this.options;
+          if (typeof list === "string") {
+            try { list = JSON.parse(list || "[]"); } catch { list = []; }
+          }
+          if (!Array.isArray(list)) return;
+          this._opts = list.map((o) => ({ value: String(o.value ?? o.label), label: String(o.label ?? o.value), el: null }));
+          this.buildList();
+          this.syncSelected(false);
+        },
+        disabled() { this.close(); },
+      },
+      ready() {
+        this.applyColor();
+        const ele = this.ele;
+        const sr = ele.shadowRoot;
+        this.labelEl = sr.querySelector("#st-label");
+        this.listEl = sr.querySelector("#st-listbox");
+        this.slotEl = sr.querySelector("#st-slot");
+        this.activeIndex = -1;
+
+        // 宿主 value 用 getter/setter 反射到 data（ofa 的 data 不在原生属性上）
+        Object.defineProperty(ele, "value", {
+          get: () => (this.value === null ? "" : this.value),
+          set: (v) => { this.value = v == null ? "" : v; },
+        });
+
+        // 宿主 options property：动态选项入口（:options 绑定 / el.options = [...]）。
+        // 内部存储用 _opts，不经 ofa attr data（数组会被序列化成字符串）。
+        // 注意：o-fill 会把内容渲染进自身 shadow，slot 看不到其中的 option，动态选项走这里
+        Object.defineProperty(ele, "options", {
+          get: () => this._opts || [],
+          set: (list) => {
+            this._opts = Array.isArray(list)
+              ? list.map((o) => ({ value: String(o.value ?? o.label), label: String(o.label ?? o.value), el: null }))
+              : [];
+            this.buildList();
+            this.syncSelected(false);
+          },
+        });
+
+        // 读取 light DOM 的 <option> 作为数据源。
+        // 支持容器组件（如 o-fill）包裹：o-fill 把条目渲染进自身 shadowRoot，
+        // 这里深入其 shadow 收集 option，并用 MutationObserver 跟随其重渲染
+        this._optObservers = [];
+        const collectFrom = (el) => {
+          if (el.tagName === "OPTION") return [el];
+          const seen = new Set();
+          const found = [];
+          [...el.querySelectorAll("option"), ...(el.shadowRoot ? el.shadowRoot.querySelectorAll("option") : [])]
+            .forEach((o) => { if (!seen.has(o)) { seen.add(o); found.push(o); } });
+          if (el.shadowRoot) {
+            const mo = new MutationObserver(() => readOptions());
+            mo.observe(el.shadowRoot, { childList: true, subtree: true });
+            this._optObservers.push(mo);
+          }
+          // o-fill 实际把条目渲染在自身 light DOM（innerHTML），容器本体也要观察
+          const mo = new MutationObserver(() => readOptions());
+          mo.observe(el, { childList: true, subtree: true });
+          this._optObservers.push(mo);
+          return found;
+        };
+        const readOptions = () => {
+          this._optObservers.forEach((mo) => mo.disconnect());
+          this._optObservers = [];
+          this._opts = this.slotEl
+            .assignedElements()
+            .flatMap((el) => collectFrom(el))
+            .map((el) => ({ value: el.getAttribute("value") ?? el.textContent.trim(), label: el.textContent.trim(), el }));
+          this.buildList();
+          // attached 时读取 default-value 属性作为初始值写入 data.value
+          if (this.value === null) {
+            const dv = ele.getAttribute("default-value");
+            if (dv !== null) this.value = dv;
+          }
+          this.syncSelected(false);
+        };
+        this.slotEl.addEventListener("slotchange", readOptions);
+        readOptions();
+        // 绑定可能早于 ready 写入 attribute，此时 slot 无 option、用 _opts 兜底解析
+        if (this.options !== null && (!this._opts || !this._opts.length)) {
+          let list = this.options;
+          if (typeof list === "string") {
+            try { list = JSON.parse(list || "[]"); } catch { list = []; }
+          }
+          if (Array.isArray(list) && list.length) {
+            this._opts = list.map((o) => ({ value: String(o.value ?? o.label), label: String(o.label ?? o.value), el: null }));
+            this.buildList();
+            if (this.value === null) {
+              const dv = ele.getAttribute("default-value");
+              if (dv !== null) this.value = dv;
+            }
+            this.syncSelected(false);
+          }
+        }
+
+        // 键盘可达：宿主本身可聚焦
+        ele.tabIndex = 0;
+        ele.addEventListener("keydown", (e) => this.onKeydown(e));
+        ele.addEventListener("click", () => {
+          if (this.disabled === null) this.isOpen() ? this.close() : this.openList();
+        });
+        // 点击外部关闭：必须用 composedPath 判断——composed 事件在 document 层
+        // 的 target 已被 shadow 边界重定向为外层宿主，contains(e.target) 会误判为外部
+        this._onDocDown = (e) => { if (!e.composedPath().includes(ele)) this.close(); };
+        document.addEventListener("pointerdown", this._onDocDown);
+      },
+      detached() {
+        document.removeEventListener("pointerdown", this._onDocDown);
+      },
+      proto: {
+        isOpen() { return this.ele.hasAttribute("open"); },
+        openList() {
+          if (this.disabled !== null || !this._opts.length) return;
+          this.ele.setAttribute("open", "");
+          // 键盘激活项初始定位到当前选中项
+          const sel = this._opts.findIndex((o) => o.value === this.value);
+          this.setActive(sel < 0 ? 0 : sel, true);
+        },
+        close() { this.ele.removeAttribute("open"); },
+        buildList() {
+          this.listEl.innerHTML = "";
+          this._opts.forEach((opt, i) => {
+            const item = document.createElement("div");
+            item.className = "opt";
+            // option 内有子元素时克隆渲染（支持富内容），否则退回纯文本 label
+            if (opt.el?.childNodes.length) {
+              [...opt.el.childNodes].forEach((n) => item.appendChild(n.cloneNode(true)));
+            } else {
+              item.textContent = opt.label;
+            }
+            item.appendChild(Object.assign(document.createElement("span"), { className: "check" }));
+            item.addEventListener("click", (e) => {
+              e.stopPropagation();
+              this.select(i);
+            });
+            item.addEventListener("pointerenter", () => this.setActive(i, false));
+            this.listEl.appendChild(item);
+          });
+        },
+        // 选中态与显示文本同步（change 事件由 select() 派发）
+        syncSelected() {
+          const opt = this._opts?.find((o) => o.value === this.value);
+          this.labelEl.textContent = opt ? opt.label : (this.placeholder || "");
+          this.labelEl.classList.toggle("placeholder", !opt);
+          [...this.listEl.children].forEach((item, i) => {
+            item.toggleAttribute("data-selected", this._opts[i].value === this.value);
+          });
+        },
+        select(i) {
+          const opt = this._opts[i];
+          if (!opt || opt.value === this.value) { this.close(); return; }
+          this.value = opt.value; // ofa data → 触发 watch → syncSelected
+          this.close();
+          this.ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
+        },
+        setActive(i, scroll) {
+          this.activeIndex = i;
+          [...this.listEl.children].forEach((item, j) => {
+            item.toggleAttribute("data-active", j === i);
+          });
+          if (scroll && i >= 0) this.listEl.children[i].scrollIntoView({ block: "nearest" });
+        },
+        onKeydown(e) {
+          if (this.disabled !== null) return;
+          const open = this.isOpen();
+          const n = this._opts.length;
+          switch (e.key) {
+            case "Enter": case " ":
+              e.preventDefault();
+              if (open) { this.select(this.activeIndex); } else { this.openList(); }
+              break;
+            case "ArrowDown":
+              e.preventDefault();
+              if (!open) this.openList();
+              else this.setActive((this.activeIndex + 1) % n, true);
+              break;
+            case "ArrowUp":
+              e.preventDefault();
+              if (!open) this.openList();
+              else this.setActive((this.activeIndex - 1 + n) % n, true);
+              break;
+            case "Home":
+              if (open) { e.preventDefault(); this.setActive(0, true); }
+              break;
+            case "End":
+              if (open) { e.preventDefault(); this.setActive(n - 1, true); }
+              break;
+            case "Escape": case "Tab":
+              this.close();
+              break;
+          }
+        },
+        // color 接受 M3 角色名或 color 模块自定义变量名，控制 focus 描边/底线颜色
+        applyColor() {
+          const name = this.color;
+          const active = name
+            ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
+            : "";
+          const sr = this.ele.shadowRoot;
+          sr.querySelector(".outline-ring").style.borderColor = active; // 空串 = 回退 CSS 默认 primary
+          sr.querySelector(".bottom-line").style.backgroundColor = active;
+        },
+        focus() { this.ele.focus(); },
+        blur() { this.ele.blur(); },
+      },
+    });
+  </script>
+</template>

@@ -1,0 +1,42 @@
+<!-- st-ripple 验收页（ofa.js 页面模块），由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; }
+    section { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+
+    /* 波纹父元素需要 position: relative */
+    .demo-box {
+      position: relative;
+      width: 240px; height: 120px;
+      border-radius: 12px;
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; cursor: pointer; overflow: hidden;
+    }
+    .demo-box.outlined {
+      background: transparent;
+      color: var(--md-sys-color-primary);
+      box-shadow: inset 0 0 0 1px var(--md-sys-color-outline);
+    }
+  </style>
+
+  <section>
+    <h3>点击区域产生波纹（波纹色 = currentColor，自动跟随文字色）</h3>
+    <div class="demo-box">点我试试<st-ripple></st-ripple></div>
+    <div class="demo-box outlined">描边区域同样适用<st-ripple></st-ripple></div>
+  </section>
+
+  <section>
+    <h3>在按钮组件中使用</h3>
+    <l-m src="../button/button.html"></l-m>
+    <st-button>点击有波纹</st-button>
+    <st-button variant="outlined">Outlined 波纹</st-button>
+    <st-button variant="text">Text 波纹</st-button>
+  </section>
+
+  <script>
+    export default async () => ({});
+  </script>
+</template>

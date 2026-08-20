@@ -1,0 +1,119 @@
+<!-- st-select 验收页（ofa.js 页面模块），由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 20px 20px 40vh; justify-items: start; }
+    section { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+    p { margin: 0; font-size: 13px; color: var(--md-sys-color-on-surface-variant); }
+    .code { font-family: ui-monospace, monospace; color: var(--md-sys-color-on-surface); }
+  </style>
+
+  <section>
+    <h3>两种 variant 与基础用法</h3>
+    <st-select placeholder="请选择水果" on:change="onFruit">
+      <option value="apple">苹果</option>
+      <option value="banana">香蕉</option>
+      <option value="cherry">樱桃</option>
+    </st-select>
+    <st-select variant="filled" placeholder="Filled" default-value="banana">
+      <option value="apple">苹果</option>
+      <option value="banana">香蕉</option>
+      <option value="cherry">樱桃</option>
+    </st-select>
+    <p>选中：<span class="code">{{fruit}}</span></p>
+  </section>
+
+  <section>
+    <h3>语义状态</h3>
+    <st-select placeholder="Disabled" disabled>
+      <option value="a">A</option>
+    </st-select>
+    <st-select placeholder="初始选中" default-value="b">
+      <option value="a">A</option>
+      <option value="b">B（初始选中）</option>
+    </st-select>
+    <st-select color="error" placeholder="校验错误态">
+      <option value="a">A</option>
+      <option value="b">B</option>
+    </st-select>
+  </section>
+
+  <section>
+    <h3>value 无 value 属性的 option / 长列表滚动</h3>
+    <st-select placeholder="无 value 属性">
+      <option>北京</option>
+      <option>上海</option>
+      <option>广州</option>
+    </st-select>
+    <st-select placeholder="长列表（键盘 ↑↓ 试试）">
+      <option value="1">选项 01</option>
+      <option value="2">选项 02</option>
+      <option value="3">选项 03</option>
+      <option value="4">选项 04</option>
+      <option value="5">选项 05</option>
+      <option value="6">选项 06</option>
+      <option value="7">选项 07</option>
+      <option value="8">选项 08</option>
+      <option value="9">选项 09</option>
+      <option value="10">选项 10</option>
+      <option value="11">选项 11</option>
+      <option value="12">选项 12</option>
+    </st-select>
+  </section>
+
+  <section>
+    <h3>option 内嵌自定义元素（富内容选项）</h3>
+    <st-select placeholder="选择水果">
+      <option value="apple"><span style="margin-right:8px;">🍎</span><b>苹果</b> Apple</option>
+      <option value="banana"><span style="margin-right:8px;">🍌</span><b>香蕉</b> Banana</option>
+      <option value="cherry"><span style="margin-right:8px;">🍒</span><b>樱桃</b> Cherry</option>
+    </st-select>
+    <p>option 内的子元素会被克隆渲染到下拉项中；闭合状态显示 option 的纯文本（apple → "🍎 苹果 Apple"）</p>
+  </section>
+
+  <section>
+    <h3>动态选项</h3>
+    <!-- 正确姿势：:options 数据绑定（数组 [{ value, label }]） -->
+    <st-select :options="cities" placeholder=":options 数据绑定" on:change="onCity"></st-select>
+    <!-- o-fill 嵌套：组件会深入 o-fill 的 shadowRoot 收集渲染出的 <option>，
+         并用 MutationObserver 跟随数据变化重渲染 -->
+    <st-select placeholder="o-fill 嵌套（动态）" on:change="onCity">
+      <o-fill :value="cityOpts">
+        <option attr:value="$data.value">{{$data.label}}</option>
+      </o-fill>
+    </st-select>
+    <p>选中城市：<span class="code">{{city}}</span></p>
+  </section>
+
+  <section>
+    <h3>纯 style 定制（原生 CSS 属性，无预设）</h3>
+    <st-select style="font-size: 12px;" placeholder="Scale 12px">
+      <option value="a">A</option>
+    </st-select>
+    <st-select style="width: 280px;" placeholder="固定宽度 280px">
+      <option value="a">A</option>
+    </st-select>
+  </section>
+
+  <script>
+    export default async () => ({
+      data: {
+        fruit: "(未选择)",
+        city: "(未选择)",
+        cities: [
+          { value: "bj", label: "北京" },
+          { value: "sh", label: "上海" },
+          { value: "gz", label: "广州" },
+        ],
+        cityOpts: [
+          { value: "bj", label: "北京" },
+          { value: "sh", label: "上海" },
+        ],
+      },
+      proto: {
+        onFruit(e) { this.fruit = e.target.value; },
+        onCity(e) { this.city = e.target.value; },
+      },
+    });
+  </script>
+</template>

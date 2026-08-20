@@ -1,0 +1,67 @@
+<!-- st-input 验收页（ofa.js 页面模块），由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 20px; justify-items: start; }
+    section { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+    p { margin: 0; font-size: 13px; color: var(--md-sys-color-on-surface-variant); }
+    /* ofa 坑：<code> 标签内的 {{...}} 不会被编译，用 span 模拟等宽样式 */
+    .code { font-family: ui-monospace, monospace; color: var(--md-sys-color-on-surface); }
+  </style>
+
+  <section>
+    <h3>两种 variant</h3>
+    <st-input placeholder="Outlined"></st-input>
+    <st-input variant="filled" placeholder="Filled"></st-input>
+  </section>
+
+  <section>
+    <h3>语义状态</h3>
+    <st-input placeholder="Disabled" default-value="不可编辑" disabled></st-input>
+    <st-input placeholder="Readonly" default-value="只读内容" readonly></st-input>
+    <st-input variant="filled" placeholder="Disabled filled" disabled></st-input>
+  </section>
+
+  <section>
+    <h3>slot 与 type</h3>
+    <st-input placeholder="搜索">
+      <span slot="prefix">🔍</span>
+    </st-input>
+    <st-input variant="filled" placeholder="密码" type="password">
+      <span slot="suffix">👁</span>
+    </st-input>
+  </section>
+
+  <section>
+    <h3>color 属性（caret / focus 边框色）</h3>
+    <st-input color="error" placeholder="校验错误态"></st-input>
+    <st-input color="success" placeholder="校验通过态"></st-input>
+    <st-input variant="filled" color="error" placeholder="Filled error"></st-input>
+  </section>
+
+  <section>
+    <h3>纯 style 定制（原生 CSS 属性，无预设）</h3>
+    <st-input style="font-size: 12px;" placeholder="Scale 12px"></st-input>
+    <st-input placeholder="Default 14px"></st-input>
+    <st-input style="font-size: 16px;" placeholder="Scale 16px"></st-input>
+    <st-input style="width: 320px;" placeholder="固定宽度 320px"></st-input>
+    <st-input variant="filled"
+      style="border-radius: 999px; border: 1px solid var(--md-sys-color-outline); padding: 0 1.429em;"
+      placeholder="Pill filled"></st-input>
+  </section>
+
+  <section>
+    <h3>事件与 value 同步</h3>
+    <st-input placeholder="输入试试，下方实时显示 value" on:input="onInput"></st-input>
+    <p>value: <span class="code">{{demoValue}}</span></p>
+  </section>
+
+  <script>
+    export default async () => ({
+      data: { demoValue: "" },
+      proto: {
+        onInput(e) { this.demoValue = e.target.value; },
+      },
+    });
+  </script>
+</template>

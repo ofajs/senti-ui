@@ -1,7 +1,8 @@
 <!--
   st-switch — Senti-UI 开关组件（基于 ofa.js）
   语义属性：checked / disabled / color（M3 角色名）
-  视觉默认值全用 em（宿主改 font-size 等比缩放），见 README.md
+  视觉对齐 Punch-UI 精致版：2px 描边轨道、拇指未选中收缩/选中复原并对勾描边入场，
+  选中时边框扩展填满轨道成实心底；默认值全用 em，见 README.md
 -->
 <template component>
   <style>
@@ -24,36 +25,65 @@
     .track {
       box-sizing: border-box;
       position: relative;
-      width: 3.286em; /* 46px */
-      height: 2em; /* 28px */
+      width: 3.714em; /* 52px */
+      height: 2.286em; /* 32px */
       flex-shrink: 0;
-      border-radius: 1em;
-      border: 0.143em solid var(--md-sys-color-outline);
+      border-radius: 2.286em;
       background: var(--md-sys-color-surface-container-highest);
-      transition: background-color 0.2s ease, border-color 0.2s ease;
-    }
-    /* 选中态底色由 applyState 按 color 属性写内联样式（无 color 属性时用默认 primary） */
-    :host([checked]) .track {
-      border-color: var(--md-sys-color-primary);
     }
 
+    /* 描边/填充统一层：未选中 = 2px outline 描边，选中 = 边框扩展成实心底。
+       只保留这一层带边框的元素（track 无边框），避免两层描边间的亚像素缝隙；
+       也不能直接做在 track 上——边框会内缩绝对定位子元素的包含块，把拇指推出轨道 */
+    .bg {
+      position: absolute;
+      inset: 0;
+      box-sizing: border-box;
+      border-radius: inherit;
+      border: 0.143em solid var(--md-sys-color-outline);
+      transition: border-color 0.3s ease;
+    }
+
+    /* 拇指：未选中 outline 灰 + scale(0.6) 收缩，选中复原并滑到右侧 */
     .thumb {
       position: absolute;
       left: 0.143em;
       top: 50%;
-      width: 1.143em; /* 16px，选中态 M3 拇指缩小 */
-      height: 1.143em;
+      width: 1.714em; /* 24px */
+      height: 1.714em;
       border-radius: 50%;
-      transform: translateY(-50%) scale(1.375) translateX(0);
+      transform: translateY(-50%) scale(0.6);
       background: var(--md-sys-color-outline);
       box-shadow: 0 0.071em 0.214em rgba(0, 0, 0, 0.25);
-      transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), background-color 0.2s ease;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
       display: grid;
       place-items: center;
+      color: inherit;
     }
     :host([checked]) .thumb {
-      transform: translateY(-50%) translateX(1.714em); /* 46-16-4-4px 位移 */
+      transform: translateY(-50%) translateX(1.429em) scale(1);
       background: var(--md-sys-color-on-primary);
+    }
+
+    /* 选中态对勾：stroke 描边入场（on-角色色拇指上用角色色勾） */
+    .mark {
+      width: 1.143em;
+      height: 1.143em;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    :host([checked]) .mark { opacity: 1; }
+    .mark path {
+      stroke-dasharray: 26;
+      stroke-dashoffset: 26;
+    }
+    :host([checked]) .mark path {
+      animation: st-sw-draw 0.16s ease-out forwards;
+      animation-delay: 0.16s;
+    }
+    @keyframes st-sw-draw { to { stroke-dashoffset: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .thumb, .track, .mark { transition: none; animation: none; }
     }
 
     .label {
@@ -66,8 +96,8 @@
       all: unset;
       position: absolute;
       inset: 0;
-      z-index: 2; /* 盖住 position:relative 的兄弟元素，保证点击/键盘都落在语义元素上 */
       cursor: inherit;
+      z-index: 2; /* 盖住 position 的兄弟元素，保证点击/键盘都落在语义元素上 */
     }
     .native:focus-visible ~ .track {
       outline: 2px solid var(--md-sys-color-on-surface);
@@ -78,7 +108,11 @@
   </style>
 
   <input class="native" type="checkbox" tabindex="0">
-  <span class="track"><span class="thumb"></span></span>
+  <span class="track"><span class="bg"></span><span class="thumb">
+    <svg class="mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M5 11l6 6l10 -10"/>
+    </svg>
+  </span></span>
   <span class="label"><slot></slot></span>
 
   <script>
@@ -109,7 +143,8 @@
         this.applyState();
       },
       proto: {
-        // watch 初始化也会触发一次（坑 #27），applyState 无副作用，天然安全
+        // watch 初始化也会触发一次（坑 #27），applyState 无副作用，天然安全。
+        // 选中态：边框扩展填满轨道（border-width = 轨道半高）实现实心底，拇指用 on-角色色
         applyState() {
           const sr = this.ele.shadowRoot;
           const input = sr.querySelector(".native");
@@ -121,20 +156,29 @@
           input.disabled = this.disabled !== null;
 
           const name = this.color;
+          const main = name
+            ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
+            : "var(--md-sys-color-primary)";
+          const onMain = name
+            ? `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-primary)))`
+            : "var(--md-sys-color-on-primary)";
+
+          const bg = sr.querySelector(".bg");
           if (on) {
-            const main = name
-              ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
-              : "var(--md-sys-color-primary)";
-            const onMain = name
-              ? `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-primary)))`
-              : "var(--md-sys-color-on-primary)";
-            track.style.background = main;
-            track.style.borderColor = main;
+            // bg 层边框扩展为半轨道高度（描边 → 实心底），单层无缝；
+            // track 底色同步为主题色——em 小数像素取整时上下边框间可能残留 1px 内容区，
+            // 不同步会在正中露出浅灰细线（12px/20px 字号下可见）
+            bg.style.borderWidth = "1.143em";
+            bg.style.borderColor = main;
+            track.style.backgroundColor = main;
             thumb.style.background = onMain;
+            thumb.style.color = main; // 对勾颜色 = 角色色（拇指底为 on-角色色）
           } else {
-            track.style.background = "";
-            track.style.borderColor = "";
+            bg.style.borderWidth = "";
+            bg.style.borderColor = "";
+            track.style.backgroundColor = "";
             thumb.style.background = "";
+            thumb.style.color = "";
           }
         },
       },

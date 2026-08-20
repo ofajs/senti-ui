@@ -98,6 +98,22 @@ test("switch：点击切换并派发 change", async ({ page }) => {
   expect(await page.evaluate(() => window.events)).toEqual([{ id: "sw-basic", checked: true }]);
 });
 
+test("switch：选中态拇指完整位于轨道内（右侧留 4px）", async ({ page }) => {
+  const geo = await page.evaluate(() => {
+    const el = document.querySelector("#sw-init");
+    const track = el.shadowRoot.querySelector(".track").getBoundingClientRect();
+    const thumb = el.shadowRoot.querySelector(".thumb").getBoundingClientRect();
+    return {
+      inside: thumb.left >= track.left && thumb.right <= track.right,
+      rightGap: Math.round(track.right - thumb.right),
+      thumbW: Math.round(thumb.width),
+    };
+  });
+  expect(geo.inside).toBe(true);
+  expect(geo.rightGap).toBeLessThanOrEqual(6);
+  expect(geo.thumbW).toBeGreaterThan(20); // 选中复原 24px
+});
+
 test("switch：disabled 阻断交互", async ({ page }) => {
   await page.locator("#sw-disabled").click({ force: true }).catch(() => {});
   await page.waitForTimeout(100);

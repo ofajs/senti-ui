@@ -31,20 +31,21 @@ JS 修改状态用 attribute 方式：`el.setAttribute("checked", "")` / `el.rem
 
 | 属性 | 默认值 |
 |------|--------|
-| 轨道尺寸 | `3.286em × 2em`（= 46×28px @ 14px，M3 比例） |
-| 轨道边框 | `0.143em solid outline`，开启态为开启色 |
-| 拇指尺寸 | 未选中 `1.571em`（22px）/ 选中 `1.143em`（16px，M3 选中缩小） |
-| 拇指位移 | 选中时右移 `1.714em`（M3 emphasized 0.2s） |
+| 轨道尺寸 | `3.714em × 2.286em`（= 52×32px @ 14px） |
+| 轨道边框 | `0.143em（2px）solid outline`，浅灰底 `surface-container-highest` |
+| 拇指尺寸 | `1.714em`（24px）；未选中 `scale(0.6)` 收缩、outline 灰，选中复原、`on-primary` 白 + 对勾 |
+| 拇指动效 | 0.3s `cubic-bezier(0.4, 0, 0.2, 1)` 位移+缩放；对勾 stroke 描边入场 0.16s |
+| 开启态轨道 | 边框扩展为半轨道高（1.143em）填满成实心（描边→底色无缝过渡），颜色为 `primary` / `color` 角色色 |
 | 标签间距 | `0.857em` |
 | `font-size` | `14px` |
-| 开启态轨道 | `primary`（`color` 属性时为对应角色色），拇指 `on-primary` |
 
 ## 注意事项与使用技巧
 
 - `checked` 是标签属性：JS 用 `setAttribute` / `removeAttribute`；ofa 页面绑定用 `attr:checked="expr"`
 - 交互由内部透明原生 checkbox 承载（覆盖整个组件，点文字也能切换），Space 键盘可用
 - `color` 属性只影响开启态轨道/拇指色，未选中态恒为 outline/surface 系
-- 拇指选中时会缩小（M3 规范），不要用外部 style 强行改拇指尺寸
+- 精致动效三件套：拇指未选中收缩/选中复原 + 平移、选中边框扩展填满轨道（描边→实心底无缝过渡）、拇指内对勾描边入场
+- 不要用外部 style 强行改拇指尺寸/边框宽度（选中态的实心底靠 border-width 扩展实现）
 ## 验证页面
 
 `index.html`（直接访问 `/packages/switch/`）。

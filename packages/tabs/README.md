@@ -55,6 +55,12 @@ tabBar.addEventListener("click", (e) => {
 </st-tab-bar>
 ```
 
+## 注意事项与使用技巧
+
+- `active` 由**外部逻辑**切换（组件不自动管理）：ofa 页面用 `attr:active="current === i"` 表达式绑定 + `on:click` 改数据即可
+- 指示条动画自动跟随 active 项（M3 emphasized 0.3s）；容器尺寸变化时瞬时重定位
+- disabled 项原生阻断点击、无事件冒泡；icon 用 `slot="icon"`
+- 计算属性（如当前标签文字）放 proto 上的 `get`，不要放模块顶层（会加载失败且报错被吞）
 ## 验证页面
 
 `index.html`（直接访问 `/packages/tabs/`）。

@@ -43,6 +43,12 @@
 </template>
 ```
 
+## 注意事项与使用技巧
+
+- 放在任意 `position: relative` 的父元素内即可，波纹色 currentColor 自动协调
+- 事件源自嵌套自定义组件时自动忽略（由该组件自己的 ripple 处理），不会一次点击多层涟漪
+- 波纹区 `pointer-events: none` + `overflow: hidden; border-radius: inherit`，不拦截交互、自动裁剪圆角
+- 一般不单独使用——st-button / st-list-item / st-menu-item / st-tab-item / st-nav-item 已内嵌
 ## 验证页面
 
 `index.html` 为打开即看的完整示例（直接访问 `/packages/ripple/`）。

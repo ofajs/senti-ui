@@ -46,6 +46,12 @@
 <st-radio name="fruit" disabled>樱桃（禁用）</st-radio>
 ```
 
+## 注意事项与使用技巧
+
+- **同组互斥靠 `name` 属性**：原生 radio 分组不跨 shadow root，组件在最近容器内查询同 `name` 兄弟手动互斥——分组项必须写在同一个父容器里
+- 被取消选中的兄弟项**不**派发 change，只有被点击的项派发
+- `checked` / `disabled` 用 attribute 方式修改；`color` 只影响选中态描边/圆点色
+- 无标签内容时标签区自动隐藏
 ## 验证页面
 
 `index.html`（直接访问 `/packages/radio/`）。

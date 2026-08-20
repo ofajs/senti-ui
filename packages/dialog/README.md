@@ -17,12 +17,18 @@
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `open` | boolean | 无 | 显示对话框（纯 CSS 控制显隐，`setAttribute` / `removeAttribute` 同步生效） |
-| `auto-close` | boolean | 无 | 允许交互关闭：点击遮罩或按 Escape 时移除 `open` 并派发 `close` 事件；未设置时只能由外部代码关闭 |
+| `open` | —（data，非标签属性） | `false` | 运行时显示状态。**推荐 `sync:open="xxx"` 双向绑定**：内部交互关闭（auto-close）会自动回写上层数据；也兼容标签裸属性 / `setAttribute` / `removeAttribute`（组件内部同步） |
+| `auto-close` | boolean | 无 | 允许交互关闭：点击遮罩或按 Escape 时关闭（改 data `open`，`sync:open` 自动回写）并派发 `close` 事件；未设置时只能由外部代码关闭 |
 
 JS 中请用 attribute 方式（直接改 property 不触发更新）：
 
+```html
+<!-- 推荐：sync:open 双向绑定，auto-close 关闭后 xxx 自动变回 false -->
+<st-dialog sync:open="dlgOpen" auto-close> ... </st-dialog>
+```
+
 ```js
+// 兼容写法（非 ofa 页面 / 自动化测试）
 dialog.setAttribute("open", "");   // 打开
 dialog.removeAttribute("open");    // 关闭（不派发 close 事件）
 ```
@@ -61,7 +67,8 @@ document.querySelector("st-dialog").addEventListener("close", () => {
 - **M3 emphasized 动效**：打开时遮罩淡入（250ms）+ 面板 `scale(0.9)` 上移入场（300ms，M3 emphasized 曲线）；关闭时反向退出（200ms），动画播完后才彻底隐藏。系统开启"减少动态效果"（`prefers-reduced-motion`）时动画时长自动趋零
 - 打开时焦点自动移入面板容器（`tabindex="-1"`），键盘用户可直接 Tab 到内部控件；面板本身不画 focus ring（由内部交互元素各自承载）
 - Escape / 遮罩点击仅在 `auto-close` 存在时生效；多个对话框同时打开时各管各的
-- 关闭后组件仍留在 DOM（`display: none`），状态由外部管理；快速关闭再打开会立即取消退出动画重新入场
+- 关闭后组件仍留在 DOM（`display: none`）；快速关闭再打开会立即取消退出动画重新入场
+- 内部交互关闭改的是 data `open`（`this.open = false`），`sync:open` 绑定的上层数据自动同步；close 事件同时派发
 - 组件从 DOM 移除时自动清理 document 级键盘监听与关闭动画定时器
 
 ## 外观定制：原生 CSS `::part(panel)`
@@ -108,6 +115,13 @@ st-dialog::part(panel) {
 
 `st-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
 
+## 注意事项与使用技巧
+
+- **`open` 是运行时状态（data，非标签属性）**：会被内部交互修改的状态放 data 而非 attrs——attrs 属性内部只能 setAttribute/removeAttribute，无法回写上层的 `sync:` 绑定。**ofa 页面里用 `sync:open="xxx"`**，auto-close 关闭后 xxx 自动变回 false
+- 兼容路径：标签裸属性 `open`、`setAttribute` / `removeAttribute` 也有效（内部 MutationObserver 同步进 data），但 ofa 绑定场景仍推荐 `sync:open`
+- `close` 事件只在**交互关闭**（auto-close）时派发；外部关闭不派发——若需统一感知，监听后自行维护状态
+- 面板定制用原生 `::part(panel)` 选择器（不是自定义变量）；字号类直接写宿主 style（可继承）
+- 多个对话框同时打开时 Escape 各管各的（都设 auto-close 时都会关）
 ## 验证页面
 
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `/packages/dialog/`）。

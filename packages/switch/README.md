@@ -39,6 +39,12 @@ JS 修改状态用 attribute 方式：`el.setAttribute("checked", "")` / `el.rem
 | `font-size` | `14px` |
 | 开启态轨道 | `primary`（`color` 属性时为对应角色色），拇指 `on-primary` |
 
+## 注意事项与使用技巧
+
+- `checked` 是标签属性：JS 用 `setAttribute` / `removeAttribute`；ofa 页面绑定用 `attr:checked="expr"`
+- 交互由内部透明原生 checkbox 承载（覆盖整个组件，点文字也能切换），Space 键盘可用
+- `color` 属性只影响开启态轨道/拇指色，未选中态恒为 outline/surface 系
+- 拇指选中时会缩小（M3 规范），不要用外部 style 强行改拇指尺寸
 ## 验证页面
 
 `index.html`（直接访问 `/packages/switch/`）。

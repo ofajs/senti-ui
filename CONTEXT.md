@@ -57,11 +57,21 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 写页面模块（page.html）与示例代码时，API 选择有严格优先级：
 
+0. **状态建模**：组件的运行时状态（可被内部交互修改的，如 dialog 的 open、select 的 value）放 **data**（不放 attrs）——attrs 声明的属性内部只能 setAttribute/removeAttribute，无法回写上层的 `sync:` 绑定；纯外部输入的语义配置（disabled / auto-close 等）才放 attrs。data 状态需 watch 反射到宿主属性供 CSS 选择器用，并用 MutationObserver 做属性→data 的反向兼容
 1. **优先 ofa.js 模板渲染语法**——数据绑定 `{{xxx}}`、属性绑定 `attr:xxx="expr"`（布尔属性必须 `attr:` 不能 `:prop`）、事件绑定 `on:click="method"`（根级直接写方法名，o-fill 内才用 `$host.`）、列表 `o-fill`、计算属性放 **proto 上的 `get`**（放模块顶层会导致页面模块加载失败且报错被吞，只显示"Loading page module failed"）
 2. **其次 ofa.js API**——`this.xxx = ...` 改数据驱动视图（不要手动 setAttribute/DOM 操作）、`sync:` 双向绑定、`this.emit()` 自定义事件
 3. **最后才用原生 DOM API**——仅当 ofa 没有对应能力（如 ResizeObserver、document 级监听、getBoundingClientRect 量取）
 
 典型对照：打开对话框用 `attr:open="openState.basic"` + `on:click="openDlg('basic')"`（数据驱动），而不是 ready 里 `addEventListener` + `setAttribute`；动态行列表用 `o-fill :value="lines"`，而不是 `insertAdjacentHTML`。**禁止**在 ready 里用 `this.ele.shadowRoot.querySelector(...).addEventListener(...)` 挂事件——这是 ofa 页面模块，模板语法天然覆盖。
+
+### 文档（README.md）规范
+
+每个组件的 README 必须包含「**注意事项与使用技巧**」章节，把该组件特有的坑和技巧写全（不是通用框架知识的重复），至少覆盖：
+
+- 状态建模方式：哪些是标签属性（attribute 修改）、哪些是运行时状态（data，`el.value` / `sync:open` 读写）——**会被内部交互修改的状态（dialog 的 open、input 的 value、menu 的 open）必须声明为 data 并写明 `sync:` 绑定用法**，attrs 声明的状态内部无法回写上层绑定（st-dialog 的 open 已踩过此坑）
+- 组件特有的交互细节（如 radio 同组互斥依赖同一父容器、snackbar 的 action 按钮必须用 st-button 的 `color` 属性而非内联 style）
+- 已知限制（如 st-select 弹层被 overflow 祖先裁剪）
+- 与其他组件配合的技巧（如 ripple 已内嵌于哪些组件）
 
 ### 验收页（page.html）规范
 
@@ -87,7 +97,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 - **st-input**（`packages/input/`）：单行输入框，两种 variant（outlined/filled）、disabled、readonly、type、placeholder、`default-value` 初始值属性、prefix/suffix 插槽、`color` 语义色属性（控制 caret 与 focus 边框色，常用于 error/success 校验态）；**value 是运行时状态（ofa data，非标签属性），attached 时由 default-value 初始化，JS 读写用 `el.value`**；`input`/`change` 事件天然 composed 直接在宿主监听；提供 `focus()`/`blur()` 方法。视觉在 `:host` 上，内部透明 `.native` input 承载交互。
 - **st-textarea**（`packages/textarea/`）：多行输入框，与 st-input 同范式（outlined/filled、rows、default-value 初始值/color/disabled/readonly、focus 描边/底线动画；value 为运行时状态，`el.value` 读写）；内部透明 textarea 用 rows 自撑高度（拖拽手柄默认关闭）；`autosize` 属性按内容自动撑开（rows 为最小高度，ResizeObserver 兜底外部字号变化）。
 - **st-select**（`packages/select/`）：单选下拉框，与 st-input 同范式（outlined/filled、placeholder、default-value 初始选中/color/disabled、focus 描边/底线动画；value 为运行时状态，`el.value` 读写）；选项写在 light DOM 的原生 `<option>`（value 缺省取文本），组件自绘 M3 风格弹层（shadow 内绝对定位，选中项 secondary-container + 对勾、键盘 ↑↓/Enter/Escape/Home/End 全支持、点击外部关闭）；`change` 事件 composed。注意：弹层在 shadow 内，被 overflow 祖先裁剪时会截断。
-- **st-dialog**（`packages/dialog/`）：模态对话框，`open` 显隐（纯 CSS，默认 display:none + `:host([open])` 正向启用）+ `auto-close`（遮罩点击/Escape 交互关闭并派发 `close` 事件 composed）；headline/默认/actions 三插槽（空区块自动隐藏）；**结构例外：宿主是全屏遮罩层（fixed + grid 居中），面板在 shadow 内 `part="panel"`，宽高/圆角/底色用原生 `::part(panel)` 选择器定制**（遮罩必须铺满视口，面板视觉无法放 :host 上）；面板默认值全 em（宿主改 font-size 全面板等比缩放）；打开时焦点移入面板容器；M3 emphasized 动效（遮罩淡入 250ms + 面板 scale 0.9 上移入场 300ms，关闭反向退出 200ms 后再隐藏，closing 过渡态由 JS 短暂挂载，watch 需 `_wasOpen` 守卫防初始化误触发）；轻磨砂遮罩（rgba(0,0,0,0.28) + blur 0.357em）。已在浏览器中完成功能与动画验证。
+- **st-dialog**（`packages/dialog/`）：模态对话框，`open` 为**运行时状态（data，非 attrs）**——内部交互关闭（auto-close）改 `this.open`，经 `sync:open` 双向绑定自动回写上层（attrs 声明的 open 内部 removeAttribute 无法回写 `:open` 绑定，此为状态类属性放 data 的原因）；watch 反射 data → 宿主 open 属性供 CSS，MutationObserver 反向兼容 setAttribute；显隐（纯 CSS，默认 display:none + `:host([open])` 正向启用）+ `auto-close`（遮罩点击/Escape 交互关闭并派发 `close` 事件 composed）；headline/默认/actions 三插槽（空区块自动隐藏）；**结构例外：宿主是全屏遮罩层（fixed + grid 居中），面板在 shadow 内 `part="panel"`，宽高/圆角/底色用原生 `::part(panel)` 选择器定制**（遮罩必须铺满视口，面板视觉无法放 :host 上）；面板默认值全 em（宿主改 font-size 全面板等比缩放）；打开时焦点移入面板容器；M3 emphasized 动效（遮罩淡入 250ms + 面板 scale 0.9 上移入场 300ms，关闭反向退出 200ms 后再隐藏，closing 过渡态由 JS 短暂挂载，watch 需 `_wasOpen` 守卫防初始化误触发）；轻磨砂遮罩（rgba(0,0,0,0.28) + blur 0.357em）。已在浏览器中完成功能与动画验证。
 - **表单选择类**（checkbox / switch / radio，2026-08-20 从 Punch-UI 重构）：统一范式——内部透明原生 `<input type="checkbox|radio">`（`all: unset` + absolute inset 0 + **z-index: 2 盖住 position:relative 的兄弟元素**）承载点击/Space/焦点，变更后反射回宿主属性（`checked`/`indeterminate`）并派发 `change`（composed）；disabled 由 `input.disabled` 原生阻断；`color` 属性选中态换角色色（applyState 写 shadow 内元素内联样式）；对勾/圆点描边与弹性入场动画；radio 的 name 分组不跨 shadow root，互斥由组件在同一容器内查询同 name 兄弟手动实现。
 - **st-snackbar**（`packages/snackbar/`）：消息条，`open` 显隐 + `duration`（毫秒）自动关闭派发 `close`；视觉在 :host（默认 secondary 次级色底，color 属性可换角色色）；`hide()` 已桥接为宿主 DOM property（坑 #24）；上滑入场动画。
 - **st-collapse**（`packages/collapse/`）：高度过渡折叠容器，`hide` 收起；ResizeObserver 跟随内容高度；watch 初始触发需容错（shadowRoot 未就绪直接 return）。

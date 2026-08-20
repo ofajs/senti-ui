@@ -123,24 +123,34 @@
     export default async () => ({
       tag: "st-dialog",
       attrs: {
-        open: null,
         autoClose: null,
+      },
+      data: {
+        // open 是运行时状态（data，非标签属性）：内部交互关闭（auto-close）改 this.open，
+        // 经 sync:open 双向绑定自动回写上层；外部也可用 setAttribute/removeAttribute
+        // （ready 里的属性观察器会同步进 data）。CSS 显隐仍由宿主 open 属性驱动（watch 反射）
+        open: false,
       },
       watch: {
         open() {
           const ele = this.ele;
+          const isOpen = this.open === true;
+          // data → 属性反射（供 :host([open]) CSS 选择器）
+          if (isOpen) ele.setAttribute("open", "");
+          else ele.removeAttribute("open");
+
           clearTimeout(this._closingTimer);
-          if (this.open !== null) {
+          if (isOpen) {
             // 打开：撤掉残留的退出过渡态，焦点移到面板容器（tabindex=-1），
             // 键盘用户随后可 Tab 进内部控件
             this._wasOpen = true;
             ele.removeAttribute("closing");
             const panel = ele.shadowRoot.querySelector(".panel");
-            // setAttribute 的 watch 异步触发，等面板可见后再聚焦
+            // watch 异步触发，等面板可见后再聚焦
             requestAnimationFrame(() => panel.focus());
           } else if (this._wasOpen) {
             // 关闭：短暂保留 closing 态播完退出动画（200ms），再彻底隐藏。
-            // ofa 初始化时也会以初始值 null 触发一次 watch，用 _wasOpen 区分（非关闭场景）
+            // data watch 初始化也会以初始值 false 触发一次，用 _wasOpen 区分（坑 #27）
             this._wasOpen = false;
             ele.setAttribute("closing", "");
             this._closingTimer = setTimeout(() => ele.removeAttribute("closing"), 250);
@@ -150,6 +160,15 @@
       ready() {
         const ele = this.ele;
         const sr = ele.shadowRoot;
+
+        // 属性 → data 兼容路径：标签裸属性 / 外部 setAttribute 同样有效
+        // （值一致时 data 不变化，不会与 watch 的反射形成循环）
+        if (ele.hasAttribute("open")) this.open = true;
+        this._attrObserver = new MutationObserver(() => {
+          const attrOpen = ele.hasAttribute("open");
+          if (attrOpen !== (this.open === true)) this.open = attrOpen;
+        });
+        this._attrObserver.observe(ele, { attributes: true, attributeFilter: ["open"] });
 
         // headline / actions 未分发内容时隐藏对应区块，避免空区块参与 gap 布局
         ["headline", "actions"].forEach((name) => {
@@ -175,12 +194,14 @@
       detached() {
         document.removeEventListener("keydown", this._onKeydown);
         clearTimeout(this._closingTimer);
+        this._attrObserver?.disconnect();
       },
       proto: {
-        // 关闭（仅在 auto-close 时允许交互触发），并派发 close 事件供外部监听
+        // 关闭（仅在 auto-close 时允许交互触发），并派发 close 事件供外部监听。
+        // 改 this.open（data）：sync:open 的上层绑定自动同步
         closeSelf() {
-          if (this.autoClose === null || this.open === null) return;
-          this.ele.removeAttribute("open");
+          if (this.autoClose === null || this.open !== true) return;
+          this.open = false;
           this.ele.dispatchEvent(new Event("close", { bubbles: true, composed: true }));
         },
       },

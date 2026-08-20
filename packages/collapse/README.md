@@ -32,6 +32,12 @@ collapse.removeAttribute("hide");    // 展开
 
 无事件；高度动画纯 CSS，内容完全透传（无样式注入）。
 
+## 注意事项与使用技巧
+
+- `hide` 用 `setAttribute` / `removeAttribute` 切换，展开/收起各 0.3s（M3 emphasized）
+- 内容高度变化（含嵌套折叠引起的）由 ResizeObserver 瞬时跟随，无过渡——这是特性：嵌套折叠时外层逐帧同步内层，不会拖尾
+- 不要给 collapse 内内容的 margin 依赖外层高度（内容用 absolute 量高，顶部留 0.1px 防 margin 折叠）
+- 配合 st-list-item 的 sublist 使用时无需手动管理
 ## 验证页面
 
 `index.html`（直接访问 `/packages/collapse/`）。

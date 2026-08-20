@@ -48,6 +48,13 @@ el.addEventListener("change", (e) => {
 | 选中态底色 | `primary`（`color` 属性时为对应角色色），对勾 `on-primary` |
 | 对勾动画 | stroke 描边入场 0.16s |
 
+## 注意事项与使用技巧
+
+- `checked` / `indeterminate` 是标签属性：JS 用 `setAttribute` / `removeAttribute`（直接改 property 不生效）；ofa 页面绑定用 `attr:checked="expr"`
+- 用户点击会自动退出 `indeterminate` 并切换为选中态（M3 行为）
+- 交互由内部透明原生 checkbox 承载（覆盖整个组件，点文字也能切换），Space 键盘可用
+- 无标签内容时（`:empty`）标签区自动隐藏
+- `color` 属性只影响选中态配色，未选中态边框恒为 on-surface-variant
 ## 验证页面
 
 `index.html`（直接访问 `/packages/checkbox/`）。

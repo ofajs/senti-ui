@@ -144,6 +144,13 @@ document.querySelector("st-select").addEventListener("change", (e) => {
 
 `st-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
 
+## 注意事项与使用技巧
+
+- `value` 是运行时状态：`el.value = "x"` 改选中（不派发 change）；初始选中用 `default-value`
+- 下拉弹层渲染在组件 shadow 内（绝对定位），被 `overflow: hidden` 祖先裁剪时会截断——该场景调整布局
+- 动态选项三种方式：`el.options = [...]`、`:options` 绑定、o-fill 嵌套（组件会深入容器收集渲染出的 option）
+- 键盘全支持：Enter/Space 打开、↑↓ 循环移动、Home/End、Escape/Tab 关闭
+- 判断"点击组件外部"必须用 `e.composedPath().includes(ele)`（composed 事件 target 在 document 层已被重定向）
 ## 验证页面
 
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `/packages/select/`）。

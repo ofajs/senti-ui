@@ -30,7 +30,7 @@
     （点遮罩 / Escape 关闭 +1）
   </p>
 
-  <st-dialog attr:open="openState.basic">
+  <st-dialog sync:open="openState.basic">
     <h2 slot="headline">基础对话框</h2>
     <p>没有 auto-close：点击遮罩与 Escape 都不会关闭，只能用下面的按钮。</p>
     <div slot="actions">
@@ -38,7 +38,7 @@
     </div>
   </st-dialog>
 
-  <st-dialog attr:open="openState.auto" auto-close on:close="onAutoClose">
+  <st-dialog sync:open="openState.auto" auto-close on:close="onAutoClose">
     <h2 slot="headline">auto-close 对话框</h2>
     <p>点击遮罩或按 Escape 试试，关闭时会派发 close 事件。</p>
     <div slot="actions">
@@ -47,18 +47,18 @@
     </div>
   </st-dialog>
 
-  <st-dialog class="wide" attr:open="openState.wide" auto-close on:close="onAutoClose">
+  <st-dialog class="wide" sync:open="openState.wide" auto-close on:close="onAutoClose">
     <h2 slot="headline">Wide 定制面板</h2>
     <p>width: min(40em, 100%)、border-radius: 1em —— 全部通过原生 ::part(panel) 选择器覆盖。</p>
   </st-dialog>
 
-  <st-dialog class="fullscreen" attr:open="openState.fs" auto-close on:close="onAutoClose">
+  <st-dialog class="fullscreen" sync:open="openState.fs" auto-close on:close="onAutoClose">
     <h2 slot="headline">Fullscreen</h2>
     <p>width/height 100%、无圆角，正文区超高时内部滚动。</p>
     <o-fill :value="lines"><p>{{$data}}</p></o-fill>
   </st-dialog>
 
-  <st-dialog attr:open="openState.small" auto-close on:close="onAutoClose" style="font-size: 12px;">
+  <st-dialog sync:open="openState.small" auto-close on:close="onAutoClose" style="font-size: 12px;">
     <h2 slot="headline">12px 缩放</h2>
     <p>宿主 font-size: 12px，面板 padding/圆角/宽度全部等比缩小。</p>
     <div slot="actions">

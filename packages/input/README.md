@@ -110,6 +110,13 @@ document.querySelector("st-input").addEventListener("input", (e) => {
 
 `st-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
 
+## 注意事项与使用技巧
+
+- `value` 是运行时状态（ofa data）：JS 读写用 `el.value`，`setAttribute("value")` 无效；初始值用标签属性 `default-value`
+- `input`/`change` 事件都可直接在宿主监听（change 由组件转发为 composed——原生 change 穿不出 shadow）
+- 事件回调里读 `e.target.value` 安全（value 已反射到宿主 property）
+- 布尔属性 readonly 的 watch 同步是异步的，setAttribute 后稍等再断言
+- 宿主本身不可聚焦（无 tabindex），焦点在内部 `.native` input 上；自动化测试用真实点击聚焦
 ## 验证页面
 
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `/packages/input/`）。

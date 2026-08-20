@@ -60,6 +60,13 @@
 </st-menu>
 ```
 
+## 注意事项与使用技巧
+
+- `open` 是运行时状态（ofa data，非标签属性）：ofa 页面用 `sync:open="menuOpen"` 双向绑定（选中后自动关闭会回写）；JS 触发用真实点击 trigger
+- trigger 必须放 `slot="trigger"`；菜单项点击后面板自动关闭，item 的 click 正常冒泡供业务监听
+- 面板 fixed 定位自动翻转避让视口、min-width 不小于触发器宽度，不受祖先 overflow 裁剪
+- 点击外部关闭用 composedPath 判断（坑 #21），滚动/resize 时自动重定位
+- `align="left"` 面板左对齐触发器，默认右对齐
 ## 验证页面
 
 `index.html`（直接访问 `/packages/menu/`）。

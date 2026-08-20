@@ -59,6 +59,13 @@ snackbar.hide(); // JS 主动关闭（派发 close）
 
 定位由外部决定（通常 `position: fixed; bottom; left: 50%` 或用宿主 style 控制）。
 
+## 注意事项与使用技巧
+
+- **action 按钮必须用 st-button 的 `color` 属性着色**（如默认反色底上 `color="inverse-primary"`、红底上 `color="on-error"`）——给 st-button 写内联 style color 会被其配色逻辑覆盖
+- `duration` 是毫秒数属性，仅与 `open` 同时存在时生效；`el.hide()`（宿主 property）手动关闭并派发 close
+- 外部 `removeAttribute("open")` 关闭不派发 close
+- 定位由外部决定：常用 `position: fixed; bottom; left: 50%; transform: translateX(-50%)`
+- 纯展示场景直接加 `open` 属性静态渲染即可
 ## 验证页面
 
 `index.html`（直接访问 `/packages/snackbar/`）。

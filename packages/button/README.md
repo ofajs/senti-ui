@@ -128,6 +128,13 @@ document.querySelector("st-button").addEventListener("click", () => {});
 
 `st-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
 
+## 注意事项与使用技巧
+
+- **给 st-button 换色必须用它的 `color` 属性，不能写内联 `style="color: ..."`**——内联色会被组件自身的配色逻辑（applyColor）覆盖；放在反色/彩色容器（如 snackbar）里时用 `color="inverse-primary"` / `color="on-error"` 这类角色名
+- `variant` 运行时切换用 `attr:variant="expr"` 绑定（ofa 页面内），JS 里用 `setAttribute`（直接改 property 不触发更新）
+- 布尔属性（disabled/loading）在 JS 里用 `setAttribute` / `removeAttribute`，ofa 页面里绑定用 `attr:loading="busy"`（`:prop` 会把 false 序列化成属性字符串导致永远禁用）
+- `setAttribute` 触发组件 watch 是异步的（下一轮微任务），设置后同步读状态会得到旧值
+- loading 态自动阻断点击，不需要再叠加 disabled
 ## 验证页面
 
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `/packages/button/`）。

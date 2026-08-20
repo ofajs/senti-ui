@@ -1,0 +1,166 @@
+<!--
+  st-checkbox — Senti-UI 复选框组件（基于 ofa.js）
+  语义属性：checked / indeterminate / disabled / color（M3 角色名）
+  视觉默认值全用 em（宿主改 font-size 等比缩放），尺寸类可直接用原生 CSS 属性覆盖，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      font-size: 14px;
+      line-height: 1.4;
+      vertical-align: middle;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :host([disabled]) {
+      cursor: not-allowed;
+      opacity: 0.38;
+    }
+
+    .box {
+      box-sizing: border-box;
+      position: relative;
+      width: 1.571em; /* 22px */
+      height: 1.571em;
+      flex-shrink: 0;
+      border: 0.143em solid var(--md-sys-color-on-surface-variant);
+      border-radius: 0.286em; /* 4px */
+      display: grid;
+      place-items: center;
+      color: var(--md-sys-color-on-primary);
+      transition: background-color 0.16s ease, border-color 0.16s ease;
+    }
+    /* 选中/不确定态底色由 applyColor 按 color 属性写内联样式（无 color 属性时用默认 primary） */
+    :host([checked]) .box,
+    :host([indeterminate]) .box {
+      border-color: var(--md-sys-color-primary);
+    }
+
+    /* 对勾：stroke-dash 描边入场 */
+    .checkmark {
+      opacity: 0;
+    }
+    :host([checked]) .checkmark { opacity: 1; }
+    :host([indeterminate]) .checkmark { opacity: 0; }
+    .checkmark path {
+      stroke-dasharray: 26;
+      stroke-dashoffset: 26;
+    }
+    :host([checked]) .checkmark path {
+      animation: st-cb-draw 0.16s ease-out forwards;
+      animation-delay: 0.1s;
+    }
+    @keyframes st-cb-draw { to { stroke-dashoffset: 0; } }
+
+    /* 不确定态横线 */
+    .dash {
+      position: absolute;
+      width: 0.714em;
+      height: 0.143em;
+      border-radius: 0.143em;
+      background: var(--md-sys-color-on-primary);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    :host([indeterminate]) .dash { opacity: 1; }
+
+    .label {
+      margin-left: 0.857em; /* 12px */
+    }
+    :host(:empty) .label { display: none; }
+
+    /* 内部透明原生 checkbox：承载点击/键盘/焦点语义，覆盖整个组件（点文字也能切换） */
+    .native {
+      all: unset;
+      position: absolute;
+      inset: 0;
+      z-index: 2; /* 盖住 position:relative 的兄弟元素，保证点击/键盘都落在语义元素上 */
+      cursor: inherit;
+    }
+    .native:focus-visible ~ .box {
+      /* 焦点圈用 on-surface（与页面背景有对比，坑 #11） */
+      outline: 2px solid var(--md-sys-color-on-surface);
+      outline-offset: 2px;
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <input class="native" type="checkbox" tabindex="0">
+  <span class="box">
+    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.2" d="M5 11l6 6l10 -10"/>
+    </svg>
+    <span class="dash"></span>
+  </span>
+  <span class="label"><slot></slot></span>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-checkbox",
+      attrs: {
+        checked: null,
+        indeterminate: null,
+        disabled: null,
+        color: null,
+      },
+      watch: {
+        checked() { this.applyState(); },
+        indeterminate() { this.applyState(); },
+        disabled() { this.applyState(); },
+        color() { this.applyState(); },
+      },
+      ready() {
+        const ele = this.ele;
+        const sr = ele.shadowRoot;
+        const input = sr.querySelector(".native");
+
+        // 交互：原生 input 承载点击与键盘（Space），变更后反射回宿主属性并派发 change
+        input.addEventListener("change", () => {
+          if (input.checked) ele.setAttribute("checked", "");
+          else ele.removeAttribute("checked");
+          // 用户交互即退出不确定态
+          ele.removeAttribute("indeterminate");
+          ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
+        });
+
+        this.applyState();
+      },
+      proto: {
+        // 把 checked/indeterminate/disabled/color 状态应用到内部结构。
+        // watch 初始化也会以初始值触发一次（坑 #27），applyState 无副作用，天然安全
+        applyState() {
+          const ele = this.ele;
+          const sr = ele.shadowRoot;
+          const input = sr.querySelector(".native");
+          const box = sr.querySelector(".box");
+          const on = this.checked !== null || this.indeterminate !== null;
+
+          input.checked = this.checked !== null;
+          input.disabled = this.disabled !== null;
+
+          const name = this.color;
+          if (on) {
+            const main = name
+              ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
+              : "var(--md-sys-color-primary)";
+            box.style.background = main;
+            box.style.borderColor = main;
+          } else {
+            box.style.background = "";
+            box.style.borderColor = "";
+          }
+          box.style.color = name
+            ? `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-primary)))`
+            : "";
+        },
+      },
+    });
+  </script>
+</template>

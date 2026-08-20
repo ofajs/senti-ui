@@ -1,0 +1,189 @@
+<!--
+  st-list-item — Senti-UI 列表项组件（基于 ofa.js）
+  语义属性：button（可点击，hover 态 + 波纹 + click 事件）/ disabled / collapsible + expanded（sublist 折叠）
+  插槽：prefix / 默认（正文）/ suffix / sublist；视觉在 :host 上可直接覆盖，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: block;
+      position: relative;
+      font-size: 14px;
+      line-height: 1.5;
+      border-radius: 0.5em; /* 7px，与 st-input 一致 */
+      color: var(--md-sys-color-on-surface);
+    }
+    /* 首尾项外圆角（嵌套子列表同理） */
+    :host(:first-child) {
+      border-radius: 1.143em 1.143em 0.5em 0.5em;
+    }
+    :host(:last-child) {
+      border-radius: 0.5em 0.5em 1.143em 1.143em;
+    }
+    :host(:first-child:last-child) {
+      border-radius: 1.143em;
+    }
+
+    .main {
+      position: relative;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      min-height: 3em; /* 42px */
+      padding: 0.5em 1em;
+      border-radius: inherit;
+    }
+
+    /* M3 state layer：currentColor 半透明叠加 */
+    .layer {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: currentColor;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+    :host([button]:hover) .layer { opacity: 0.08; }
+    :host([button]:active) .layer { opacity: 0.12; }
+
+    :host([disabled]) {
+      cursor: not-allowed;
+    }
+    :host([disabled]) .main {
+      opacity: 0.38;
+    }
+    :host([disabled]) .layer { display: none; }
+
+    .prefix,
+    .suffix {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      gap: 0.571em;
+    }
+    .prefix { margin-right: 1em; color: var(--md-sys-color-on-surface-variant); }
+    .suffix { margin-left: 0.571em; color: var(--md-sys-color-on-surface-variant); }
+
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+    }
+    ::slotted([slot="prefix"]),
+    ::slotted([slot="suffix"]) {
+      display: inline-flex;
+    }
+    /* 副文本：slotted 元素加 secondary 属性 */
+    ::slotted([secondary]) {
+      font-size: 0.857em;
+      line-height: 1.4;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .expand-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    /* 坑 #20：反向逻辑——默认旋转收起态，expanded 正向展开 */
+    .expand-icon { transform: rotate(-90deg); }
+    :host([expanded]) .expand-icon { transform: none; }
+
+    .sublist {
+      display: block;
+    }
+
+    /* 内部透明原生 button：承载点击/键盘/焦点语义（button / collapsible 时） */
+    .native {
+      all: unset;
+      position: absolute;
+      inset: 0;
+      z-index: 2; /* 盖住 position:relative 的兄弟元素，保证点击/键盘都落在语义元素上 */
+      cursor: pointer;
+      border-radius: inherit;
+      display: none;
+    }
+    :host([button]) .native,
+    :host([collapsible]) .native { display: block; }
+    .native:focus-visible {
+      outline: 2px solid var(--md-sys-color-on-surface);
+      outline-offset: -2px;
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <l-m src="../ripple/ripple.html"></l-m>
+  <l-m src="../collapse/collapse.html"></l-m>
+
+  <div class="main">
+    <span class="layer"></span>
+    <div class="prefix"><slot name="prefix"></slot></div>
+    <div class="content"><slot></slot></div>
+    <div class="suffix">
+      <slot name="suffix"></slot>
+      <div class="expand-icon" style="display:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1.143em" height="1.143em" viewBox="0 0 24 24">
+          <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m17 10l-5 5l-5-5"/>
+        </svg>
+      </div>
+    </div>
+    <st-ripple></st-ripple>
+    <button class="native" type="button"></button>
+  </div>
+
+  <div class="sublist">
+    <st-collapse attr:hide="expanded === null">
+      <slot name="sublist"></slot>
+    </st-collapse>
+  </div>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-list-item",
+      attrs: {
+        button: null,
+        disabled: null,
+        collapsible: null,
+        expanded: null,
+      },
+      ready() {
+        const ele = this.ele;
+        const sr = ele.shadowRoot;
+
+        // collapsible 时显示展开箭头；非 collapsible 时 sublist 经 st-collapse 恒展开显示
+        this._syncIcon = () => {
+          sr.querySelector(".expand-icon").style.display =
+            this.collapsible !== null ? "" : "none";
+        };
+        this._syncIcon();
+
+        // disabled 同步到内部原生 button：原生 disabled 天然阻断点击/键盘/焦点
+        this.applyDisabled = () => {
+          sr.querySelector(".native").disabled = this.disabled !== null;
+        };
+        this.applyDisabled();
+
+        // 交互语义由内部 .native button 承载：
+        // - 折叠项：点击切换 expanded（不冒泡，避免触发外部点击逻辑）
+        // - button 项：click 天然冒泡 + composed 到宿主，无需手动派发
+        sr.querySelector(".native").addEventListener("click", (e) => {
+          if (this.disabled !== null || this.collapsible === null) return;
+          e.stopPropagation(); // 折叠项点击只切换 expanded，不作为 click 事件传出
+          if (this.expanded !== null) ele.removeAttribute("expanded");
+          else ele.setAttribute("expanded", "");
+        });
+      },
+      watch: {
+        // watch 初始化也会触发一次（坑 #27），无副作用的同步天然安全
+        collapsible() { this._syncIcon?.(); },
+        disabled() { this.applyDisabled?.(); },
+      },
+    });
+  </script>
+</template>

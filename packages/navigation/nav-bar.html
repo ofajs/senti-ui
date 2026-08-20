@@ -1,0 +1,104 @@
+<!--
+  st-nav-bar — Senti-UI 导航栏组件（基于 ofa.js）
+  子项为 light DOM 的 st-nav-item（active 属性标记当前项，由外部切换）；
+  药丸形高亮背景自动动画跟随 active 项，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.286em;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    /* 药丸形 active 背景：secondary-container，M3 emphasized 曲线跟随动画 */
+    .active-bg {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-radius: 2em;
+      background: var(--md-sys-color-secondary-container);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        left 0.3s cubic-bezier(0.2, 0, 0, 1),
+        top 0.3s cubic-bezier(0.2, 0, 0, 1),
+        width 0.3s cubic-bezier(0.2, 0, 0, 1),
+        height 0.3s cubic-bezier(0.2, 0, 0, 1),
+        opacity 0.2s ease;
+    }
+    .active-bg.not-animate { transition: none !important; }
+
+    l-m { display: none; }
+  </style>
+
+  <l-m src="./nav-item.html"></l-m>
+  <slot></slot>
+  <div class="active-bg"></div>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-nav-bar",
+      proto: {
+        // 定位 active 药丸到 active 项的指示区域（30ms 合并连续切换）
+        updateActive() {
+          if (this._timer) return;
+          this._timer = setTimeout(() => {
+            this._timer = null;
+            const ele = this.ele;
+            const items = ele.querySelectorAll("st-nav-item");
+            const active = Array.from(items).find((it) => it.hasAttribute("active"));
+            const bg = ele.shadowRoot.querySelector(".active-bg");
+            if (!active) {
+              bg.style.opacity = "0";
+              return;
+            }
+            // 对齐到子项内部的药丸指示区（icon 背景区）
+            const pill = active.shadowRoot.querySelector(".pill");
+            const pillRect = (pill || active).getBoundingClientRect();
+            const hostRect = ele.getBoundingClientRect();
+            bg.style.opacity = "1";
+            bg.style.left = pillRect.left - hostRect.left + "px";
+            bg.style.top = pillRect.top - hostRect.top + "px";
+            bg.style.width = pillRect.width + "px";
+            bg.style.height = pillRect.height + "px";
+          }, 30);
+        },
+      },
+      ready() {
+        const ele = this.ele;
+        this._itemObserver = new MutationObserver(() => this.updateActive());
+        const observeItems = () => {
+          ele.querySelectorAll("st-nav-item").forEach((it) => {
+            this._itemObserver.observe(it, { attributes: true, attributeFilter: ["active"] });
+          });
+        };
+        observeItems();
+        this._childObserver = new MutationObserver(observeItems);
+        this._childObserver.observe(ele, { childList: true });
+        this.updateActive();
+      },
+      attached() {
+        // 尺寸变化时瞬时重定位（不带动画）
+        const bg = () => this.ele.shadowRoot.querySelector(".active-bg");
+        this._resizeObserver = new ResizeObserver(() => {
+          bg().classList.add("not-animate");
+          this.updateActive();
+          clearTimeout(this._resizeTimer);
+          this._resizeTimer = setTimeout(() => bg().classList.remove("not-animate"), 50);
+        });
+        this._resizeObserver.observe(this.ele);
+      },
+      detached() {
+        this._itemObserver?.disconnect();
+        this._childObserver?.disconnect();
+        this._resizeObserver?.disconnect();
+      },
+    });
+  </script>
+</template>

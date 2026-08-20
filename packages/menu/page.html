@@ -1,0 +1,47 @@
+<!-- st-menu 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
+    section { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+  </style>
+
+  <section>
+    <h3>基础</h3>
+    <st-menu id="menu-right">
+      <st-button slot="trigger" variant="outlined">右对齐菜单 ▾</st-button>
+      <st-menu-item><span slot="prefix">✏️</span>编辑<span slot="suffix">⌘E</span></st-menu-item>
+      <st-menu-item><span slot="prefix">📋</span>复制<span slot="suffix">⌘C</span></st-menu-item>
+      <st-menu-item disabled><span slot="prefix">🗑</span>删除（禁用）</st-menu-item>
+      <hr>
+      <st-menu-item id="mi-about">关于</st-menu-item>
+    </st-menu>
+
+    <st-menu align="left" id="menu-left">
+      <st-button slot="trigger" variant="text">左对齐菜单 ▾</st-button>
+      <st-menu-item>选项 A</st-menu-item>
+      <st-menu-item>选项 B</st-menu-item>
+    </st-menu>
+  </section>
+
+  <p style="margin:0; font-size:14px; color: var(--md-sys-color-on-surface-variant);">
+    菜单项点击：<span class="code" style="font-family: ui-monospace, monospace;">{{lastPick}}</span>
+    ｜ open/close 计数：<span class="code" style="font-family: ui-monospace, monospace;">{{openCount}}</span>
+  </p>
+
+  <script>
+    export default async () => ({
+      data: { lastPick: "（无）", openCount: 0 },
+      ready() {
+        const sr = this.ele.shadowRoot;
+        sr.querySelector("#mi-about").addEventListener("click", () => {
+          this.lastPick = "关于";
+        });
+        const m = sr.querySelector("#menu-right");
+        m.addEventListener("open", () => { this.openCount += 1; });
+        m.addEventListener("close", () => { this.openCount -= 1; });
+      },
+      proto: {},
+    });
+  </script>
+</template>

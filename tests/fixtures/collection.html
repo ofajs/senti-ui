@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>st-list / st-menu / st-tab-bar / st-nav-bar test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-init.js"></script>
+  <l-m src="/packages/list/list.html"></l-m>
+  <l-m src="/packages/menu/menu.html"></l-m>
+  <l-m src="/packages/tabs/tab-bar.html"></l-m>
+  <l-m src="/packages/navigation/nav-bar.html"></l-m>
+  <style>
+    st-menu .panel-marker { display: none; }
+  </style>
+</head>
+<body>
+  <st-list id="list">
+    <st-list-item button id="li-btn"><span slot="prefix">📦</span>可点击项</st-list-item>
+    <st-list-item id="li-plain">普通项</st-list-item>
+    <st-list-item button disabled id="li-disabled">禁用项</st-list-item>
+    <st-list-item collapsible id="li-fold">
+      折叠项
+      <st-list slot="sublist">
+        <st-list-item button id="li-sub">子项</st-list-item>
+      </st-list>
+    </st-list-item>
+  </st-list>
+
+  <st-menu id="menu">
+    <button slot="trigger" id="menu-trigger">菜单</button>
+    <st-menu-item id="mi-a"><span slot="prefix">A</span>选项A</st-menu-item>
+    <st-menu-item id="mi-b">选项B</st-menu-item>
+    <st-menu-item disabled id="mi-x">禁用</st-menu-item>
+  </st-menu>
+
+  <st-tab-bar id="tabs">
+    <st-tab-item id="tab-a" active>邮件</st-tab-item>
+    <st-tab-item id="tab-b">通话</st-tab-item>
+    <st-tab-item disabled id="tab-x">禁用</st-tab-item>
+  </st-tab-bar>
+
+  <st-nav-bar id="nav">
+    <st-nav-item id="nav-a" active>首页</st-nav-item>
+    <st-nav-item id="nav-b">发现</st-nav-item>
+    <st-nav-item disabled id="nav-x">禁用</st-nav-item>
+  </st-nav-bar>
+
+  <script>
+    window.events = [];
+    document.querySelectorAll("st-list-item, st-menu-item, st-tab-item, st-nav-item").forEach((el) => {
+      el.addEventListener("click", () => window.events.push(el.id));
+    });
+    ["open", "close"].forEach((t) => {
+      document.querySelector("#menu").addEventListener(t, () => window.events.push("menu-" + t));
+    });
+  </script>
+</body>
+</html>

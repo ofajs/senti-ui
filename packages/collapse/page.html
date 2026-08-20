@@ -1,0 +1,36 @@
+<!-- st-collapse 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 12px; padding: 40px; align-content: start; max-width: 480px; }
+    st-collapse div { padding: 12px; color: var(--md-sys-color-on-surface-variant); }
+  </style>
+
+  <st-button id="btn-toggle" variant="outlined">展开 / 收起</st-button>
+
+  <st-collapse hide id="demo">
+    <div>
+      折叠内容：高度动画由 ResizeObserver 量取，内容变化自动跟随。<br>
+      再来一行文字验证多行高度。
+    </div>
+  </st-collapse>
+
+  <st-button id="btn-add" variant="text">往内容里加一行</st-button>
+
+  <script>
+    export default async () => ({
+      ready() {
+        const sr = this.ele.shadowRoot;
+        const c = sr.querySelector("#demo");
+        sr.querySelector("#btn-toggle").addEventListener("click", () => {
+          if (c.hasAttribute("hide")) c.removeAttribute("hide");
+          else c.setAttribute("hide", "");
+        });
+        let n = 3;
+        sr.querySelector("#btn-add").addEventListener("click", () => {
+          c.querySelector("div").insertAdjacentHTML("beforeend", `<br>动态第 ${n++} 行`);
+        });
+      },
+      proto: {},
+    });
+  </script>
+</template>

@@ -1,0 +1,124 @@
+<!--
+  st-nav-item — Senti-UI 导航项组件（基于 ofa.js）
+  语义属性：active / disabled；插槽 icon / 默认（文字）；click 事件冒泡到宿主，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      z-index: 1;
+    }
+
+    .container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 0.857em 1em;
+      color: var(--md-sys-color-on-surface-variant);
+      transition: color 0.2s ease;
+    }
+    :host([active]) .container {
+      color: var(--md-sys-color-on-secondary-container);
+    }
+
+    /* icon 背景药丸：nav-bar 的 active-bg 对齐到这里（.pill） */
+    .pill {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 4em; /* 56px */
+      height: 2.286em; /* 32px */
+      border-radius: 2em;
+    }
+
+    .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.714em; /* 24px */
+    }
+    ::slotted([slot="icon"]) { display: inline-flex; }
+
+    .label {
+      font-size: 0.857em; /* 12px，M3 navigation bar label */
+      margin-top: 0.286em;
+    }
+
+    /* M3 state layer：currentColor 半透明叠加（仅在药丸范围内） */
+    .layer {
+      position: absolute;
+      inset: 0;
+      border-radius: 2em;
+      background: currentColor;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+    :host(:hover) .layer { opacity: 0.08; }
+    :host(:active) .layer { opacity: 0.12; }
+
+    :host([disabled]) {
+      cursor: not-allowed;
+      opacity: 0.38;
+    }
+
+    /* 内部透明原生 button：承载点击/键盘/焦点语义，覆盖整个组件 */
+    .native {
+      all: unset;
+      position: absolute;
+      inset: 0;
+      z-index: 2; /* 盖住 position:relative 的兄弟元素，保证点击/键盘都落在语义元素上 */
+      cursor: pointer;
+    }
+    .native:focus-visible ~ .container .pill {
+      outline: 2px solid var(--md-sys-color-on-surface);
+      outline-offset: 2px;
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <l-m src="../ripple/ripple.html"></l-m>
+
+  <button class="native" type="button"></button>
+  <div class="container">
+    <div class="pill">
+      <span class="layer"></span>
+      <span class="icon"><slot name="icon"></slot></span>
+      <st-ripple></st-ripple>
+    </div>
+    <div class="label"><slot></slot></div>
+  </div>
+<script>
+  import "../color/st-init.js";
+  export default async () => ({
+    tag: "st-nav-item",
+    attrs: {
+      active: null,
+      disabled: null,
+    },
+    watch: {
+      disabled() { this.applyDisabled(); },
+    },
+    ready() {
+      const sr = this.ele.shadowRoot;
+      // disabled 同步到内部原生 button：原生 disabled 天然阻断点击/键盘/焦点
+      this.applyDisabled = () => {
+        sr.querySelector(".native").disabled = this.disabled !== null;
+      };
+      this.applyDisabled();
+    },
+    proto: {},
+  });
+</script>
+</template>

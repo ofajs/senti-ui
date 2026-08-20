@@ -1,0 +1,100 @@
+<!--
+  st-tab-bar — Senti-UI 标签栏组件（基于 ofa.js）
+  子项为 light DOM 的 st-tab-item（active 属性标记当前项，由外部切换）；
+  底部指示条自动动画跟随 active 项，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      position: relative;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      font-family: inherit;
+      border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    }
+
+    .indicator {
+      position: absolute;
+      bottom: 0;
+      height: 0.143em; /* 2px */
+      width: 0;
+      background: var(--md-sys-color-primary);
+      transition:
+        left 0.3s cubic-bezier(0.2, 0, 0, 1),
+        width 0.3s cubic-bezier(0.2, 0, 0, 1);
+    }
+    .indicator.not-animate { transition: none !important; }
+
+    l-m { display: none; }
+  </style>
+
+  <l-m src="./tab-item.html"></l-m>
+  <slot></slot>
+  <div class="indicator"></div>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-tab-bar",
+      data: {
+        noAnimate: true,
+      },
+      proto: {
+        // 定位指示条到 active 项（30ms 合并连续切换）
+        updateIndicator() {
+          if (this._timer) return;
+          this._timer = setTimeout(() => {
+            this._timer = null;
+            const ele = this.ele;
+            const items = ele.querySelectorAll("st-tab-item");
+            const active = Array.from(items).find((it) => it.hasAttribute("active"));
+            const indicator = ele.shadowRoot.querySelector(".indicator");
+            if (!active) {
+              indicator.style.opacity = "0";
+              return;
+            }
+            const itemRect = active.getBoundingClientRect();
+            const hostRect = ele.getBoundingClientRect();
+            indicator.style.opacity = "1";
+            indicator.style.left = itemRect.left - hostRect.left + "px";
+            indicator.style.width = itemRect.width + "px";
+          }, 30);
+        },
+      },
+      ready() {
+        const ele = this.ele;
+        // 子项 active 变化（属性监听，跨组件不依赖 ofa 实例方法）
+        this._itemObserver = new MutationObserver(() => this.updateIndicator());
+        const observeItems = () => {
+          ele.querySelectorAll("st-tab-item").forEach((it) => {
+            this._itemObserver.observe(it, { attributes: true, attributeFilter: ["active"] });
+          });
+        };
+        observeItems();
+        // 子项增删跟随
+        this._childObserver = new MutationObserver(observeItems);
+        this._childObserver.observe(ele, { childList: true });
+        this.updateIndicator();
+        // 首次定位不做动画，之后开启
+        setTimeout(() => { this.noAnimate = false; ele.shadowRoot.querySelector(".indicator").classList.remove("not-animate"); }, 100);
+      },
+      attached() {
+        // 尺寸变化时瞬时重定位（不带动画）
+        this._resizeObserver = new ResizeObserver(() => {
+          const indicator = this.ele.shadowRoot.querySelector(".indicator");
+          indicator.classList.add("not-animate");
+          this.updateIndicator();
+          clearTimeout(this._resizeTimer);
+          this._resizeTimer = setTimeout(() => indicator.classList.remove("not-animate"), 50);
+        });
+        this._resizeObserver.observe(this.ele);
+      },
+      detached() {
+        this._itemObserver?.disconnect();
+        this._childObserver?.disconnect();
+        this._resizeObserver?.disconnect();
+      },
+    });
+  </script>
+</template>

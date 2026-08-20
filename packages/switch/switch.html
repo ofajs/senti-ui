@@ -1,0 +1,143 @@
+<!--
+  st-switch — Senti-UI 开关组件（基于 ofa.js）
+  语义属性：checked / disabled / color（M3 角色名）
+  视觉默认值全用 em（宿主改 font-size 等比缩放），见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      font-size: 14px;
+      vertical-align: middle;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :host([disabled]) {
+      cursor: not-allowed;
+      opacity: 0.38;
+    }
+
+    .track {
+      box-sizing: border-box;
+      position: relative;
+      width: 3.286em; /* 46px */
+      height: 2em; /* 28px */
+      flex-shrink: 0;
+      border-radius: 1em;
+      border: 0.143em solid var(--md-sys-color-outline);
+      background: var(--md-sys-color-surface-container-highest);
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    /* 选中态底色由 applyState 按 color 属性写内联样式（无 color 属性时用默认 primary） */
+    :host([checked]) .track {
+      border-color: var(--md-sys-color-primary);
+    }
+
+    .thumb {
+      position: absolute;
+      left: 0.143em;
+      top: 50%;
+      width: 1.143em; /* 16px，选中态 M3 拇指缩小 */
+      height: 1.143em;
+      border-radius: 50%;
+      transform: translateY(-50%) scale(1.375) translateX(0);
+      background: var(--md-sys-color-outline);
+      box-shadow: 0 0.071em 0.214em rgba(0, 0, 0, 0.25);
+      transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), background-color 0.2s ease;
+      display: grid;
+      place-items: center;
+    }
+    :host([checked]) .thumb {
+      transform: translateY(-50%) translateX(1.714em); /* 46-16-4-4px 位移 */
+      background: var(--md-sys-color-on-primary);
+    }
+
+    .label {
+      margin-left: 0.857em;
+    }
+    :host(:empty) .label { display: none; }
+
+    /* 内部透明原生 checkbox：承载点击/键盘/焦点语义，覆盖整个组件 */
+    .native {
+      all: unset;
+      position: absolute;
+      inset: 0;
+      z-index: 2; /* 盖住 position:relative 的兄弟元素，保证点击/键盘都落在语义元素上 */
+      cursor: inherit;
+    }
+    .native:focus-visible ~ .track {
+      outline: 2px solid var(--md-sys-color-on-surface);
+      outline-offset: 2px;
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <input class="native" type="checkbox" tabindex="0">
+  <span class="track"><span class="thumb"></span></span>
+  <span class="label"><slot></slot></span>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-switch",
+      attrs: {
+        checked: null,
+        disabled: null,
+        color: null,
+      },
+      watch: {
+        checked() { this.applyState(); },
+        disabled() { this.applyState(); },
+        color() { this.applyState(); },
+      },
+      ready() {
+        const ele = this.ele;
+        const input = ele.shadowRoot.querySelector(".native");
+
+        // 交互：原生 input 承载点击与键盘（Space），变更后反射回宿主属性并派发 change
+        input.addEventListener("change", () => {
+          if (input.checked) ele.setAttribute("checked", "");
+          else ele.removeAttribute("checked");
+          ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
+        });
+
+        this.applyState();
+      },
+      proto: {
+        // watch 初始化也会触发一次（坑 #27），applyState 无副作用，天然安全
+        applyState() {
+          const sr = this.ele.shadowRoot;
+          const input = sr.querySelector(".native");
+          const track = sr.querySelector(".track");
+          const thumb = sr.querySelector(".thumb");
+          const on = this.checked !== null;
+
+          input.checked = on;
+          input.disabled = this.disabled !== null;
+
+          const name = this.color;
+          if (on) {
+            const main = name
+              ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
+              : "var(--md-sys-color-primary)";
+            const onMain = name
+              ? `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-primary)))`
+              : "var(--md-sys-color-on-primary)";
+            track.style.background = main;
+            track.style.borderColor = main;
+            thumb.style.background = onMain;
+          } else {
+            track.style.background = "";
+            track.style.borderColor = "";
+            thumb.style.background = "";
+          }
+        },
+      },
+    });
+  </script>
+</template>

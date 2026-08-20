@@ -1,0 +1,54 @@
+<!-- st-list 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; max-width: 420px; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); }
+  </style>
+
+  <h3>基础列表（button 项 + 副文本 + hr 分隔）</h3>
+  <st-list>
+    <st-list-item button id="li-inbox">
+      <span slot="prefix">📥</span>
+      <div>收件箱<span secondary>12 封未读</span></div>
+      <span slot="suffix">→</span>
+    </st-list-item>
+    <st-list-item button>
+      <span slot="prefix">📤</span>
+      <div>已发送</div>
+    </st-list-item>
+    <hr>
+    <st-list-item button disabled>
+      <span slot="prefix">🚫</span>
+      <div>已禁用项</div>
+    </st-list-item>
+  </st-list>
+
+  <h3>可折叠项（collapsible + sublist）</h3>
+  <st-list>
+    <st-list-item collapsible expanded>
+      <span slot="prefix">📁</span>
+      <div>文件夹</div>
+      <st-list slot="sublist">
+        <st-list-item button><span slot="prefix">🗂</span>工作</st-list-item>
+        <st-list-item button><span slot="prefix">🏠</span>生活</st-list-item>
+      </st-list>
+    </st-list-item>
+    <st-list-item button><span slot="prefix">⭐</span>收藏</st-list-item>
+  </st-list>
+
+  <p style="margin:0; font-size:14px; color: var(--md-sys-color-on-surface-variant);">
+    click 事件：<span class="code" style="font-family: ui-monospace, monospace;">{{lastClick}}</span>
+  </p>
+
+  <script>
+    export default async () => ({
+      data: { lastClick: "（无）" },
+      ready() {
+        this.ele.shadowRoot.querySelector("#li-inbox").addEventListener("click", () => {
+          this.lastClick = "收件箱";
+        });
+      },
+      proto: {},
+    });
+  </script>
+</template>

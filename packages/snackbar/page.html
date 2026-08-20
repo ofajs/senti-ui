@@ -1,0 +1,51 @@
+<!-- st-snackbar 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 20px; padding: 40px; align-content: start; }
+    section { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+    st-snackbar {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  </style>
+
+  <section>
+    <h3>基础（duration 自动关闭）</h3>
+    <st-button id="btn-basic" variant="outlined">显示 4s 消息</st-button>
+    <st-button id="btn-manual" variant="outlined">显示手动关闭消息</st-button>
+    <st-button id="btn-hide" variant="text">JS hide() 关闭</st-button>
+  </section>
+
+  <p style="margin:0; font-size:14px; color: var(--md-sys-color-on-surface-variant);">
+    close 事件计数：<span class="code" style="font-family: ui-monospace, monospace;">{{count}}</span>
+  </p>
+
+  <st-snackbar id="sb-basic" duration="4000">
+    已删除 1 个项目
+    <st-button slot="action" variant="text" style="color: var(--md-sys-color-inverse-primary);">撤销</st-button>
+  </st-snackbar>
+
+  <st-snackbar id="sb-manual">
+    这条消息不会自动消失，请手动关闭
+  </st-snackbar>
+
+  <script>
+    export default async () => ({
+      data: { count: 0 },
+      ready() {
+        const sr = this.ele.shadowRoot;
+        const sb = (id) => sr.querySelector("#" + id);
+        sr.querySelector("#btn-basic").addEventListener("click", () => sb("sb-basic").setAttribute("open", ""));
+        sr.querySelector("#btn-manual").addEventListener("click", () => sb("sb-manual").setAttribute("open", ""));
+        sr.querySelector("#btn-hide").addEventListener("click", () => sb("sb-manual").hide());
+        ["sb-basic", "sb-manual"].forEach((id) => {
+          sb(id).addEventListener("close", () => { this.count += 1; });
+        });
+      },
+      proto: {},
+    });
+  </script>
+</template>

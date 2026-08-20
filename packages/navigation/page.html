@@ -1,0 +1,38 @@
+<!-- st-nav-bar 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); }
+    .panel { padding: 16px; color: var(--md-sys-color-on-surface-variant); }
+    st-nav-bar { border-top: 1px solid var(--md-sys-color-outline-variant); }
+  </style>
+
+  <h3>点击切换（药丸背景动画跟随）</h3>
+  <st-nav-bar id="bar">
+    <st-nav-item active><span slot="icon">🏠</span>首页</st-nav-item>
+    <st-nav-item><span slot="icon">🔍</span>发现</st-nav-item>
+    <st-nav-item><span slot="icon">➕</span>发布</st-nav-item>
+    <st-nav-item><span slot="icon">👤</span>我的</st-nav-item>
+    <st-nav-item disabled><span slot="icon">⚙️</span>设置（禁用）</st-nav-item>
+  </st-nav-bar>
+
+  <div class="panel">当前页：{{current}}</div>
+
+  <script>
+    export default async () => ({
+      data: { current: "首页" },
+      ready() {
+        const sr = this.ele.shadowRoot;
+        sr.querySelectorAll("#bar st-nav-item").forEach((item) => {
+          item.addEventListener("click", () => {
+            if (item.hasAttribute("disabled")) return;
+            sr.querySelectorAll("#bar st-nav-item").forEach((t) => t.removeAttribute("active"));
+            item.setAttribute("active", "");
+            this.current = item.textContent.trim();
+          });
+        });
+      },
+      proto: {},
+    });
+  </script>
+</template>

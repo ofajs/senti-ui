@@ -1,0 +1,49 @@
+<!-- st-checkbox 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 20px; padding: 40px; align-content: start; }
+    section { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+  </style>
+
+  <section>
+    <h3>基础</h3>
+    <st-checkbox>苹果</st-checkbox>
+    <st-checkbox checked>香蕉（初始选中）</st-checkbox>
+    <st-checkbox disabled>樱桃（禁用）</st-checkbox>
+    <st-checkbox disabled checked>西瓜（禁用+选中）</st-checkbox>
+    <st-checkbox indeterminate>全选（不确定态）</st-checkbox>
+    <st-checkbox></st-checkbox>
+  </section>
+
+  <section>
+    <h3>color 属性</h3>
+    <st-checkbox color="error" checked>错误色</st-checkbox>
+    <st-checkbox color="success" checked>成功色</st-checkbox>
+    <st-checkbox color="tertiary" checked>三级色</st-checkbox>
+  </section>
+
+  <section>
+    <h3>等比缩放（宿主 font-size）</h3>
+    <st-checkbox style="font-size: 12px;" checked>12px</st-checkbox>
+    <st-checkbox checked>14px</st-checkbox>
+    <st-checkbox style="font-size: 20px;" checked>20px</st-checkbox>
+  </section>
+
+  <section>
+    <h3>change 事件计数：<span class="code" style="font-family: ui-monospace, monospace;">{{count}}</span></h3>
+    <st-checkbox id="cb-count">点我</st-checkbox>
+  </section>
+
+  <script>
+    export default async () => ({
+      data: { count: 0 },
+      ready() {
+        this.ele.shadowRoot.querySelector("#cb-count").addEventListener("change", () => {
+          this.count += 1;
+        });
+      },
+      proto: {},
+    });
+  </script>
+</template>

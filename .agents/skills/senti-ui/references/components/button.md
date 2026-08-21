@@ -8,10 +8,10 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="/packages/button/button.html"></l-m>
-<l-m src="/packages/button/button-group.html"></l-m>   <!-- st-button-group -->
-<l-m src="/packages/button/split-button.html"></l-m>   <!-- st-split-button -->
-<l-m src="/packages/button/icon-button.html"></l-m>     <!-- st-icon-button -->
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/button.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/button-group.html"></l-m>   <!-- st-button-group -->
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/split-button.html"></l-m>   <!-- st-split-button -->
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/icon-button.html"></l-m>     <!-- st-icon-button -->
 ```
 
 组件内部已 `import "../color/st-init.js"`，加载按钮时会自动注入 `--md-sys-color-*` 颜色体系（多次 import 不冲突，模块按 URL 去重）；若你的部署不含 color 包，则需自行定义这些变量。
@@ -29,8 +29,8 @@
 设置/取消布尔属性示例：`<st-button loading>...</st-button>`；JS 中请用 attribute 方式（直接改 property 不触发更新）：
 
 ```js
-btn.setAttribute("loading", "");
-btn.removeAttribute("loading");
+$("st-button").attr("loading", "");   // 设为裸属性；移除用 null
+$("st-button").attr("loading", null);
 ```
 
 ## color 属性（与 color 模块联动）
@@ -72,7 +72,7 @@ btn.removeAttribute("loading");
 点击事件直接在 `<st-button>` 上监听（内部原生 button 会转发）：
 
 ```js
-document.querySelector("st-button").addEventListener("click", () => {});
+$("st-button").on("click", () => {});
 ```
 
 ## 外观定制：直接写原生 CSS 属性
@@ -219,6 +219,4 @@ document.querySelector("st-button").addEventListener("click", () => {});
 - **st-split-button 点主区 = 主操作（click），点箭头 = 开菜单**，两者互不干扰；菜单项点击后面板自动关闭并截断冒泡，不会误触发主操作
 - st-split-button 的菜单项来自 `st-menu-item`（split-button 内部已加载，无需额外引入）
 - **st-icon-button 必须配 `title` / `aria-label`**（无文字，缺名称时屏幕阅读器读不出用途）；其 color 分派多了 tonal 分支（container 配对色）
-## 验证页面
-
-`index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `/packages/button/`）。
+`index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/`）。

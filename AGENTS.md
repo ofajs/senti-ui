@@ -54,6 +54,12 @@ packages/color/  # M3 体系生成器 + st-init.js（颜色唯一来源）
 
 开发中踩到 ofa.js / CDN / 缓存 / 浏览器兼容等任何坑并解决后，**必须**在解决当时就把这条经验沉淀到 [CONTEXT.md](./CONTEXT.md) 的「ofa.js 已知坑」章节（保持一条一坑：现象 + 原因 + 正确写法），防止下次重复踩坑、重复排查。非 ofa.js 类的坑（如部署、测试工具）可在该章节后另起小节存放。
 
+## senti-ui 技能（.agents/skills/senti-ui/）维护规则
+
+- 技能内的文件引用（含 SKILL.md 与 references/ 内的文档互链）**必须用相对地址，且不得超出技能目录**——该目录以后会被整体导出为技能发布到其他地方，超出目录的引用在导出后会失效（组件引入的 jsdelivr CDN URL 属于运行时地址，不受此限制）
+- **只要更新了组件使用**（属性/插槽/事件/用法变更，或新增组件），除了更新对应的 `packages/{name}/README.md`，**必须同步更新 senti-ui 技能**：`references/components/{name}.md`（从 README 同步，仓库相对路径 `/packages/...` 改写为 jsdelivr 完整 URL）与 `references/components.md` 速查表（新组件要登记）
+- **技能内示例代码必须 ofa.js API 优先**（「写法优先级」声明统一放在技能的 SKILL.md 中，组件文档不重复写）：ofa 页面场景一律用模板绑定语法（`{{xxx}}` / `attr:xxx`（布尔属性必须 `attr:`） / `sync:value` / `sync:open` / `on:click`）或 ofa 数据读写（`el.value` 等已反射的运行时状态）；纯 JS 场景用 ofa 实例 API（`$("sel").attr(name, value)`（设值传具体值、设裸属性传 `""`、移除传 `null`）、`$("sel").on("event", fn)`）。**不写 `setAttribute` / `removeAttribute` / `document.querySelector(...).addEventListener(...)` 等原生 DOM API**；确需提示"非 ofa 环境 / 自动化测试"的差异时，用文字说明而不是示例代码
+
 ## 临时文件
 
 `.playwright-mcp/`（浏览器验证产生的快照/日志）已在 `.gitignore` 中忽略，不要提交。

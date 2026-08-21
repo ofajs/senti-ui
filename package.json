@@ -1,11 +1,12 @@
 {
   "name": "senti-ui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Senti-UI — an AI-first component library built on ofa.js with Material Design 3 color system",
   "type": "module",
   "scripts": {
     "dev": "http-server . -p 8642 -c-1 --cors",
-    "test": "playwright test"
+    "test": "playwright test",
+    "pack-skill": "node scripts/pack-skill.mjs"
   },
   "repository": {
     "type": "git",

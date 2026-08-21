@@ -44,6 +44,19 @@
   </section>
 
   <section>
+    <h3>JS 主动操作（el.value 读写，非 ofa 环境的写法）</h3>
+    <st-textarea id="js-ta" placeholder="JS 控制"></st-textarea>
+    <st-button variant="outlined" on:click="jsSet">写入两行内容</st-button>
+    <st-button variant="text" on:click="jsRead">读取 value</st-button>
+    <p>读取结果：<span class="code">{{jsValue}}</span></p>
+  </section>
+
+  <section>
+    <h3>聚焦行为</h3>
+    <p>焦点由内部透明原生 textarea 承载（宿主不可聚焦），<span class="code">Tab</span> 可达、输入直接生效</p>
+  </section>
+
+  <section>
     <h3>事件与 value 同步</h3>
     <st-textarea placeholder="输入试试，下方实时显示 value" on:input="onInput"></st-textarea>
     <p>value: <span class="code">{{demoValue}}</span></p>
@@ -51,9 +64,13 @@
 
   <script>
     export default async () => ({
-      data: { demoValue: "" },
+      data: { demoValue: "", jsValue: "（未读取）" },
       proto: {
         onInput(e) { this.demoValue = e.target.value; },
+        jsSet() { this.ele.shadowRoot.querySelector("#js-ta").value = "第一行\n第二行"; },
+        jsRead() {
+          this.jsValue = JSON.stringify(this.ele.shadowRoot.querySelector("#js-ta").value);
+        },
       },
     });
   </script>

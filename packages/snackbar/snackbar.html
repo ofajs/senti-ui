@@ -5,7 +5,8 @@
 -->
 <template component>
   <style>
-    /* 坑 #20：默认隐藏 + 正向启用 */
+    /* 坑 #20：默认隐藏 + 正向启用；显隐即时切换，组件不自带开合动画
+       （需要动画的场景由外部包装元素提供，如 toast.js 的滑入滑出） */
     :host { display: none; }
     :host([open]) {
       display: inline-flex;
@@ -13,7 +14,9 @@
       box-sizing: border-box;
       min-width: 14.286em; /* 200px */
       max-width: 34.286em; /* 480px */
-      padding: 0.857em 1em;
+      /* 高度完全由内容决定；上下边距按内容分档（:has 感知插槽）：
+         无按钮 8px 舒适；有按钮 4px（40px 按钮撑出 M3 的 48dp，按钮不再额外撑高） */
+      padding: 0.571em 1em;
       border-radius: 0.286em; /* 4px */
       font-size: 14px;
       font-family: inherit;
@@ -21,15 +24,13 @@
       background: var(--md-sys-color-secondary);
       color: var(--md-sys-color-on-secondary);
       box-shadow: 0 0.143em 0.571em rgba(0, 0, 0, 0.2);
-      animation: st-sb-in 0.2s cubic-bezier(0.2, 0, 0, 1);
     }
-    @keyframes st-sb-in {
-      from { opacity: 0; transform: translateY(1em); }
-      to { opacity: 1; transform: none; }
+    /* 有操作按钮时上下边距收紧到 4px（has-action 由 slotchange 探测挂载——
+       :host(:has()) 嵌套函数选择器在 ofa 样式作用域下不生效，坑 #20 同类） */
+    :host([has-action]) {
+      padding-block: 0.286em;
     }
-    @media (prefers-reduced-motion: reduce) {
-      :host([open]) { animation-duration: 0.01ms; }
-    }
+
 
     .content {
       flex: 1;
@@ -72,16 +73,19 @@
         },
         color() { this.applyColor(); },
       },
+      attached() {},
       ready() {
         const ele = this.ele;
         // proto 方法挂在 ofa 实例上，原生元素不可见（坑 #24），桥接 hide 到宿主 property
         ele.hide = () => this.hide();
+        // action 插槽有无内容 → has-action 属性 → 动态分档上下边距
+        const actionSlot = ele.shadowRoot.querySelector('slot[name="action"]');
+        const syncHasAction = () => {
+          ele.toggleAttribute("has-action", actionSlot.assignedElements().length > 0);
+        };
+        actionSlot.addEventListener("slotchange", syncHasAction);
+        syncHasAction();
         this.applyColor();
-      },
-      ready() {
-        const ele = this.ele;
-        // proto 方法挂在 ofa 实例上，原生元素不可见（坑 #24），桥接 hide 到宿主 property
-        ele.hide = () => this.hide();
       },
       detached() {
         clearTimeout(this._hideTimer);
@@ -100,7 +104,7 @@
           s.background = `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-secondary)))`;
           s.color = `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-secondary)))`;
         },
-        // 关闭（自动或 JS 调用）并派发 close 事件
+        // 关闭（自动或 JS 调用）并派发 close 事件；显隐即时切换（组件不自带动画）
         hide() {
           if (this.open === null) return;
           clearTimeout(this._hideTimer);

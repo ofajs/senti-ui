@@ -31,16 +31,44 @@
   </section>
 
   <section>
+    <h3>数据绑定（attr:checked，页面数据驱动）</h3>
+    <st-checkbox attr:checked="agree" on:change="agree = !agree">同意协议</st-checkbox>
+    <span class="state">agree 数据：<span class="code" style="font-family: ui-monospace, monospace;">{{agree}}</span></span>
+  </section>
+
+  <section>
+    <h3>JS 主动操作（setAttribute / removeAttribute）</h3>
+    <st-checkbox id="js-cb">JS 控制</st-checkbox>
+    <st-button variant="outlined" on:click="jsCheck">选中</st-button>
+    <st-button variant="outlined" on:click="jsInd">设为不确定态</st-button>
+    <st-button variant="text" on:click="jsClear">清空</st-button>
+  </section>
+
+  <section>
+    <h3>聚焦与键盘</h3>
+    <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant);">
+      <span class="code" style="font-family: ui-monospace, monospace;">Tab</span> 聚焦（focus-visible 有焦圈）、<span class="code" style="font-family: ui-monospace, monospace;">Space</span> 切换；点文字同样可切换
+    </p>
+  </section>
+
+  <section>
     <h3>change 事件计数：<span class="code" style="font-family: ui-monospace, monospace;">{{count}}</span></h3>
     <st-checkbox on:change="onCountChange">点我</st-checkbox>
   </section>
 
   <script>
     export default async () => ({
-      data: { count: 0 },
+      data: { count: 0, agree: false },
       proto: {
         onCountChange() {
           this.count += 1;
+        },
+        jsCheck() { this.ele.shadowRoot.querySelector("#js-cb").setAttribute("checked", ""); },
+        jsInd() { this.ele.shadowRoot.querySelector("#js-cb").setAttribute("indeterminate", ""); },
+        jsClear() {
+          const cb = this.ele.shadowRoot.querySelector("#js-cb");
+          cb.removeAttribute("checked");
+          cb.removeAttribute("indeterminate");
         },
       },
     });

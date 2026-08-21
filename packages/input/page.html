@@ -51,6 +51,19 @@
   </section>
 
   <section>
+    <h3>JS 主动操作（el.value 读写，非 ofa 环境的写法）</h3>
+    <st-input id="js-input" placeholder="JS 控制"></st-input>
+    <st-button variant="outlined" on:click="jsSet">写入 "hello"</st-button>
+    <st-button variant="text" on:click="jsRead">读取 value</st-button>
+    <p>读取结果：<span class="code">{{jsValue}}</span>（<span class="code">setAttribute("value") 无效</span>，value 是运行时状态）</p>
+  </section>
+
+  <section>
+    <h3>聚焦行为</h3>
+    <p>焦点由内部透明原生 input 承载（宿主不可聚焦）：<span class="code">Tab</span> 良好可达、<span class="code">focus()</span>/<span class="code">blur()</span> 方法仅 ofa 实例可用；外部脚本聚焦请点击组件或聚焦其内部 input</p>
+  </section>
+
+  <section>
     <h3>事件与 value 同步</h3>
     <st-input placeholder="输入试试，下方实时显示 value" on:input="onInput"></st-input>
     <p>value: <span class="code">{{demoValue}}</span></p>
@@ -58,9 +71,13 @@
 
   <script>
     export default async () => ({
-      data: { demoValue: "" },
+      data: { demoValue: "", jsValue: "（未读取）" },
       proto: {
         onInput(e) { this.demoValue = e.target.value; },
+        jsSet() { this.ele.shadowRoot.querySelector("#js-input").value = "hello"; },
+        jsRead() {
+          this.jsValue = this.ele.shadowRoot.querySelector("#js-input").value || "(空)";
+        },
       },
     });
   </script>

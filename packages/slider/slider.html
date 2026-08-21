@@ -1,0 +1,227 @@
+<!--
+  st-slider — Senti-UI 滑块组件（基于 ofa.js），视觉对齐 M3 sliders 规范
+  语义属性：min / max / step / default-value / disabled / color（M3 角色名）
+  value 是运行时状态（ofa data）：el.value 读写，输入时派发 input，松手派发 change
+  交互由内部透明原生 input[type=range] 承载（拖拽/键盘 ←→/焦点），见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      width: 13.571em; /* 190px */
+      height: 2.857em; /* 40px 触控高度 */
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    :host([disabled]) {
+      cursor: not-allowed;
+      opacity: 0.38;
+    }
+    :host([disabled]) .native { pointer-events: none; }
+
+    /* M3 轨道：4px 高、两端半圆；左右各内缩拇指半径（拇指中心在轨道端点上） */
+    .track,
+    .fill {
+      position: absolute;
+      top: 50%;
+      height: 0.286em; /* 4px */
+      border-radius: 0.286em;
+      transform: translateY(-50%);
+    }
+    .track {
+      left: 0.714em; /* = 拇指半径 0.714em(10px) */
+      right: 0.714em;
+      background: var(--md-sys-color-surface-container-highest);
+    }
+    .fill {
+      left: 0.714em;
+      width: 50%;
+      background: var(--st-slider-main, var(--md-sys-color-primary));
+    }
+
+    /* M3 拇指：20px 角色色圆点，轨道端点间移动；拖动/聚焦时显示数值气泡 */
+    .thumb {
+      position: absolute;
+      top: 50%;
+      width: 1.429em; /* 20px */
+      height: 1.429em;
+      border-radius: 50%;
+      background: var(--st-slider-main, var(--md-sys-color-primary));
+      transform: translate(-50%, -50%);
+      left: 50%;
+    }
+
+    /* 数值气泡（M3 value indicator）：拖动/键盘聚焦时显示，浅底深字 */
+    .value-tip {
+      position: absolute;
+      bottom: calc(50% + 1.143em); /* 拇指上方 16px */
+      transform: translateX(-50%);
+      left: 50%;
+      box-sizing: border-box;
+      min-width: 1.714em;
+      padding: 0.143em 0.429em;
+      border-radius: 0.286em;
+      font-size: 0.786em; /* 11px */
+      line-height: 1.5;
+      text-align: center;
+      white-space: nowrap;
+      background: var(--st-slider-main, var(--md-sys-color-primary));
+      color: var(--md-sys-color-on-primary);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+    .value-tip::after {
+      /* 气泡小三角 */
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 0.286em solid transparent;
+      border-top-color: var(--st-slider-main, var(--md-sys-color-primary));
+    }
+    :host(.st-active) .value-tip { opacity: 1; }
+
+    /* 内部透明原生 range：承载拖拽/键盘/焦点，覆盖整条轨道 */
+    .native {
+      all: unset;
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      cursor: inherit;
+      opacity: 0;           /* 透明但可交互，避免浏览器默认 thumb/轨道 盖在自定义 UI 上 */
+      outline: none;
+    }
+    /* 兜底：各浏览器 range 的伪元素也置透明 */
+    .native::-webkit-slider-runnable-track,
+    .native::-webkit-slider-thumb,
+    .native::-moz-range-track,
+    .native::-moz-range-thumb {
+      background: transparent;
+      border: none;
+    }
+    .native:focus-visible ~ .thumb {
+      outline: 2px solid var(--md-sys-color-on-surface);
+      outline-offset: 2px;
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <input class="native" type="range" tabindex="0">
+  <span class="track"></span>
+  <span class="fill"></span>
+  <span class="value-tip">0</span>
+  <span class="thumb"></span>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-slider",
+      attrs: {
+        min: "0",
+        max: "100",
+        step: "1",
+        defaultValue: null,
+        disabled: null,
+        color: null,
+      },
+      data: {
+        // value 是运行时状态（ofa data，非标签属性）：attached 时由 default-value 初始化
+        value: null,
+      },
+      watch: {
+        value() { this.applyVisual(); },
+        color() { this.applyColor(); },
+        disabled() { this.applyState(); },
+      },
+      ready() {
+        const ele = this.ele;
+        const sr = ele.shadowRoot;
+        const input = sr.querySelector(".native");
+
+        // 宿主 value property：读写反射到 ofa data
+        Object.defineProperty(ele, "value", {
+          get: () => this.value,
+          set: (v) => { this.value = String(v); },
+        });
+
+        // 原生 range 承载拖拽与键盘；input 实时反馈，change（松手/键盘提交）单独派发
+        input.addEventListener("input", () => {
+          this.value = input.value;
+          ele.dispatchEvent(new Event("input", { bubbles: true, composed: true }));
+        });
+        input.addEventListener("change", () => {
+          ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
+        });
+
+        // 拖动/聚焦时显示数值气泡（M3 value indicator）
+        const activate = () => ele.classList.add("st-active");
+        const deactivate = () => ele.classList.remove("st-active");
+        input.addEventListener("pointerdown", activate);
+        input.addEventListener("pointerup", deactivate);
+        input.addEventListener("pointercancel", deactivate);
+        input.addEventListener("focus", activate);
+        input.addEventListener("blur", deactivate);
+
+        this.applyState();
+        this.applyColor();
+        // setAttribute 的 watch 异步（坑 #18），初始同步一次
+        requestAnimationFrame(() => { this.applyState(); this.applyVisual(); });
+      },
+      proto: {
+        applyState() {
+          const sr = this.ele.shadowRoot;
+          const input = sr.querySelector(".native");
+          input.min = this.min ?? "0";
+          input.max = this.max ?? "100";
+          input.step = this.step ?? "1";
+          input.disabled = this.disabled !== null;
+          if (this.value === null) {
+            const dv = this.ele.getAttribute("default-value");
+            this.value = dv !== null ? dv : this.min ?? "0";
+          }
+          this.applyVisual();
+        },
+        // 按 value 比例布置：fill 宽度与拇指中心（均以轨道内缩区为基准）+ 气泡位置/文本
+        applyVisual() {
+          const sr = this.ele.shadowRoot;
+          const input = sr.querySelector(".native");
+          if (this.value !== null) input.value = this.value;
+          const min = Number(input.min || 0);
+          const max = Number(input.max || 100);
+          const v = Math.min(Math.max(Number(input.value || min), min), max);
+          const pct = max > min ? ((v - min) / (max - min)) * 100 : 0;
+
+          // 轨道内缩区宽 = 100% - 2×拇指半径(0.714em→占宿主宽的比例需换算)
+          const hostW = this.ele.getBoundingClientRect().width || 1;
+          const padPx = (0.714 * 14) * (parseFloat(getComputedStyle(this.ele).fontSize) / 14);
+          // M3：激活段从轨道左端延伸到拇指中心（fill 有 left 内缩起点，宽度要减去起点）
+          const thumbLeft = padPx + (pct / 100) * (hostW - padPx * 2);
+          sr.querySelector(".fill").style.width = ((thumbLeft - padPx) / hostW) * 100 + "%";
+          const thumb = sr.querySelector(".thumb");
+          thumb.style.left = thumbLeft + "px";
+          const tip = sr.querySelector(".value-tip");
+          tip.style.left = thumbLeft + "px";
+          tip.textContent = input.value;
+        },
+        // color 接受 M3 角色名：设置 --st-slider-main（激活段/拇指/气泡/三角一处联动），
+        // 气泡文字恒用 on-primary（气泡底是纯角色色）
+        applyColor() {
+          const name = this.color;
+          this.ele.style.setProperty(
+            "--st-slider-main",
+            name
+              ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
+              : "var(--md-sys-color-primary)"
+          );
+        },
+      },
+    });
+  </script>
+</template>

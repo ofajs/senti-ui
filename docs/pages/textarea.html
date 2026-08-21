@@ -1,0 +1,45 @@
+<template page>
+  <style>
+    :host {
+      display: block;
+      padding: 32px max(24px, calc((100% - 960px) / 2)) 80px;
+      box-sizing: border-box;
+    }
+    l-m { display: none; }
+    header {
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-size: 32px;
+      margin: 0 0 8px;
+    }
+    .desc {
+      margin: 0;
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 15px;
+    }
+    .tag {
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 13px;
+      color: var(--md-sys-color-primary);
+    }
+  </style>
+
+  <l-m src="../../packages/textarea/textarea.html"></l-m>
+  <l-m src="../../packages/button/button.html"></l-m>
+
+  <header>
+    <h1>多行输入框 Textarea</h1>
+    <p class="desc">rows 自撑高度、autosize 自动撑开、与 st-input 同范式 &nbsp;标签：<span class="tag">st-textarea</span></p>
+  </header>
+
+  <o-page src="../../packages/textarea/page.html"></o-page>
+
+  <script>
+    export const parent = "../layout.html";
+
+    export default async () => {
+      return {};
+    };
+  </script>
+</template>

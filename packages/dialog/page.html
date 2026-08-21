@@ -66,10 +66,30 @@
     </div>
   </st-dialog>
 
+  <section>
+    <h3>聚焦与键盘</h3>
+    <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant); width:100%;">
+      打开后焦点自动移入面板容器，<span class="code" style="font-family: ui-monospace, monospace;">Tab</span> 进入内部控件；<span class="code" style="font-family: ui-monospace, monospace;">Escape</span> 关闭（需 auto-close）；多个对话框同时打开时 Escape 各管各的
+    </p>
+  </section>
+
+  <section>
+    <h3>命令式工具（alert / confirm / prompt，JS 导入调用，用完即毁）</h3>
+    <st-button variant="outlined" on:click="runAlert">alert</st-button>
+    <st-button variant="outlined" on:click="runConfirm">confirm（危险色确认）</st-button>
+    <st-button variant="outlined" on:click="runPrompt">prompt</st-button>
+    <span class="code" style="font-size:13px; color: var(--md-sys-color-on-surface-variant);">返回值：{{utilResult}}</span>
+    <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant); width:100%;">
+      引入：<span class="code">import stAlert from "/packages/dialog/alert.js"</span>（confirm / prompt 同理）；
+      遮罩点击 / Escape = 取消（alert → null，confirm → null，prompt → null）
+    </p>
+  </section>
+
   <script>
     export default async () => ({
       data: {
         closeCount: 0,
+        utilResult: "（未调用）",
         openState: { basic: false, auto: false, wide: false, fs: false, small: false },
         lines: Array.from({ length: 20 }, (_, i) => i + 1),
       },
@@ -82,6 +102,21 @@
         },
         onAutoClose() {
           this.closeCount += 1;
+        },
+        async runAlert() {
+          if (!window.__stDialogUtilsReady) return;
+          const ok = await window.stAlert({ title: "操作成功", message: "密码已重置，请使用新密码登录。", ok: "知道了" });
+          this.utilResult = "alert → " + ok;
+        },
+        async runConfirm() {
+          if (!window.__stDialogUtilsReady) return;
+          const ok = await window.stConfirm({ title: "确认删除", message: "确定要删除用户 bob 吗？此操作不可撤销。", yes: "删除", cancel: "取消", color: "error" });
+          this.utilResult = "confirm → " + ok;
+        },
+        async runPrompt() {
+          if (!window.__stDialogUtilsReady) return;
+          const val = await window.stPrompt({ title: "重置密码", message: "为用户 bob 设置新密码（至少 4 位）", placeholder: "请输入新密码" });
+          this.utilResult = "prompt → " + JSON.stringify(val);
         },
       },
     });

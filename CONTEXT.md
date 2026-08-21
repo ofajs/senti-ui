@@ -38,14 +38,22 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 | Button 按钮 | `st-button` | `<l-m src="/packages/button/button.html"></l-m>` | [packages/button/README.md](./packages/button/README.md) |
 | Button-group 按钮组 | `st-button-group` | `<l-m src="/packages/button/button-group.html"></l-m>` | [packages/button/README.md](./packages/button/README.md) |
 | Split-button 分裂按钮 | `st-split-button` | `<l-m src="/packages/button/split-button.html"></l-m>` | [packages/button/README.md](./packages/button/README.md) |
+| Icon-button 图标按钮 | `st-icon-button` | `<l-m src="/packages/button/icon-button.html"></l-m>` | [packages/button/README.md](./packages/button/README.md) |
 | Input 单行输入框 | `st-input` | `<l-m src="/packages/input/input.html"></l-m>` | [packages/input/README.md](./packages/input/README.md) |
 | Textarea 多行输入框 | `st-textarea` | `<l-m src="/packages/textarea/textarea.html"></l-m>` | [packages/textarea/README.md](./packages/textarea/README.md) |
 | Select 单选下拉框 | `st-select` | `<l-m src="/packages/select/select.html"></l-m>` | [packages/select/README.md](./packages/select/README.md) |
 | Dialog 对话框 | `st-dialog` | `<l-m src="/packages/dialog/dialog.html"></l-m>` | [packages/dialog/README.md](./packages/dialog/README.md) |
+| Dialog 命令式工具 | `stAlert/stConfirm/stPrompt` | `import stAlert from "/packages/dialog/alert.js"` | [packages/dialog/README.md](./packages/dialog/README.md) |
 | Checkbox 复选框 | `st-checkbox` | `<l-m src="/packages/checkbox/checkbox.html"></l-m>` | [packages/checkbox/README.md](./packages/checkbox/README.md) |
 | Switch 开关 | `st-switch` | `<l-m src="/packages/switch/switch.html"></l-m>` | [packages/switch/README.md](./packages/switch/README.md) |
 | Radio 单选按钮 | `st-radio` | `<l-m src="/packages/radio/radio.html"></l-m>` | [packages/radio/README.md](./packages/radio/README.md) |
 | Snackbar 消息条 | `st-snackbar` | `<l-m src="/packages/snackbar/snackbar.html"></l-m>` | [packages/snackbar/README.md](./packages/snackbar/README.md) |
+| Toast 命令式工具 | `stToast` | `import stToast from "/packages/snackbar/toast.js"` | [packages/snackbar/README.md](./packages/snackbar/README.md) |
+| Slider 滑块 | `st-slider` | `<l-m src="/packages/slider/slider.html"></l-m>` | [packages/slider/README.md](./packages/slider/README.md) |
+| Progress 进度 | `st-progress` | `<l-m src="/packages/progress/progress.html"></l-m>` | [packages/progress/README.md](./packages/progress/README.md) |
+| Tooltip 提示 | `st-tooltip` | `<l-m src="/packages/tooltip/tooltip.html"></l-m>` | [packages/tooltip/README.md](./packages/tooltip/README.md) |
+| Card 卡片 | `st-card` | `<l-m src="/packages/card/card.html"></l-m>` | [packages/card/README.md](./packages/card/README.md) |
+| Badges 徽标 | `st-badges` | `<l-m src="/packages/badges/badges.html"></l-m>` | [packages/badges/README.md](./packages/badges/README.md) |
 | Collapse 折叠容器 | `st-collapse` | `<l-m src="/packages/collapse/collapse.html"></l-m>` | [packages/collapse/README.md](./packages/collapse/README.md) |
 | List 列表 | `st-list` / `st-list-item` | `<l-m src="/packages/list/list.html"></l-m>` | [packages/list/README.md](./packages/list/README.md) |
 | Menu 下拉菜单 | `st-menu` / `st-menu-item` | `<l-m src="/packages/menu/menu.html"></l-m>` | [packages/menu/README.md](./packages/menu/README.md) |
@@ -79,32 +87,41 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 ### 验收页（page.html）规范
 
-验收页是组件的**标签用法说明书**，AI（和人）看一眼就该知道每种用法怎么写。必须覆盖：
+验收页是组件的**标签用法说明书**（参照 Punch-UI demo 的完整度），AI（和人）看一眼就该知道每种用法怎么写。**必须覆盖以下清单**（不适用项注明"无"即可）：
 
-- **完整展示组件标签的各种用法**：每个属性（尤其是 `color` 类枚举值——primary / secondary / tertiary / error / success 及自定义变量）、每个插槽、每种 variant，都要有对应的**真实标签示例**直接写在页面里，而非只靠文字说明
-- 纯展示类组件（snackbar 等）直接静态渲染（加 `open` 之类属性），不要为了"演示"写 JS 触发逻辑；有交互语义的（dialog / menu 等）才用按钮触发
-- 视觉定制能力（原生 CSS 属性覆盖、`font-size` 等比缩放、`::part()`）各给一两个示例
-- 交互/事件类组件给一个最小的事件反馈（如计数展示），让验证者无需打开控制台
+1. **属性全展示**：每个属性（尤其是 `color` 类枚举值——primary / secondary / tertiary / error / success 及自定义变量）、每个插槽、每种 variant、每个语义状态（默认/选中/禁用/禁用+选中等组合），都要有对应的**真实标签示例**直接写在页面里，而非只靠文字说明
+2. **视觉定制能力**：原生 CSS 属性覆盖、`font-size` 等比缩放、`::part()`（有面板的组件）各给一两个示例
+3. **事件监听**：核心事件（change/click/close…）用 `on:xxx` 绑定 proto 方法，配可见反馈（计数器 + 当前状态值显示），验证者无需打开控制台
+4. **数据绑定**：ofa 页面内的标准用法（`attr:checked="xxx"` / `sync:open="xxx"` 等），配数据显示让双向链路可见
+5. **JS 主动操作**：非 ofa 环境/自动化测试的写法（`setAttribute` / `removeAttribute` / `el.value` / `el.hide()` 等），用按钮触发并回显结果
+6. **聚焦与键盘行为**：焦点落在哪（内部原生元素）、Tab 可达、Space/Enter 激活，给"聚焦此组件"按钮 + 操作提示
+7. 纯展示类组件（snackbar 等）直接静态渲染（加 `open` 之类属性），不要为了"演示"写 JS 触发逻辑；有交互语义的（dialog / menu 等）才用按钮触发
+
+示例参照 `packages/switch/page.html`（完整七项）；所有交互区块用 ofa 语法写（on:click / attr: / {{}}），页面用到的其他组件记得在 index.html 补 `<l-m>` 引入。
 
 ## 工具
 
 | 工具 | 说明 | 入口 |
 |------|------|------|
 | M3 颜色体系生成器 | 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），可即时预览、复制 CSS；含 `st-init.js` 项目初始化模块（各页面引入，动态注入颜色体系并跟随 localStorage 配置）；核心模块 `m3-theme.js` 提供 `generateM3Theme` / `themeToCss` / `applyTheme` / `expandCustoms` 四个 API；内置扩展角色 success（默认绿 `#006E1C`，不随种子色变化）；支持核心四角色 + success 手动覆盖与自定义变量（自动按 M3 tone 规则展开 on/container 配对 token），配置存 localStorage | [packages/color/index.html](./packages/color/index.html)（JS：`packages/color/m3-theme.js`） |
+| 组件官网 | `docs/` 目录，o-router + o-app 微应用（入口 `docs/index.html`）：`layout.html` 侧边栏布局（parent/slot 嵌套）+ `pages/home.html` 首页 + 每组件一页薄包装（预载 l-m 后 `<o-page>` 内嵌对应验收页 `packages/{name}/page.html`）；dialog/snackbar 的命令式工具在入口 index.html 预加载挂 window（坑 #6）；新增组件时在 `docs/layout.html` 的 components 数组登记并建 `docs/pages/{name}.html` | [docs/index.html](./docs/index.html) |
 
 ## 当前状态（2026-08-20）
 
-当前 15 个模块（含 4 个双标签模块），st-button 作为整个库设计范式的样板：
+当前 20 个模块（含 4 个双标签模块，2026-08-21 新增 slider/progress/tooltip/card/badges 五件套——参考 MUI 清单筛选引入），st-button 作为整个库设计范式的样板：
 
 - **st-button**（`packages/button/`）：三种 variant（filled/outlined/text）、disabled、loading、prefix/suffix 插槽；`color` 语义色属性可与 variant 自由组合（按 M3 规范分派：filled 用角色色底/on-角色色字，outlined/text 用角色色作前景与描边，运行时切换 variant 亦生效）；外观完全由原生 CSS 属性定制（视觉在 `:host` 上，内部透明 `.native` 原生 button 承载交互语义）。已在浏览器中完成功能与双主题验证。
 - **st-button-group / st-split-button**（`packages/button/`，2026-08-21 从 Punch-UI 重构）：按钮组（connected 连体/full-width 等分；**圆角在 attached 后由 JS 按位置设置**，不用 ::slotted(:first-child) 位置选择器——ofa 升级 light DOM 时序下不可靠，slotchange 自动重算）；分裂按钮（主区 click 冒泡做主操作 + 箭头区开合菜单，菜单项用 st-menu-item；open 为 data 运行时状态支持 sync:open；面板行为同 st-menu）。案例与 st-button 写在同一验收页。
+- **st-icon-button**（`packages/button/icon-button.html`）：圆形图标按钮，四种 M3 variant（standard 透明 / filled / tonal container 配对 / outlined）+ `color` 属性（tonal 分支消费 container 配对 token）+ disabled；图标插槽默认 1.571em；使用时必须配 title/aria-label（无文字）。案例与 st-button 同验收页。
+- **第二批组件**（2026-08-21，参考 MUI 组件清单）：**st-slider**（M3 视觉：轨道两端内缩拇指半径、20px 圆拇指、拖动/聚焦显示数值气泡 value indicator；内部原生 input[type=range] 承载拖拽/键盘；value 为 data 运行时状态 el.value 读写，attr:value 页面绑定；min/max/step 转发原生）；**st-progress**（线形/环形 × 确定/不定四态，不定动画由 JS 内联 animation 驱动——不能用属性选择器：JS 写 indeterminate 属性会经 ofa 反馈进 attr data 与"缺省 value 推导"形成自引用死锁，坑 #37；缺省 value 自动视为不定；环形不定为**固定弧长（55% 圆周）+ 1.2s 匀速旋转**——不做弧长呼吸：offset 推进/呼吸方案在实测中始终有可见接缝，固定弧长旋转 360°≡0° 天然无缝）；**st-tooltip**（悬停/聚焦开合，气泡 fixed 自动上下翻转，open 为 data 需 watch 反射属性供 CSS，坑 #27 守卫；content 纯文本防注入）；**st-card**（elevated/filled/outlined 三 variant + interactive 可点击形态，.native button 承载；宿主恒 position:relative 且波纹仅 interactive 显示——否则绝对定位的波纹逃逸到全局）；**st-badges**（点/数字封顶 max+/文字徽标，钉在默认插槽元素右上角，pointer-events none）。
 - **st-ripple**（`packages/ripple/`）：点击波纹，放在 relative 父元素内使用；已内嵌到 st-button（点击按钮有波纹效果），波纹色 currentColor。
 - **st-input**（`packages/input/`）：单行输入框，两种 variant（outlined/filled）、disabled、readonly、type、placeholder、`default-value` 初始值属性、prefix/suffix 插槽、`color` 语义色属性（控制 caret 与 focus 边框色，常用于 error/success 校验态）；**value 是运行时状态（ofa data，非标签属性），attached 时由 default-value 初始化，JS 读写用 `el.value`**；`input`/`change` 事件天然 composed 直接在宿主监听；提供 `focus()`/`blur()` 方法。视觉在 `:host` 上，内部透明 `.native` input 承载交互。
 - **st-textarea**（`packages/textarea/`）：多行输入框，与 st-input 同范式（outlined/filled、rows、default-value 初始值/color/disabled/readonly、focus 描边/底线动画；value 为运行时状态，`el.value` 读写）；内部透明 textarea 用 rows 自撑高度（拖拽手柄默认关闭）；`autosize` 属性按内容自动撑开（rows 为最小高度，ResizeObserver 兜底外部字号变化）。
-- **st-select**（`packages/select/`）：单选下拉框，与 st-input 同范式（outlined/filled、placeholder、default-value 初始选中/color/disabled、focus 描边/底线动画；value 为运行时状态，`el.value` 读写）；选项写在 light DOM 的原生 `<option>`（value 缺省取文本），组件自绘 M3 风格弹层（shadow 内绝对定位，选中项 secondary-container + 对勾、键盘 ↑↓/Enter/Escape/Home/End 全支持、点击外部关闭）；`change` 事件 composed。注意：弹层在 shadow 内，被 overflow 祖先裁剪时会截断。
-- **st-dialog**（`packages/dialog/`）：模态对话框，`open` 为**运行时状态（data，非 attrs）**——内部交互关闭（auto-close）改 `this.open`，经 `sync:open` 双向绑定自动回写上层（attrs 声明的 open 内部 removeAttribute 无法回写 `:open` 绑定，此为状态类属性放 data 的原因）；watch 反射 data → 宿主 open 属性供 CSS，MutationObserver 反向兼容 setAttribute；显隐（纯 CSS，默认 display:none + `:host([open])` 正向启用）+ `auto-close`（遮罩点击/Escape 交互关闭并派发 `close` 事件 composed）；headline/默认/actions 三插槽（空区块自动隐藏）；**结构例外：宿主是全屏遮罩层（fixed + grid 居中），面板在 shadow 内 `part="panel"`，宽高/圆角/底色用原生 `::part(panel)` 选择器定制**（遮罩必须铺满视口，面板视觉无法放 :host 上）；面板默认值全 em（宿主改 font-size 全面板等比缩放）；打开时焦点移入面板容器；M3 emphasized 动效（遮罩淡入 250ms + 面板 scale 0.9 上移入场 300ms，关闭反向退出 200ms 后再隐藏，closing 过渡态由 JS 短暂挂载，watch 需 `_wasOpen` 守卫防初始化误触发）；轻磨砂遮罩（rgba(0,0,0,0.28) + blur 0.357em）。已在浏览器中完成功能与动画验证。
+- **st-select**（`packages/select/`）：单选下拉框，与 st-input 同范式（outlined/filled、placeholder、default-value 初始选中/color/disabled、focus 描边/底线动画；value 为运行时状态，`el.value` 读写）；选项写在 light DOM 的原生 `<option>`（value 缺省取文本），组件自绘 M3 风格弹层（shadow 内绝对定位，选中项 secondary-container + 对勾、键盘 ↑↓/Enter/Escape/Home/End 全支持、点击外部关闭）；弹层按视口剩余空间自动下弹/上弹（drop-up），开合动画同 st-menu（进入 0.2s 缩放淡入 / 退出 150ms 过渡后隐藏）；`change` 事件 composed。注意：弹层在 shadow 内，被 overflow 祖先裁剪时会截断。
+- **st-dialog**（`packages/dialog/`）：模态对话框，`open` 为**运行时状态（data，非 attrs）**——内部交互关闭（auto-close）改 `this.open`，经 `sync:open` 双向绑定自动回写上层（attrs 声明的 open 内部 removeAttribute 无法回写 `:open` 绑定，此为状态类属性放 data 的原因）；watch 反射 data → 宿主 open 属性供 CSS，MutationObserver 反向兼容 setAttribute；显隐（纯 CSS，默认 display:none + `:host([open])` 正向启用）+ `auto-close`（遮罩点击/Escape 交互关闭并派发 `close` 事件 composed）；headline/默认/actions 三插槽（空区块自动隐藏）；**结构例外：宿主是全屏遮罩层（fixed + grid 居中），面板在 shadow 内 `part="panel"`，宽高/圆角/底色用原生 `::part(panel)` 选择器定制**（遮罩必须铺满视口，面板视觉无法放 :host 上）；面板默认值全 em（宿主改 font-size 全面板等比缩放）；打开时焦点移入面板容器；M3 emphasized 动效（遮罩淡入 250ms + 面板 scale 0.9 上移入场 300ms，关闭反向退出 200ms 后再隐藏，closing 过渡态由 JS 短暂挂载，watch 需 `_wasOpen` 守卫防初始化误触发）；轻磨砂遮罩（rgba(0,0,0,0.28) + blur 0.357em）。另含**命令式工具**（`alert.js`/`confirm.js`/`prompt.js`，核心工厂 `util.js`，2026-08-21 参考 LemonTrade 移植）：`await stAlert/stConfirm/stPrompt(...)` 基于 st-dialog 即用即毁，返回值对齐原生语义（alert→true/null，confirm→true/false/null，prompt→值/null），文本自动转义、组件按需注入 l-m；prompt 聚焦须排在对话框自身聚焦之后（open watch 的 rAF 会抢焦点）。
 - **表单选择类**（checkbox / switch / radio，2026-08-20 从 Punch-UI 重构）：统一范式——内部透明原生 `<input type="checkbox|radio">`（`all: unset` + absolute inset 0 + **z-index: 2 盖住 position:relative 的兄弟元素**）承载点击/Space/焦点，变更后反射回宿主属性（`checked`/`indeterminate`）并派发 `change`（composed）；disabled 由 `input.disabled` 原生阻断；`color` 属性选中态换角色色（applyState 写 shadow 内元素内联样式）；对勾/圆点描边与弹性入场动画；radio 的 name 分组不跨 shadow root，互斥由组件在同一容器内查询同 name 兄弟手动实现。
 - **st-snackbar**（`packages/snackbar/`）：消息条，`open` 显隐 + `duration`（毫秒）自动关闭派发 `close`；视觉在 :host（默认 secondary 次级色底，color 属性可换角色色）；`hide()` 已桥接为宿主 DOM property（坑 #24）；上滑入场动画。
+- **stToast 命令式工具**（`packages/snackbar/toast.js`，2026-08-21 参考 Punch-UI 移植）：基于 st-snackbar 的 toast()——视口左下角 fixed 容器堆叠、入场/退场动画（0.3s）、duration 自动关闭（0 = 手动），返回 `{ close, el }`；✕ 关闭按钮色默认 inverse-primary / 彩色底用 on-角色色（st-button color 属性）；组件按需注入 l-m，文本 textContent 防注入。
 - **st-collapse**（`packages/collapse/`）：高度过渡折叠容器，`hide` 收起；ResizeObserver 跟随内容高度；watch 初始触发需容错（shadowRoot 未就绪直接 return）。
 - **st-list / st-list-item**（`packages/list/`）：列表容器 + 列表项；item 支持 `button`（state layer + 波纹 + click 冒泡）/ `disabled`（原生 button.disabled 阻断）/ `collapsible + expanded`（内嵌 st-collapse 折叠 sublist，点击切换且不冒泡）；prefix/suffix/secondary 副文本插槽；首尾项自动大圆角。
 - **st-menu / st-menu-item**（`packages/menu/`）：下拉菜单，trigger 插槽 + light DOM 菜单项；面板 fixed 定位 JS 计算（翻转避让视口、min-width 跟随触发器）；open/close 事件（watch 需守卫防初始化派发）；点外部/Escape/选中自动关闭（外部判断用 composedPath，坑 #21）；item 的 `.native` 以宿主为包含块（宿主必须 position:relative，否则 absolute 铺满整个面板）。
@@ -143,6 +160,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 21. **document 层监听判断"点击组件外部"必须用 `e.composedPath().includes(ele)`，不能用 `ele.contains(e.target)`**——composed 事件（pointerdown/click）冒泡到 document 时，target 已被沿途每层 shadow 边界重定向为最外层宿主（如 `o-page`），`contains` 必然误判为外部；st-select 曾因此弹层被提前关闭、选项 click 落空（表现为"选了没反应"）。另：合成验证（直接 `.click()` 选项）不触发 pointerdown，测不出此类问题，务必用真实点击回归
 22. **ofa 的 `:prop` 绑定到 attr 声明的键时会把对象 JSON 序列化写入 attribute**——组件侧 watch 收到的是 JSON 字符串（或解析后的值），不能当作数组直接用；正确写法：组件内 watch 里 `JSON.parse` 后规范化存入内部字段（如 `_opts`），不要存回 ofa attr data（会再次序列化）。同理 `:prop` 绑定到未声明的键则完全不生效
 23. **o-fill 把模板条目渲染在自身 light DOM（innerHTML），slot 的 assignedElements 只能看到 O-FILL 容器本身**——宿主组件想消费其中的条目（如 st-select 消费 option），需在 collect 时深入容器查询：`el.querySelectorAll('option')`（light DOM）+ `el.shadowRoot?.querySelectorAll('option')` 双路收集并去重，且要用 MutationObserver 同时观察容器本体与 shadowRoot（childList+subtree）跟随重渲染；只观察 shadowRoot 会漏掉 o-fill 的实际渲染位置
+39. **o-router 的 hash 路由以站点根（origin）解析，不相对当前页面目录**——应用放在子目录（如 `docs/`）时，hash 必须带目录前缀：`#/docs/pages/xxx.html`（写 `#/pages/xxx.html` 会去请求 `/pages/xxx.html` 而 404）；`app-config.js` 的 `home` 是相对配置文件的路径不受影响。另：嵌套布局页（parent/slot 模式）里 `routerChange` 不保证触发，侧边栏高亮改用 `ready` + `window.addEventListener("hashchange", ...)` 主动刷新更可靠
 
 ### 测试/验证类坑（非 ofa.js）
 
@@ -156,6 +174,9 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
     b) **transition shorthand 里第一个时间值是 duration、第二个是 delay**——`transition: height .3s <curve> 0s` 的 `0s` 是 delay，时长仍是 .3s，写成"时长在前来 0 结尾"毫无作用；正确写法 `transition: height 0s <curve>`；
     c) **不能用 `:host([hide]) { height: 0 !important }` 之类的 CSS 强制规则配合异步 watch 设过渡**——属性变化时高度随 CSS 同步瞬变，而 watch（异步，坑 #18）里才设置的 transitionDuration 来不及生效，动画整个跳过；正确写法：去掉 CSS 强制规则，watch hide（守卫初始化触发，坑 #27）里先设 `transitionDuration=".3s"` 再由 JS 设高度（收起设 0 / 展开设内容高），超时后恢复 0s（Punch-UI 原版即此设计）
 31. **CSS 变量不能同名自引用累加**——`--x: calc(var(--x, 0px) + 1em)` 在同一元素上声明时 var 指向自身，按规范构成 guaranteed-invalid 循环，整条声明静默失效（computed value 为空，无任何报错），"沿嵌套层级累加缩进"这类需求 CSS 变量链做不到（Punch-UI 用两个变量名交替也只能固定层数）；正确写法：由父组件**自顶向下传播**——在 sublist 插槽的 slotchange 里把"深度+1"推给已分配的子 st-list 并递归通知子项（st-list-item 的嵌套缩进即此方案，每层 `calc(depth * var(--st-list-step, 1em))`），并加 rAF/setTimeout 重推兜底。**注意**：ofa 页面模块（o-page）可能重排甚至复制嵌套组件的 light DOM（parentElement 链断裂、出现同文本的残留副本），自动化验证时不要用 `textContent.includes` 匹配元素（会命中祖先或副本），要用 id 或精确匹配
+37. **组件 JS 写自身声明的 attrs 属性会反馈进 ofa attr data，形成自引用死锁**——attrs 声明的属性，JS setAttribute/toggleAttribute 后 ofa 会同步进 attr data，watch 里再读 `this.xxx !== null` 判断"外部是否设置过"就永远为真/假锁死（st-progress 的 indeterminate 推导曾因此失效：一旦按推导挂上属性，自身读到的就是"用户设置了"）。正确写法：推导类状态不要落属性，直接以 JS 内联样式/内部字段表达；确需属性给 CSS 用时，读原始意图要用别的来源
+38. **ofa 组件 document.createElement 动态创建可能不升级**——`customElements.get(tag)` 已 defined 但 createElement + append 的实例可能迟迟没有 shadowRoot（初始化机制与 l-m 扫描相关）；自动化测试/工具里需要动态实例时优先用页面预置元素，或创建后轮询 shadowRoot 就绪
+36. **fixed 定位的弹层组件不能放在有 transform 的祖先内**——CSS `transform`/`filter`/`perspective`/`will-change` 会创建新包含块，后代的 `position: fixed` 改为相对该祖先定位而非视口：st-dialog 的全屏遮罩会铺不满视口（下方内容"穿透"可点、遮罩错位）。常见触发：做过入场动画且 transform 未清除的容器。正确写法：弹层组件挂在 body 或无 transform 的顶层容器；命令式工具（stAlert/stConfirm/stPrompt）自动 append 到 body 天然规避
 35. **"边框扩展成实心底"技巧在过渡与小数字号下会露馅，慎用**——用 border-width 从 2px 扩到半高实现描边→实心填充（Punch-UI switch 的做法）时：a) em 换算在非基准字号（12px/20px）下产生小数像素，取整后在轨道正中露出 1px 底色行；b) 过渡瞬间边框色与底色各自插值，中缝行短暂显示混色。正确写法：改用**恒定描边宽度 + 背景色过渡**（bg 层 border-width 恒定 2px，选中态过渡 background-color），中心区域任何时刻都被背景完整覆盖，无缝隙行；若确需尺寸拼合视觉，必须给被覆盖底层同步同色兜底
 34. **display:none 会暂停 CSS 动画，animationend 永不触发**——祖先被 display:none（如菜单面板关闭、对话框隐藏）时子树内的 CSS 动画冻结，animationend/transitionend 不会派发；靠 animationend 清理的元素（如 ripple 的波纹 span）会残留，面板再显示时动画从暂停处"续播"。正确写法：清理逻辑加 setTimeout 兜底（定时器不受 display 影响，先到先清）；同理监听 transitionend 的逻辑（如 collapse 的过渡时长复位）也要有超时兜底
 33. **依赖 light DOM 位置/结构的逻辑放 attached 而非 ready**——ready 时元素可能尚未真正进入文档/兄弟结构未稳定（ofa 渐进升级、重排 light DOM），按位置计算（如 button-group 的首尾圆角）会算错；正确写法：attached 里读取 `slot.assignedElements()` 计算并设置，slotchange 时重算。同理 ::slotted(:first-child) 等位置选择器也受此时序影响，位置相关样式改用 JS 设置内联值

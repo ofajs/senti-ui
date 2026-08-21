@@ -1,0 +1,71 @@
+<!-- st-slider 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; max-width: 480px; }
+    section { display: flex; flex-direction: column; gap: 16px; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); }
+    .state { font-size: 13px; color: var(--md-sys-color-on-surface-variant); font-family: ui-monospace, monospace; }
+  </style>
+
+  <section>
+    <h3>基础（默认 0-100 步进 1）</h3>
+    <st-slider default-value="40"></st-slider>
+    <st-slider disabled default-value="60">禁用</st-slider>
+  </section>
+
+  <section>
+    <h3>min / max / step</h3>
+    <st-slider min="0" max="10" step="2" default-value="4"></st-slider>
+    <st-slider min="50" max="150" default-value="80"></st-slider>
+  </section>
+
+  <section>
+    <h3>color 属性 — M3 角色</h3>
+    <st-slider color="error" default-value="30"></st-slider>
+    <st-slider color="success" default-value="70"></st-slider>
+    <st-slider color="tertiary" default-value="50"></st-slider>
+  </section>
+
+  <section>
+    <h3>纯 style 定制（原生 CSS 属性）</h3>
+    <st-slider style="width: 240px;" default-value="50"></st-slider>
+    <st-slider style="font-size: 12px;" default-value="50">12px 等比缩放</st-slider>
+  </section>
+
+  <section>
+    <h3>事件监听（on:input 实时 / on:change 松手）与数据绑定</h3>
+    <st-slider attr:value="volume" on:input="onVol" on:change="onVolDone"></st-slider>
+    <span class="state">volume 数据：{{volume}}｜input 次数：{{inCount}}｜change 次数：{{doneCount}}</span>
+  </section>
+
+  <section>
+    <h3>JS 主动操作（el.value 读写）与聚焦键盘</h3>
+    <st-slider id="js-slider" default-value="20"></st-slider>
+    <div style="display:flex; gap:12px;">
+      <st-button variant="outlined" on:click="setVol(80)">设为 80</st-button>
+      <st-button variant="text" on:click="readVol">读取 value</st-button>
+    </div>
+    <span class="state">读取结果：{{jsValue}}；Tab 聚焦后 ←/→/Home/End 键盘可调</span>
+  </section>
+
+  <script>
+    export default async () => ({
+      data: { volume: "50", inCount: 0, doneCount: 0, jsValue: "（未读取）" },
+      proto: {
+        onVol(e) {
+          this.volume = e.target.value;
+          this.inCount += 1;
+        },
+        onVolDone() {
+          this.doneCount += 1;
+        },
+        setVol(v) {
+          this.ele.shadowRoot.querySelector("#js-slider").value = v;
+        },
+        readVol() {
+          this.jsValue = this.ele.shadowRoot.querySelector("#js-slider").value;
+        },
+      },
+    });
+  </script>
+</template>

@@ -86,6 +86,18 @@
   </section>
 
   <section>
+    <h3>JS 主动操作（el.value 改选中，不派发 change）</h3>
+    <st-select id="js-sel" placeholder="请选择">
+      <option value="apple">苹果</option>
+      <option value="banana">香蕉</option>
+      <option value="cherry">樱桃</option>
+    </st-select>
+    <st-button variant="outlined" on:click="jsPick('banana')">选中香蕉</st-button>
+    <st-button variant="text" on:click="jsPick('cherry')">选中樱桃</st-button>
+    <p>程序改值不派发 change（仅用户交互派发）；初始选中用标签属性 <span class="code">default-value</span></p>
+  </section>
+
+  <section>
     <h3>纯 style 定制（原生 CSS 属性，无预设）</h3>
     <st-select style="font-size: 12px;" placeholder="Scale 12px">
       <option value="a">A</option>
@@ -94,6 +106,15 @@
       <option value="a">A</option>
     </st-select>
   </section>
+
+  <!-- 贴近视口底部：打开时自动向上弹（翻转避让视口） -->
+  <st-select placeholder="底部下拉（向上弹）" style="position: fixed; bottom: 24px; right: 24px;">
+    <option value="a">甲</option>
+    <option value="b">乙</option>
+    <option value="c">丙</option>
+    <option value="d">丁</option>
+    <option value="e">戊</option>
+  </st-select>
 
   <script>
     export default async () => ({
@@ -111,6 +132,7 @@
         ],
       },
       proto: {
+        jsPick(v) { this.ele.shadowRoot.querySelector("#js-sel").value = v; },
         onFruit(e) { this.fruit = e.target.value; },
         onCity(e) { this.city = e.target.value; },
       },

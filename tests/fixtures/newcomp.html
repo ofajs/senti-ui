@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>slider / progress / tooltip / card / badges test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-init.js"></script>
+  <l-m src="/packages/slider/slider.html"></l-m>
+  <l-m src="/packages/progress/progress.html"></l-m>
+  <l-m src="/packages/tooltip/tooltip.html"></l-m>
+  <l-m src="/packages/card/card.html"></l-m>
+  <l-m src="/packages/badges/badges.html"></l-m>
+  <l-m src="/packages/button/button.html"></l-m>
+</head>
+<body>
+  <st-slider id="sl-basic" default-value="40"></st-slider>
+  <st-slider id="sl-range" min="0" max="10" step="2" default-value="4"></st-slider>
+  <st-slider id="sl-disabled" disabled default-value="60"></st-slider>
+  <st-slider id="sl-color" color="error" default-value="30"></st-slider>
+
+  <st-progress id="pg-60" value="60"></st-progress>
+  <st-progress id="pg-indet" indeterminate></st-progress>
+  <st-progress id="pg-noval"></st-progress>
+  <st-progress id="pg-circ" circular value="75"></st-progress>
+  <st-progress id="pg-circ-indet" circular indeterminate></st-progress>
+
+  <st-tooltip id="tip-basic" content="提示内容">
+    <st-button variant="outlined">悬停我</st-button>
+  </st-tooltip>
+  <st-tooltip id="tip-top" content="顶部提示（翻下方）" style="position: fixed; top: 10px; left: 20px;">
+    <st-button variant="text">顶部触发器</st-button>
+  </st-tooltip>
+
+  <st-card id="card-elev"></st-card>
+  <st-card id="card-outlined" variant="outlined"></st-card>
+  <st-card id="card-click" interactive>可点击卡片</st-card>
+
+  <st-badges id="bd-dot"><span>●</span></st-badges>
+  <st-badges id="bd-num" value="8"><span>●</span></st-badges>
+  <st-badges id="bd-max" value="120"><span>●</span></st-badges>
+  <st-badges id="bd-text" value="NEW"><span>●</span></st-badges>
+
+  <script>
+    window.events = [];
+    document.querySelectorAll("st-slider").forEach((el) => {
+      ["input", "change"].forEach((t) => el.addEventListener(t, () => window.events.push({ id: el.id, type: t, value: el.value })));
+    });
+    document.querySelector("#card-click").addEventListener("click", () => window.events.push("card-click"));
+  </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!--
+  st-badges — Senti-UI 徽标组件（基于 ofa.js）
+  语义属性：value（数字，缺省为红点）/ max（数值封顶，默认 99）/ color（M3 角色名，默认 error）
+  默认插槽放被标记的元素（icon-button 等），徽标钉在其右上角，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      position: relative;
+      display: inline-flex;
+    }
+
+    /* 徽标：右上角，error 底 on-error 字；无 value 时为 6px 圆点 */
+    .badge {
+      position: absolute;
+      top: -0.214em;
+      right: -0.214em;
+      box-sizing: border-box;
+      min-width: 1.429em; /* 20px */
+      height: 1.429em;
+      padding: 0 0.286em;
+      border-radius: 1.429em;
+      font-size: 0.786em; /* 11px */
+      font-weight: 600;
+      line-height: 1.429em;
+      text-align: center;
+      background: var(--md-sys-color-error);
+      color: var(--md-sys-color-on-error);
+      pointer-events: none;
+      z-index: 1;
+      white-space: nowrap;
+    }
+    :host(:not([value])) .badge {
+      min-width: 0.429em; /* 6px 圆点 */
+      width: 0.429em;
+      height: 0.429em;
+      padding: 0;
+      line-height: 0;
+      border-radius: 50%;
+      top: 0;
+      right: 0;
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <slot></slot>
+  <span class="badge" id="st-badge"></span>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-badges",
+      attrs: {
+        value: null,
+        max: "99",
+        color: null,
+      },
+      watch: {
+        value() { this.applyState(); },
+        max() { this.applyState(); },
+        color() { this.applyState(); },
+      },
+      ready() {
+        this.applyState();
+      },
+      proto: {
+        // watch 初始化也会触发一次（坑 #27），apply 无副作用，天然安全。
+        // value 超过 max 显示 "max+"；color 换徽标配色（默认 error）
+        applyState() {
+          const sr = this.ele.shadowRoot;
+          const badge = sr.querySelector("#st-badge");
+          if (this.value !== null) {
+            const v = Number(this.value);
+            if (Number.isNaN(v)) {
+              badge.textContent = this.value; // 非数字（如 "NEW"）原样展示
+            } else {
+              const max = Number(this.max) || 99;
+              badge.textContent = v > max ? `${max}+` : String(v);
+            }
+          } else {
+            badge.textContent = ""; // 无 value = 圆点
+          }
+          const name = this.color;
+          if (name) {
+            badge.style.background = `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-error)))`;
+            badge.style.color = `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-error)))`;
+          } else {
+            badge.style.background = "";
+            badge.style.color = "";
+          }
+        },
+      },
+    });
+  </script>
+</template>

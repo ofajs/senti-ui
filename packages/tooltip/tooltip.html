@@ -1,0 +1,130 @@
+<!--
+  st-tooltip — Sensi-UI 提示组件（基于 ofa.js）
+  语义属性：content（提示文本，纯文本渲染防注入）/ placement(top|bottom，默认自动翻转) / disabled
+  open 为运行时状态（ofa data）：sync:open 可双向绑定；悬停/聚焦宿主自动开合
+  默认插槽放触发元素；气泡 fixed 定位自动翻转避让视口，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      position: relative;
+      display: inline-flex;
+    }
+
+    /* 气泡：fixed 定位（JS 计算位置），inverse-surface 深色底 */
+    .bubble {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      box-sizing: border-box;
+      max-width: 20em;
+      padding: 0.357em 0.643em; /* 5px 9px */
+      border-radius: 0.286em;
+      font-size: 0.857em; /* 12px */
+      font-family: inherit;
+      line-height: 1.5;
+      background: var(--md-sys-color-inverse-surface);
+      color: var(--md-sys-color-inverse-on-surface);
+      z-index: 1200;
+      pointer-events: none;
+    }
+    :host([open]) .bubble { display: block; }
+    :host([drop-up]) .bubble {
+      transform-origin: 50% 100%;
+      animation: st-tip-in-up 0.15s cubic-bezier(0.2, 0, 0, 1);
+    }
+    :host(:not([drop-up])) .bubble {
+      transform-origin: 50% 0;
+      animation: st-tip-in 0.15s cubic-bezier(0.2, 0, 0, 1);
+    }
+    @keyframes st-tip-in {
+      from { opacity: 0; transform: translateY(0.286em); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes st-tip-in-up {
+      from { opacity: 0; transform: translateY(-0.286em); }
+      to { opacity: 1; transform: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bubble { animation: none; }
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <slot></slot>
+  <div class="bubble"></div>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-tooltip",
+      attrs: {
+        content: null,
+        disabled: null,
+      },
+      data: {
+        // open 是运行时状态（data，非标签属性）：sync:open 可双向绑定；
+        // 悬停/聚焦宿主自动开合也走这里
+        open: false,
+      },
+      watch: {
+        open(val) {
+          const ele = this.ele;
+          // data → 属性反射（CSS :host([open]) 显隐选择器依赖属性）
+          if (val) ele.setAttribute("open", "");
+          else ele.removeAttribute("open");
+          if (val) this.updatePosition();
+        },
+        content() { this.applyContent(); },
+        disabled() { if (this.disabled !== null) this.open = false; },
+      },
+      ready() {
+        const ele = this.ele;
+        const sr = ele.shadowRoot;
+        this.applyContent = () => {
+          sr.querySelector(".bubble").textContent = this.content || "";
+        };
+        this.applyContent();
+
+        // 悬停/聚焦开合（disabled 时不响应）
+        const show = () => { if (this.disabled === null) this.open = true; };
+        const hide = () => { this.open = false; };
+        ele.addEventListener("pointerenter", show);
+        ele.addEventListener("pointerleave", hide);
+        ele.addEventListener("focusin", show);
+        ele.addEventListener("focusout", hide);
+        this._onKeydown = (e) => { if (e.key === "Escape") this.open = false; };
+        document.addEventListener("keydown", this._onKeydown);
+      },
+      detached() {
+        document.removeEventListener("keydown", this._onKeydown);
+        clearTimeout(this._showTimer);
+      },
+      proto: {
+        // 气泡定位：触发器上方居中，视口上方放不下翻到下方（横向夹在视口内）
+        updatePosition() {
+          const ele = this.ele;
+          const bubble = ele.shadowRoot.querySelector(".bubble");
+          const rect = ele.getBoundingClientRect();
+          ele.removeAttribute("drop-up");
+          // 先显示才能量尺寸（visibility 不影响布局：直接量 offsetWidth）
+          const w = bubble.offsetWidth;
+          const h = bubble.offsetHeight;
+          let left = rect.left + rect.width / 2 - w / 2;
+          left = Math.max(8, Math.min(left, window.innerWidth - w - 8));
+          const gap = 7; // 7px
+          let top = rect.top - h - gap;
+          if (top < 8) {
+            top = rect.bottom + gap;
+          } else {
+            ele.setAttribute("drop-up", "");
+          }
+          bubble.style.left = left + "px";
+          bubble.style.top = top + "px";
+        },
+      },
+    });
+  </script>
+</template>

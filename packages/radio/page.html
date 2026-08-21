@@ -27,17 +27,38 @@
   </section>
 
   <section>
+    <h3>数据绑定（attr:checked）</h3>
+    <st-radio name="sync" attr:checked="pick === 0" on:click="pick = 0">方案 A</st-radio>
+    <st-radio name="sync" attr:checked="pick === 1" on:click="pick = 1">方案 B</st-radio>
+    <span class="state">pick 数据：<span class="code" style="font-family: ui-monospace, monospace;">{{pick}}</span></span>
+  </section>
+
+  <section>
+    <h3>JS 主动操作（setAttribute 选中）</h3>
+    <st-radio name="js" id="js-rd">JS 控制</st-radio>
+    <st-button variant="outlined" on:click="jsPick">选中它</st-button>
+  </section>
+
+  <section>
+    <h3>聚焦与键盘</h3>
+    <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant);">
+      <span class="code" style="font-family: ui-monospace, monospace;">Tab</span> 聚焦、<span class="code" style="font-family: ui-monospace, monospace;">Space</span>/<span class="code" style="font-family: ui-monospace, monospace;">Enter</span> 选中；同组互斥依赖同一父容器内同 <span class="code" style="font-family: ui-monospace, monospace;">name</span>
+    </p>
+  </section>
+
+  <section>
     <h3>change 事件计数：<span class="code" style="font-family: ui-monospace, monospace;">{{count}}</span></h3>
     <st-radio name="fruit" on:change="onCountChange">点我</st-radio>
   </section>
 
   <script>
     export default async () => ({
-      data: { count: 0 },
+      data: { count: 0, pick: 0 },
       proto: {
         onCountChange() {
           this.count += 1;
         },
+        jsPick() { this.ele.shadowRoot.querySelector("#js-rd").setAttribute("checked", ""); },
       },
     });
   </script>

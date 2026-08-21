@@ -8,6 +8,7 @@
   <l-m src="/packages/button/button.html"></l-m>
   <l-m src="/packages/button/button-group.html"></l-m>
   <l-m src="/packages/button/split-button.html"></l-m>
+  <l-m src="/packages/button/icon-button.html"></l-m>
 </head>
 <body>
   <st-button id="btn-default">Default</st-button>
@@ -35,6 +36,13 @@
     <st-menu-item slot="menu" id="sm2">发送到云盘</st-menu-item>
   </st-split-button>
   <st-split-button id="split-disabled" disabled>禁用</st-split-button>
+
+  <st-icon-button id="ib-standard">⭐</st-icon-button>
+  <st-icon-button id="ib-filled" variant="filled">✅</st-icon-button>
+  <st-icon-button id="ib-tonal" variant="tonal">🗑</st-icon-button>
+  <st-icon-button id="ib-outlined" variant="outlined">⚙️</st-icon-button>
+  <st-icon-button id="ib-color" variant="tonal" color="error">🚫</st-icon-button>
+  <st-icon-button id="ib-disabled" disabled>🔒</st-icon-button>
 
   <script>
     window.events = [];

@@ -1,0 +1,133 @@
+<template page>
+  <style>
+    :host {
+      display: block;
+      height: 100%;
+    }
+    .shell {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    aside {
+      width: 240px;
+      flex: none;
+      overflow-y: auto;
+      border-right: 1px solid var(--md-sys-color-surface-variant);
+      background: var(--md-sys-color-surface-container-low);
+      padding: 16px 12px;
+      box-sizing: border-box;
+    }
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--md-sys-color-primary);
+      padding: 8px 12px 20px;
+      text-decoration: none;
+      display: block;
+    }
+    .group-title {
+      font-size: 12px;
+      color: var(--md-sys-color-on-surface-variant);
+      padding: 16px 12px 6px;
+      letter-spacing: 0.05em;
+    }
+    .nav-item {
+      display: block;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      color: var(--md-sys-color-on-surface);
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 2px;
+    }
+    .nav-item:hover {
+      background: color-mix(in srgb, currentColor 8%, transparent);
+    }
+    .nav-item[active] {
+      background: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+      font-weight: 600;
+    }
+    main {
+      flex: 1;
+      overflow-y: auto;
+    }
+    @media (max-width: 768px) {
+      aside {
+        display: none;
+      }
+    }
+  </style>
+
+  <div class="shell">
+    <aside>
+      <a class="logo" href="#/docs/pages/home.html">Senti-UI</a>
+
+      <div class="group-title">开始</div>
+      <a class="nav-item" href="#/docs/pages/home.html" attr:active="activeHome">介绍</a>
+
+      <div class="group-title">组件</div>
+      <o-fill :value="components">
+        <a class="nav-item" attr:href="'#/docs/pages/' + $data.file + '.html'" attr:active="$host.activeFile === $data.file">
+          {{$data.label}}
+          <span style="color: var(--md-sys-color-on-surface-variant); font-size: 12px; margin-left: 4px;">{{$data.name}}</span>
+        </a>
+      </o-fill>
+    </aside>
+    <main>
+      <slot></slot>
+    </main>
+  </div>
+
+  <script>
+    export default async () => {
+      return {
+        data: {
+          activeFile: "",
+          activeHome: false,
+          components: [
+            { file: "button", label: "按钮", name: "st-button" },
+            { file: "input", label: "单行输入框", name: "st-input" },
+            { file: "textarea", label: "多行输入框", name: "st-textarea" },
+            { file: "select", label: "下拉框", name: "st-select" },
+            { file: "checkbox", label: "复选框", name: "st-checkbox" },
+            { file: "switch", label: "开关", name: "st-switch" },
+            { file: "radio", label: "单选按钮", name: "st-radio" },
+            { file: "slider", label: "滑块", name: "st-slider" },
+            { file: "dialog", label: "对话框", name: "st-dialog" },
+            { file: "menu", label: "下拉菜单", name: "st-menu" },
+            { file: "snackbar", label: "消息条", name: "st-snackbar" },
+            { file: "tooltip", label: "提示", name: "st-tooltip" },
+            { file: "card", label: "卡片", name: "st-card" },
+            { file: "badges", label: "徽标", name: "st-badges" },
+            { file: "collapse", label: "折叠容器", name: "st-collapse" },
+            { file: "list", label: "列表", name: "st-list" },
+            { file: "tabs", label: "标签栏", name: "st-tab-bar" },
+            { file: "navigation", label: "导航栏", name: "st-nav-bar" },
+            { file: "progress", label: "进度", name: "st-progress" },
+            { file: "ripple", label: "波纹", name: "st-ripple" },
+          ],
+        },
+        ready() {
+          this.refreshActive();
+          this._onHash = () => this.refreshActive();
+          window.addEventListener("hashchange", this._onHash);
+        },
+        detached() {
+          window.removeEventListener("hashchange", this._onHash);
+        },
+        proto: {
+          refreshActive() {
+            const src = decodeURIComponent(location.hash);
+            const match = src.match(/pages\/(\w+)\.html/);
+            const file = match ? match[1] : "home";
+            this.activeFile = file;
+            this.activeHome = file === "home";
+          },
+        },
+      };
+    };
+  </script>
+</template>

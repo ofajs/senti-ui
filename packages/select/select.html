@@ -102,7 +102,8 @@
     }
     :host([open]) .arrow { transform: rotate(225deg) translateY(-0.1em); }
 
-    /* 下拉弹层：挂在 shadow 内（宿主须不被 overflow 裁剪的祖先包裹） */
+    /* 下拉弹层：挂在 shadow 内（宿主须不被 overflow 裁剪的祖先包裹）。
+       打开时按视口剩余空间自动翻转（drop-up），开合动画同 st-menu */
     .listbox {
       display: none;
       position: absolute;
@@ -118,8 +119,40 @@
       border-radius: 0.5em;
       box-shadow: 0 0.2em 0.8em rgb(0 0 0 / 0.2);
       z-index: 10;
+      transform-origin: 50% 0;
+      animation: st-select-in 0.2s cubic-bezier(0.2, 0, 0, 1);
     }
-    :host([open]) .listbox { display: block; }
+    /* 下方空间不足时向上弹（open 时 JS 按视口位置判定挂 drop-up） */
+    :host([drop-up]) .listbox {
+      top: auto;
+      bottom: calc(100% + 0.286em);
+      transform-origin: 50% 100%;
+      animation-name: st-select-in-up;
+    }
+    /* 关闭过渡：短暂保留 closing 态播完退出动画再隐藏（坑 #34：不能只靠 display） */
+    :host([open]) .listbox,
+    :host([closing]) .listbox { display: block; }
+    .listbox.closing, :host([closing]) .listbox {
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(-0.429em) scale(0.98);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+    :host([drop-up]) .listbox.closing,
+    :host([drop-up][closing]) .listbox {
+      transform: translateY(0.429em) scale(0.98);
+    }
+    @keyframes st-select-in {
+      from { opacity: 0; transform: translateY(-0.429em) scale(0.98); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes st-select-in-up {
+      from { opacity: 0; transform: translateY(0.429em) scale(0.98); }
+      to { opacity: 1; transform: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .listbox { animation: none; transition: none; }
+    }
 
     .opt {
       display: flex;
@@ -290,17 +323,36 @@
       },
       detached() {
         document.removeEventListener("pointerdown", this._onDocDown);
+        clearTimeout(this._closeTimer);
       },
       proto: {
         isOpen() { return this.ele.hasAttribute("open"); },
         openList() {
           if (this.disabled !== null || !this._opts.length) return;
-          this.ele.setAttribute("open", "");
+          const ele = this.ele;
+          clearTimeout(this._closeTimer);
+          ele.removeAttribute("closing"); // 重新打开时取消退出过渡、重启进入动画
+          ele.removeAttribute("drop-up");
+          ele.setAttribute("open", "");
+          // 按视口剩余空间翻转：下方放不下且上方更宽裕时向上弹
+          const rect = ele.getBoundingClientRect();
+          const below = window.innerHeight - rect.bottom - 8;
+          const above = rect.top - 8;
+          if (below < this.listEl.offsetHeight && above > below) {
+            ele.setAttribute("drop-up", "");
+          }
           // 键盘激活项初始定位到当前选中项
           const sel = this._opts.findIndex((o) => o.value === this.value);
           this.setActive(sel < 0 ? 0 : sel, true);
         },
-        close() { this.ele.removeAttribute("open"); },
+        close() {
+          const ele = this.ele;
+          if (!this.isOpen() && !ele.hasAttribute("closing")) return;
+          ele.removeAttribute("open");
+          clearTimeout(this._closeTimer);
+          ele.setAttribute("closing", ""); // 播 150ms 退出动画后再隐藏
+          this._closeTimer = setTimeout(() => ele.removeAttribute("closing"), 180);
+        },
         buildList() {
           this.listEl.innerHTML = "";
           this._opts.forEach((opt, i) => {

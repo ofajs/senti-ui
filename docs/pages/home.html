@@ -1,0 +1,107 @@
+<template page>
+  <style>
+    :host {
+      display: block;
+      padding: 48px max(24px, calc((100% - 860px) / 2)) 80px;
+      box-sizing: border-box;
+    }
+    h1 {
+      font-size: 40px;
+      margin: 0 0 12px;
+      color: var(--md-sys-color-on-surface);
+    }
+    h1 .accent {
+      color: var(--md-sys-color-primary);
+    }
+    .tagline {
+      font-size: 18px;
+      color: var(--md-sys-color-on-surface-variant);
+      margin: 0 0 32px;
+      max-width: 640px;
+      line-height: 1.6;
+    }
+    .quick-start {
+      margin: 32px 0;
+    }
+    pre {
+      background: var(--md-sys-color-surface-container);
+      border-radius: 12px;
+      padding: 16px 20px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    h2 {
+      font-size: 24px;
+      margin: 48px 0 16px;
+    }
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .principle {
+      background: var(--md-sys-color-surface-container-low);
+      border: 1px solid var(--md-sys-color-surface-variant);
+      border-radius: 16px;
+      padding: 20px;
+    }
+    .principle h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+    .principle p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+  </style>
+
+  <h1>Senti-UI<span class="accent">.</span></h1>
+  <p class="tagline">
+    面向 AI 的 ofa.js 组件库。无构建、纯静态，CDN 引入即用；
+    颜色体系遵循 Material Design 3，语义用属性、外观用原生 CSS。
+  </p>
+
+  <div class="quick-start">
+    <h2>快速开始</h2>
+    <pre><code>&lt;script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"&gt;&lt;/script&gt;
+&lt;script type="module" src="/packages/color/st-init.js"&gt;&lt;/script&gt;
+
+&lt;l-m src="/packages/button/button.html"&gt;&lt;/l-m&gt;
+
+&lt;st-button&gt;你好，Senti-UI&lt;/st-button&gt;</code></pre>
+  </div>
+
+  <h2>核心理念</h2>
+  <div class="principles">
+    <div class="principle">
+      <h3>语义用属性，外观用原生 CSS</h3>
+      <p>属性只表达语义（disabled / loading / variant），没有 size 枚举预设；视觉全在 :host 上，style="height:32px" 直接覆盖生效。</p>
+    </div>
+    <div class="principle">
+      <h3>颜色只走 M3 角色</h3>
+      <p>组件内不写死颜色，一律消费 --md-sys-color-* 变量；在 color 工具里调好配色，本站自动跟随（试试左侧导航换色后的效果）。</p>
+    </div>
+    <div class="principle">
+      <h3>尺寸默认值用 em</h3>
+      <p>height / padding / border-radius 以 font-size 为基准，改一个 font-size 即可整体等比缩放。</p>
+    </div>
+    <div class="principle">
+      <h3>文档即 API</h3>
+      <p>每个组件的 README 自包含：属性表、插槽、事件、默认值清单与可运行示例，写给 AI 按需检索。</p>
+    </div>
+  </div>
+
+  <script>
+    export const parent = "../layout.html";
+
+    export default async () => {
+      return {};
+    };
+  </script>
+</template>

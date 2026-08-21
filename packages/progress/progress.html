@@ -1,0 +1,169 @@
+<!--
+  st-progress — Senti-UI 进度指示组件（基于 ofa.js）
+  语义属性：circular（环形）/ indeterminate（不定进度）/ value（0-100，缺省即 indeterminate）/ color（M3 角色名）
+  视觉在 :host 上（em 尺寸，改 font-size 等比缩放），见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      font-size: 14px;
+      color: var(--md-sys-color-primary);
+    }
+
+    /* 线形：轨道 4px，高 4px + 上下留 6px 触控余量 */
+    .linear {
+      position: relative;
+      width: 100%;
+      min-width: 8em;
+      height: 0.286em; /* 4px */
+      border-radius: 0.286em;
+      overflow: hidden;
+      background: var(--md-sys-color-surface-container-highest);
+    }
+    .linear .bar {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: currentColor;
+      transition: width 0.3s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    /* 线形不定进度动画（keyframes 由 JS 按状态以内联 animation 驱动——
+       不用属性选择器：JS 写 indeterminate 属性会经 ofa 反馈进 attr data，
+       与"缺省 value 推导不定"形成自引用死锁） */
+    @keyframes st-pg-slide {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(433%); }
+    }
+
+    /* 环形：svg stroke-dash；size = 2.857em（40px），stroke 0.286em */
+    svg.circular {
+      width: 2.857em;
+      height: 2.857em;
+      transform: rotate(-90deg);
+    }
+    svg.circular .track {
+      fill: none;
+      stroke: var(--md-sys-color-surface-container-highest);
+      stroke-width: 0.286em;
+    }
+    svg.circular .arc {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 0.286em;
+      stroke-linecap: round;
+      stroke-dasharray: 100;
+      stroke-dashoffset: 100; /* 0-100 by JS */
+    }
+    /* 环形不定：外层整圈旋转 + 内层弧线生长收缩，形成 M3 风格的头尾都在动的效果。
+       起点由 svg 的 rotate(-90deg) 固定到 12 点钟；keyframes 从 -90deg 转到
+       等价的 270deg，保证一圈 360° 且首尾视觉相同，循环无跳变。 */
+    @keyframes st-pg-rotate {
+      from { transform: rotate(-90deg); }
+      to { transform: rotate(270deg); }
+    }
+    @keyframes st-pg-arc {
+      0% {
+        stroke-dasharray: 1 100;
+        stroke-dashoffset: 0;
+      }
+      50% {
+        stroke-dasharray: 55 100;
+        stroke-dashoffset: -13.75;
+      }
+      100% {
+        stroke-dasharray: 1 100;
+        stroke-dashoffset: -100;
+      }
+    }
+
+    /* 坑 #20 反向逻辑：默认线形，circular 正向切环形 */
+    svg.circular { display: none; }
+    :host([circular]) svg.circular { display: block; }
+    :host([circular]) .linear { display: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bar, svg.circular, svg.circular .arc { animation: none !important; }
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <div class="linear"><div class="bar"></div></div>
+  <svg class="circular" viewBox="0 0 42 42">
+    <circle class="track" cx="21" cy="21" r="15.91549430919"></circle>
+    <circle class="arc" cx="21" cy="21" r="15.91549430919" pathLength="100"></circle>
+  </svg>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-progress",
+      attrs: {
+        circular: null,
+        indeterminate: null,
+        value: null, // 0-100（数字属性，外部配置走 attrs）
+        color: null,
+      },
+      watch: {
+        value() { this.applyState(); },
+        circular() { this.applyState(); },
+        indeterminate() { this.applyState(); },
+        color() { this.applyColor(); },
+      },
+      ready() {
+        this.applyState();
+        this.applyColor();
+      },
+      proto: {
+        // watch 初始化也会触发一次（坑 #27），apply 无副作用，天然安全
+        applyState() {
+          const sr = this.ele.shadowRoot;
+          const bar = sr.querySelector(".linear .bar");
+          const arc = sr.querySelector("svg.circular .arc");
+          // 无有效 value（缺省 / 空串 / 非数字）即视为不定（ofa 无属性时 attr data
+          // 可能是 "" 而非 null，一并判掉）
+          const hasValue =
+            this.value !== null && this.value !== "" && !Number.isNaN(Number(this.value));
+          const indeterminate = this.indeterminate !== null || !hasValue;
+          const v = Math.min(Math.max(Number(this.value ?? 0) || 0, 0), 100);
+          const svg = sr.querySelector("svg.circular");
+          if (indeterminate) {
+            bar.style.width = "30%";
+            bar.style.transition = "none";
+            bar.style.animation = "st-pg-slide 1.2s cubic-bezier(0.45, 0, 0.2, 1) infinite";
+            arc.style.strokeDashoffset = "";
+            if (this.circular !== null) {
+              // 外层整圈旋转 + 内层弧线生长收缩，周期错开更有节奏
+              svg.style.animation = "st-pg-rotate 2s linear infinite";
+              arc.style.animation = "st-pg-arc 1.5s ease-in-out infinite";
+              arc.style.strokeDasharray = "";
+            } else {
+              svg.style.animation = "";
+              arc.style.animation = "";
+              arc.style.strokeDasharray = "";
+            }
+          } else {
+            bar.style.width = v + "%";
+            bar.style.transition = "";
+            bar.style.animation = "";
+            arc.style.strokeDasharray = "100";
+            arc.style.strokeDashoffset = String(100 - v);
+            svg.style.animation = "";
+            arc.style.animation = "";
+          }
+        },
+        // color 接受 M3 角色名：进度色换角色色（走 currentColor）
+        applyColor() {
+          this.ele.style.color = this.color
+            ? `var(--md-sys-color-${this.color}, var(--${this.color}, var(--md-sys-color-primary)))`
+            : "";
+        },
+      },
+    });
+  </script>
+</template>

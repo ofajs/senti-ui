@@ -24,6 +24,23 @@
     </st-menu>
   </section>
 
+  <section>
+    <h3>sync:open 数据绑定（菜单开合状态回写）</h3>
+    <st-menu sync:open="menuOpen">
+      <st-button slot="trigger" variant="outlined">状态绑定菜单 ▾</st-button>
+      <st-menu-item>选项一</st-menu-item>
+      <st-menu-item>选项二</st-menu-item>
+    </st-menu>
+    <span style="font-size:13px; color: var(--md-sys-color-on-surface-variant);">menuOpen 数据：<span class="code" style="font-family: ui-monospace, monospace;">{{menuOpen}}</span>（选中/点外部/Escape 关闭后自动回写 false）</span>
+  </section>
+
+  <section>
+    <h3>键盘行为</h3>
+    <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant); width:100%;">
+      <span class="code" style="font-family: ui-monospace, monospace;">Escape</span> 关闭、点击组件外部关闭；菜单项 <span class="code" style="font-family: ui-monospace, monospace;">Tab</span> 良好可达、<span class="code" style="font-family: ui-monospace, monospace;">Enter</span>/<span class="code" style="font-family: ui-monospace, monospace;">Space</span> 激活
+    </p>
+  </section>
+
   <p style="margin:0; font-size:14px; color: var(--md-sys-color-on-surface-variant);">
     菜单项点击：<span class="code" style="font-family: ui-monospace, monospace;">{{lastPick}}</span>
     ｜ open/close 状态：<span class="code" style="font-family: ui-monospace, monospace;">{{openCount}}</span>
@@ -31,7 +48,7 @@
 
   <script>
     export default async () => ({
-      data: { lastPick: "（无）", openCount: 0 },
+      data: { lastPick: "（无）", openCount: 0, menuOpen: false },
       proto: {
         onOpen() {
           this.openCount += 1;

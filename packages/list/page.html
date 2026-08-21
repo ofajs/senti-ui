@@ -57,6 +57,11 @@
     click 事件：<span class="code" style="font-family: ui-monospace, monospace;">{{lastClick}}</span>
   </p>
 
+  <h3>聚焦与键盘</h3>
+  <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant);">
+    button / collapsible 项由内部原生 button 承载交互：<span class="code" style="font-family: ui-monospace, monospace;">Tab</span> 聚焦、<span class="code" style="font-family: ui-monospace, monospace;">Enter</span>/<span class="code" style="font-family: ui-monospace, monospace;">Space</span> 激活；折叠项同样支持
+  </p>
+
   <script>
     export default async () => ({
       data: { lastClick: "（无）" },

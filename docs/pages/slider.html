@@ -1,0 +1,45 @@
+<template page>
+  <style>
+    :host {
+      display: block;
+      padding: 32px max(24px, calc((100% - 960px) / 2)) 80px;
+      box-sizing: border-box;
+    }
+    l-m { display: none; }
+    header {
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-size: 32px;
+      margin: 0 0 8px;
+    }
+    .desc {
+      margin: 0;
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 15px;
+    }
+    .tag {
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 13px;
+      color: var(--md-sys-color-primary);
+    }
+  </style>
+
+  <l-m src="../../packages/slider/slider.html"></l-m>
+  <l-m src="../../packages/button/button.html"></l-m>
+
+  <header>
+    <h1>滑块 Slider</h1>
+    <p class="desc">M3 视觉：轨道内缩、拖动显示数值气泡；内部原生 input[type=range] 承载拖拽/键盘 &nbsp;标签：<span class="tag">st-slider</span></p>
+  </header>
+
+  <o-page src="../../packages/slider/page.html"></o-page>
+
+  <script>
+    export const parent = "../layout.html";
+
+    export default async () => {
+      return {};
+    };
+  </script>
+</template>

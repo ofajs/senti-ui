@@ -1,6 +1,6 @@
 ---
 name: "senti-ui"
-description: "Senti-UI component library knowledge base (ofa.js + Material Design 3, no build step). Invoke when the user asks about Senti-UI or st-* components, wants to build a web page/app UI with senti-ui, asks about st-button / st-input / st-dialog / stToast etc., theming with M3 color tokens, or developing new components based on senti-ui."
+description: "Senti-UI component library knowledge base (ofa.js + Material Design 3, no build step). Invoke when the user asks about Senti-UI or st-* components, wants to build a web page/app UI with senti-ui, asks about st-button / st-input / st-dialog / toast etc., theming with M3 color tokens, or developing new components based on senti-ui."
 ---
 
 # Senti-UI 组件库使用指南
@@ -55,12 +55,12 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 | 多行输入框 | `st-textarea` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/textarea/textarea.html` |
 | 单选下拉框 | `st-select` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/select/select.html` |
 | 对话框 | `st-dialog` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/dialog.html` |
-| 对话框命令式工具 | `stAlert/stConfirm/stPrompt` | `import stAlert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/alert.js"` 等 |
+| 对话框命令式工具 | `alert/confirm/prompt` | `import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/alert.js"` 等 |
 | 复选框 | `st-checkbox` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/checkbox/checkbox.html` |
 | 开关 | `st-switch` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/switch/switch.html` |
 | 单选按钮 | `st-radio` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/radio/radio.html` |
 | 消息条 | `st-snackbar` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/snackbar.html` |
-| Toast 命令式工具 | `stToast` | `import stToast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js"` |
+| Toast 命令式工具 | `toast` | `import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js"` |
 | 滑块 | `st-slider` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/slider/slider.html` |
 | 进度 | `st-progress` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/progress/progress.html` |
 | 提示 | `st-tooltip` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/tooltip/tooltip.html` |

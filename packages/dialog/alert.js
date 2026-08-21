@@ -1,10 +1,10 @@
 // alert.js —— 警告对话框（仅确认按钮），基于 st-dialog
 // 用法：
-//   const ok = await stAlert("操作成功");                 // → true（确认）/ null（遮罩、Escape）
-//   const ok = await stAlert({ title, message, ok, color });
+//   const ok = await alert("操作成功");                 // → true（确认）/ null（遮罩、Escape）
+//   const ok = await alert({ title, message, ok, color });
 import { escapeHtml, createDialog } from "./util.js";
 
-export default async function stAlert(options) {
+export default async function alert(options) {
   let message = "";
   let title = "";
   let okText = "确定";

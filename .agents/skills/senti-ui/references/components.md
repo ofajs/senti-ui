@@ -56,12 +56,12 @@
 - 命令式工具（无需预引入组件）：
 
 ```js
-import stAlert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/alert.js";
-import stConfirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/confirm.js";
-import stPrompt from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/prompt.js";
-const ok = await stConfirm("确认删除？"); // true/false/null（null=被关闭）
-const name = await stPrompt("你的名字", "默认值"); // 值/null
-await stAlert("完成"); // true/null
+import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/alert.js";
+import confirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/confirm.js";
+import prompt from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/prompt.js";
+const ok = await confirm("确认删除？"); // true/false/null（null=被关闭）
+const name = await prompt("你的名字", "默认值"); // 值/null
+await alert("完成"); // true/null
 ```
 
 - 坑：不要放在有 transform/filter 的祖先内
@@ -79,11 +79,11 @@ await stAlert("完成"); // true/null
 - 属性：`open`、`duration`（毫秒，到时自动关闭派发 `close`）、`color`（底色为角色色、文字 on-角色色）
 - 插槽：默认（消息）、`action`（建议放 `st-button variant="text"`）
 - 方法：`el.hide()` 主动关闭（派发 close）
-- `stToast` 命令式工具（无需预引入）：
+- `toast` 命令式工具（无需预引入）：
 
 ```js
-import stToast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js";
-const t = stToast("已保存", { duration: 3000 }); // 返回 { close, el }；duration 0 = 手动
+import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js";
+const t = toast("已保存", { duration: 3000 }); // 返回 { close, el }；duration 0 = 手动
 ```
 
 ## st-slider 滑块

@@ -20,12 +20,12 @@
   <l-m src="../button/button.html"></l-m>
   <!-- 命令式工具预加载（坑 #6：页面模块内不能相对 import，须挂 window 供轮询） -->
   <script type="module">
-    import stAlert from "./alert.js";
-    import stConfirm from "./confirm.js";
-    import stPrompt from "./prompt.js";
-    window.stAlert = stAlert;
-    window.stConfirm = stConfirm;
-    window.stPrompt = stPrompt;
+    import alert from "./alert.js";
+    import confirm from "./confirm.js";
+    import prompt from "./prompt.js";
+    window.alert = alert;
+    window.confirm = confirm;
+    window.prompt = prompt;
     window.__stDialogUtilsReady = true;
   </script>
   <o-page src="./page.html"></o-page>

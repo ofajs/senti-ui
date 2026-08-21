@@ -3,13 +3,13 @@ import { test, expect } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
   await page.goto("/tests/fixtures/feedback.html");
   await page.waitForFunction(
-    () => window.__stToastReady && document.querySelector("#sb-auto")?.shadowRoot,
+    () => window.__toastReady && document.querySelector("#sb-auto")?.shadowRoot,
     { timeout: 20_000 }
   );
 });
 
 test("toast：出现于左下角固定容器，默认 3s 自动消失", async ({ page }) => {
-  await page.evaluate(() => { window.__t = window.stToast("已保存"); });
+  await page.evaluate(() => { window.__t = window.toast("已保存"); });
   await page.waitForSelector(".st-toast-container .st-toast");
   const geo = await page.evaluate(() => {
     const t = document.querySelector(".st-toast");
@@ -32,8 +32,8 @@ test("toast：出现于左下角固定容器，默认 3s 自动消失", async ({
 
 test("toast：多条堆叠、color 换色、duration 0 手动关闭", async ({ page }) => {
   await page.evaluate(async () => {
-    await window.stToast({ message: "第一条", duration: 0 });
-    await window.stToast({ message: "第二条", color: "success", duration: 0 });
+    await window.toast({ message: "第一条", duration: 0 });
+    await window.toast({ message: "第二条", color: "success", duration: 0 });
   });
   await page.waitForTimeout(300);
   expect(await page.evaluate(() => document.querySelectorAll(".st-toast").length)).toBe(2);
@@ -61,7 +61,7 @@ test("toast：多条堆叠、color 换色、duration 0 手动关闭", async ({ p
   // close() 手动关闭幂等
   await page.evaluate(() => window.__t && 0);
   await page.evaluate(async () => {
-    const t = await window.stToast({ message: "第三条", duration: 0 });
+    const t = await window.toast({ message: "第三条", duration: 0 });
     window.__t3 = t;
   });
   await page.waitForTimeout(200);

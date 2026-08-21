@@ -67,12 +67,12 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`，下表�
 | Textarea 多行输入框 | `st-textarea` | `.../packages/textarea/textarea.html` |
 | Select 单选下拉框 | `st-select` | `.../packages/select/select.html` |
 | Dialog 对话框 | `st-dialog` | `.../packages/dialog/dialog.html` |
-| Dialog 命令式工具 | `stAlert/stConfirm/stPrompt` | `import stAlert from ".../packages/dialog/alert.js"` 等 |
+| Dialog 命令式工具 | `alert/confirm/prompt` | `import alert from ".../packages/dialog/alert.js"` 等 |
 | Checkbox 复选框 | `st-checkbox` | `.../packages/checkbox/checkbox.html` |
 | Switch 开关 | `st-switch` | `.../packages/switch/switch.html` |
 | Radio 单选按钮 | `st-radio` | `.../packages/radio/radio.html` |
 | Snackbar 消息条 | `st-snackbar` | `.../packages/snackbar/snackbar.html` |
-| Toast 命令式工具 | `stToast` | `import stToast from ".../packages/snackbar/toast.js"` |
+| Toast 命令式工具 | `toast` | `import toast from ".../packages/snackbar/toast.js"` |
 | Slider 滑块 | `st-slider` | `.../packages/slider/slider.html` |
 | Progress 进度 | `st-progress` | `.../packages/progress/progress.html` |
 | Tooltip 提示 | `st-tooltip` | `.../packages/tooltip/tooltip.html` |
@@ -93,11 +93,11 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`，下表�
 
 ```html
 <script type="module">
-  import stConfirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/confirm.js";
-  import stToast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js";
+  import confirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/confirm.js";
+  import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js";
 
-  if (await stConfirm("确认删除？")) {   // true / false / null（被关闭）
-    stToast("已删除", { duration: 3000 }); // 左下角 toast，返回 { close, el }
+  if (await confirm("确认删除？")) {   // true / false / null（被关闭）
+    toast("已删除", { duration: 3000 }); // 左下角 toast，返回 { close, el }
   }
 </script>
 ```

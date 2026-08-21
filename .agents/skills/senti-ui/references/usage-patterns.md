@@ -40,7 +40,7 @@ Senti-UI 基于 ofa.js。在 ofa 页面（`<o-page>` / `<o-app>`）内用模板�
 
 - **JS 改布尔属性用 `$("sel").attr(name, "")` 设置 / `attr(name, null)` 移除**，改 property 不触发更新
 - **`setAttribute` 后 watch 异步生效**——同步读计算样式/状态会得到旧值，验证时 `await` 约 100ms 再断言
-- **st-dialog / st-select / st-menu 等弹层组件不要放在有 `transform`/`filter` 的祖先内**——fixed 定位会被劫持成相对该祖先，遮罩铺不满视口。挂在 body 或无 transform 的顶层容器（命令式工具 stAlert/stToast 自动 append 到 body，天然规避）
+- **st-dialog / st-select / st-menu 等弹层组件不要放在有 `transform`/`filter` 的祖先内**——fixed 定位会被劫持成相对该祖先，遮罩铺不满视口。挂在 body 或无 transform 的顶层容器（命令式工具 alert/toast 自动 append 到 body，天然规避）
 - **st-select 弹层在 shadow 内**，被 `overflow: hidden` 祖先裁剪时会截断，注意放置位置
 - **`<st-icon-button>` 无文字，必须配 `title` / `aria-label`**
 - **st-card 内放按钮等交互元素时不要加 `interactive`**——点内部按钮会同时冒泡出卡片 click

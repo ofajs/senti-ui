@@ -1,7 +1,7 @@
 // prompt.js —— 输入对话框（st-input + 确认 + 取消），基于 st-dialog
 // 用法：
-//   const val = await stPrompt("请输入新密码");           // → 输入值 / null（取消、遮罩、Escape）
-//   const val = await stPrompt({ title, message, placeholder, value, yes, cancel });
+//   const val = await prompt("请输入新密码");           // → 输入值 / null（取消、遮罩、Escape）
+//   const val = await prompt({ title, message, placeholder, value, yes, cancel });
 import { escapeHtml, createDialog } from "./util.js";
 
 const ensureInput = async () => {
@@ -11,7 +11,7 @@ const ensureInput = async () => {
   await customElements.whenDefined("st-input");
 };
 
-export default async function stPrompt(options) {
+export default async function prompt(options) {
   let message = "";
   let title = "";
   let yesText = "确定";

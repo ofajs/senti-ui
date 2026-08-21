@@ -65,12 +65,12 @@ Traditional component libraries offer lots of "convenience presets" for humans (
 | Textarea | `st-textarea` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/textarea/textarea.html` |
 | Select | `st-select` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/select/select.html` |
 | Dialog | `st-dialog` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/dialog.html` |
-| Dialog imperative utils | `stAlert/stConfirm/stPrompt` | `import stAlert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/alert.js"` etc. |
+| Dialog imperative utils | `alert/confirm/prompt` | `import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/alert.js"` etc. |
 | Checkbox | `st-checkbox` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/checkbox/checkbox.html` |
 | Switch | `st-switch` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/switch/switch.html` |
 | Radio | `st-radio` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/radio/radio.html` |
 | Snackbar | `st-snackbar` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/snackbar.html` |
-| Toast imperative util | `stToast` | `import stToast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js"` |
+| Toast imperative util | `toast` | `import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js"` |
 | Slider | `st-slider` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/slider/slider.html` |
 | Progress | `st-progress` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/progress/progress.html` |
 | Tooltip | `st-tooltip` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/tooltip/tooltip.html` |
@@ -93,11 +93,11 @@ Full docs (attribute tables, slots, events, default value lists) live in each pa
 
 ```html
 <script type="module">
-  import stConfirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/confirm.js";
-  import stToast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js";
+  import confirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/confirm.js";
+  import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js";
 
-  if (await stConfirm("Delete?")) {   // true / false / null (dismissed)
-    stToast("Deleted", { duration: 3000 }); // bottom-left toast, returns { close, el }
+  if (await confirm("Delete?")) {   // true / false / null (dismissed)
+    toast("Deleted", { duration: 3000 }); // bottom-left toast, returns { close, el }
   }
 </script>
 ```

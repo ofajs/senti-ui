@@ -27,7 +27,7 @@
     这是一条很长的消息：网络连接已断开，正在尝试重新连接，请稍候片刻。系统会在恢复后自动同步你的数据。
   </st-snackbar>
 
-  <h3>toast 命令式工具（import stToast from "/packages/snackbar/toast.js"，左下角堆叠）</h3>
+  <h3>toast 命令式工具（import toast from "/packages/snackbar/toast.js"，左下角堆叠）</h3>
   <section style="display:flex; gap:12px; flex-wrap:wrap;">
     <st-button variant="outlined" on:click="toastBasic">默认 toast（3s）</st-button>
     <st-button variant="outlined" on:click="toastColor">彩色 toast（success）</st-button>
@@ -42,15 +42,15 @@
     export default async () => ({
       proto: {
         async toastBasic() {
-          if (window.__stToastReady) await window.stToast("已保存全部更改");
+          if (window.__toastReady) await window.toast("已保存全部更改");
         },
         async toastColor() {
-          if (window.__stToastReady) await window.stToast({ message: "同步完成", color: "success" });
+          if (window.__toastReady) await window.toast({ message: "同步完成", color: "success" });
         },
         async toastSticky() {
-          if (window.__stToastReady) {
-            const t = await window.stToast({ message: "我不会自动消失，点 ✕ 关闭", duration: 0 });
-            this._lastToast = t;
+          if (window.__toastReady) {
+            const t = await window.toast({ message: "我不会自动消失，点 ✕ 关闭", duration: 0 });
+            this._latoast = t;
           }
         },
       },

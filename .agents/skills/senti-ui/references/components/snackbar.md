@@ -1,4 +1,4 @@
-# st-snackbar 消息条组件（含命令式工具 stToast）
+# st-snackbar 消息条组件（含命令式工具 toast）
 
 基于 ofa.js 的底部消息条组件 `st-snackbar`，以及基于它构建的命令式 toast 工具（`toast.js`），同目录存放。视觉在 `:host` 上（默认主题次级色 `secondary` 底，`color` 属性可换任意 M3 角色），可直接用原生 CSS 属性覆盖。
 
@@ -13,7 +13,7 @@ toast 工具无需预引入组件——内部按需注入 `<l-m>`（snackbar / b
 
 ```html
 <script type="module">
-  import stToast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js";
+  import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js";
 </script>
 ```
 
@@ -67,16 +67,16 @@ snackbar.hide(); // JS 主动关闭（派发 close）
 
 定位由外部决定（通常 `position: fixed; bottom; left: 50%` 或用宿主 style 控制）。
 
-## 命令式工具：stToast
+## 命令式工具：toast
 
 `toast()` 式即用消息提示：固定在视口左下角、多条堆叠、入场/退场动画、自动或手动关闭。
 
 ```js
 // 字符串简写，默认 3s 消失
-const t = await stToast("已保存");
+const t = await toast("已保存");
 // 对象参数：message / duration（毫秒，0 = 不自动消失）/ color（M3 角色名）
-const t = await stToast({ message: "同步完成", color: "success", duration: 4000 });
-const t = await stToast({ message: "点 ✕ 关闭", duration: 0 });
+const t = await toast({ message: "同步完成", color: "success", duration: 4000 });
+const t = await toast({ message: "点 ✕ 关闭", duration: 0 });
 t.close(); // 手动关闭（返回 { close, el }）
 ```
 

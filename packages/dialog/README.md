@@ -1,4 +1,4 @@
-# st-dialog 对话框组件（含命令式工具 stAlert / stConfirm / stPrompt）
+# st-dialog 对话框组件（含命令式工具 alert / confirm / prompt）
 
 基于 ofa.js 的模态对话框组件 `st-dialog`，以及基于它构建的三个命令式工具（`alert.js` / `confirm.js` / `prompt.js`），同目录存放。语义由属性表达（`open` 控制显示，`auto-close` 控制交互关闭），视觉默认值全用 em，面板外观用原生 CSS `::part(panel)` 选择器直接定制。
 
@@ -15,9 +15,9 @@
 
 ```html
 <script type="module">
-  import stAlert from "/packages/dialog/alert.js";
-  import stConfirm from "/packages/dialog/confirm.js";
-  import stPrompt from "/packages/dialog/prompt.js";
+  import alert from "/packages/dialog/alert.js";
+  import confirm from "/packages/dialog/confirm.js";
+  import prompt from "/packages/dialog/prompt.js";
 </script>
 ```
 
@@ -125,21 +125,21 @@ st-dialog::part(panel) {
 
 `st-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
 
-## 命令式工具：stAlert / stConfirm / stPrompt
+## 命令式工具：alert / confirm / prompt
 
 `window.alert/confirm/prompt` 的异步替代品，基于 st-dialog（M3 风格、带入场/退出动画、遮罩/Escape 可关），**命令式调用、用完即毁**（关闭动画播完自动移除 DOM）。参数支持字符串简写或对象：
 
 ```js
 // alert：确认 → true；遮罩/Escape → null
-const ok = await stAlert("操作成功");
-await stAlert({ title: "提示", message: "密码已重置", ok: "知道了" });
+const ok = await alert("操作成功");
+await alert({ title: "提示", message: "密码已重置", ok: "知道了" });
 
 // confirm：确认 → true；取消 → false；遮罩/Escape → null。color 用于危险操作
-const ok = await stConfirm({ title: "确认删除", message: "不可撤销", yes: "删除", cancel: "取消", color: "error" });
+const ok = await confirm({ title: "确认删除", message: "不可撤销", yes: "删除", cancel: "取消", color: "error" });
 
 // prompt：确认 → 输入值(string)；取消/遮罩/Escape → null（对齐原生行为）。
 // 自动聚焦并全选默认值，Enter 提交
-const val = await stPrompt({ title: "重置密码", message: "至少 4 位", placeholder: "新密码", value: "预填" });
+const val = await prompt({ title: "重置密码", message: "至少 4 位", placeholder: "新密码", value: "预填" });
 ```
 
 对象参数：`title` / `message`（或 `content`）/ `ok`（或 `yes`）/ `cancel` / `placeholder` / `value` / `color`。
@@ -153,7 +153,7 @@ const val = await stPrompt({ title: "重置密码", message: "至少 4 位", pla
 - `close` 事件只在**交互关闭**（auto-close）时派发；外部关闭不派发——若需统一感知，监听后自行维护状态
 - 面板定制用原生 `::part(panel)` 选择器（不是自定义变量）；字号类直接写宿主 style（可继承）
 - 多个对话框同时打开时 Escape 各管各的（都设 auto-close 时都会关）
-- **不要把 st-dialog 放在已设置 `transform`（及 `filter`/`perspective`/`will-change`）的祖先元素内**——这些属性会创建新的包含块，宿主的 `position: fixed` 遮罩与面板会改为相对该祖先定位，遮罩铺不满视口、出现"穿透"（下方内容可点、遮罩错位）。常见触发场景：做过入场动画（transform 未清除）的容器、开启了 translate 的布局包装。对话框请挂在 `document.body` 或无 transform 的顶层容器下（命令式工具 stAlert/stConfirm/stPrompt 已自动挂 body，不受影响）
+- **不要把 st-dialog 放在已设置 `transform`（及 `filter`/`perspective`/`will-change`）的祖先元素内**——这些属性会创建新的包含块，宿主的 `position: fixed` 遮罩与面板会改为相对该祖先定位，遮罩铺不满视口、出现"穿透"（下方内容可点、遮罩错位）。常见触发场景：做过入场动画（transform 未清除）的容器、开启了 translate 的布局包装。对话框请挂在 `document.body` 或无 transform 的顶层容器下（命令式工具 alert/confirm/prompt 已自动挂 body，不受影响）
 ## 验证页面
 
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `/packages/dialog/`）。

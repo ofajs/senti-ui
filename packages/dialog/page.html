@@ -80,7 +80,7 @@
     <st-button variant="outlined" on:click="runPrompt">prompt</st-button>
     <span class="code" style="font-size:13px; color: var(--md-sys-color-on-surface-variant);">返回值：{{utilResult}}</span>
     <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant); width:100%;">
-      引入：<span class="code">import stAlert from "/packages/dialog/alert.js"</span>（confirm / prompt 同理）；
+      引入：<span class="code">import alert from "/packages/dialog/alert.js"</span>（confirm / prompt 同理）；
       遮罩点击 / Escape = 取消（alert → null，confirm → null，prompt → null）
     </p>
   </section>
@@ -105,17 +105,17 @@
         },
         async runAlert() {
           if (!window.__stDialogUtilsReady) return;
-          const ok = await window.stAlert({ title: "操作成功", message: "密码已重置，请使用新密码登录。", ok: "知道了" });
+          const ok = await window.alert({ title: "操作成功", message: "密码已重置，请使用新密码登录。", ok: "知道了" });
           this.utilResult = "alert → " + ok;
         },
         async runConfirm() {
           if (!window.__stDialogUtilsReady) return;
-          const ok = await window.stConfirm({ title: "确认删除", message: "确定要删除用户 bob 吗？此操作不可撤销。", yes: "删除", cancel: "取消", color: "error" });
+          const ok = await window.confirm({ title: "确认删除", message: "确定要删除用户 bob 吗？此操作不可撤销。", yes: "删除", cancel: "取消", color: "error" });
           this.utilResult = "confirm → " + ok;
         },
         async runPrompt() {
           if (!window.__stDialogUtilsReady) return;
-          const val = await window.stPrompt({ title: "重置密码", message: "为用户 bob 设置新密码（至少 4 位）", placeholder: "请输入新密码" });
+          const val = await window.prompt({ title: "重置密码", message: "为用户 bob 设置新密码（至少 4 位）", placeholder: "请输入新密码" });
           this.utilResult = "prompt → " + JSON.stringify(val);
         },
       },

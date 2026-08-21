@@ -1,6 +1,6 @@
 // toast.js —— 命令式消息提示（基于 st-snackbar），用法见 packages/snackbar/README.md
-// const t = stToast("已保存");               // 默认 3s 自动消失
-// const t = await stToast({ message, duration, color });  // duration: 0 = 不自动消失
+// const t = toast("已保存");               // 默认 3s 自动消失
+// const t = await toast({ message, duration, color });  // duration: 0 = 不自动消失
 // t.close();                                 // 手动关闭
 
 let container = null;
@@ -65,7 +65,7 @@ const initContainer = () => {
   document.body.appendChild(container);
 };
 
-export default async function stToast(options) {
+export default async function toast(options) {
   let message = "";
   let duration = 3000;
   let color = null; // 默认反色底；传 M3 角色名则整条换色
@@ -118,4 +118,4 @@ export default async function stToast(options) {
   return { close, el: snackbarEl };
 }
 
-export { stToast };
+export { toast };

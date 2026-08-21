@@ -19,9 +19,9 @@
   <l-m src="./snackbar.html"></l-m>
   <l-m src="../button/button.html"></l-m>  <!-- toast 命令式工具预加载（坑 #6：页面模块内不能相对 import，须挂 window） -->
   <script type="module">
-    import stToast from "./toast.js";
-    window.stToast = stToast;
-    window.__stToastReady = true;
+    import toast from "./toast.js";
+    window.toast = toast;
+    window.__toastReady = true;
   </script>
   <o-page src="./page.html"></o-page>
 </body>

@@ -18,7 +18,7 @@ const lastDialog = () =>
 
 test("alert：确认返回 true，遮罩返回 null，对话框用完即毁", async ({ page }) => {
   await ready(page);
-  await page.evaluate(() => { window.__p = window.stAlert({ title: "提示", message: "操作成功" }); });
+  await page.evaluate(() => { window.__p = window.alert({ title: "提示", message: "操作成功" }); });
 
   await page.waitForFunction(
     () => document.querySelector('st-dialog[data-st-util]')?.hasAttribute("open")
@@ -33,7 +33,7 @@ test("alert：确认返回 true，遮罩返回 null，对话框用完即毁", as
   expect(await page.evaluate(() => document.querySelectorAll('st-dialog[data-st-util]').length)).toBe(0);
 
   // 遮罩关闭 → null
-  await page.evaluate(() => { window.__p = window.stAlert("再试一次"); });
+  await page.evaluate(() => { window.__p = window.alert("再试一次"); });
   await page.waitForFunction(() => document.querySelector('st-dialog[data-st-util]')?.hasAttribute("open"));
   await page.mouse.click(5, 300);
   expect(await page.evaluate(() => window.__p)).toBe(null);
@@ -41,7 +41,7 @@ test("alert：确认返回 true，遮罩返回 null，对话框用完即毁", as
 
 test("confirm：确认 true / 取消 false / Escape null，危险色确认按钮", async ({ page }) => {
   await ready(page);
-  await page.evaluate(() => { window.__p = window.stConfirm({ title: "删除", message: "不可撤销", yes: "删除", color: "error" }); });
+  await page.evaluate(() => { window.__p = window.confirm({ title: "删除", message: "不可撤销", yes: "删除", color: "error" }); });
   await page.waitForFunction(() => document.querySelector('st-dialog[data-st-util]')?.hasAttribute("open"));
   await page.evaluate(() => {
     const d = document.querySelector('st-dialog[data-st-util]');
@@ -49,7 +49,7 @@ test("confirm：确认 true / 取消 false / Escape null，危险色确认按钮
   });
   expect(await page.evaluate(() => window.__p)).toBe(true);
 
-  await page.evaluate(() => { window.__p = window.stConfirm("取消场景"); });
+  await page.evaluate(() => { window.__p = window.confirm("取消场景"); });
   await page.waitForFunction(() => document.querySelector('st-dialog[data-st-util]')?.hasAttribute("open"));
   await page.evaluate(() => {
     const d = document.querySelector('st-dialog[data-st-util]');
@@ -57,7 +57,7 @@ test("confirm：确认 true / 取消 false / Escape null，危险色确认按钮
   });
   expect(await page.evaluate(() => window.__p)).toBe(false);
 
-  await page.evaluate(() => { window.__p = window.stConfirm("Escape 场景"); });
+  await page.evaluate(() => { window.__p = window.confirm("Escape 场景"); });
   await page.waitForFunction(() => document.querySelector('st-dialog[data-st-util]')?.hasAttribute("open"));
   await page.keyboard.press("Escape");
   expect(await page.evaluate(() => window.__p)).toBe(null);
@@ -65,7 +65,7 @@ test("confirm：确认 true / 取消 false / Escape null，危险色确认按钮
 
 test("prompt：确认返回输入值（Enter 提交），取消返回 null，自动聚焦并选中", async ({ page }) => {
   await ready(page);
-  await page.evaluate(() => { window.__p = window.stPrompt({ title: "输入", placeholder: "写点什么", value: "预填值" }); });
+  await page.evaluate(() => { window.__p = window.prompt({ title: "输入", placeholder: "写点什么", value: "预填值" }); });
   await page.waitForFunction(() => document.querySelector('st-dialog[data-st-util]')?.hasAttribute("open"));
   await page.waitForTimeout(200);
 
@@ -74,7 +74,7 @@ test("prompt：确认返回输入值（Enter 提交），取消返回 null，自
   await page.keyboard.press("Enter");
   expect(await page.evaluate(() => window.__p)).toBe("hello");
 
-  await page.evaluate(() => { window.__p = window.stPrompt("取消场景"); });
+  await page.evaluate(() => { window.__p = window.prompt("取消场景"); });
   await page.waitForFunction(() => document.querySelector('st-dialog[data-st-util]')?.hasAttribute("open"));
   await page.evaluate(() => {
     const d = document.querySelector('st-dialog[data-st-util]');

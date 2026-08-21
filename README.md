@@ -1,21 +1,34 @@
 # Senti-UI
 
-**面向 AI 的 UI 组件库**：基于 [ofa.js](https://github.com/ofajs/ofa.js)（Web Components 框架），颜色体系采用 Google Material Design 3（M3）。**无构建、纯静态，CDN 引入即用**。
+[**中文文档**](./README.zh-CN.md)
 
-仓库地址：<https://github.com/ofajs/senti-ui>
+A **UI component library designed for AI**: built on [ofa.js](https://github.com/ofajs/ofa.js) (a Web Components framework), with a Google Material Design 3 (M3) color system. **No build step, purely static — load from CDN and use immediately.**
 
-## 设计理念（与传统组件库的区别）
+Repository: <https://github.com/ofajs/senti-ui>
 
-传统组件库为人设计大量"便利预设"（`size="small"` 这类枚举）。Senti-UI 认为 AI 直接写 style/CSS 更精确灵活，预设只是多余的记忆负担，因此：
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
+[![GitHub Repo stars](https://img.shields.io/github/stars/ofajs/senti-ui?style=flat&logo=github)](https://github.com/ofajs/senti-ui/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/ofajs/senti-ui?style=flat&logo=github)](https://github.com/ofajs/senti-ui/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/ofajs/senti-ui?style=flat&logo=github)](https://github.com/ofajs/senti-ui/pulls)
+[![jsDelivr](https://img.shields.io/jsdelivr/gh/hm/ofajs/senti-ui?style=flat&logo=jsdelivr)](https://www.jsdelivr.com/package/gh/ofajs/senti-ui)
+[![GitHub last commit](https://img.shields.io/github/last-commit/ofajs/senti-ui?style=flat&logo=github)](https://github.com/ofajs/senti-ui/commits)
+[![Made with ofa.js](https://img.shields.io/badge/made%20with-ofa.js-5f6ee7)](https://github.com/ofajs/ofa.js)
+[![M3](https://img.shields.io/badge/color-Material%20Design%203-0061A4)](https://m3.material.io/styles/color/overview)
+[![No Build](https://img.shields.io/badge/build-none-2ea44f?label=no%20build)](https://github.com/ofajs/senti-ui)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/ofajs/senti-ui/pulls)
 
-- **属性只表达语义**（`disabled` / `loading` / M3 规范内的 `variant` / `color` 语义色引用），没有 size 类预设，也没有 `--st-*` 样式代理变量
-- **外观直接用原生 CSS 属性定制**——组件视觉全部定义在 `:host` 上，`<st-button style="height:32px; border-radius:8px">` 直接生效
-- **尺寸默认值全用 em**——只改 `font-size` 即整体等比缩放
-- **颜色永不写死**，一律消费 `--md-sys-color-*` M3 角色变量，自动适配深浅色主题
-- **`color` 属性是语义引用**：值是 M3 角色名或 color 工具里定义的自定义变量名（如 `color="brand"` 消费 `--brand/--on-brand`），与 color 工具联动实现一键换色
-- **文档写给 AI 读**：自包含、结构化、只含事实
+## Design Philosophy (what makes it different from traditional libraries)
 
-## 快速开始
+Traditional component libraries offer lots of "convenience presets" for humans (enums like `size="small"`). Senti-UI believes AI writes style/CSS directly with more precision and flexibility — presets are just an unnecessary memory burden. Therefore:
+
+- **Attributes express semantics only** (`disabled` / `loading` / M3-spec `variant` / the `color` semantic reference) — no size presets, no `--st-*` style proxy variables
+- **Appearance is customized with plain native CSS properties** — component visuals live entirely on `:host`, so `<st-button style="height:32px; border-radius:8px">` just works
+- **Size defaults use em units** — change `font-size` to scale the whole component proportionally
+- **Colors are never hard-coded** — always consume `--md-sys-color-*` M3 role variables, adapting to light/dark themes automatically
+- **The `color` attribute is a semantic reference**: its value is an M3 role name or a custom variable name defined in the color tool (e.g. `color="brand"` consumes `--brand/--on-brand`), enabling one-click re-theming via the color tool
+- **Documentation written for AI**: self-contained, structured, facts only
+
+## Quick Start
 
 ```html
 <!DOCTYPE html>
@@ -25,7 +38,7 @@
   <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
 </head>
 <body>
-  <!-- 按需引入组件（用哪个引哪个） -->
+  <!-- Load components on demand (only what you use) -->
   <l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/button.html"></l-m>
 
   <st-button color="error" variant="outlined">Delete</st-button>
@@ -36,113 +49,113 @@
 </html>
 ```
 
-- 组件内部会自动 import 颜色初始化模块（`st-init.js`）注入 `--md-sys-color-*` 体系，无需额外配置
-- 深浅色主题默认跟随系统；强制用 `<html class="st-light">` / `<html class="st-dark">`
-- 主题定制（种子色、自定义色）用 [M3 颜色体系生成器](#主题定制)：调好配色后，同域所有页面自动跟随
+- Components automatically import the color init module (`st-init.js`) to inject the `--md-sys-color-*` system — no extra setup needed
+- Light/dark theme follows the system by default; force with `<html class="st-light">` / `<html class="st-dark">`
+- For theming (seed color, custom colors) see the [M3 color generator](#theming): once configured, all pages on the same origin follow automatically
 
-## 组件清单
+## Components
 
-CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`，下表引入语句省略前缀（实际使用必须写全）。文档在各组件目录的 `README.md`（如 `.../packages/button/README.md`）。
-
-| 组件 | 标签 | 引入 |
+| Component | Tag | Import |
 |------|------|------|
-| Button 按钮 | `st-button` | `<l-m src=".../packages/button/button.html"></l-m>` |
-| Button-group 按钮组 | `st-button-group` | `.../packages/button/button-group.html` |
-| Split-button 分裂按钮 | `st-split-button` | `.../packages/button/split-button.html` |
-| Icon-button 图标按钮 | `st-icon-button` | `.../packages/button/icon-button.html` |
-| Input 单行输入框 | `st-input` | `.../packages/input/input.html` |
-| Textarea 多行输入框 | `st-textarea` | `.../packages/textarea/textarea.html` |
-| Select 单选下拉框 | `st-select` | `.../packages/select/select.html` |
-| Dialog 对话框 | `st-dialog` | `.../packages/dialog/dialog.html` |
-| Dialog 命令式工具 | `stAlert/stConfirm/stPrompt` | `import stAlert from ".../packages/dialog/alert.js"` 等 |
-| Checkbox 复选框 | `st-checkbox` | `.../packages/checkbox/checkbox.html` |
-| Switch 开关 | `st-switch` | `.../packages/switch/switch.html` |
-| Radio 单选按钮 | `st-radio` | `.../packages/radio/radio.html` |
-| Snackbar 消息条 | `st-snackbar` | `.../packages/snackbar/snackbar.html` |
-| Toast 命令式工具 | `stToast` | `import stToast from ".../packages/snackbar/toast.js"` |
-| Slider 滑块 | `st-slider` | `.../packages/slider/slider.html` |
-| Progress 进度 | `st-progress` | `.../packages/progress/progress.html` |
-| Tooltip 提示 | `st-tooltip` | `.../packages/tooltip/tooltip.html` |
-| Card 卡片 | `st-card` | `.../packages/card/card.html` |
-| Badges 徽标 | `st-badges` | `.../packages/badges/badges.html` |
-| Collapse 折叠容器 | `st-collapse` | `.../packages/collapse/collapse.html` |
-| List 列表 | `st-list` / `st-list-item` | `.../packages/list/list.html` |
-| Menu 下拉菜单 | `st-menu` / `st-menu-item` | `.../packages/menu/menu.html` |
-| Tabs 标签栏 | `st-tab-bar` / `st-tab-item` | `.../packages/tabs/tab-bar.html` |
-| Navigation 导航栏 | `st-nav-bar` / `st-nav-item` | `.../packages/navigation/nav-bar.html` |
-| Ripple 波纹 | `st-ripple` | `.../packages/ripple/ripple.html` |
+| Button | `st-button` | `<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/button.html"></l-m>` |
+| Button group | `st-button-group` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/button-group.html` |
+| Split button | `st-split-button` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/split-button.html` |
+| Icon button | `st-icon-button` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/icon-button.html` |
+| Input | `st-input` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/input/input.html` |
+| Textarea | `st-textarea` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/textarea/textarea.html` |
+| Select | `st-select` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/select/select.html` |
+| Dialog | `st-dialog` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/dialog.html` |
+| Dialog imperative utils | `stAlert/stConfirm/stPrompt` | `import stAlert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/alert.js"` etc. |
+| Checkbox | `st-checkbox` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/checkbox/checkbox.html` |
+| Switch | `st-switch` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/switch/switch.html` |
+| Radio | `st-radio` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/radio/radio.html` |
+| Snackbar | `st-snackbar` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/snackbar.html` |
+| Toast imperative util | `stToast` | `import stToast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js"` |
+| Slider | `st-slider` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/slider/slider.html` |
+| Progress | `st-progress` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/progress/progress.html` |
+| Tooltip | `st-tooltip` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/tooltip/tooltip.html` |
+| Card | `st-card` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/card/card.html` |
+| Badges | `st-badges` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/badges/badges.html` |
+| Collapse | `st-collapse` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/collapse/collapse.html` |
+| List | `st-list` / `st-list-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/list/list.html` |
+| Menu | `st-menu` / `st-menu-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/menu/menu.html` |
+| Tabs | `st-tab-bar` / `st-tab-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/tabs/tab-bar.html` |
+| Navigation bar | `st-nav-bar` / `st-nav-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/navigation/nav-bar.html` |
+| Ripple | `st-ripple` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/ripple/ripple.html` |
 
-## 关键使用模式
+Full docs (attribute tables, slots, events, default value lists) live in each package's `README.md` (e.g. `.../packages/button/README.md`).
 
-- **运行时状态不是标签属性**——`st-input`/`st-select`/`st-slider` 的 `value`，`st-dialog`/`st-tooltip` 的 `open` 等是运行时状态：JS 用 `el.value` / `el.open` 读写，`setAttribute("value")` 无效（初始值用 `default-value` 标签属性）
-- **布尔属性的 JS 修改必须用 `setAttribute` / `removeAttribute`**——直接改 property 不触发更新
-- 命令式工具即用即毁，返回 Promise，对齐原生语义：
+## Key Usage Patterns
+
+- **Runtime state is not a tag attribute** — `value` on `st-input`/`st-select`/`st-slider`, `open` on `st-dialog`/`st-tooltip` etc. are runtime state: read/write via `el.value` / `el.open` in JS (`setAttribute("value")` has no effect; use the `default-value` tag attribute for initial values)
+- **Boolean attributes must be toggled via attributes** (`$("el").attr("disabled", "")` to set, `attr("disabled", null)` to remove) — assigning properties directly does not trigger updates
+- Imperative utils are promise-based and align with native semantics:
 
 ```html
 <script type="module">
   import stConfirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/confirm.js";
   import stToast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js";
 
-  if (await stConfirm("确认删除？")) {   // true / false / null（被关闭）
-    stToast("已删除", { duration: 3000 }); // 左下角 toast，返回 { close, el }
+  if (await stConfirm("Delete?")) {   // true / false / null (dismissed)
+    stToast("Deleted", { duration: 3000 }); // bottom-left toast, returns { close, el }
   }
 </script>
 ```
 
-## 主题定制
+## Theming
 
-[M3 颜色体系生成器](https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/index.html) 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），支持核心四角色 + 扩展角色 success 覆盖与自定义变量（自动展开 `--brand` / `--on-brand` 等配对 token）。配置存 localStorage——在工具里调好配色，同域所有引入 `st-init.js` 的页面自动跟随（一键换色）。
+The [M3 color generator](https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/index.html) generates a full light/dark M3 system (`--md-sys-color-*`) from a seed color, with overrides for the core four roles + the extended `success` role, plus custom variables (auto-expanded into paired tokens like `--brand` / `--on-brand`). The configuration is stored in localStorage — once set in the tool, every page on the same origin that includes `st-init.js` follows automatically (one-click re-theming).
 
-需要手动控制时：
+For manual control:
 
 ```html
 <script type="module" src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/st-init.js"></script>
 ```
 
-## AI 使用
+## AI Usage
 
-本库附带 Agent Skill（`.agents/skills/senti-ui/`），Claude Code / ZCode 等 AI 工具加载后即可正确使用全部组件：组件属性、插槽、事件、运行时状态读写方式与常见坑。详见 [SKILL.md](./.agents/skills/senti-ui/SKILL.md)。
+This repo ships an Agent Skill (`.agents/skills/senti-ui/`). Once loaded by AI tools like Claude Code / ZCode, the AI can use every component correctly: attributes, slots, events, runtime-state read/write patterns, and common pitfalls. See [SKILL.md](./.agents/skills/senti-ui/SKILL.md).
 
-### 导入技能
+### Installing the Skill
 
-技能就是一个包含 `SKILL.md` 的目录，三种方式任选：
+A skill is just a directory containing `SKILL.md`. Pick one of three ways:
 
-**方式一：从本仓库复制（推荐）**
+**Option 1: copy from this repo (recommended)**
 
 ```bash
 git clone https://github.com/ofajs/senti-ui.git
-# 用户级（所有项目可用）
+# user-level (available in all projects)
 cp -r senti-ui/.agents/skills/senti-ui ~/.agents/skills/
-# 或软链，git pull 即可更新
+# or symlink, then `git pull` to update
 ln -s "$(pwd)/senti-ui/.agents/skills/senti-ui" ~/.agents/skills/senti-ui
 ```
 
-放在项目里则复制到 `.agents/skills/`（或 `.zcode/skills/`）下。
+For a single project, copy it into that project's `.agents/skills/` (or `.zcode/skills/`).
 
-**方式二：zip 包**
+**Option 2: zip package**
 
 ```bash
-# 本仓库已提供打包脚本，产物为 dist/senti-ui-skill.zip（解压得到 senti-ui/ 目录）
-npm run pack-skill   # 即 scripts/pack-skill.mjs（零依赖 Node 脚本）
+# This repo provides a packing script; output is .agents/skills/senti-ui-skill.zip (unzips to a senti-ui/ directory)
+npm run pack-skill   # runs scripts/pack-skill.mjs (zero-dependency Node script)
 
-unzip dist/senti-ui-skill.zip -d ~/.agents/skills/
+unzip .agents/skills/senti-ui-skill.zip -d ~/.agents/skills/
 ```
 
-**方式三：直接在克隆的仓库内使用**
+**Option 3: use it inside a cloned repo**
 
-AI 进入本仓库工作时，`.agents/skills/senti-ui/` 会被自动发现，无需额外操作。
+When an AI works inside this repository, `.agents/skills/senti-ui/` is discovered automatically — nothing to do.
 
-## 本地开发
+## Local Development
 
 ```bash
 npm install
-npm run dev    # http-server 禁缓存，端口 8642
-npm test       # Playwright 端到端测试（须先 npx playwright install chromium）
+npm run dev    # http-server with cache disabled, port 8642
+npm test       # Playwright e2e tests (run `npx playwright install chromium` first)
 ```
 
-- 新增/修改组件请先阅读 [AGENTS.md](./AGENTS.md)（开发规则）与 [CONTEXT.md](./CONTEXT.md)（项目全景 + 组件索引 + ofa.js 已知坑）
-- 组件官网：`docs/` 目录，本地 `http://localhost:8642/docs/`
+- Read [AGENTS.md](./AGENTS.md) (development rules) and [CONTEXT.md](./CONTEXT.md) (project overview + component index + known ofa.js pitfalls) before adding or modifying components
+- Component docs site: `docs/` directory, at `http://localhost:8642/docs/`
 
 ## License
 
-见 [LICENSE](./LICENSE)。
+See [LICENSE](./LICENSE).

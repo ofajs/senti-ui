@@ -1,7 +1,5 @@
 # st-nav-bar / st-nav-item 导航栏组件
 
-> **写法优先级**：ofa 页面（`<o-page>` / `<o-app>`）中优先用模板绑定语法：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx="expr"`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。纯 JS 场景用 ofa 实例 API：`$("sel").attr(name, value)`（布尔属性 true 添加 / false 移除）、`$("sel").on("event", fn)`。不要写 `setAttribute` / `document.querySelector(...).addEventListener(...)` 等原生 DOM API。详见 [../usage-patterns.md](../usage-patterns.md)。
-
 基于 ofa.js 的底部导航栏（M3 navigation bar）。子项写在 light DOM 的 `st-nav-item`，`active` 属性标记当前项（由外部逻辑切换）；药丸形高亮背景自动动画跟随 active 项（M3 emphasized 0.3s）。
 
 ## 依赖引入（使用前必须）

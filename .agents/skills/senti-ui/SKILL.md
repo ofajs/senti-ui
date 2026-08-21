@@ -73,10 +73,22 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`，下表�
 | 导航栏 | `st-nav-bar` / `st-nav-item` | `.../packages/navigation/nav-bar.html` |
 | 波纹 | `st-ripple` | `.../packages/ripple/ripple.html` |
 
-## 必读的关键使用模式
+## 必读：写法优先级（适用于所有组件文档）
+
+组件文档（references/components/）中的示例统一遵守本规则，文档内不再重复：
+
+- **ofa 页面（`<o-page>` / `<o-app>`）中优先用模板绑定语法**：数据绑定 `{{xxx}}`（只能用于文本节点）、属性绑定 `attr:xxx="expr"`（布尔属性必须 `attr:`，不能 `:prop`——`:disabled="false"` 会把 false 序列化成字符串属性导致永远禁用）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）
+- **纯 JS 场景用 ofa 实例 API**：
+  - `$("sel").attr(name, 值)` 设置值；`attr(name, "")` 只设置这个 attr（裸属性）；`attr(name, null)` 去掉这个 attr
+  - `$("sel").on("event", fn)` 监听事件
+  - 运行时状态读写用 `$("sel").value` / `el.value`（DOM property，`attr("value", ...)` 无效）
+- **不要写原生 DOM API**：`setAttribute` / `removeAttribute` / `el.disabled = true`（改 property 不触发更新）/ `document.querySelector(...).addEventListener(...)`
+
+详见 [references/usage-patterns.md](./references/usage-patterns.md)。
+
+## 其他关键模式
 
 1. **运行时状态不是标签属性**——`st-input`/`st-textarea`/`st-select`/`st-slider` 的 `value`，`st-dialog`/`st-tooltip` 的 `open` 等是运行时状态：JS 用 `el.value` / `el.open` 读写，`setAttribute("value")` 无效（初始值用 `default-value` 标签属性）
-2. **布尔属性的 JS 修改必须用 setAttribute/removeAttribute**——直接改 property 不触发更新
-3. 每个组件的完整属性表、插槽、事件、默认值与特有坑，见 [references/components.md](./references/components.md)
+2. 每个组件的完整属性表、插槽、事件、默认值与特有坑，见 [references/components.md](./references/components.md)
 
 深入阅读顺序建议：写页面前读 [references/usage-patterns.md](./references/usage-patterns.md)（ofa.js 数据绑定语法 + 消费方常见坑）；改主题读 [references/theming.md](./references/theming.md)；用具体组件前查 [references/components.md](./references/components.md) 的对应章节速查，需要完整属性表、默认值清单与更多示例时再读 [references/components/](./references/components/) 下该组件的详细文档（如 button.md、dialog.md——button.md 同时覆盖 button-group / split-button / icon-button）。

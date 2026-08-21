@@ -1,7 +1,5 @@
 # st-checkbox 复选框组件
 
-> **写法优先级**：ofa 页面（`<o-page>` / `<o-app>`）中优先用模板绑定语法：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx="expr"`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。纯 JS 场景用 ofa 实例 API：`$("sel").attr(name, value)`（布尔属性 true 添加 / false 移除）、`$("sel").on("event", fn)`。不要写 `setAttribute` / `document.querySelector(...).addEventListener(...)` 等原生 DOM API。详见 [../usage-patterns.md](../usage-patterns.md)。
-
 基于 ofa.js 的复选框组件。语义由属性表达，视觉默认值全用 em（改宿主 `font-size` 等比缩放），交互由内部透明原生 `<input type="checkbox">` 承载（点击/Space 键盘/焦点）。
 
 ## 依赖引入（使用前必须）
@@ -22,7 +20,7 @@
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互 |
 | `color` | M3 角色名 / 自定义变量名 | 无 | 选中态底色/描边/对勾色（如 `color="error"`） |
 
-纯 JS 修改状态用 ofa API：`$("st-checkbox").attr("checked", true)` / `$("st-checkbox").attr("checked", false)`（布尔属性 true 添加 / false 移除）。
+纯 JS 修改状态用 ofa API：`$("st-checkbox").attr("checked", "")` / `$("st-checkbox").attr("checked", null)`（设置裸属性传 `""`，移除传 `null`，设值直接传值）。
 
 ## 插槽
 

@@ -1,7 +1,5 @@
 # st-select 单选下拉框组件
 
-> **写法优先级**：ofa 页面（`<o-page>` / `<o-app>`）中优先用模板绑定语法：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx="expr"`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。纯 JS 场景用 ofa 实例 API：`$("sel").attr(name, value)`（布尔属性 true 添加 / false 移除）、`$("sel").on("event", fn)`。不要写 `setAttribute` / `document.querySelector(...).addEventListener(...)` 等原生 DOM API。详见 [../usage-patterns.md](../usage-patterns.md)。
-
 基于 ofa.js 的单选下拉框组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设，也不需要自定义 CSS 变量）。
 
 组件的视觉样式全部定义在宿主元素（`:host`）上。选项写在 light DOM 的原生 `<option>` 元素里（只作数据源，不参与渲染），组件读取后自绘 M3 风格下拉列表。
@@ -68,7 +66,7 @@ JS 中修改状态请用 attribute（布尔）与 property（值）方式：
 
 ```js
 sel.value = "banana"; // 运行时改选中值（不派发 change）
-$("st-select").attr("disabled", true);   // 布尔属性：true 添加 / false 移除
+$("st-select").attr("disabled", "");   // 设为裸属性；移除用 null
 ```
 
 ## 事件

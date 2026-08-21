@@ -6,7 +6,7 @@ Senti-UI 基于 ofa.js。在 ofa 页面（`<o-page>` / `<o-app>`）内用模板�
 
 组件属性分两类，**读写方式完全不同**：
 
-- **标签属性**（disabled / variant / placeholder / duration 等）：HTML 里写裸属性；JS 用 ofa 实例 API `$("sel").attr("disabled", true / false)`——布尔属性 true 添加、false（或 null）移除。不要用 `el.disabled = true`（改 property 不触发更新），也不必写原生 `setAttribute` / `removeAttribute`
+- **标签属性**（disabled / variant / placeholder / duration 等）：HTML 里写裸属性；JS 用 ofa 实例 API `$("sel").attr("disabled", "") / attr("disabled", null)`——设置裸属性传 `""`，移除传 `null`，设具体值直接传值。不要用 `el.disabled = true`（改 property 不触发更新），也不必写原生 `setAttribute` / `removeAttribute`
 - **运行时状态**（value / open 等 ofa data）：JS 用 `el.value`、`el.open` 这样的 DOM property 读写（`$("sel").value` 同理）；`attr("value", ...)` 无效。初始值用对应的 `default-value` 标签属性（input/textarea/select/slider 都有）
 
 已被内部交互修改的状态（dialog 被 auto-close 关掉、input 被用户输入）必须走运行时状态通道，声明成标签属性的话内部无法回写上层绑定。
@@ -38,7 +38,7 @@ Senti-UI 基于 ofa.js。在 ofa 页面（`<o-page>` / `<o-app>`）内用模板�
 
 ## 4. 消费方常见坑
 
-- **JS 改布尔属性用 `$("sel").attr(name, true / false)`**（ofa 实例 API：true 添加属性、false/null 移除），改 property 不触发更新
+- **JS 改布尔属性用 `$("sel").attr(name, "")` 设置 / `attr(name, null)` 移除**，改 property 不触发更新
 - **`setAttribute` 后 watch 异步生效**——同步读计算样式/状态会得到旧值，验证时 `await` 约 100ms 再断言
 - **st-dialog / st-select / st-menu 等弹层组件不要放在有 `transform`/`filter` 的祖先内**——fixed 定位会被劫持成相对该祖先，遮罩铺不满视口。挂在 body 或无 transform 的顶层容器（命令式工具 stAlert/stToast 自动 append 到 body，天然规避）
 - **st-select 弹层在 shadow 内**，被 `overflow: hidden` 祖先裁剪时会截断，注意放置位置

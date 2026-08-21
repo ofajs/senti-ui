@@ -1,7 +1,5 @@
 # st-input 单行输入框组件
 
-> **写法优先级**：ofa 页面（`<o-page>` / `<o-app>`）中优先用模板绑定语法：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx="expr"`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。纯 JS 场景用 ofa 实例 API：`$("sel").attr(name, value)`（布尔属性 true 添加 / false 移除）、`$("sel").on("event", fn)`。不要写 `setAttribute` / `document.querySelector(...).addEventListener(...)` 等原生 DOM API。详见 [../usage-patterns.md](../usage-patterns.md)。
-
 基于 ofa.js 的单行输入框组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设，也不需要自定义 CSS 变量）。
 
 组件的视觉样式全部定义在宿主元素（`:host`）上，`st-input` 本身就是一个普通的可样式化元素。内部有一个透明的原生 `<input>` 负责语义（输入/键盘/焦点/disabled/readonly）。
@@ -37,8 +35,8 @@
 
 ```js
 // 纯 JS 场景（ofa API）
-$("st-input").attr("disabled", true);    // 布尔属性：true 添加 / false 移除
-$("st-input").attr("disabled", false);
+$("st-input").attr("disabled", "");    // 设为裸属性；移除用 null
+$("st-input").attr("disabled", null);
 $("st-input").value = "新的值"; // 运行时读写值（value 是 DOM property，attr("value") 无效）
 ```
 

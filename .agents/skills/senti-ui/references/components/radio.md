@@ -1,7 +1,5 @@
 # st-radio 单选按钮组件
 
-> **写法优先级**：ofa 页面（`<o-page>` / `<o-app>`）中优先用模板绑定语法：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx="expr"`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。纯 JS 场景用 ofa 实例 API：`$("sel").attr(name, value)`（布尔属性 true 添加 / false 移除）、`$("sel").on("event", fn)`。不要写 `setAttribute` / `document.querySelector(...).addEventListener(...)` 等原生 DOM API。详见 [../usage-patterns.md](../usage-patterns.md)。
-
 基于 ofa.js 的单选按钮组件。语义由属性表达，视觉默认值全用 em，交互由内部透明原生 `<input type="radio">` 承载（点击/键盘/焦点）。
 
 **同组互斥**：原生 radio 的 name 分组不跨 shadow root，组件用 `name` 属性作为分组键，选中时自动取消**同一最近容器**内同 `name` 的其他 `st-radio`。

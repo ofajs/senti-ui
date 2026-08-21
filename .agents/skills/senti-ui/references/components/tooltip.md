@@ -1,7 +1,5 @@
 # st-tooltip 提示组件
 
-> **写法优先级**：ofa 页面（`<o-page>` / `<o-app>`）中优先用模板绑定语法：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx="expr"`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。纯 JS 场景用 ofa 实例 API：`$("sel").attr(name, value)`（布尔属性 true 添加 / false 移除）、`$("sel").on("event", fn)`。不要写 `setAttribute` / `document.querySelector(...).addEventListener(...)` 等原生 DOM API。详见 [../usage-patterns.md](../usage-patterns.md)。
-
 基于 ofa.js 的悬停/聚焦提示。默认插槽放触发元素，气泡 fixed 定位自动翻转避让视口。
 
 ## 依赖引入（使用前必须）
@@ -20,7 +18,7 @@
 
 ## 运行时状态
 
-- `open`：**data（非标签属性）**，`sync:open="xxx"` 双向绑定；悬停/聚焦宿主自动开合也走此状态；纯 JS 用 `$("st-tooltip").attr("open", true / false)`
+- `open`：**data（非标签属性）**，`sync:open="xxx"` 双向绑定；悬停/聚焦宿主自动开合也走此状态；纯 JS 用 `$("st-tooltip").attr("open", "") / attr("open", null)`
 
 ## 行为
 

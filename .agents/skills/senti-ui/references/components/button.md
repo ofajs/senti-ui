@@ -1,7 +1,5 @@
 # st-button 按钮组件（含 st-button-group / st-split-button / st-icon-button）
 
-> **写法优先级**：ofa 页面（`<o-page>` / `<o-app>`）中优先用模板绑定语法：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx="expr"`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。纯 JS 场景用 ofa 实例 API：`$("sel").attr(name, value)`（布尔属性 true 添加 / false 移除）、`$("sel").on("event", fn)`。不要写 `setAttribute` / `document.querySelector(...).addEventListener(...)` 等原生 DOM API。详见 [../usage-patterns.md](../usage-patterns.md)。
-
 本包包含四个相关组件：`st-button` 按钮、`st-button-group` 按钮组、`st-split-button` 分裂按钮、`st-icon-button` 图标按钮，引入语句共用一个目录。基于 ofa.js。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设，也不需要自定义 CSS 变量；`color` 属性是 M3 角色/自定义变量名的语义引用）。
 
 组件的视觉样式全部定义在宿主元素（`:host`）上，`st-button` 本身就是一个普通的可样式化元素——`style` 写什么就生效什么。内部有一个透明的原生 `<button>` 负责语义（点击/键盘/焦点/disabled）。
@@ -31,8 +29,8 @@
 设置/取消布尔属性示例：`<st-button loading>...</st-button>`；JS 中请用 attribute 方式（直接改 property 不触发更新）：
 
 ```js
-$("st-button").attr("loading", true);   // 布尔属性：true 添加 / false 移除
-$("st-button").attr("loading", false);
+$("st-button").attr("loading", "");   // 设为裸属性；移除用 null
+$("st-button").attr("loading", null);
 ```
 
 ## color 属性（与 color 模块联动）

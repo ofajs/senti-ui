@@ -1,8 +1,8 @@
 # 组件详解
 
-CDN 前缀：`https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`（下文 `<l-m>` 的 src 省略前缀，使用时必须补全）。
+引入地址均为完整 jsdelivr URL（`https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/...`），可直接使用。
 每个组件的完整文档（完整属性表、插槽、事件、默认值清单、更多示例）在本目录 [components/](./components/) 下对应文件中，如按钮见 [components/button.md](./components/button.md)。
-通用规则（所有组件）：布尔属性 JS 用 setAttribute/removeAttribute；`color` 属性值是 M3 角色名或自定义变量名；尺寸默认值全 em，改 `font-size` 等比缩放。
+通用规则（所有组件）：属性读写遵守 SKILL.md 的「写法优先级」（ofa API 优先，`attr(name, 值/""/null)`）；`color` 属性值是 M3 角色名或自定义变量名；尺寸默认值全 em，改 `font-size` 等比缩放。
 
 ## st-button 按钮
 

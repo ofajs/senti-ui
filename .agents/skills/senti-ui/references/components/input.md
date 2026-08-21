@@ -1,6 +1,6 @@
 # st-input 单行输入框组件
 
-> **写法优先级**：本文档中的原生 JS 写法（`setAttribute` / `addEventListener` 等）仅适用于非 ofa 环境或自动化测试。在 ofa 页面（`<o-page>` / `<o-app>`）中必须优先用 ofa.js API：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx=`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。详见 [../usage-patterns.md](../usage-patterns.md)。
+> **写法优先级**：ofa 页面（`<o-page>` / `<o-app>`）中优先用模板绑定语法：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx="expr"`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。纯 JS 场景用 ofa 实例 API：`$("sel").attr(name, value)`（布尔属性 true 添加 / false 移除）、`$("sel").on("event", fn)`。不要写 `setAttribute` / `document.querySelector(...).addEventListener(...)` 等原生 DOM API。详见 [../usage-patterns.md](../usage-patterns.md)。
 
 基于 ofa.js 的单行输入框组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设，也不需要自定义 CSS 变量）。
 
@@ -36,10 +36,10 @@
 ```
 
 ```js
-// 非 ofa 环境 / 自动化测试的兼容写法
-input.setAttribute("disabled", "");
-input.removeAttribute("disabled");
-input.value = "新的值"; // 运行时读写值（el.value 是 DOM property，setAttribute("value") 无效）
+// 纯 JS 场景（ofa API）
+$("st-input").attr("disabled", true);    // 布尔属性：true 添加 / false 移除
+$("st-input").attr("disabled", false);
+$("st-input").value = "新的值"; // 运行时读写值（value 是 DOM property，attr("value") 无效）
 ```
 
 ## 插槽
@@ -64,7 +64,7 @@ input.value = "新的值"; // 运行时读写值（el.value 是 DOM property，s
 
 ```js
 // 非 ofa 环境 / 自动化测试的兼容写法
-document.querySelector("st-input").addEventListener("input", (e) => {
+$("st-input").on("input", (e) => {
   console.log(e.target.value);
 });
 ```

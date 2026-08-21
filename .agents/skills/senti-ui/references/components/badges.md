@@ -1,6 +1,6 @@
 # st-badges 徽标组件
 
-> **写法优先级**：本文档中的原生 JS 写法（`setAttribute` / `addEventListener` 等）仅适用于非 ofa 环境或自动化测试。在 ofa 页面（`<o-page>` / `<o-app>`）中必须优先用 ofa.js API：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx=`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。详见 [../usage-patterns.md](../usage-patterns.md)。
+> **写法优先级**：ofa 页面（`<o-page>` / `<o-app>`）中优先用模板绑定语法：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx="expr"`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。纯 JS 场景用 ofa 实例 API：`$("sel").attr(name, value)`（布尔属性 true 添加 / false 移除）、`$("sel").on("event", fn)`。不要写 `setAttribute` / `document.querySelector(...).addEventListener(...)` 等原生 DOM API。详见 [../usage-patterns.md](../usage-patterns.md)。
 
 基于 ofa.js 的徽标。默认插槽放被标记元素（icon-button 等），徽标钉在其右上角。
 
@@ -40,7 +40,7 @@
 ## 注意事项与使用技巧
 
 - 徽标 `pointer-events: none`，不挡被标记元素的点击
-- 数字变化直接 `setAttribute("value", ...)`；ofa 页面绑定 `attr:value="count"` 
+- 数字变化用 `$("st-badges").attr("value", 3)`；ofa 页面绑定 `attr:value="count"` 
 - value 为非数字字符串时按文字徽标展示（不封顶、不换底色尺寸）
 
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/badges/`）。

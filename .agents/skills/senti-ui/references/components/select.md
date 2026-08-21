@@ -1,6 +1,6 @@
 # st-select 单选下拉框组件
 
-> **写法优先级**：本文档中的原生 JS 写法（`setAttribute` / `addEventListener` 等）仅适用于非 ofa 环境或自动化测试。在 ofa 页面（`<o-page>` / `<o-app>`）中必须优先用 ofa.js API：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx=`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。详见 [../usage-patterns.md](../usage-patterns.md)。
+> **写法优先级**：ofa 页面（`<o-page>` / `<o-app>`）中优先用模板绑定语法：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx="expr"`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。纯 JS 场景用 ofa 实例 API：`$("sel").attr(name, value)`（布尔属性 true 添加 / false 移除）、`$("sel").on("event", fn)`。不要写 `setAttribute` / `document.querySelector(...).addEventListener(...)` 等原生 DOM API。详见 [../usage-patterns.md](../usage-patterns.md)。
 
 基于 ofa.js 的单选下拉框组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设，也不需要自定义 CSS 变量）。
 
@@ -68,7 +68,7 @@ JS 中修改状态请用 attribute（布尔）与 property（值）方式：
 
 ```js
 sel.value = "banana"; // 运行时改选中值（不派发 change）
-sel.setAttribute("disabled", "");
+$("st-select").attr("disabled", true);   // 布尔属性：true 添加 / false 移除
 ```
 
 ## 事件
@@ -76,7 +76,7 @@ sel.setAttribute("disabled", "");
 - `change`：选中项变化（用户交互）时派发，`bubbles` + `composed`，直接在 `<st-select>` 上监听，`el.value` 已更新：
 
 ```js
-document.querySelector("st-select").addEventListener("change", (e) => {
+$("st-select").on("change", (e) => {
   console.log(e.target.value);
 });
 ```

@@ -50,7 +50,7 @@ CDN 前缀：`https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`（下文 `<l-m>` 
 
 - **结构例外**：宿主是全屏遮罩（fixed + 居中），面板在 shadow 内 `part="panel"`——宽高/圆角/底色用 `::part(panel)` 定制（如 `st-dialog::part(panel) { width: 400px; }`）
 - 属性：`auto-close`（遮罩点击/Escape 关闭并派发 `close`）
-- **`open` 是运行时状态**：推荐 `sync:open="xxx"` 双向绑定（auto-close 关闭自动回写）；兼容 `setAttribute("open","")` / `removeAttribute("open")`
+- **`open` 是运行时状态**：推荐 `sync:open="xxx"` 双向绑定（auto-close 关闭自动回写）；纯 JS 用 `$("st-dialog").attr("open", true / false)`
 - 插槽：`headline` / 默认 / `actions`（空区块自动隐藏）
 - 焦点：打开时自动移入面板；M3 emphasized 动效
 - 命令式工具（无需预引入组件）：
@@ -72,7 +72,7 @@ await stAlert("完成"); // true/null
 
 - 属性：`checked`（checkbox 另有 `indeterminate`）、`color`（选中态换角色色）、`disabled`
 - radio：同组互斥依赖**同一父容器**内的同 `name` 兄弟
-- 用法：`<st-checkbox checked on:change="...">`；JS 用 `setAttribute("checked","")` / `removeAttribute("checked")`
+- 用法：`<st-checkbox checked on:change="...">`；JS 用 `$("st-checkbox").attr("checked", true / false)`
 
 ## st-snackbar 消息条
 

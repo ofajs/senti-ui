@@ -1,6 +1,6 @@
 # st-snackbar 消息条组件（含命令式工具 stToast）
 
-> **写法优先级**：本文档中的原生 JS 写法（`setAttribute` / `addEventListener` 等）仅适用于非 ofa 环境或自动化测试。在 ofa 页面（`<o-page>` / `<o-app>`）中必须优先用 ofa.js API：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx=`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。详见 [../usage-patterns.md](../usage-patterns.md)。
+> **写法优先级**：ofa 页面（`<o-page>` / `<o-app>`）中优先用模板绑定语法：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx="expr"`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。纯 JS 场景用 ofa 实例 API：`$("sel").attr(name, value)`（布尔属性 true 添加 / false 移除）、`$("sel").on("event", fn)`。不要写 `setAttribute` / `document.querySelector(...).addEventListener(...)` 等原生 DOM API。详见 [../usage-patterns.md](../usage-patterns.md)。
 
 基于 ofa.js 的底部消息条组件 `st-snackbar`，以及基于它构建的命令式 toast 工具（`toast.js`），同目录存放。视觉在 `:host` 上（默认主题次级色 `secondary` 底，`color` 属性可换任意 M3 角色），可直接用原生 CSS 属性覆盖。
 
@@ -28,8 +28,8 @@ toast 工具无需预引入组件——内部按需注入 `<l-m>`（snackbar / b
 | `color` | M3 角色名 / 自定义变量名 | 无 | 语义配色：底色为角色色、文字为 on-角色色（如 `color="error"`）；未设置时用默认反色底 |
 
 ```js
-snackbar.setAttribute("open", "");
-snackbar.setAttribute("duration", "4000");
+$("st-snackbar").attr("open", true);
+$("st-snackbar").attr("duration", 4000);
 snackbar.hide(); // JS 主动关闭（派发 close）
 ```
 
@@ -53,7 +53,7 @@ snackbar.hide(); // JS 主动关闭（派发 close）
 
 ## 事件
 
-- `close`：`duration` 到时自动关闭或 `el.hide()` 时派发（`bubbles` + `composed`）。外部 `removeAttribute("open")` 不派发。
+- `close`：`duration` 到时自动关闭或 `el.hide()` 时派发（`bubbles` + `composed`）。外部 `$("st-snackbar").attr("open", false)` 不派发。
 
 ## 默认值（直接覆盖即可）
 
@@ -88,7 +88,7 @@ t.close(); // 手动关闭（返回 { close, el }）
 
 - **action 按钮必须用 st-button 的 `color` 属性着色**（如默认反色底上 `color="inverse-primary"`、红底上 `color="on-error"`）——给 st-button 写内联 style color 会被其配色逻辑覆盖
 - `duration` 是毫秒数属性，仅与 `open` 同时存在时生效；`el.hide()`（宿主 property）手动关闭并派发 close
-- 外部 `removeAttribute("open")` 关闭不派发 close
+- 外部 `$("st-snackbar").attr("open", false)` 关闭不派发 close
 - 显隐即时切换，无内建动画；`hide()`（宿主 property）关闭并派发 close
 - toast 工具自带滑入/滑出动画（0.3s，斜向渐移），播完才移除元素：常用 `position: fixed; bottom; left: 50%; transform: translateX(-50%)`
 - 纯展示场景直接加 `open` 属性静态渲染即可

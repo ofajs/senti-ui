@@ -1,6 +1,6 @@
 # st-dialog 对话框组件（含命令式工具 stAlert / stConfirm / stPrompt）
 
-> **写法优先级**：本文档中的原生 JS 写法（`setAttribute` / `addEventListener` 等）仅适用于非 ofa 环境或自动化测试。在 ofa 页面（`<o-page>` / `<o-app>`）中必须优先用 ofa.js API：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx=`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。详见 [../usage-patterns.md](../usage-patterns.md)。
+> **写法优先级**：ofa 页面（`<o-page>` / `<o-app>`）中优先用模板绑定语法：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx="expr"`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。纯 JS 场景用 ofa 实例 API：`$("sel").attr(name, value)`（布尔属性 true 添加 / false 移除）、`$("sel").on("event", fn)`。不要写 `setAttribute` / `document.querySelector(...).addEventListener(...)` 等原生 DOM API。详见 [../usage-patterns.md](../usage-patterns.md)。
 
 基于 ofa.js 的模态对话框组件 `st-dialog`，以及基于它构建的三个命令式工具（`alert.js` / `confirm.js` / `prompt.js`），同目录存放。语义由属性表达（`open` 控制显示，`auto-close` 控制交互关闭），视觉默认值全用 em，面板外观用原生 CSS `::part(panel)` 选择器直接定制。
 
@@ -41,8 +41,8 @@ JS 中请用 attribute 方式（直接改 property 不触发更新）：
 
 ```js
 // 兼容写法（非 ofa 页面 / 自动化测试）
-dialog.setAttribute("open", "");   // 打开
-dialog.removeAttribute("open");    // 关闭（不派发 close 事件）
+$("st-dialog").attr("open", true);   // 打开
+$("st-dialog").attr("open", false);  // 关闭（不派发 close 事件）
 ```
 
 ## 插槽
@@ -66,10 +66,10 @@ dialog.removeAttribute("open");    // 关闭（不派发 close 事件）
 
 ## 事件
 
-- `close`：**交互关闭**（点击遮罩 / Escape，且设置了 `auto-close`）时派发，`bubbles` + `composed`，直接在 `<st-dialog>` 上监听。外部代码 `removeAttribute("open")` 关闭**不**派发：
+- `close`：**交互关闭**（点击遮罩 / Escape，且设置了 `auto-close`）时派发，`bubbles` + `composed`，直接在 `<st-dialog>` 上监听。外部代码 `$("st-dialog").attr("open", false)` 关闭**不**派发：
 
 ```js
-document.querySelector("st-dialog").addEventListener("close", () => {
+$("st-dialog").on("close", () => {
   console.log("用户主动关闭了对话框");
 });
 ```

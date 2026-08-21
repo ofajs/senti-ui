@@ -1,5 +1,7 @@
 # st-select 单选下拉框组件
 
+> **写法优先级**：本文档中的原生 JS 写法（`setAttribute` / `addEventListener` 等）仅适用于非 ofa 环境或自动化测试。在 ofa 页面（`<o-page>` / `<o-app>`）中必须优先用 ofa.js API：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx=`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。详见 [../usage-patterns.md](../usage-patterns.md)。
+
 基于 ofa.js 的单选下拉框组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设，也不需要自定义 CSS 变量）。
 
 组件的视觉样式全部定义在宿主元素（`:host`）上。选项写在 light DOM 的原生 `<option>` 元素里（只作数据源，不参与渲染），组件读取后自绘 M3 风格下拉列表。

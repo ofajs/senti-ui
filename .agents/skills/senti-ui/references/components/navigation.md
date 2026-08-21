@@ -1,5 +1,7 @@
 # st-nav-bar / st-nav-item 导航栏组件
 
+> **写法优先级**：本文档中的原生 JS 写法（`setAttribute` / `addEventListener` 等）仅适用于非 ofa 环境或自动化测试。在 ofa 页面（`<o-page>` / `<o-app>`）中必须优先用 ofa.js API：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx=`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。详见 [../usage-patterns.md](../usage-patterns.md)。
+
 基于 ofa.js 的底部导航栏（M3 navigation bar）。子项写在 light DOM 的 `st-nav-item`，`active` 属性标记当前项（由外部逻辑切换）；药丸形高亮背景自动动画跟随 active 项（M3 emphasized 0.3s）。
 
 ## 依赖引入（使用前必须）

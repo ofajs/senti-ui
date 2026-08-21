@@ -1,5 +1,7 @@
 # st-input 单行输入框组件
 
+> **写法优先级**：本文档中的原生 JS 写法（`setAttribute` / `addEventListener` 等）仅适用于非 ofa 环境或自动化测试。在 ofa 页面（`<o-page>` / `<o-app>`）中必须优先用 ofa.js API：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx=`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。详见 [../usage-patterns.md](../usage-patterns.md)。
+
 基于 ofa.js 的单行输入框组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设，也不需要自定义 CSS 变量）。
 
 组件的视觉样式全部定义在宿主元素（`:host`）上，`st-input` 本身就是一个普通的可样式化元素。内部有一个透明的原生 `<input>` 负责语义（输入/键盘/焦点/disabled/readonly）。
@@ -26,12 +28,18 @@
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互、无 focus 态 |
 | `readonly` | boolean | 无 | 只读：可聚焦、不可修改 |
 
-设置/取消布尔属性示例：`<st-input disabled>`；JS 中请用 attribute 方式（直接改 property 不触发更新）。改值用 `el.value = "..."`：
+在 ofa 页面中优先用绑定语法（**布尔属性必须用 `attr:`**，`:disabled` 会把 false 序列化成字符串属性导致永远禁用）；JS 读写值用 `el.value`：
+
+```html
+<!-- ofa 页面（推荐） -->
+<st-input sync:value="form.name" attr:disabled="form.locked" placeholder="姓名"></st-input>
+```
 
 ```js
+// 非 ofa 环境 / 自动化测试的兼容写法
 input.setAttribute("disabled", "");
 input.removeAttribute("disabled");
-input.value = "新的值"; // 运行时读写值
+input.value = "新的值"; // 运行时读写值（el.value 是 DOM property，setAttribute("value") 无效）
 ```
 
 ## 插槽
@@ -49,7 +57,13 @@ input.value = "新的值"; // 运行时读写值
 
 `input` / `change` 事件天然穿透 shadow DOM，直接在 `<st-input>` 上监听，`el.value` 已同步为最新值：
 
+```html
+<!-- ofa 页面（推荐）：根级直接写方法名，回调里读 this.form.name -->
+<st-input sync:value="form.name" on:input="onNameInput"></st-input>
+```
+
 ```js
+// 非 ofa 环境 / 自动化测试的兼容写法
 document.querySelector("st-input").addEventListener("input", (e) => {
   console.log(e.target.value);
 });

@@ -1,5 +1,7 @@
 # st-textarea 多行输入框组件
 
+> **写法优先级**：本文档中的原生 JS 写法（`setAttribute` / `addEventListener` 等）仅适用于非 ofa 环境或自动化测试。在 ofa 页面（`<o-page>` / `<o-app>`）中必须优先用 ofa.js API：数据绑定 `{{xxx}}`、属性绑定 `attr:xxx=`（布尔属性必须 `attr:`，不能 `:prop`）、双向绑定 `sync:value` / `sync:open`、事件 `on:click` / `on:input`（根级直接写方法名）。详见 [../usage-patterns.md](../usage-patterns.md)。
+
 基于 ofa.js 的多行输入框组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设，也不需要自定义 CSS 变量）。
 
 内部有一个透明的原生 `<textarea>` 负责语义（输入/键盘/焦点/rows）。拖拽手柄默认关闭，高度由 `rows` / 内容（`autosize`）/ `style="height: ..."` 决定。

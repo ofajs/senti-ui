@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Senti-UI — 面向 AI 的 ofa.js 组件库</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="../packages/color/st-init.js"></script>
+  <!-- 命令式工具预加载（坑 #6：页面模块内不能相对 import，须挂 window 供轮询） -->
+  <script type="module">
+    import stAlert from "../packages/dialog/alert.js";
+    import stConfirm from "../packages/dialog/confirm.js";
+    import stPrompt from "../packages/dialog/prompt.js";
+    window.stAlert = stAlert;
+    window.stConfirm = stConfirm;
+    window.stPrompt = stPrompt;
+    window.__stDialogUtilsReady = true;
+
+    import stToast from "../packages/snackbar/toast.js";
+    window.stToast = stToast;
+    window.__stToastReady = true;
+  </script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: system-ui, sans-serif;
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+    }
+  </style>
+</head>
+<body>
+  <l-m src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/libs/router/dist/router.min.mjs"></l-m>
+  <o-router fix-body>
+    <o-app src="./app-config.js"></o-app>
+  </o-router>
+</body>
+</html>

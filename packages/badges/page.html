@@ -1,0 +1,86 @@
+<!-- st-badges 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
+    section { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+  </style>
+
+  <section>
+    <h3>用在 button 上（普通按钮 / 图标按钮）</h3>
+    <st-badges value="3"><st-button>收件箱</st-button></st-badges>
+    <st-badges value="12"><st-button variant="outlined">待审批</st-button></st-badges>
+    <st-badges color="success" value="99+"><st-button variant="text">在线</st-button></st-badges>
+    <st-badges><st-button variant="outlined" color="error">异常</st-button></st-badges>
+  </section>
+
+  <section>
+    <h3>基础（点徽标 / 数字徽标 / 封顶 99+）</h3>
+    <st-badges><st-icon-button title="通知">🔔</st-icon-button></st-badges>
+    <st-badges value="8"><st-icon-button title="消息">✉️</st-icon-button></st-badges>
+    <st-badges value="120"><st-icon-button title="更多">📬</st-icon-button></st-badges>
+  </section>
+
+  <section>
+    <h3>各种按钮上的效果</h3>
+    <st-badges value="3"><st-button>默认按钮</st-button></st-badges>
+    <st-badges value="5"><st-button variant="outlined">Outlined</st-button></st-badges>
+    <st-badges value="7"><st-button variant="text">Text</st-button></st-badges>
+    <st-badges value="9"><st-button color="error">Error 按钮</st-button></st-badges>
+    <st-badges value="2"><st-button variant="tonal" color="success">Tonal</st-button></st-badges>
+    <st-badges value="1"><st-icon-button variant="filled" title="通知">🔔</st-icon-button></st-badges>
+    <st-badges value="99+"><st-icon-button variant="tonal" title="消息">✉️</st-icon-button></st-badges>
+    <st-badges><st-icon-button variant="outlined" title="待处理">📋</st-icon-button></st-badges>
+  </section>
+
+  <section>
+    <h3>动态改变 badges（模拟收消息，1s 一条，到 99+ 停）</h3>
+    <st-badges attr:value="liveCount" max="99"><st-icon-button title="实时消息">📡</st-icon-button></st-badges>
+    <span style="font-size:13px; color: var(--md-sys-color-on-surface-variant);">liveCount 数据：{{liveCount}}（attr:value 数据绑定驱动）</span>
+  </section>
+
+  <section>
+    <h3>color 属性 — M3 角色</h3>
+    <st-badges value="5" color="primary"><st-icon-button title="primary">🔵</st-icon-button></st-badges>
+    <st-badges value="5" color="success"><st-icon-button title="success">🟢</st-icon-button></st-badges>
+    <st-badges value="5" color="tertiary"><st-icon-button title="tertiary">🟣</st-icon-button></st-badges>
+  </section>
+
+  <section>
+    <h3>自定义封顶（max）与数据绑定（attr:value）</h3>
+    <st-badges attr:value="msgCount" max="9"><st-icon-button title="动态">📡</st-icon-button></st-badges>
+    <span>msgCount 数据：{{msgCount}}</span>
+  </section>
+
+  <section>
+    <h3>JS 主动操作（setAttribute）与事件</h3>
+    <st-badges id="js-badge" value="1"><st-icon-button title="JS">⚙️</st-icon-button></st-badges>
+    <st-button variant="outlined" on:click="incBadge">+1（模拟收到消息）</st-button>
+  </section>
+
+  <section>
+    <h3>纯 style 定制 / 标记任意元素</h3>
+    <st-badges value="NEW" style="--x:0;"><st-button variant="text">文本 value</st-button></st-badges>
+    <st-badges color="success"><span style="width:48px;height:48px;border-radius:50%;background:var(--md-sys-color-surface-container-high);display:inline-block;"></span></st-badges>
+  </section>
+
+  <script>
+    export default async () => ({
+      data: { msgCount: "3", liveCount: "1" },
+      ready() {
+        this._liveTimer = setInterval(() => {
+          const n = Number(this.liveCount) + 1;
+          this.liveCount = String(Math.min(n, 120));
+          if (n >= 120) clearInterval(this._liveTimer);
+        }, 1000);
+      },
+      proto: {
+        incBadge() {
+          const b = this.ele.shadowRoot.querySelector("#js-badge");
+          b.setAttribute("value", String(Number(b.getAttribute("value") || 0) + 1));
+          this.msgCount = String(Number(this.msgCount) + 1);
+        },
+      },
+    });
+  </script>
+</template>

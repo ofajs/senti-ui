@@ -1,0 +1,46 @@
+<template page>
+  <style>
+    :host {
+      display: block;
+      padding: 32px max(24px, calc((100% - 960px) / 2)) 80px;
+      box-sizing: border-box;
+    }
+    l-m { display: none; }
+    header {
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-size: 32px;
+      margin: 0 0 8px;
+    }
+    .desc {
+      margin: 0;
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 15px;
+    }
+    .tag {
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 13px;
+      color: var(--md-sys-color-primary);
+    }
+  </style>
+
+  <l-m src="../../packages/badges/badges.html"></l-m>
+  <l-m src="../../packages/button/button.html"></l-m>
+  <l-m src="../../packages/button/icon-button.html"></l-m>
+
+  <header>
+    <h1>徽标 Badges</h1>
+    <p class="desc">点/数字封顶 max+/文字徽标，钉在插槽元素右上角 &nbsp;标签：<span class="tag">st-badges</span></p>
+  </header>
+
+  <o-page src="../../packages/badges/page.html"></o-page>
+
+  <script>
+    export const parent = "../layout.html";
+
+    export default async () => {
+      return {};
+    };
+  </script>
+</template>

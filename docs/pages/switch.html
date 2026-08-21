@@ -1,0 +1,45 @@
+<template page>
+  <style>
+    :host {
+      display: block;
+      padding: 32px max(24px, calc((100% - 960px) / 2)) 80px;
+      box-sizing: border-box;
+    }
+    l-m { display: none; }
+    header {
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-size: 32px;
+      margin: 0 0 8px;
+    }
+    .desc {
+      margin: 0;
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 15px;
+    }
+    .tag {
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 13px;
+      color: var(--md-sys-color-primary);
+    }
+  </style>
+
+  <l-m src="../../packages/switch/switch.html"></l-m>
+  <l-m src="../../packages/button/button.html"></l-m>
+
+  <header>
+    <h1>开关 Switch</h1>
+    <p class="desc">恒定描边 + 背景色过渡实现选中态，Space 切换 &nbsp;标签：<span class="tag">st-switch</span></p>
+  </header>
+
+  <o-page src="../../packages/switch/page.html"></o-page>
+
+  <script>
+    export const parent = "../layout.html";
+
+    export default async () => {
+      return {};
+    };
+  </script>
+</template>

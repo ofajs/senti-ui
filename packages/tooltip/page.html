@@ -1,0 +1,62 @@
+<!-- st-tooltip 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
+    section { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+    .state { font-size: 13px; color: var(--md-sys-color-on-surface-variant); font-family: ui-monospace, monospace; }
+  </style>
+
+  <section>
+    <h3>基础（悬停 / 聚焦触发元素显示）</h3>
+    <st-tooltip content="删除这条记录">
+      <st-button variant="outlined">悬停我</st-button>
+    </st-tooltip>
+    <st-tooltip content="带图标的提示：⭐ 收藏后可在个人中心找到">
+      <st-icon-button title="收藏">⭐</st-icon-button>
+    </st-tooltip>
+  </section>
+
+  <section>
+    <h3>贴近视口底部（自动翻转到下方）</h3>
+    <st-tooltip content="上方放不下时自动翻到下方显示" style="position: fixed; bottom: 24px; left: 40px;">
+      <st-button variant="outlined">底部的触发器</st-button>
+    </st-tooltip>
+  </section>
+
+  <section>
+    <h3>纯 style 定制 / 长文本自动换行</h3>
+    <st-tooltip content="最长 20em 自动换行的长提示文本，超出部分会折行显示而不撑爆气泡">
+      <st-button variant="text">长文本</st-button>
+    </st-tooltip>
+  </section>
+
+  <section>
+    <h3>数据绑定（sync:open，开合状态回写）与 JS 主动操作</h3>
+    <st-tooltip content="用数据绑定控制的提示" sync:open="tipOpen">
+      <st-button variant="outlined" on:click="tipOpen = !tipOpen">点我开合</st-button>
+    </st-tooltip>
+    <span class="state">tipOpen 数据：{{tipOpen}}</span>
+    <st-tooltip id="js-tip" content="JS setAttribute 驱动">
+      <st-button variant="text" on:click="jsShow">JS 显示 2s</st-button>
+    </st-tooltip>
+  </section>
+
+  <section>
+    <h3>聚焦与键盘</h3>
+    <span class="state">Tab 聚焦触发器（按钮）时提示同样显示；Escape 关闭；气泡 pointer-events: none 不挡交互</span>
+  </section>
+
+  <script>
+    export default async () => ({
+      data: { tipOpen: false },
+      proto: {
+        jsShow() {
+          const tip = this.ele.shadowRoot.querySelector("#js-tip");
+          tip.setAttribute("open", "");
+          setTimeout(() => tip.removeAttribute("open"), 2000);
+        },
+      },
+    });
+  </script>
+</template>

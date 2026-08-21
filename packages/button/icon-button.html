@@ -1,0 +1,151 @@
+<!--
+  st-icon-button — Senti-UI 图标按钮组件（基于 ofa.js）
+  语义属性：variant(standard|filled|tonal|outlined) / color（M3 角色名） / disabled
+  圆形图标按钮（默认插槽放单个图标），视觉在 :host 上可直接用原生 CSS 属性定制，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      /* 视觉样式全部定义在 host 上，外部 style 可直接覆盖任何原生属性 */
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      position: relative;
+      width: 2.857em; /* 40px，与 st-button 高度一致 */
+      height: 2.857em;
+      padding: 0;
+      border: 1px solid transparent;
+      border-radius: 50%; /* M3 图标按钮为圆形 */
+      font-size: 14px;
+      font-family: inherit;
+      background-color: transparent;
+      color: var(--md-sys-color-on-surface-variant);
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* M3 四种图标按钮类型 */
+    :host([variant="filled"]) {
+      background-color: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+    }
+    :host([variant="tonal"]) {
+      background-color: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+    }
+    :host([variant="outlined"]) {
+      border-color: var(--md-sys-color-outline);
+    }
+
+    /* M3 state layer：currentColor 半透明叠加 */
+    .layer {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background-color: currentColor;
+      opacity: 0;
+      pointer-events: none;
+    }
+    :host(:hover) .layer { opacity: 0.08; }
+    :host(:active) .layer { opacity: 0.12; }
+
+    :host([disabled]) {
+      cursor: not-allowed;
+      opacity: 0.38;
+    }
+    :host([disabled]) .layer { opacity: 0; }
+
+    ::slotted(*) {
+      display: inline-flex;
+      font-size: 1.571em; /* 22px 图标建议尺寸，随 font-size 等比 */
+      line-height: 1;
+    }
+
+    l-m { display: none; }
+
+    /* 内部透明原生 button：承载点击/键盘/焦点语义 */
+    .native {
+      all: unset;
+      position: absolute;
+      inset: 0;
+      z-index: 2; /* 盖住 position 的兄弟元素 */
+      cursor: inherit;
+      border-radius: inherit;
+    }
+    .native:focus-visible {
+      /* 不用 currentColor：filled 白字按钮的白圈画在浅色页面上不可见（坑 #11） */
+      outline: 2px solid var(--md-sys-color-on-surface);
+      outline-offset: 2px;
+    }
+  </style>
+
+  <span class="layer"></span>
+  <l-m src="../ripple/ripple.html"></l-m>
+  <st-ripple></st-ripple>
+  <slot></slot>
+  <button class="native" type="button" tabindex="0"></button>
+
+  <script>
+    import "../color/st-init.js";
+    export default async () => ({
+      tag: "st-icon-button",
+      attrs: {
+        variant: "standard",
+        color: null,
+        disabled: null,
+      },
+      watch: {
+        color() { this.applyColor(); },
+        variant() { this.applyColor(); },
+        disabled() { this.applyDisabled?.(); },
+      },
+      ready() {
+        const sr = this.ele.shadowRoot;
+        // disabled 同步到内部原生 button：原生 disabled 天然阻断点击/键盘/焦点（坑 #29）
+        this.applyDisabled = () => {
+          sr.querySelector(".native").disabled = this.disabled !== null;
+        };
+        this.applyDisabled();
+        this.applyColor();
+      },
+      proto: {
+        // color 接受 M3 角色名或 color 模块自定义变量名，按 variant 分派（同 st-button；
+        // 内联样式会压过 :host([variant]) 规则，必须先读 variant 再写，坑 #15）
+        applyColor() {
+          const s = this.ele.style;
+          const name = this.color;
+          if (!name) {
+            s.background = "";
+            s.color = "";
+            s.borderColor = "";
+            return;
+          }
+          const main = `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`;
+          const on = `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-primary)))`;
+          const container = `var(--md-sys-color-${name}-container, var(--${name}-container, var(--md-sys-color-secondary-container)))`;
+          const onContainer = `var(--md-sys-color-on-${name}-container, var(--on-${name}-container, var(--md-sys-color-on-secondary-container)))`;
+          if (this.variant === "filled") {
+            s.background = main;
+            s.color = on;
+            s.borderColor = "";
+          } else if (this.variant === "tonal") {
+            s.background = container;
+            s.color = onContainer;
+            s.borderColor = "";
+          } else if (this.variant === "outlined") {
+            s.background = "";
+            s.color = main;
+            s.borderColor = main;
+          } else {
+            // standard
+            s.background = "";
+            s.color = main;
+            s.borderColor = "";
+          }
+        },
+      },
+    });
+  </script>
+</template>

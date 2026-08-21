@@ -23,6 +23,13 @@
     <st-tab-item>C</st-tab-item>
   </st-tab-bar>
 
+  <section>
+    <h3>事件监听与键盘</h3>
+    <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant); width:100%;">
+      标签 click 事件冒泡（composed），外部统一监听分发；<span class="code" style="font-family: ui-monospace, monospace;">Tab</span> 聚焦（focus-visible 有焦圈）、<span class="code" style="font-family: ui-monospace, monospace;">Enter</span>/<span class="code" style="font-family: ui-monospace, monospace;">Space</span> 激活；disabled 项跳过交互
+    </p>
+  </section>
+
   <script>
     export default async () => ({
       data: { current: 0, labels: ["邮件", "通话", "收藏"] },

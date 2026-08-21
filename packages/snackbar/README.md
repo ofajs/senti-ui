@@ -1,12 +1,20 @@
-# st-snackbar 消息条组件
+# st-snackbar 消息条组件（含命令式工具 stToast）
 
-基于 ofa.js 的底部消息条组件。视觉在 `:host` 上（默认主题次级色 `secondary` 底，`color` 属性可换任意 M3 角色），可直接用原生 CSS 属性覆盖。
+基于 ofa.js 的底部消息条组件 `st-snackbar`，以及基于它构建的命令式 toast 工具（`toast.js`），同目录存放。视觉在 `:host` 上（默认主题次级色 `secondary` 底，`color` 属性可换任意 M3 角色），可直接用原生 CSS 属性覆盖。
 
 ## 依赖引入（使用前必须）
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
 <l-m src="/packages/snackbar/snackbar.html"></l-m>
+```
+
+toast 工具无需预引入组件——内部按需注入 `<l-m>`（snackbar / button）并等待就绪：
+
+```html
+<script type="module">
+  import stToast from "/packages/snackbar/toast.js";
+</script>
 ```
 
 ## 语义属性
@@ -50,22 +58,44 @@ snackbar.hide(); // JS 主动关闭（派发 close）
 | 属性 | 默认值 |
 |------|--------|
 | min-width / max-width | `14.286em` / `34.286em`（= 200/480px） |
-| padding | `0.857em 1em` |
+| padding | 无按钮 `0.571em 1em`（8px 14px，舒适）；有操作按钮时自动收紧为 `0.286em` 上下（4px，40px 按钮撑出 M3 48dp）——由 action 插槽有无内容动态分档（`has-action` 属性，slotchange 探测）；高度纯内容决定，无 min-height |
 | 圆角 | `0.286em`（= 4px） |
 | 底色 / 文字 | 默认 `secondary` / `on-secondary`（主题次级色）；`color` 属性时为 角色色 / on-角色色 |
 | 操作区颜色 | `on-secondary`（默认底色下）；`color` 属性时跟随 on-角色色（继承文字色） |
-| 入场动画 | 上移淡入 0.2s（M3 emphasized） |
+| 显隐 | `open` 属性即时切换（display none ↔ inline-flex），**组件不自带开合动画**；需要动画由外部包装提供（toast 工具自带滑入/滑出） |
 | `font-size` | `14px` |
 
 定位由外部决定（通常 `position: fixed; bottom; left: 50%` 或用宿主 style 控制）。
+
+## 命令式工具：stToast
+
+`toast()` 式即用消息提示：固定在视口左下角、多条堆叠、入场/退场动画、自动或手动关闭。
+
+```js
+// 字符串简写，默认 3s 消失
+const t = await stToast("已保存");
+// 对象参数：message / duration（毫秒，0 = 不自动消失）/ color（M3 角色名）
+const t = await stToast({ message: "同步完成", color: "success", duration: 4000 });
+const t = await stToast({ message: "点 ✕ 关闭", duration: 0 });
+t.close(); // 手动关闭（返回 { close, el }）
+```
+
+实现说明：消息条复用 st-snackbar（✕ 关闭用**小号 st-icon-button**，`font-size: 10px` 等比缩小到约 28px 不撑高消息条；按钮色走 `color` 属性——默认反色底上 `inverse-primary`、彩色底上 `on-角色色`）；消息文本走 `textContent` 天然防注入；容器 `pointer-events: none` 不挡页面交互。
 
 ## 注意事项与使用技巧
 
 - **action 按钮必须用 st-button 的 `color` 属性着色**（如默认反色底上 `color="inverse-primary"`、红底上 `color="on-error"`）——给 st-button 写内联 style color 会被其配色逻辑覆盖
 - `duration` 是毫秒数属性，仅与 `open` 同时存在时生效；`el.hide()`（宿主 property）手动关闭并派发 close
 - 外部 `removeAttribute("open")` 关闭不派发 close
-- 定位由外部决定：常用 `position: fixed; bottom; left: 50%; transform: translateX(-50%)`
+- 显隐即时切换，无内建动画；`hide()`（宿主 property）关闭并派发 close
+- toast 工具自带滑入/滑出动画（0.3s，斜向渐移），播完才移除元素：常用 `position: fixed; bottom; left: 50%; transform: translateX(-50%)`
 - 纯展示场景直接加 `open` 属性静态渲染即可
 ## 验证页面
 
 `index.html`（直接访问 `/packages/snackbar/`）。
+### toast 注意事项
+
+- 返回 `{ close, el }`（非 Promise 结果值本身），`close()` 幂等
+- 多条 toast 在左下角堆叠（后出的在下），各自独立计时关闭
+- `duration: 0` 不自动消失，只能点 ✕ 或 `close()` 关闭
+- 容器固定在视口左下角（fixed），不要在有 transform 的祖先内调用（坑同 st-dialog #36）——工具自动挂 body，正常使用不受影响

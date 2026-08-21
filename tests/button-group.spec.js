@@ -134,3 +134,69 @@ test("split-button：color 属性按 variant 分派（outlined 前景为角色�
     `rgb(${parseInt(hex.slice(0, 2), 16)}, ${parseInt(hex.slice(2, 4), 16)}, ${parseInt(hex.slice(4, 6), 16)})`
   );
 });
+
+// ---------- st-icon-button ----------
+
+test("icon-button：四种 variant 的配色差异（透明/填充/容器/描边）", async ({ page }) => {
+  await ready(page);
+  const styles = await page.evaluate(() => {
+    const get = (sel) => {
+      const cs = getComputedStyle(document.querySelector(sel));
+      return { bg: cs.backgroundColor, border: cs.borderColor, color: cs.color };
+    };
+    return {
+      standard: get("#ib-standard"),
+      filled: get("#ib-filled"),
+      tonal: get("#ib-tonal"),
+      outlined: get("#ib-outlined"),
+    };
+  });
+  expect(styles.standard.bg).toBe("rgba(0, 0, 0, 0)");
+  expect(styles.filled.bg).not.toBe("rgba(0, 0, 0, 0)");
+  expect(styles.tonal.bg).not.toBe("rgba(0, 0, 0, 0)");
+  expect(styles.tonal.bg).not.toBe(styles.filled.bg);
+  expect(styles.outlined.bg).toBe("rgba(0, 0, 0, 0)");
+  expect(styles.outlined.border).not.toBe(styles.standard.border);
+});
+
+test("icon-button：圆形与等比尺寸", async ({ page }) => {
+  await ready(page);
+  const geo = await page.evaluate(() => {
+    const cs = getComputedStyle(document.querySelector("#ib-standard"));
+    return { w: cs.width, h: cs.height, radius: cs.borderRadius };
+  });
+  expect(geo.w).toBe(geo.h);
+  expect(parseFloat(geo.w)).toBeCloseTo(40, 0);
+  expect(geo.radius).toBe("50%");
+});
+
+test("icon-button：click 冒泡到宿主，disabled 原生阻断", async ({ page }) => {
+  await ready(page);
+  await page.evaluate(() => {
+    window.iconEvents = [];
+    document.querySelector("#ib-standard").addEventListener("click", () => window.iconEvents.push("std"));
+  });
+  await page.locator("#ib-standard").click();
+  expect(await page.evaluate(() => window.iconEvents)).toEqual(["std"]);
+
+  await page.locator("#ib-disabled").click({ force: true }).catch(() => {});
+  await page.waitForTimeout(100);
+  expect(
+    await page.evaluate(() => document.querySelector("#ib-disabled").shadowRoot.querySelector(".native").disabled)
+  ).toBe(true);
+});
+
+test("icon-button：color=error + tonal 分支用 error-container 底色", async ({ page }) => {
+  await ready(page);
+  const { errorContainerBg, btnBg } = await page.evaluate(() => {
+    const token = getComputedStyle(document.documentElement).getPropertyValue("--md-sys-color-error-container").trim();
+    return {
+      errorContainerBg: token,
+      btnBg: getComputedStyle(document.querySelector("#ib-color")).backgroundColor,
+    };
+  });
+  const hex = errorContainerBg.replace("#", "");
+  expect(btnBg).toBe(
+    `rgb(${parseInt(hex.slice(0, 2), 16)}, ${parseInt(hex.slice(2, 4), 16)}, ${parseInt(hex.slice(4, 6), 16)})`
+  );
+});

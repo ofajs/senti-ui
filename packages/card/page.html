@@ -1,0 +1,46 @@
+<!-- st-card 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    h3 { grid-column: 1 / -1; margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); }
+    .demo-card h4 { margin: 0 0 8px; font-size: 16px; }
+    .demo-card p { margin: 0 0 12px; font-size: 13px; line-height: 1.6; color: var(--md-sys-color-on-surface-variant); }
+  </style>
+
+  <h3>三种 variant（elevated 默认 / filled / outlined）</h3>
+  <st-card class="demo-card">
+    <h4>Elevated（默认）</h4>
+    <p>M3 level 1 阴影，surface-container-low 底色。内容自由组合：标题、正文、图片。</p>
+  </st-card>
+  <st-card class="demo-card" variant="filled">
+    <h4>Filled</h4>
+    <p>surface-container-highest 底色，无阴影。</p>
+  </st-card>
+  <st-card class="demo-card" variant="outlined">
+    <h4>Outlined</h4>
+    <p>outline-variant 描边，透明底。</p>
+  </st-card>
+
+  <h3>interactive（可点击：hover 抬升 + 波纹 + click 冒泡，计数 {{clickCount}}）</h3>
+  <st-card class="demo-card" interactive on:click="clickCount += 1">
+    <h4>可点击的卡片</h4>
+    <p>整卡可点（内部原生 button 承载），Tab 聚焦有焦圈、Enter/Space 激活。</p>
+  </st-card>
+
+  <h3>纯 style 定制（原生 CSS 属性 + 插槽组合）</h3>
+  <st-card class="demo-card" style="border-radius: 1.429em; padding: 1.43em;">
+    <h4>大圆角 + 大内边距</h4>
+    <p>宽高、圆角、底色、阴影全部原生属性覆盖。</p>
+  </st-card>
+  <st-card class="demo-card" variant="filled" style="font-size: 12px;">
+    <h4>12px 等比缩放</h4>
+    <p>改 font-size，内边距/圆角随 em 联动。</p>
+  </st-card>
+
+  <script>
+    export default async () => ({
+      data: { clickCount: 0 },
+      proto: {},
+    });
+  </script>
+</template>

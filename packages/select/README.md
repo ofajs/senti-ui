@@ -135,6 +135,8 @@ document.querySelector("st-select").addEventListener("change", (e) => {
   - filled：底边框上叠加 2px 线，从左到右展开（200ms，M3 emphasized 曲线）
   - `color` 属性时描边/底线换为对应角色色
 - 下拉箭头：CSS chevron，展开时旋转 180°（200ms）
+- **弹层方向自适应**：打开时按视口剩余空间判定——下方放不下且上方更宽裕时自动向上弹（drop-up）
+- **开合动画**（同 st-menu）：缩放淡入 0.2s（M3 emphasized），关闭先播 150ms 退出过渡再隐藏
 - 弹层：`surface-container` 底色 + 阴影 + 圆角，选中项 `secondary-container` 底色 + 对勾，键盘激活项 `surface-container-high` 高亮；最高 `15em` 内滚动
 - disabled：0.38 透明度、`not-allowed` 光标、阻断聚焦与展开
 
@@ -151,6 +153,7 @@ document.querySelector("st-select").addEventListener("change", (e) => {
 - 动态选项三种方式：`el.options = [...]`、`:options` 绑定、o-fill 嵌套（组件会深入容器收集渲染出的 option）
 - 键盘全支持：Enter/Space 打开、↑↓ 循环移动、Home/End、Escape/Tab 关闭
 - 判断"点击组件外部"必须用 `e.composedPath().includes(ele)`（composed 事件 target 在 document 层已被重定向）
+- 弹层仍挂在 shadow 内（absolute 定位），被 overflow 祖先裁剪时会截断；翻转只解决上下方向，不解决裁剪
 ## 验证页面
 
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `/packages/select/`）。

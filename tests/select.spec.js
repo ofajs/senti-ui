@@ -99,3 +99,51 @@ test("disabled 属性生效：无法打开弹层", async ({ page }) => {
   );
   expect(events).toEqual([]);
 });
+
+test("下拉翻转：贴近视口底部时向上弹出", async ({ page }) => {
+  const sel = page.locator("#sel-bottom");
+  await sel.click();
+  await page.waitForTimeout(300);
+  const state = await page.evaluate(() => {
+    const el = document.querySelector("#sel-bottom");
+    const box = el.shadowRoot.querySelector("#st-listbox").getBoundingClientRect();
+    const host = el.getBoundingClientRect();
+    return {
+      dropUp: el.hasAttribute("drop-up"),
+      listboxAboveHost: Math.round(box.bottom) <= Math.round(host.top) + 2,
+      visible: box.height > 0,
+    };
+  });
+  expect(state.dropUp).toBe(true);
+  expect(state.listboxAboveHost).toBe(true);
+  expect(state.visible).toBe(true);
+});
+
+test("下拉动画：进入有入场动画，关闭先播退出过渡再隐藏", async ({ page }) => {
+  const sel = page.locator("#sel-basic");
+  await sel.click();
+  await page.waitForTimeout(100);
+  const entering = await page.evaluate(() => {
+    const el = document.querySelector("#sel-basic");
+    return getComputedStyle(el.shadowRoot.querySelector("#st-listbox")).animationName;
+  });
+  expect(entering).toContain("st-select-in");
+
+  // 关闭：closing 过渡态期间仍可见
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(60);
+  const exiting = await page.evaluate(() => {
+    const el = document.querySelector("#sel-basic");
+    return { closing: el.hasAttribute("closing"), display: getComputedStyle(el.shadowRoot.querySelector("#st-listbox")).display };
+  });
+  expect(exiting.closing).toBe(true);
+  expect(exiting.display).toBe("block");
+
+  // 180ms 后彻底隐藏
+  await page.waitForTimeout(300);
+  expect(
+    await page.evaluate(
+      () => getComputedStyle(document.querySelector("#sel-basic").shadowRoot.querySelector("#st-listbox")).display
+    )
+  ).toBe("none");
+});

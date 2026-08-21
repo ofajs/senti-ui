@@ -99,9 +99,40 @@
     <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant);">最近选择：{{lastPick}}</span>
   </section>
 
+  <section>
+    <h3>JS 主动操作（attribute 方式，非 ofa 环境的写法）</h3>
+    <st-button id="js-btn">JS 控制</st-button>
+    <st-button variant="outlined" on:click="jsToggleDisabled">切换 disabled</st-button>
+    <st-button variant="outlined" on:click="jsToggleLoading">切换 loading</st-button>
+    <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant); width:100%;">
+      直接改 property 不生效，必须 <span class="code" style="font-family: ui-monospace, monospace;">setAttribute</span> / <span class="code" style="font-family: ui-monospace, monospace;">removeAttribute</span>（watch 异步生效）
+    </p>
+  </section>
+
+  <section>
+    <h3>聚焦与键盘</h3>
+    <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant); width:100%;">
+      <span class="code" style="font-family: ui-monospace, monospace;">Tab</span> 聚焦（focus-visible 外圈）、<span class="code" style="font-family: ui-monospace, monospace;">Enter</span>/<span class="code" style="font-family: ui-monospace, monospace;">Space</span> 激活；键盘激活的波纹从中心扩散
+    </p>
+  </section>
+
+  <section>
+    <h3>icon-button（四种 variant + color + disabled + 事件计数 {{iconCount}}）</h3>
+    <st-icon-button title="收藏" on:click="iconCount += 1">⭐</st-icon-button>
+    <st-icon-button variant="filled" title="确认" on:click="iconCount += 1">✅</st-icon-button>
+    <st-icon-button variant="tonal" title="删除" on:click="iconCount += 1">🗑</st-icon-button>
+    <st-icon-button variant="outlined" title="设置" on:click="iconCount += 1">⚙️</st-icon-button>
+    <st-icon-button variant="filled" color="error" title="错误操作" on:click="iconCount += 1">🚫</st-icon-button>
+    <st-icon-button variant="tonal" color="success" title="保存" on:click="iconCount += 1">💾</st-icon-button>
+    <st-icon-button variant="outlined" disabled title="禁用">🔒</st-icon-button>
+    <st-icon-button title="12px 缩放" style="font-size: 12px;">🔍</st-icon-button>
+    <st-icon-button title="20px 缩放" style="font-size: 20px;">🔍</st-icon-button>
+  </section>
+
   <script>
     export default async () => ({
-      data: { busy: false, demoVariant: "filled", splitCount: 0, lastPick: "（无）" },
+      data: { busy: false, demoVariant: "filled", splitCount: 0, lastPick: "（无）", iconCount: 0 },
+      // JS 主动操作在 proto 里
       proto: {
         startTask() {
           this.busy = true;
@@ -118,6 +149,14 @@
         onMenuClose() {},
         pick(name) {
           this.lastPick = name;
+        },
+        jsToggleDisabled() {
+          const btn = this.ele.shadowRoot.querySelector("#js-btn");
+          btn.hasAttribute("disabled") ? btn.removeAttribute("disabled") : btn.setAttribute("disabled", "");
+        },
+        jsToggleLoading() {
+          const btn = this.ele.shadowRoot.querySelector("#js-btn");
+          btn.hasAttribute("loading") ? btn.removeAttribute("loading") : btn.setAttribute("loading", "");
         },
       },
     });

@@ -1,43 +1,96 @@
 <!-- st-switch 验收页，由同目录 index.html 通过 <o-page> 加载 -->
 <template page>
   <style>
-    :host { display: grid; gap: 20px; padding: 40px; align-content: start; }
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
     section { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; }
     h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+    .code { font-family: ui-monospace, monospace; font-size: 13px; }
+    .state {
+      font-size: 13px; color: var(--md-sys-color-on-surface-variant);
+      padding: 2px 8px; border-radius: 6px;
+      background: var(--md-sys-color-surface-container-high);
+    }
   </style>
 
   <section>
-    <h3>基础</h3>
+    <h3>基础（默认 / 初始选中 / 禁用 / 禁用+选中）</h3>
     <st-switch>Wi-Fi</st-switch>
-    <st-switch checked>蓝牙（初始开启）</st-switch>
+    <st-switch checked>蓝牙（初始选中）</st-switch>
     <st-switch disabled>飞行模式（禁用）</st-switch>
-    <st-switch disabled checked>勿扰（禁用+开启）</st-switch>
+    <st-switch disabled checked>勿扰（禁用+选中）</st-switch>
+    <st-switch>（无标签时自动隐藏文字区）</st-switch>
   </section>
 
   <section>
-    <h3>color 属性</h3>
-    <st-switch color="success" checked>成功色</st-switch>
-    <st-switch color="error" checked>错误色</st-switch>
+    <h3>color 属性 — M3 角色（primary / secondary / tertiary / error / success）</h3>
+    <st-switch color="primary" checked>primary</st-switch>
+    <st-switch color="secondary" checked>secondary</st-switch>
+    <st-switch color="tertiary" checked>tertiary</st-switch>
+    <st-switch color="error" checked>error</st-switch>
+    <st-switch color="success" checked>success</st-switch>
   </section>
 
   <section>
-    <h3>等比缩放（宿主 font-size）</h3>
+    <h3>等比缩放（宿主 font-size，padding/圆角/轨道全部联动）</h3>
     <st-switch style="font-size: 12px;" checked>12px</st-switch>
-    <st-switch checked>14px</st-switch>
+    <st-switch checked>14px（默认）</st-switch>
     <st-switch style="font-size: 20px;" checked>20px</st-switch>
   </section>
 
   <section>
-    <h3>change 事件计数：<span class="code" style="font-family: ui-monospace, monospace;">{{count}}</span></h3>
-    <st-switch on:change="onCountChange">点我</st-switch>
+    <h3>事件监听（on:change）</h3>
+    <st-switch on:change="onEvtChange">点我</st-switch>
+    <span class="state">change 次数：<span class="code">{{evtCount}}</span>｜当前状态：<span class="code">{{evtState}}</span></span>
+  </section>
+
+  <section>
+    <h3>数据绑定（attr:checked，页面数据驱动视图）</h3>
+    <st-switch attr:checked="darkMode" on:change="darkMode = !darkMode">深色模式</st-switch>
+    <span class="state">darkMode 数据：<span class="code">{{darkMode}}</span></span>
+  </section>
+
+  <section>
+    <h3>JS 主动操作（setAttribute / removeAttribute，非 ofa 环境的写法）</h3>
+    <st-switch id="js-switch">JS 控制</st-switch>
+    <st-button variant="outlined" on:click="jsOpen">打开</st-button>
+    <st-button variant="outlined" on:click="jsClose">关闭</st-button>
+    <span class="state">checked 属性：<span class="code">{{jsState}}</span></span>
+  </section>
+
+  <section>
+    <h3>聚焦行为（焦点在内部原生 input 上，Tab 可达、Space 切换、focus 有可见焦圈）</h3>
+    <st-switch id="focus-switch">键盘可达</st-switch>
+    <st-button variant="outlined" on:click="focusSwitch">聚焦此开关</st-button>
+    <span class="state">聚焦后按 <span class="code">Space</span> 切换、<span class="code">Tab</span> 离开</span>
   </section>
 
   <script>
     export default async () => ({
-      data: { count: 0 },
+      data: {
+        evtCount: 0,
+        evtState: "未选中",
+        darkMode: false,
+        jsState: "无",
+      },
       proto: {
-        onCountChange() {
-          this.count += 1;
+        onEvtChange(e) {
+          this.evtCount += 1;
+          this.evtState = e.target.hasAttribute("checked") ? "checked" : "未选中";
+        },
+        jsOpen() {
+          this.ele.shadowRoot.querySelector("#js-switch").setAttribute("checked", "");
+          this.jsState = "checked";
+        },
+        jsClose() {
+          this.ele.shadowRoot.querySelector("#js-switch").removeAttribute("checked");
+          this.jsState = "无";
+        },
+        focusSwitch() {
+          // 焦点由内部透明原生 input 承载（宿主本身不可聚焦）
+          this.ele.shadowRoot
+            .querySelector("#focus-switch")
+            .shadowRoot.querySelector("input")
+            .focus();
         },
       },
     });

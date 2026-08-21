@@ -1,0 +1,94 @@
+<!--
+  st-card — Senti-UI 卡片容器组件（基于 ofa.js）
+  语义属性：variant(elevated|filled|outlined，M3 三类型) / interactive（可点击：hover 抬升 + 波纹 + click 冒泡）
+  视觉在 :host 上（em 尺寸），插槽内容自由组合，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: block;
+      position: relative; /* 波纹/state layer 的定位基准（否则绝对定位逃逸到全局） */
+      box-sizing: border-box;
+      padding: 1em;
+      border-radius: 0.857em; /* 12px */
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--md-sys-color-on-surface);
+      background: var(--md-sys-color-surface-container-low);
+      border: 1px solid transparent;
+      /* M3 elevated：level 1 阴影 */
+      box-shadow: 0 0.107em 0.286em rgba(0, 0, 0, 0.3);
+    }
+    :host([variant="filled"]) {
+      background: var(--md-sys-color-surface-container-highest);
+      box-shadow: none;
+    }
+    :host([variant="outlined"]) {
+      background: transparent;
+      border-color: var(--md-sys-color-outline-variant);
+      box-shadow: none;
+    }
+
+    :host([interactive]) {
+      cursor: pointer;
+      transition: box-shadow 0.2s ease, transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+    }
+    :host([interactive]:hover) {
+      /* hover 抬升到 level 2 */
+      box-shadow: 0 0.143em 0.5em rgba(0, 0, 0, 0.25), 0 0.071em 0.214em rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    /* M3 state layer（仅 interactive） */
+    .layer {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: currentColor;
+      opacity: 0;
+      pointer-events: none;
+      display: none;
+    }
+    :host([interactive]) .layer { display: block; }
+    :host([interactive]:hover) .layer { opacity: 0.04; }
+    :host([interactive]:active) .layer { opacity: 0.08; }
+    /* 波纹仅 interactive 显示（默认隐藏，坑 #20 正向逻辑） */
+    st-ripple { display: none; }
+    :host([interactive]) st-ripple { display: block; }
+
+    /* 内部透明原生 button：承载点击/键盘/焦点（interactive 时） */
+    .native {
+      all: unset;
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      cursor: pointer;
+      border-radius: inherit;
+      display: none;
+    }
+    :host([interactive]) .native { display: block; }
+    .native:focus-visible {
+      outline: 2px solid var(--md-sys-color-on-surface);
+      outline-offset: 2px;
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <l-m src="../ripple/ripple.html"></l-m>
+  <span class="layer"></span>
+  <slot></slot>
+  <st-ripple></st-ripple>
+  <button class="native" type="button" tabindex="0"></button>
+<script>
+  import "../color/st-init.js";
+  export default async () => ({
+    tag: "st-card",
+    attrs: {
+      variant: "elevated",
+      interactive: null,
+    },
+    // 无 JS 逻辑：interactive 的 click 由内部 .native button 天然冒泡（composed）
+  });
+</script>
+</template>

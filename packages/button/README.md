@@ -1,6 +1,6 @@
-# st-button 按钮组件（含 st-button-group / st-split-button）
+# st-button 按钮组件（含 st-button-group / st-split-button / st-icon-button）
 
-本包包含三个相关组件：`st-button` 按钮、`st-button-group` 按钮组、`st-split-button` 分裂按钮，引入语句共用一个目录。基于 ofa.js。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size/color 类预设，也不需要自定义 CSS 变量）。
+本包包含四个相关组件：`st-button` 按钮、`st-button-group` 按钮组、`st-split-button` 分裂按钮、`st-icon-button` 图标按钮，引入语句共用一个目录。基于 ofa.js。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size/color 类预设，也不需要自定义 CSS 变量）。
 
 组件的视觉样式全部定义在宿主元素（`:host`）上，`st-button` 本身就是一个普通的可样式化元素——`style` 写什么就生效什么。内部有一个透明的原生 `<button>` 负责语义（点击/键盘/焦点/disabled）。
 
@@ -11,6 +11,7 @@
 <l-m src="/packages/button/button.html"></l-m>
 <l-m src="/packages/button/button-group.html"></l-m>   <!-- st-button-group -->
 <l-m src="/packages/button/split-button.html"></l-m>   <!-- st-split-button -->
+<l-m src="/packages/button/icon-button.html"></l-m>     <!-- st-icon-button -->
 ```
 
 组件内部已 `import "../color/st-init.js"`，加载按钮时会自动注入 `--md-sys-color-*` 颜色体系（多次 import 不冲突，模块按 URL 去重）；若你的部署不含 color 包，则需自行定义这些变量。
@@ -183,6 +184,30 @@ document.querySelector("st-button").addEventListener("click", () => {});
 | 箭头区 | 正方形（aspect-ratio 1/1），与主区分界线 currentColor 40% |
 | 面板 | 与 st-menu 面板一致（min-width 8em、圆角 0.857em、surface-container 底） |
 
+## st-icon-button 图标按钮
+
+圆形图标按钮（默认插槽放单个图标，建议 22px 左右的 svg/emoji/图标字体）。四种 M3 类型：
+
+| `variant` | 背景 | 图标色 | 边框 |
+|-----------|------|--------|------|
+| `standard`（默认） | 透明 | `on-surface-variant` | 无 |
+| `filled` | `primary` | `on-primary` | 无 |
+| `tonal` | `secondary-container` | `on-secondary-container` | 无 |
+| `outlined` | 透明 | `on-surface-variant` | `outline` |
+
+其他属性：`color`（M3 角色名，按上表同款语义换色——filled 用角色色/on-角色色，tonal 用 container 配对，outlined/standard 用角色色作前景与描边）、`disabled`（0.38 透明度、阻断交互）。
+
+```html
+<st-icon-button title="收藏">⭐</st-icon-button>
+<st-icon-button variant="filled">✅</st-icon-button>
+<st-icon-button variant="tonal" color="error">🗑</st-icon-button>
+<st-icon-button variant="outlined" disabled>⚙️</st-icon-button>
+```
+
+- `click` 事件直接在宿主监听（内部原生 button 转发），`Tab` 聚焦 / `Enter`/`Space` 激活
+- 记得配 `title` 或 `aria-label` 提供无障碍名称（图标按钮没有文字）
+- 默认值：`2.857em × 2.857em`（40×40px @ 14px）、圆形（`border-radius: 50%`）、图标 `1.571em`（22px）——改宿主 `font-size` 整体等比缩放
+
 ## 注意事项与使用技巧
 
 - **给 st-button 换色必须用它的 `color` 属性，不能写内联 `style="color: ..."`**——内联色会被组件自身的配色逻辑（applyColor）覆盖；放在反色/彩色容器（如 snackbar）里时用 `color="inverse-primary"` / `color="on-error"` 这类角色名
@@ -193,6 +218,7 @@ document.querySelector("st-button").addEventListener("click", () => {});
 - **st-button-group 的圆角在 attached 后由 JS 按位置设置**（内联在子按钮上）——不用 `::slotted(:first-child)` 位置选择器（ofa 升级/重排 light DOM 时序下不可靠）；外部不要给子按钮单独写 `border-radius`，需整体定制在 group 宿主上覆盖字号即可等比缩放；子项增删（slotchange）自动重算
 - **st-split-button 点主区 = 主操作（click），点箭头 = 开菜单**，两者互不干扰；菜单项点击后面板自动关闭并截断冒泡，不会误触发主操作
 - st-split-button 的菜单项来自 `st-menu-item`（split-button 内部已加载，无需额外引入）
+- **st-icon-button 必须配 `title` / `aria-label`**（无文字，缺名称时屏幕阅读器读不出用途）；其 color 分派多了 tonal 分支（container 配对色）
 ## 验证页面
 
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `/packages/button/`）。

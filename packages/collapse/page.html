@@ -17,6 +17,10 @@
 
   <st-button variant="text" on:click="addLine">往内容里加一行</st-button>
 
+  <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant);">
+    非 ofa 环境用 <span class="code" style="font-family: ui-monospace, monospace;">setAttribute("hide", "")</span> / <span class="code" style="font-family: ui-monospace, monospace;">removeAttribute("hide")</span> 切换；内容高度变化自动跟随
+  </p>
+
   <script>
     export default async () => ({
       data: { hidden: true, lines: [] },

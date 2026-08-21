@@ -1,0 +1,69 @@
+<!-- st-progress 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; max-width: 480px; }
+    section { display: flex; flex-direction: column; gap: 16px; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); }
+    .row { display: flex; align-items: center; gap: 16px; }
+    span { font-size: 13px; color: var(--md-sys-color-on-surface-variant); min-width: 4.5em; }
+  </style>
+
+  <section>
+    <h3>线形：确定 / 不定</h3>
+    <div class="row"><span>value=60</span><st-progress value="60" style="flex:1;"></st-progress></div>
+    <div class="row"><span>不定</span><st-progress indeterminate style="flex:1;"></st-progress></div>
+  </section>
+
+  <section>
+    <h3>环形：确定 / 不定</h3>
+    <div class="row">
+      <span>value=75</span><st-progress circular value="75"></st-progress>
+      <span>不定</span><st-progress circular indeterminate></st-progress>
+      <span>100%</span><st-progress circular value="100" color="success"></st-progress>
+    </div>
+  </section>
+
+  <section>
+    <h3>color 属性 — M3 角色</h3>
+    <div class="row"><span>error</span><st-progress value="40" color="error" style="flex:1;"></st-progress></div>
+    <div class="row"><span>success</span><st-progress value="80" color="success" style="flex:1;"></st-progress></div>
+  </section>
+
+  <section>
+    <h3>纯 style 定制（font-size 等比缩放 / 宽度）</h3>
+    <div class="row"><span>12px</span><st-progress value="50" style="flex:1; font-size: 12px;"></st-progress></div>
+    <div class="row"><span>20px</span><st-progress circular value="50" style="font-size: 20px;"></st-progress></div>
+  </section>
+
+  <section>
+    <h3>JS 动态驱动（模拟加载）</h3>
+    <div class="row">
+      <st-progress id="sim" value="0" style="flex:1;"></st-progress>
+      <st-progress circular id="sim-c" value="0"></st-progress>
+    </div>
+    <span id="sim-label">0%</span>
+  </section>
+
+  <script>
+    export default async () => ({
+      ready() {
+        const sr = this.ele.shadowRoot;
+        const bar = sr.querySelector("#sim");
+        const ring = sr.querySelector("#sim-c");
+        const label = sr.querySelector("#sim-label");
+        sr.querySelector("#sim").addEventListener("click", () => {
+          let v = 0;
+          clearInterval(this._iv);
+          this._iv = setInterval(() => {
+            v = Math.min(v + Math.random() * 18, 100);
+            bar.setAttribute("value", String(Math.round(v)));
+            ring.setAttribute("value", String(Math.round(v)));
+            label.textContent = Math.round(v) + "%";
+            if (v >= 100) clearInterval(this._iv);
+          }, 300);
+        });
+      },
+      proto: {},
+    });
+  </script>
+</template>

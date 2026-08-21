@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "http-server . -p 8642 -c-1 --cors",
-    "test": "playwright test"
+    "test": "playwright test",
+    "pack-skill": "node scripts/pack-skill.mjs"
   },
   "repository": {
     "type": "git",

@@ -103,6 +103,35 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`，下表�
 
 本库附带 Agent Skill（`.agents/skills/senti-ui/`），Claude Code / ZCode 等 AI 工具加载后即可正确使用全部组件：组件属性、插槽、事件、运行时状态读写方式与常见坑。详见 [SKILL.md](./.agents/skills/senti-ui/SKILL.md)。
 
+### 导入技能
+
+技能就是一个包含 `SKILL.md` 的目录，三种方式任选：
+
+**方式一：从本仓库复制（推荐）**
+
+```bash
+git clone https://github.com/ofajs/senti-ui.git
+# 用户级（所有项目可用）
+cp -r senti-ui/.agents/skills/senti-ui ~/.agents/skills/
+# 或软链，git pull 即可更新
+ln -s "$(pwd)/senti-ui/.agents/skills/senti-ui" ~/.agents/skills/senti-ui
+```
+
+放在项目里则复制到 `.agents/skills/`（或 `.zcode/skills/`）下。
+
+**方式二：zip 包**
+
+```bash
+# 本仓库已提供打包脚本，产物为 dist/senti-ui-skill.zip（解压得到 senti-ui/ 目录）
+npm run pack-skill   # 即 scripts/pack-skill.mjs（零依赖 Node 脚本）
+
+unzip dist/senti-ui-skill.zip -d ~/.agents/skills/
+```
+
+**方式三：直接在克隆的仓库内使用**
+
+AI 进入本仓库工作时，`.agents/skills/senti-ui/` 会被自动发现，无需额外操作。
+
 ## 本地开发
 
 ```bash

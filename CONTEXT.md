@@ -8,7 +8,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 ## 核心理念（与传统组件库的本质区别）
 
-传统组件库为人设计大量"便利预设"（`size="small"`、`color="primary"` 这类枚举）。对 AI 来说这些没有价值——AI 直接写 style/CSS 更精确灵活，预设只是多余的记忆负担。因此本库：
+传统组件库为人设计大量"便利预设"（`size="small"` 这类枚举）。对 AI 来说这些没有价值——AI 直接写 style/CSS 更精确灵活，预设只是多余的记忆负担。因此本库没有 size 类预设；
 
 - **属性只表达语义**（disabled / loading / M3 规范内的 variant / `color` 语义色引用），**外观直接用原生 CSS 属性定制**——`color` 属性的值是 M3 角色名或 color 模块自定义变量名（如 `color="brand"` 消费 `--brand/--on-brand`），与 color 工具联动实现一键换色，它引用的是语义而非样式预设——组件视觉全部定义在 `:host` 上，`style="height:32px; border-radius:8px"` 直接生效，不发明 `--st-*` 样式代理变量；交互语义由内部透明原生元素（`.native` 模式）承载
 - **尺寸类默认值用 em**（height / padding / border-radius / gap 等，以组件默认 font-size 为基准换算，视觉不变）——AI 只改 `font-size` 即可整体等比缩放；需要非等比尺寸时仍可单独覆写任一属性
@@ -196,4 +196,3 @@ Playwright 端到端测试（无构建，走真实浏览器）：
 
 - 按同样范式扩展组件（dialog、menu 等，参考 st-button 的三件套结构）
 - 将本文档封装为 Agent Skill（`SKILL.md`），供 Claude Code / ZCode 等工具按需加载
-- ~~引入浏览器自动化测试~~ 已落地：Playwright 端到端测试（见「测试」章节）+ GitHub Actions CI

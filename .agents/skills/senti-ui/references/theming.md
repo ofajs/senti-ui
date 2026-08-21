@@ -21,7 +21,7 @@
 
 ## 自定义配色
 
-用 color 工具（`https://ofajs.github.io/senti-ui/packages/color/index.html` 或本地部署的 `packages/color/index.html`）：
+用 color 工具（在线地址：`https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/index.html`）：
 
 - 改**种子色**：整套 `--md-sys-color-*` 按 M3 tone 规则重新推导
 - 覆盖核心四角色（primary/secondary/tertiary/error）+ 扩展角色 success

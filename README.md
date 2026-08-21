@@ -6,7 +6,7 @@
 
 ## 设计理念（与传统组件库的区别）
 
-传统组件库为人设计大量"便利预设"（`size="small"`、`color="primary"` 这类枚举）。Senti-UI 认为 AI 直接写 style/CSS 更精确灵活，预设只是多余的记忆负担，因此：
+传统组件库为人设计大量"便利预设"（`size="small"` 这类枚举）。Senti-UI 认为 AI 直接写 style/CSS 更精确灵活，预设只是多余的记忆负担，因此：
 
 - **属性只表达语义**（`disabled` / `loading` / M3 规范内的 `variant` / `color` 语义色引用），没有 size 类预设，也没有 `--st-*` 样式代理变量
 - **外观直接用原生 CSS 属性定制**——组件视觉全部定义在 `:host` 上，`<st-button style="height:32px; border-radius:8px">` 直接生效

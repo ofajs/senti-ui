@@ -54,6 +54,11 @@ packages/color/  # M3 体系生成器 + st-init.js（颜色唯一来源）
 
 开发中踩到 ofa.js / CDN / 缓存 / 浏览器兼容等任何坑并解决后，**必须**在解决当时就把这条经验沉淀到 [CONTEXT.md](./CONTEXT.md) 的「ofa.js 已知坑」章节（保持一条一坑：现象 + 原因 + 正确写法），防止下次重复踩坑、重复排查。非 ofa.js 类的坑（如部署、测试工具）可在该章节后另起小节存放。
 
+## senti-ui 技能（.agents/skills/senti-ui/）维护规则
+
+- 技能内的文件引用（含 SKILL.md 与 references/ 内的文档互链）**必须用相对地址，且不得超出技能目录**——该目录以后会被整体导出为技能发布到其他地方，超出目录的引用在导出后会失效（组件引入的 jsdelivr CDN URL 属于运行时地址，不受此限制）
+- **只要更新了组件使用**（属性/插槽/事件/用法变更，或新增组件），除了更新对应的 `packages/{name}/README.md`，**必须同步更新 senti-ui 技能**：`references/components/{name}.md`（从 README 同步，仓库相对路径 `/packages/...` 改写为 jsdelivr 完整 URL）与 `references/components.md` 速查表（新组件要登记）
+
 ## 临时文件
 
 `.playwright-mcp/`（浏览器验证产生的快照/日志）已在 `.gitignore` 中忽略，不要提交。

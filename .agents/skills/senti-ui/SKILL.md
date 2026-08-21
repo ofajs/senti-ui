@@ -9,7 +9,7 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 
 ## 核心理念（先读，决定你怎么写代码）
 
-传统组件库给人准备了大量枚举预设（`size="small"`、`color="primary"`）。Senti-UI 认为对 AI 这些是负担：
+传统组件库给人准备了大量枚举预设（`size="small"`）。Senti-UI 认为对 AI 这些是负担：
 
 - **属性只表达语义**（`disabled` / `loading` / M3 规范内的 `variant` / `color` 语义色引用），**没有 size 类预设，也没有 `--st-*` 样式代理变量**
 - **外观定制 = 直接写原生 CSS 属性**。组件视觉全部定义在 `:host` 上，`<st-button style="height:32px; border-radius:8px">` 直接生效
@@ -79,4 +79,4 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`，下表�
 2. **布尔属性的 JS 修改必须用 setAttribute/removeAttribute**——直接改 property 不触发更新
 3. 每个组件的完整属性表、插槽、事件、默认值与特有坑，见 [references/components.md](./references/components.md)
 
-深入阅读顺序建议：写页面前读 [references/usage-patterns.md](./references/usage-patterns.md)（ofa.js 数据绑定语法 + 消费方常见坑）；改主题读 [references/theming.md](./references/theming.md)；用具体组件前查 components.md 对应章节，需要更完整事实时按文内给出的 jsdelivr URL 拉取该组件的 README.md。
+深入阅读顺序建议：写页面前读 [references/usage-patterns.md](./references/usage-patterns.md)（ofa.js 数据绑定语法 + 消费方常见坑）；改主题读 [references/theming.md](./references/theming.md)；用具体组件前查 [references/components.md](./references/components.md) 的对应章节速查，需要完整属性表、默认值清单与更多示例时再读 [references/components/](./references/components/) 下该组件的详细文档（如 button.md、dialog.md——button.md 同时覆盖 button-group / split-button / icon-button）。

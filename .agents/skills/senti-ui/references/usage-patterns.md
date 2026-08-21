@@ -52,4 +52,4 @@ Senti-UI 基于 ofa.js。在 ofa 页面（`<o-page>` / `<o-app>`）内用模板�
 
 - 无构建：任意静态服务器直接部署即可；`l-m src` 与 ES import 必须写**完整 URL**（或与你的部署路径一致的绝对路径 `/packages/...`）
 - 颜色在 JS 执行后生效，有极短未上色闪烁；主题体系依赖 CDN 上的 material-color-utilities
-- 本地开发/预览 senti-ui 生态页面时用 `npm run dev`（http-server 禁缓存，端口 8642），不要用不禁缓存的服务，否则改完文件浏览器继续用旧模块
+- 预览本地静态页面时务必用禁缓存的静态服务器（如 `npx http-server -c-1`），否则改完文件浏览器继续用旧模块，表现为"改了没生效"

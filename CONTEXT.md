@@ -103,7 +103,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 | 工具 | 说明 | 入口 |
 |------|------|------|
-| M3 颜色体系生成器 | 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），可即时预览、复制 CSS；含 `st-init.js` 项目初始化模块（各页面引入，动态注入颜色体系并跟随 localStorage 配置）；核心模块 `m3-theme.js` 提供 `generateM3Theme` / `themeToCss` / `applyTheme` / `expandCustoms` 四个 API；内置扩展角色 success（默认绿 `#006E1C`，不随种子色变化）；支持核心四角色 + success 手动覆盖与自定义变量（自动按 M3 tone 规则展开 on/container 配对 token），配置存 localStorage | [packages/color/index.html](./packages/color/index.html)（JS：`packages/color/m3-theme.js`） |
+| M3 颜色体系生成器 | 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），可即时预览、复制 CSS；含 `st-init.js` 项目初始化模块（各页面引入，动态注入颜色体系并跟随 localStorage 配置）；核心模块 `m3-theme.js` 提供 `generateM3Theme` / `themeToCss` / `applyTheme` / `expandCustoms` 四个 API；内置扩展角色 success（默认绿 `#006E1C`，不随种子色变化）；支持核心四角色 + success 手动覆盖与自定义变量（自动按 M3 tone 规则展开 on/container 配对 token），配置存 localStorage；完整 token 清单与配对规则见 [packages/color/README.md](./packages/color/README.md) | [packages/color/index.html](./packages/color/index.html)（JS：`packages/color/m3-theme.js`） |
 | 组件官网 | `docs/` 目录，o-router + o-app 微应用（入口 `docs/index.html`）：`layout.html` 侧边栏布局（parent/slot 嵌套）+ `pages/home.html` 首页 + 每组件一页薄包装（预载 l-m 后 `<o-page>` 内嵌对应验收页 `packages/{name}/page.html`）；dialog/snackbar 的命令式工具在入口 index.html 预加载挂 window（坑 #6）；新增组件时在 `docs/layout.html` 的 components 数组登记并建 `docs/pages/{name}.html` | [docs/index.html](./docs/index.html) |
 
 ## 当前状态（2026-08-20）

@@ -1,47 +1,109 @@
 # 主题与颜色（Material Design 3）
 
+Senti-UI 全库**唯一颜色来源**：从种子色按 M3（HCT 色彩空间）规则生成完整的浅色/深色两套 token（`--md-sys-color-*` CSS 变量），由 `st-init.js` 动态注入。**任何场景都不要写死颜色值**——消费这些变量，深浅色模式零成本自动适配。
+
+CDN 前缀：`https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`（下称 `{cdn}`）。
+
 ## 颜色体系从哪来
 
-`packages/color/st-init.js` 是全库唯一颜色来源：读取 color 工具保存在 localStorage 的配置（种子色/角色覆盖/自定义变量），动态生成完整 M3 体系并注入 `<style>`。所有 senti-ui 组件加载时会自动 import 它，正常使用**无需手动引入**。无保存配置时用默认种子色 `#0061A4`。
-
-需要手动控制时：
+`{cdn}/packages/color/st-init.js` 读取 localStorage 中 color 工具保存的配置（key 为 `st-color-config`：`{ seed, overrides, customs }`），无配置时用默认种子色 `#0061A4`。所有 senti-ui 组件加载时自动 import 它，**正常使用无需手动引入**；需要提前注入（减少闪烁）或独立使用时：
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/st-init.js"></script>
+<script type="module" src="{cdn}/packages/color/st-init.js"></script>
 ```
 
-## 主题切换
+## 可用颜色 token 完整清单
 
-默认跟随系统。强制：
+每套主题 32 个 token，浅色/深色同名自动换值。**变量名规则**：camelCase → kebab-case（`onPrimary` → `--md-sys-color-on-primary`）。下表省略 `--md-sys-color-` 前缀。
+
+### 角色色（每个角色 4 个配对 token）
+
+| 角色 | 角色色（底/前景） | 上面放文字 | 容器色（浅底） | 容器上文字 |
+|------|------|------|------|------|
+| primary 主色 | `primary` | `on-primary` | `primary-container` | `on-primary-container` |
+| secondary 次色 | `secondary` | `on-secondary` | `secondary-container` | `on-secondary-container` |
+| tertiary 三级色 | `tertiary` | `on-tertiary` | `tertiary-container` | `on-tertiary-container` |
+| error 错误 | `error` | `on-error` | `error-container` | `on-error-container` |
+| success 成功（内置扩展角色，默认绿，不随种子色变化） | `success` | `on-success` | `success-container` | `on-success-container` |
+
+### 中性色（surface 系，页面与容器底色）
+
+| token | 用途 |
+|------|------|
+| `surface` / `on-surface` | 页面底色 / 页面正文文字（最常用的一对） |
+| `surface-variant` / `on-surface-variant` | 次级容器底（如输入框 outlined 底）/ 次级文字、placeholder、图标 |
+| `surface-container-lowest` / `-low` / `-`（默认）/ `-high` / `-highest` | 容器底色五层梯度（浅色模式白→深，深色模式反向），卡片/弹层按层级选用 |
+| `outline` / `outline-variant` | 边框线（粗）/ 分隔线（细） |
+| `inverse-surface` / `inverse-on-surface` / `inverse-primary` | 反色（tooltip 气泡底 / 其上文字 / 深浅反转的 primary） |
+
+## 文字与背景如何搭配（核心规则）
+
+M3 的 token 天生成对，**永远用配对 token，不要自己调透明度或写死色值**：
+
+1. **实底用 on-角色色放字**：`background: var(--md-sys-color-primary)` + `color: var(--md-sys-color-on-primary)`——on- 色按 HCT 对比度算法推导，任何种子色下对比度都达标
+2. **浅容器底用 on-*-container 放字**：`primary-container` 底 + `on-primary-container` 字（tonal 风格：chip、选中态）
+3. **中性底用 on-surface 系**：`surface` 底 + `on-surface` 字；`surface-container-*` 底配 `on-surface`（标题）/ `on-surface-variant`（次要文字）
+4. **只用作前景时用角色色本身**：`color: var(--md-sys-color-error)` 放在 `surface` 底上（错误文字、描边）
+5. **自定义变量同样四配对**：`--brand` / `--on-brand` / `--brand-container` / `--on-brand-container`，规则同上
+
+组件的 `color` 属性已按上述规则自动配对（filled：角色色底 + on-角色色字；tonal：container 配对；outlined/text：角色色前景），优先用它而不是手写变量。
+
+## 深色 / 浅色模式
+
+- **默认跟随系统**（`prefers-color-scheme`），token 自动换值，同时 `color-scheme` 让原生控件跟随
+- 强制：`<html class="st-light">` / `<html class="st-dark">`（优先级高于系统）
+- 自定义 CSS 只要消费 `--md-sys-color-*`，深浅色自动适配——这就是"颜色只走 M3 角色"的原因
+
+## 自定义配色（三种方式）
+
+### 1. color 可视化工具（推荐）
+
+打开 `{cdn}/packages/color/index.html`：改种子色、覆盖核心四角色 + success、添加自定义变量。配置存 localStorage，**同域**页面全部跟随（一键换色）。
+
+### 2. 直接写 localStorage（JS 初始化，须在 st-init.js 执行前写入）
+
+```js
+localStorage.setItem("st-color-config", JSON.stringify({
+  seed: "#0061A4",                    // 种子色
+  overrides: { primary: "#B3261E" },  // 可选键：primary/secondary/tertiary/error/success
+  customs: [{ name: "brand", color: "#FF0000" }],  // 自定义变量，name 自动 kebab-case
+}));
+```
+
+### 3. JS API（`{cdn}/packages/color/m3-theme.js`，程序化主题）
+
+```js
+import { applyTheme, themeToCss, generateM3Theme, expandCustoms } from "{cdn}/packages/color/m3-theme.js";
+
+applyTheme("#6750A4");                               // 生成并注入当前文档，即时生效
+applyTheme("#6750A4", { primary: "#B3261E" }, { brand: "#FF0000" });
+const css = themeToCss("#6750A4");                   // 完整 CSS 文本（浅色+深色两块），可存静态文件
+const { light, dark } = generateM3Theme("#6750A4");  // 结构化数据
+expandCustoms({ brand: "#FF0000" });                 // 只展开自定义变量的四配对 token
+```
+
+自定义变量按 M3 tone 规则推导四配对：浅色 tone `[40, 100, 90, 10]`（角色/on/容器/on容器），深色 `[80, 20, 30, 90]`。
+
+## 在页面/组件中使用
 
 ```html
-<html class="st-light"> ... </html>
-<html class="st-dark"> ... </html>
+<!-- 页面级：中性底 + on 色文字 -->
+<body style="background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface);">
+
+<!-- 自定义强调块：用配对 token -->
+<div style="background: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container);">
+  出错了
+</div>
+
+<!-- 组件语义换色（自动配对） -->
+<st-button color="error">Delete</st-button>
+<st-button color="brand">Brand 按钮</st-button>  <!-- 需先在 color 工具添加 brand 变量 -->
 ```
 
-## 自定义配色
+## 注意事项
 
-用 color 工具（在线地址：`https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/index.html`）：
-
-- 改**种子色**：整套 `--md-sys-color-*` 按 M3 tone 规则重新推导
-- 覆盖核心四角色（primary/secondary/tertiary/error）+ 扩展角色 success
-- 添加**自定义变量**（如 `brand`）：自动展开 `--brand` / `--on-brand` / `--brand-container` / `--on-brand-container` 配对 token
-- 配置存 localStorage——**同域**所有引入 st-init.js 的页面自动跟随（一键换色）
-
-内置扩展角色 `success`：默认绿 `#006E1C`，不随种子色变化，token 由 st-init.js 自动注入，`color="success"` 直接可用。
-
-## 组件里怎么用颜色
-
-三种方式，按粒度选：
-
-1. **`color` 属性（语义换色）**：值是 M3 角色名或自定义变量名，组件按自身 variant 规则配对底色/文字/描边（如 filled 用角色色底 + on-角色色字，outlined 用角色色前景与描边）。在 color 工具里改配置，全站跟随
-2. **原生 style + M3 角色**：`style="background: var(--md-sys-color-error); color: var(--md-sys-color-on-error)"` —— 一次性定制，仍自动适配深浅色
-3. **hover/active/disabled 不用管**：state layer 用 currentColor 半透明叠加（8%/12%），disabled 用 0.38 透明度，与任意配色自动协调
-
-## 核心 JS API（m3-theme.js）
-
-`packages/color/m3-theme.js` 提供：`generateM3Theme`（种子色 → M3 体系）、`themeToCss`（→ CSS 文本）、`applyTheme`（应用）、`expandCustoms`（自定义变量展开）。
-
-## 常用 M3 角色
-
-`primary/on-primary`、`secondary/on-secondary`、`tertiary/on-tertiary`、`error/on-error`、`success/on-success`（扩展）、`surface/on-surface`、`surface-container(-low/-high/-highest)`、`outline`、`outline-variant`、`inverse-surface/inverse-on-surface`。浅深两套同名 token，切换主题即整体换值。
+- 未定义的 `color` 名称回退到 primary
+- `themeToCss` 输出可作静态 CSS 部署（消除 JS 生效前的闪烁），但失去 localStorage 一键换色能力
+- 颜色在 JS 执行后生效（有极短未上色闪烁）；依赖 CDN 上的 `@material/material-color-utilities`
+- `st-init.js` 同时导出 `themeConfig`（当前配置）与 `theme`（已应用的主题数据）
+- 组件 hover/active 用 state layer（currentColor 8%/12% 叠加）、disabled 用 0.38 透明度——无需额外 token，与任意配色自动协调

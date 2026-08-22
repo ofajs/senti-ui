@@ -8,11 +8,22 @@
     :host {
       position: relative;
       display: flex;
+      box-sizing: border-box; /* height:100% 与 padding 不叠加超出容器 */
       align-items: center;
       justify-content: center;
       gap: 0.286em;
       font-size: 14px;
       font-family: inherit;
+      background: var(--md-sys-color-surface-container);
+    }
+
+    /* 纵向模式（侧栏/rail）：子项纵向堆叠 */
+    :host([vertical]) {
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 0.143em;
+      padding: 0.286em;
     }
 
     /* 药丸形 active 背景：secondary-container，M3 emphasized 曲线跟随动画 */
@@ -44,6 +55,9 @@
     import "../color/st-color-init.js";
     export default async () => ({
       tag: "st-nav-bar",
+      attrs: {
+        vertical: null, // 子项排列方向：横向一行（默认）/ 纵向一列
+      },
       proto: {
         // 定位 active 药丸到 active 项的指示区域（30ms 合并连续切换）
         updateActive() {
@@ -58,9 +72,10 @@
               bg.style.opacity = "0";
               return;
             }
-            // 对齐到子项内部的药丸指示区（icon 背景区）
+            // 对齐指示区：active 子项带 parallel（文字在右）时整行背景，否则子项内部药丸区（icon 背景区）
             const pill = active.shadowRoot.querySelector(".pill");
-            const pillRect = (pill || active).getBoundingClientRect();
+            const target = active.hasAttribute("parallel") ? active : (pill || active);
+            const pillRect = target.getBoundingClientRect();
             const hostRect = ele.getBoundingClientRect();
             bg.style.opacity = "1";
             bg.style.left = pillRect.left - hostRect.left + "px";
@@ -75,7 +90,7 @@
         this._itemObserver = new MutationObserver(() => this.updateActive());
         const observeItems = () => {
           ele.querySelectorAll("st-nav-item").forEach((it) => {
-            this._itemObserver.observe(it, { attributes: true, attributeFilter: ["active"] });
+            this._itemObserver.observe(it, { attributes: true, attributeFilter: ["active", "parallel"] });
           });
         };
         observeItems();

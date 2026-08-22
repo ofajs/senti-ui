@@ -60,7 +60,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 | List 列表 | `st-list` / `st-list-item` | `<l-m src="/packages/list/list.html"></l-m>` | [packages/list/README.md](./packages/list/README.md) |
 | Menu 下拉菜单 | `st-menu` / `st-menu-item` | `<l-m src="/packages/menu/menu.html"></l-m>` | [packages/menu/README.md](./packages/menu/README.md) |
 | Tabs 标签栏 | `st-tab-bar` / `st-tab-item` | `<l-m src="/packages/tabs/tab-bar.html"></l-m>` | [packages/tabs/README.md](./packages/tabs/README.md) |
-| Navigation 导航栏 | `st-nav-bar` / `st-nav-item` | `<l-m src="/packages/navigation/nav-bar.html"></l-m>` | [packages/navigation/README.md](./packages/navigation/README.md) |
+| Navigation 导航栏 / 布局 | `st-nav-bar` / `st-nav-item` / `st-nav-layout` | `<l-m src="/packages/navigation/nav-bar.html"></l-m>` + `<l-m src="/packages/navigation/nav-layout.html"></l-m>` | [packages/navigation/README.md](./packages/navigation/README.md) |
 | Ripple 波纹 | `st-ripple` | `<l-m src="/packages/ripple/ripple.html"></l-m>` | [packages/ripple/README.md](./packages/ripple/README.md) |
 
 组件包结构：`{name}.html`（组件）+ `index.html`（验收页加载器）+ `page.html`（ofa.js 页面模块，承载验收页逻辑）。
@@ -127,7 +127,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 - **st-collapse**（`packages/collapse/`）：高度过渡折叠容器，`hide` 收起；ResizeObserver 跟随内容高度；watch 初始触发需容错（shadowRoot 未就绪直接 return）。
 - **st-list / st-list-item**（`packages/list/`）：列表容器 + 列表项；item 支持 `button`（state layer + 波纹 + click 冒泡）/ `disabled`（原生 button.disabled 阻断）/ `collapsible + expanded`（内嵌 st-collapse 折叠 sublist，点击切换且不冒泡）；prefix/suffix/secondary 副文本插槽；首尾项自动大圆角。
 - **st-menu / st-menu-item**（`packages/menu/`）：下拉菜单，trigger 插槽 + light DOM 菜单项；面板 fixed 定位 JS 计算（翻转避让视口、min-width 跟随触发器）；open/close 事件（watch 需守卫防初始化派发）；点外部/Escape/选中自动关闭（外部判断用 composedPath，坑 #21）；item 的 `.native` 以宿主为包含块（宿主必须 position:relative，否则 absolute 铺满整个面板）。
-- **st-tab-bar / st-tab-item** 与 **st-nav-bar / st-nav-item**（`packages/tabs/`、`packages/navigation/`）：指示条/药丸跟随动画组件——bar 用 MutationObserver 监听子项 `active` 属性变化 + ResizeObserver 尺寸重定位（瞬时无动画），item 的 active 切换由外部逻辑处理（click 冒泡传出）；tab 指示条贴底边线、nav 药丸为 secondary-container 对齐 item 内 `.pill` 区域。
+- **st-tab-bar / st-tab-item** 与 **st-nav-bar / st-nav-item**（`packages/tabs/`、`packages/navigation/`）：指示条/药丸跟随动画组件——bar 用 MutationObserver 监听子项 `active` 属性变化 + ResizeObserver 尺寸重定位（瞬时无动画），item 的 active 切换由外部逻辑处理（click 冒泡传出）；tab 指示条贴底边线、nav 药丸为 secondary-container 对齐 item 内 `.pill` 区域。nav 的形态属性**分属两层**（bar 不向下改子项）：`vertical` 在 `st-nav-bar` 上（子项排列方向），`parallel` 在各 `st-nav-item` 上（文字位置：icon 右——icon 药丸 32×32、active 药丸覆盖整行、state layer/波纹改以 item 行为包含块：`.pill` 置 `position: static` 使内部绝对定位层上浮到 `.container`）；bar 的药丸定位按 active 项是否带 `parallel` 选择整行/药丸区；配套 **st-nav-layout**（2026-08-22 新增，参考 Punch-UI nav-layout）：以自身宽度做 container query 的三档响应式布局——<768px 底部导航 / 768–1023px 平板：仍在底部、item 切横排（parallel，整行药丸）/ ≥1024px 左侧窄 rail（仅 vertical，宽度跟随内容），**只有 st-nav-layout** 会按容器宽度自动修正两者（≥1024 给 bar 挂 `vertical`；768–1023 给各 item 挂 `parallel`，MutationObserver 跟随 bar 内增删 item）。
 
 全局文件：
 

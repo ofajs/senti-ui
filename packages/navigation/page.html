@@ -4,7 +4,6 @@
     :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
     h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); }
     .panel { padding: 16px; color: var(--md-sys-color-on-surface-variant); }
-    st-nav-bar { border-top: 1px solid var(--md-sys-color-outline-variant); }
   </style>
 
   <h3>点击切换（药丸背景动画跟随）</h3>
@@ -18,6 +17,39 @@
 
   <div class="panel">当前页：{{currentLabel}}</div>
 
+  <h3>纵向导航（侧栏 / rail，st-nav-bar vertical）</h3>
+  <st-nav-bar vertical style="justify-self: start; width: fit-content;">
+    <st-nav-item attr:active="railCurrent === 0" on:click="selectRail(0)"><span slot="icon">📥</span>收件箱</st-nav-item>
+    <st-nav-item attr:active="railCurrent === 1" on:click="selectRail(1)"><span slot="icon">🏷️</span>标签</st-nav-item>
+    <st-nav-item attr:active="railCurrent === 2" on:click="selectRail(2)"><span slot="icon">📤</span>已发送</st-nav-item>
+    <st-nav-item disabled><span slot="icon">🗑️</span>回收站（禁用）</st-nav-item>
+  </st-nav-bar>
+
+  <div class="panel">当前侧栏项：{{railLabel}}</div>
+
+  <h3>抽屉形态（bar 纵向 + item 各自 parallel，文字在右）</h3>
+  <st-nav-bar vertical style="justify-self: start; width: fit-content;">
+    <st-nav-item parallel attr:active="railCurrent === 0" on:click="selectRail(0)"><span slot="icon">📥</span>收件箱</st-nav-item>
+    <st-nav-item parallel attr:active="railCurrent === 1" on:click="selectRail(1)"><span slot="icon">🏷️</span>标签</st-nav-item>
+    <st-nav-item parallel attr:active="railCurrent === 2" on:click="selectRail(2)"><span slot="icon">📤</span>已发送</st-nav-item>
+    <st-nav-item><span slot="icon">🚫</span>无 parallel 项</st-nav-item>
+  </st-nav-bar>
+
+  <h3>响应式布局（st-nav-layout，拖动窗口宽度观察切换）</h3>
+  <p style="margin:0 0 8px; font-size:13px; color: var(--md-sys-color-on-surface-variant); width:100%;">
+    容器宽 <span class="code" style="font-family: ui-monospace, monospace;">&lt;1024px</span> 导航在底部（768px 起 item 切横排、选中整行药丸背景）；≥1024px 移到左侧窄 rail（icon 上 / 文字下）
+  </p>
+  <st-nav-layout style="height: 380px; border: 1px solid var(--md-sys-color-outline-variant);">
+    <st-nav-bar slot="nav">
+      <st-nav-item attr:active="layoutCurrent === 0" on:click="selectLayout(0)"><span slot="icon">🏠</span>首页</st-nav-item>
+      <st-nav-item attr:active="layoutCurrent === 1" on:click="selectLayout(1)"><span slot="icon">🔍</span>发现</st-nav-item>
+      <st-nav-item attr:active="layoutCurrent === 2" on:click="selectLayout(2)"><span slot="icon">👤</span>我的</st-nav-item>
+    </st-nav-bar>
+    <div class="panel" style="height: 100%; box-sizing: border-box;">
+      内容区（默认插槽）：{{layoutLabel}}。缩小/放大窗口或开发者工具切换设备宽度，观察导航位置与形态切换。
+    </div>
+  </st-nav-layout>
+
   <section>
     <h3>事件监听与键盘</h3>
     <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant); width:100%;">
@@ -27,13 +59,32 @@
 
   <script>
     export default async () => ({
-      data: { current: 0, labels: ["首页", "发现", "发布", "我的"] },
+      data: {
+        current: 0,
+        labels: ["首页", "发现", "发布", "我的"],
+        railCurrent: 0,
+        railLabels: ["收件箱", "标签", "已发送"],
+        layoutCurrent: 0,
+        layoutLabels: ["首页", "发现", "我的"],
+      },
       proto: {
         get currentLabel() {
           return this.labels[this.current] || "";
         },
         select(i) {
           this.current = i;
+        },
+        get railLabel() {
+          return this.railLabels[this.railCurrent] || "";
+        },
+        selectRail(i) {
+          this.railCurrent = i;
+        },
+        get layoutLabel() {
+          return this.layoutLabels[this.layoutCurrent] || "";
+        },
+        selectLayout(i) {
+          this.layoutCurrent = i;
         },
       },
     });

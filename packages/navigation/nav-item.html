@@ -1,6 +1,6 @@
 <!--
   st-nav-item — Senti-UI 导航项组件（基于 ofa.js）
-  语义属性：active / disabled；插槽 icon / 默认（文字）；click 事件冒泡到宿主，见 README.md
+  语义属性：active / disabled / parallel（文字在 icon 右边）；插槽 icon / 默认（文字）；click 事件冒泡到宿主，见 README.md
 -->
 <template component>
   <style>
@@ -52,6 +52,23 @@
     .label {
       font-size: 0.857em; /* 12px，M3 navigation bar label */
       margin-top: 0.286em;
+    }
+
+    /* parallel 属性（item 级）：文字移到 icon 右边，state layer 与波纹覆盖整行；
+       排列方向由 st-nav-bar 的 vertical 属性控制，与 item 无关 */
+    :host([parallel]) .container {
+      flex-direction: row;
+      justify-content: flex-start;
+      padding: 0.5em 1em;
+    }
+    :host([parallel]) .pill {
+      position: static; /* .layer 改以 .container 为包含块，覆盖整行 */
+      width: 2.286em; /* 32×32 */
+      flex-shrink: 0;
+    }
+    :host([parallel]) .label {
+      margin: 0 0 0 0.857em;
+      font-size: 1em;
     }
 
     /* M3 state layer：currentColor 半透明叠加（仅在药丸范围内） */
@@ -106,6 +123,7 @@
     attrs: {
       active: null,
       disabled: null,
+      parallel: null,
     },
     watch: {
       disabled() { this.applyDisabled(); },

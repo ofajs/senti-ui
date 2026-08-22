@@ -12,7 +12,7 @@ CDN 前缀：`https://cdn.jsdelivr.net/gh/ofajs/senti-ui`（下称 `{cdn}`）。
 <script src="{cdn}/packages/boot/st-boot.js"></script>
 ```
 
-**刷新闪色治理**：颜色由 JS 动态生成，模块加载前会闪一下。`st-boot.js`（经典同步脚本）在首帧前完成——有缓存（`st-color-init.js` 生成后存入 localStorage key `st-theme-css`）同步注入 `<style>` 零闪；无缓存则同步 `<link>` 静态兜底 `st-default.css`（默认种子色主题），`st-color-init.js` 随后按真实配置覆盖并写缓存。
+**刷新闪色治理**：颜色由 JS 动态生成，模块加载前会闪一下。`st-boot.js`（经典同步脚本）在首帧前完成——有缓存（`st-color-init.js` 生成后存入 localStorage key `st-theme-css`，每次加载都重写）同步注入 `<style>` 零闪；无缓存则同步 `<link>` 静态兜底 `st-default.css`（默认种子色主题），`st-color-init.js` 随后按真实配置覆盖并写缓存。缓存 CSS 与静态兜底均含 `@media (prefers-color-scheme: dark) { html:not(.st-light) { color-scheme: dark; … } }` 深色跟随块（三条生成路径输出同一结构），深色系统下首帧即为深色、原生控件跟随。
 
 ## 可用颜色 token 完整清单
 

@@ -162,7 +162,15 @@ export function themeToCss(seedHex, overrides, customs) {
   const expanded = expandCustoms(customs);
   const block = (scheme, extra) =>
     TOKEN_NAMES.map((n) => `  ${toKebab(n)}: ${scheme[n].toLowerCase()};`).concat(customLines(extra)).join("\n");
-  return `:root,\nhtml.st-light {\n  color-scheme: light;\n${block(light, expanded.light)}\n}\n\nhtml.st-dark {\n  color-scheme: dark;\n${block(dark, expanded.dark)}\n}\n`;
+  return `:root,\nhtml.st-light {\n  color-scheme: light;\n${block(light, expanded.light)}\n}\n\nhtml.st-dark {\n  color-scheme: dark;\n${block(dark, expanded.dark)}\n}\n\n${darkMediaBlock(block(dark, expanded.dark), "  ")}\n`;
+}
+
+/**
+ * 深色跟随系统 media 块（themeToCss 与 applyTheme 共用，防止两条生成路径漂移）：
+ * decls 为深色块的声明文本（含各自缩进），indent 为块内声明所需的额外缩进
+ */
+function darkMediaBlock(decls, indent) {
+  return `@media (prefers-color-scheme: dark) {\n  html:not(.st-light) {\n    color-scheme: dark;\n${decls.split("\n").map((l) => indent + l).join("\n")}\n  }\n}`;
 }
 
 /**
@@ -187,6 +195,6 @@ export function applyTheme(seedHex, overrides, customs) {
     TOKEN_NAMES.map((n) => `${indent}${toKebab(n)}: ${scheme[n]};`)
       .concat(customLines(extraScheme).map((l) => indent + l.trim()))
       .join("\n");
-  tag.textContent = `:root {\n${m3Lines(light, expanded.light, "  ")}\n}\nhtml.st-dark {\n${m3Lines(dark, expanded.dark, "  ")}\n}\n@media (prefers-color-scheme: dark) {\n  html:not(.st-light) {\n${m3Lines(dark, expanded.dark, "    ")}\n  }\n}`;
+  tag.textContent = `:root {\n  color-scheme: light;\n${m3Lines(light, expanded.light, "  ")}\n}\nhtml.st-dark {\n  color-scheme: dark;\n${m3Lines(dark, expanded.dark, "  ")}\n}\n${darkMediaBlock(`  color-scheme: dark;\n${m3Lines(dark, expanded.dark, "  ")}`, "  ")}`;
   return { light, dark };
 }

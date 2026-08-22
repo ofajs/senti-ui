@@ -31,7 +31,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 `st-color-init.js` 是项目初始化模块（取代了原静态 `css/st-m3.css`）：读取 color 工具保存在 localStorage 的配置（种子色/角色覆盖/自定义变量），动态生成完整 M3 体系并注入 `<style>`——**在 color 工具里调好配色，全站页面（同域）自动跟随**；无保存配置时用默认种子色 `#0061A4`。体系默认注入内置扩展角色 `success`（`--md-sys-color-success` / `on-success` / `success-container` / `on-success-container`，默认绿色 `#006E1C` 按 M3 tone 规则推导，不随主种子色变化，可在工具中覆盖）。主题切换：默认跟随系统；强制用 `<html class="st-light">` / `<html class="st-dark">`。
 
-`st-boot.js` 是**同步引导脚本（经典 script，非 module，页面唯一需要引入的标签，须放 head）**，消除刷新闪色：刷新时同步注入 `st-color-init.js` 预先缓存的 CSS（key `st-theme-css`，零闪）；首次访问无缓存则同步 `<link>` 静态兜底 `st-default.css`（默认种子色主题）；注入完首帧样式后自动动态加载 `st-color-init.js`（module），由它按配置生成真实主题覆盖并更新缓存。`material-color-utilities` 已 vendored 到 `packages/color/vendor/`，无外部 CDN 依赖。
+`st-boot.js` 是**同步引导脚本（经典 script，非 module，页面唯一需要引入的标签，须放 head）**，消除刷新闪色：刷新时同步注入 `st-color-init.js` 预先缓存的 CSS（key `st-theme-css`，零闪）；首次访问无缓存则同步 `<link>` 静态兜底 `st-default.css`（默认种子色主题）；注入完首帧样式后自动动态加载 `st-color-init.js`（module），由它按配置生成真实主题覆盖并更新缓存。缓存每次页面加载都会被 `st-color-init.js` 重写（key `st-theme-css`），旧结构缓存自然被新结构覆盖。三条 CSS 生成路径（`applyTheme` 动态 `<style>`、`themeToCss` 缓存/静态文件、`st-default.css` 兜底）输出**同一结构**：浅色块、`html.st-dark` 深色块、`@media (prefers-color-scheme: dark) { html:not(.st-light) }` 深色跟随块，每块都带对应 `color-scheme` 声明——深色系统下 `color-scheme` 计算值为 dark（原生滚动条/表单控件跟随）且首帧不闪浅色。`material-color-utilities` 已 vendored 到 `packages/color/vendor/`，无外部 CDN 依赖。
 
 ## 组件清单
 

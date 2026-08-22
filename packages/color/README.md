@@ -6,16 +6,23 @@ Senti-UI 全库**唯一颜色来源**：从种子色按 Material Design 3（HCT 
 
 ## 依赖引入（使用前必须）
 
-**普通页面**：组件内部已自动 `import "../color/st-init.js"`，无需手动引入。需要提前注入（避免闪烁）或独立使用时：
+**普通页面**：组件内部已自动 `import "../color/st-init.js"`，无需手动引入。需要独立使用或消除刷新闪色时，在 `<head>` 内尽早引入一行即可（boot 会自动加载 st-init.js）：
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<script type="module" src="/packages/color/st-init.js"></script>
+<script src="/packages/color/st-boot.js"></script>
 ```
 
 `st-init.js` 读取 localStorage 中 color 工具保存的配置（key 为 `st-color-config`：`{ seed, overrides, customs }`），无配置时用默认种子色 `#0061A4`。**同域所有引入它的页面共享配置**——工具里调好配色，全站自动跟随（一键换色）。
 
-注意：颜色在 JS 执行后生效（有极短未上色闪烁）；依赖 CDN 上的 `@material/material-color-utilities`。
+### 刷新闪色的治理（st-boot.js 同步引导）
+
+颜色由 JS 动态生成，模块加载前页面无色会闪一下。`st-boot.js` 是**经典同步脚本（非 module）**，首帧渲染前完成：
+
+- **刷新（有缓存）**：`st-init.js` 每次生成后把主题 CSS 缓存到 localStorage（key `st-theme-css`），`st-boot.js` 同步读缓存注入 `<style>`——零网络、零计算、零闪
+- **首次访问（无缓存）**：同步 `<link>` 引入静态兜底 `st-default.css`（默认种子色主题，`themeToCss` 生成的产物）——首帧即有默认色，`st-init.js` 随后按真实配置覆盖并写缓存
+- `st-boot.js` 会从自身 `<script src>` 推导同目录路径（st-default.css / st-init.js），放在任何路径下都可用；它注入完首帧样式后自动动态加载 `st-init.js`，页面无需再写第二个标签
+
+依赖说明：`m3-theme.js` 已改为引入**本地 vendored** 的 `./vendor/material-color-utilities.js`（单文件自包含 bundle，源自 jsdelivr），不再依赖外部 CDN。
 
 ## 可用颜色 token 完整清单
 

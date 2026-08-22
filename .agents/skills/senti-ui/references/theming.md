@@ -6,11 +6,13 @@ CDN 前缀：`https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`（下称 `{cdn}`�
 
 ## 颜色体系从哪来
 
-`{cdn}/packages/color/st-init.js` 读取 localStorage 中 color 工具保存的配置（key 为 `st-color-config`：`{ seed, overrides, customs }`），无配置时用默认种子色 `#0061A4`。所有 senti-ui 组件加载时自动 import 它，**正常使用无需手动引入**；需要提前注入（减少闪烁）或独立使用时：
+`{cdn}/packages/color/st-init.js` 读取 localStorage 中 color 工具保存的配置（key 为 `st-color-config`：`{ seed, overrides, customs }`），无配置时用默认种子色 `#0061A4`。所有 senti-ui 组件加载时自动 import 它，**正常使用无需手动引入**；要消除刷新闪色或独立使用时，在 `<head>` 内尽早引入一行（boot 会自动加载 st-init.js）：
 
 ```html
-<script type="module" src="{cdn}/packages/color/st-init.js"></script>
+<script src="{cdn}/packages/color/st-boot.js"></script>
 ```
+
+**刷新闪色治理**：颜色由 JS 动态生成，模块加载前会闪一下。`st-boot.js`（经典同步脚本）在首帧前完成——有缓存（`st-init.js` 生成后存入 localStorage key `st-theme-css`）同步注入 `<style>` 零闪；无缓存则同步 `<link>` 静态兜底 `st-default.css`（默认种子色主题），`st-init.js` 随后按真实配置覆盖并写缓存。
 
 ## 可用颜色 token 完整清单
 
@@ -104,6 +106,6 @@ expandCustoms({ brand: "#FF0000" });                 // 只展开自定义变量
 
 - 未定义的 `color` 名称回退到 primary
 - `themeToCss` 输出可作静态 CSS 部署（消除 JS 生效前的闪烁），但失去 localStorage 一键换色能力
-- 颜色在 JS 执行后生效（有极短未上色闪烁）；依赖 CDN 上的 `@material/material-color-utilities`
+- 未加 st-boot.js 的页面仍有极短未上色闪烁；`m3-theme.js` 使用本地 vendored 的 material-color-utilities（无外部 CDN 依赖）
 - `st-init.js` 同时导出 `themeConfig`（当前配置）与 `theme`（已应用的主题数据）
 - 组件 hover/active 用 state layer（currentColor 8%/12% 叠加）、disabled 用 0.38 透明度——无需额外 token，与任意配色自动协调

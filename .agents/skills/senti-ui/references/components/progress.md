@@ -6,7 +6,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/progress/progress.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/progress/progress.html"></l-m>
 ```
 
 ## 语义属性
@@ -41,4 +41,4 @@
 - 不定模式：`indeterminate` 属性，或不写 `value`
 - `prefers-reduced-motion` 下动画趋零
 
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/progress/`）。
+`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/progress/`）。

@@ -8,7 +8,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/radio/radio.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/radio/radio.html"></l-m>
 ```
 
 ## 语义属性
@@ -52,4 +52,4 @@
 - 被取消选中的兄弟项**不**派发 change，只有被点击的项派发
 - `checked` / `disabled` 用 attribute 方式修改；`color` 只影响选中态描边/圆点色
 - 无标签内容时标签区自动隐藏
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/radio/`）。
+`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/radio/`）。

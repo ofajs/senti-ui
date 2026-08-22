@@ -8,10 +8,10 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/input/input.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/input/input.html"></l-m>
 ```
 
-组件内部已 `import "../color/st-init.js"`，加载时自动注入 `--md-sys-color-*` 颜色体系（多次 import 不冲突）；若你的部署不含 color 包，则需自行定义这些变量。
+组件内部已 `import "../color/st-color-init.js"`，加载时自动注入 `--md-sys-color-*` 颜色体系（多次 import 不冲突）；若你的部署不含 color 包，则需自行定义这些变量。
 
 ## 语义属性
 
@@ -120,7 +120,7 @@ $("st-input").on("input", (e) => {
 
 ## 主题
 
-`st-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
+`st-color-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
 
 ## 注意事项与使用技巧
 
@@ -129,4 +129,4 @@ $("st-input").on("input", (e) => {
 - 事件回调里读 `e.target.value` 安全（value 已反射到宿主 property）
 - 布尔属性 readonly 的 watch 同步是异步的，setAttribute 后稍等再断言
 - 宿主本身不可聚焦（无 tabindex），焦点在内部 `.native` input 上；自动化测试用真实点击聚焦
-`index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/input/`）。
+`index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/input/`）。

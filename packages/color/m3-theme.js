@@ -19,7 +19,7 @@ import {
   hexFromArgb,
   Cam16,
   Hct,
-} from "https://esm.run/@material/material-color-utilities";
+} from "./vendor/material-color-utilities.js"; // 本地 vendored 单文件 bundle（源自 jsdelivr +esm，自包含无外部依赖）
 
 // M3 系统变量名顺序（token 清单）
 export const TOKEN_NAMES = [

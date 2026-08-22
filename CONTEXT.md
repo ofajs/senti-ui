@@ -26,10 +26,12 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<script type="module" src="/packages/color/st-init.js"></script>
+<script src="/packages/boot/st-boot.js"></script>
 ```
 
-`st-init.js` 是项目初始化模块（取代了原静态 `css/st-m3.css`）：读取 color 工具保存在 localStorage 的配置（种子色/角色覆盖/自定义变量），动态生成完整 M3 体系并注入 `<style>`——**在 color 工具里调好配色，全站页面（同域）自动跟随**；无保存配置时用默认种子色 `#0061A4`。体系默认注入内置扩展角色 `success`（`--md-sys-color-success` / `on-success` / `success-container` / `on-success-container`，默认绿色 `#006E1C` 按 M3 tone 规则推导，不随主种子色变化，可在工具中覆盖）。主题切换：默认跟随系统；强制用 `<html class="st-light">` / `<html class="st-dark">`。注意：颜色在 JS 执行后生效（有极短未上色闪烁），且依赖 CDN 上的 material-color-utilities。
+`st-color-init.js` 是项目初始化模块（取代了原静态 `css/st-m3.css`）：读取 color 工具保存在 localStorage 的配置（种子色/角色覆盖/自定义变量），动态生成完整 M3 体系并注入 `<style>`——**在 color 工具里调好配色，全站页面（同域）自动跟随**；无保存配置时用默认种子色 `#0061A4`。体系默认注入内置扩展角色 `success`（`--md-sys-color-success` / `on-success` / `success-container` / `on-success-container`，默认绿色 `#006E1C` 按 M3 tone 规则推导，不随主种子色变化，可在工具中覆盖）。主题切换：默认跟随系统；强制用 `<html class="st-light">` / `<html class="st-dark">`。
+
+`st-boot.js` 是**同步引导脚本（经典 script，非 module，页面唯一需要引入的标签，须放 head）**，消除刷新闪色：刷新时同步注入 `st-color-init.js` 预先缓存的 CSS（key `st-theme-css`，零闪）；首次访问无缓存则同步 `<link>` 静态兜底 `st-default.css`（默认种子色主题）；注入完首帧样式后自动动态加载 `st-color-init.js`（module），由它按配置生成真实主题覆盖并更新缓存。`material-color-utilities` 已 vendored 到 `packages/color/vendor/`，无外部 CDN 依赖。
 
 ## 组件清单
 
@@ -103,7 +105,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 | 工具 | 说明 | 入口 |
 |------|------|------|
-| M3 颜色体系生成器 | 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），可即时预览、复制 CSS；含 `st-init.js` 项目初始化模块（各页面引入，动态注入颜色体系并跟随 localStorage 配置）；核心模块 `m3-theme.js` 提供 `generateM3Theme` / `themeToCss` / `applyTheme` / `expandCustoms` 四个 API；内置扩展角色 success（默认绿 `#006E1C`，不随种子色变化）；支持核心四角色 + success 手动覆盖与自定义变量（自动按 M3 tone 规则展开 on/container 配对 token），配置存 localStorage | [packages/color/index.html](./packages/color/index.html)（JS：`packages/color/m3-theme.js`） |
+| M3 颜色体系生成器 | 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），可即时预览、复制 CSS；含 `st-color-init.js` 项目初始化模块（各页面引入，动态注入颜色体系并跟随 localStorage 配置）；核心模块 `m3-theme.js` 提供 `generateM3Theme` / `themeToCss` / `applyTheme` / `expandCustoms` 四个 API；内置扩展角色 success（默认绿 `#006E1C`，不随种子色变化）；支持核心四角色 + success 手动覆盖与自定义变量（自动按 M3 tone 规则展开 on/container 配对 token），配置存 localStorage；完整 token 清单与配对规则见 [packages/color/README.md](./packages/color/README.md) | [packages/color/index.html](./packages/color/index.html)（JS：`packages/color/m3-theme.js`） |
 | 组件官网 | `docs/` 目录，o-router + o-app 微应用（入口 `docs/index.html`）：`layout.html` 侧边栏布局（parent/slot 嵌套）+ `pages/home.html` 首页 + 每组件一页薄包装（预载 l-m 后 `<o-page>` 内嵌对应验收页 `packages/{name}/page.html`）；dialog/snackbar 的命令式工具在入口 index.html 预加载挂 window（坑 #6）；新增组件时在 `docs/layout.html` 的 components 数组登记并建 `docs/pages/{name}.html` | [docs/index.html](./docs/index.html) |
 
 ## 当前状态（2026-08-20）
@@ -143,7 +145,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 4. **条件渲染不要依赖 `x-if` 响应运行时属性变化**——改用常驻 DOM + `:host([attr])` CSS 选择器控制显隐
 5. `{{...}}` 只能用在文本节点，属性值一律用 `attr:` / `:prop` / `:style.` 指令
 6. **ofa 页面模块（page.html）脚本内不能用相对路径 `import()`**——模块代码经 eval 执行，相对路径解析失败；需要在 index.html 用 `<script type="module">` 预加载并挂到 `window`，页面工厂里等待就绪（注意 `o-page` 升级可能早于内联 module 执行，`__ready` Promise 可能尚不存在，须轮询 `window` 上的标记）
-7. **验收页统一用 `o-page` 模式**——index.html 只做加载器（ofa.js + st-init.js + `<l-m>` + `<o-page src="./page.html">`），内容与逻辑全部放 page.html 页面模块（data / proto / o-fill 列表渲染）
+7. **验收页统一用 `o-page` 模式**——index.html 只做加载器（ofa.js + st-color-init.js + `<l-m>` + `<o-page src="./page.html">`），内容与逻辑全部放 page.html 页面模块（data / proto / o-fill 列表渲染）
 8. **本地验证必须用 `npm run dev`**（http-server `-c-1` 禁缓存，端口 8642）——用户通常会提前启动它，直接用 `http://localhost:8642/` 验证即可，不要另起 python http.server 等不禁缓存的服务，否则改完 `page.html` / `m3-theme.js` 浏览器继续用旧模块，表现为"改了没生效"或诡异报错，排查极耗时
 9. **ofa CDN 不锁版本会自动升级**（曾从 4.5 漂移到 4.7.3），新版可能把更多方法名变为保留（如 `refresh` 已被 `$.fn` 占用）——proto 方法名避开 `$.fn` 上的通用名（get/set/text/html/data/watch/on/emit/class/style/remove/refresh 等）
 10. **页面模块内部操作 shadow DOM 用 `this.ele.shadowRoot.querySelector`（原生 API）**——比 `this.shadow.$()` 跨版本更稳
@@ -161,6 +163,8 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 22. **ofa 的 `:prop` 绑定到 attr 声明的键时会把对象 JSON 序列化写入 attribute**——组件侧 watch 收到的是 JSON 字符串（或解析后的值），不能当作数组直接用；正确写法：组件内 watch 里 `JSON.parse` 后规范化存入内部字段（如 `_opts`），不要存回 ofa attr data（会再次序列化）。同理 `:prop` 绑定到未声明的键则完全不生效
 23. **o-fill 把模板条目渲染在自身 light DOM（innerHTML），slot 的 assignedElements 只能看到 O-FILL 容器本身**——宿主组件想消费其中的条目（如 st-select 消费 option），需在 collect 时深入容器查询：`el.querySelectorAll('option')`（light DOM）+ `el.shadowRoot?.querySelectorAll('option')` 双路收集并去重，且要用 MutationObserver 同时观察容器本体与 shadowRoot（childList+subtree）跟随重渲染；只观察 shadowRoot 会漏掉 o-fill 的实际渲染位置
 39. **o-router 的 hash 路由以站点根（origin）解析，不相对当前页面目录**——应用放在子目录（如 `docs/`）时，hash 必须带目录前缀：`#/docs/pages/xxx.html`（写 `#/pages/xxx.html` 会去请求 `/pages/xxx.html` 而 404）；`app-config.js` 的 `home` 是相对配置文件的路径不受影响。另：嵌套布局页（parent/slot 模式）里 `routerChange` 不保证触发，侧边栏高亮改用 `ready` + `window.addEventListener("hashchange", ...)` 主动刷新更可靠
+
+40. **JS 动态生成主题会有 FOUC（刷新闪色），治理 = 同步引导 + 双兜底**——模块加载（及其 CDN 依赖）在首帧渲染之后完成，页面先无色再变色。方案：`st-color-init.js` 生成后把主题 CSS 缓存到 localStorage（`st-theme-css`），配套经典同步脚本 `st-boot.js`（head 内引入，页面唯一标签；boot 注入完首帧样式后自动动态加载 st-color-init）刷新时同步注入缓存；首次访问无缓存则同步 `<link>` 静态兜底 `st-default.css`（默认种子色）。要点：a) module 天生 defer，同步注入必须用经典 script（`document.currentScript.parentNode.insertBefore`）；b) st-boot 从自身 src 推导同目录路径，跨路径可用；c) 动态 `<style id="st-dynamic-theme">` 在 head 更靠后，同特异性自然覆盖 boot 注入的样式；d) 依赖库 vendored 到本地（`packages/color/vendor/`）后模块加载不再受外部 CDN 波动影响
 
 ### 测试/验证类坑（非 ofa.js）
 
@@ -187,7 +191,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 Playwright 端到端测试（无构建，走真实浏览器）：
 
-- 用例：`tests/{button,input,textarea,select}.spec.js`；fixture 页：`tests/fixtures/*.html`（引 CDN ofa.js + st-init.js + l-m，`window.events` 记录事件）
+- 用例：`tests/{button,input,textarea,select}.spec.js`；fixture 页：`tests/fixtures/*.html`（引 CDN ofa.js + st-color-init.js + l-m，`window.events` 记录事件）
 - 运行：`npm test`（自动起 `http-server` :8642，禁缓存；须先 `npx playwright install chromium`）
 - CI：`.github/workflows/test.yml`（push/PR 时跑 chromium）
 - 已知注意：st-input/st-textarea 宿主本身不可聚焦（无 tabindex），焦点在内部 `.native` 上，`el.focus()` 原生调用无效（坑 #24），测试用真实点击聚焦；焦点事件断言用 `focusin`/`focusout`（原生 focus/blur 不冒泡）

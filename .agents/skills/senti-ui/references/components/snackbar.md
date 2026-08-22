@@ -6,14 +6,14 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/snackbar.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/snackbar/snackbar.html"></l-m>
 ```
 
 toast 工具无需预引入组件——内部按需注入 `<l-m>`（snackbar / button）并等待就绪：
 
 ```html
 <script type="module">
-  import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js";
+  import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/snackbar/toast.js";
 </script>
 ```
 
@@ -90,7 +90,7 @@ t.close(); // 手动关闭（返回 { close, el }）
 - 显隐即时切换，无内建动画；`hide()`（宿主 property）关闭并派发 close
 - toast 工具自带滑入/滑出动画（0.3s，斜向渐移），播完才移除元素：常用 `position: fixed; bottom; left: 50%; transform: translateX(-50%)`
 - 纯展示场景直接加 `open` 属性静态渲染即可
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/`）。
+`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/snackbar/`）。
 ### toast 注意事项
 
 - 返回 `{ close, el }`（非 Promise 结果值本身），`close()` 幂等

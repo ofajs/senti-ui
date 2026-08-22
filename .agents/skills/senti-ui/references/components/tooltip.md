@@ -6,7 +6,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/tooltip/tooltip.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tooltip/tooltip.html"></l-m>
 ```
 
 ## 语义属性
@@ -42,4 +42,4 @@
 - `open` 为运行时状态：ofa 页面用 `sync:open`，JS 用 setAttribute 兼容路径
 - 提示不要承载关键信息（触屏设备无悬停）
 
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/tooltip/`）。
+`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tooltip/`）。

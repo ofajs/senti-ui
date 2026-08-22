@@ -6,7 +6,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/list/list.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/list/list.html"></l-m>
 ```
 
 （`st-list` 内部已加载 `list-item.html`，`st-list-item` 也可单独引入。）
@@ -78,4 +78,4 @@
 - `button` 项的 click 是原生冒泡（composed）；plain 项点击也会自然冒泡（普通 DOM 行为）；`disabled` 项原生阻断无 click；折叠项点击只切换 `expanded` 不派发 click
 - 副文本：子元素加 `secondary` 属性；分隔线直接放 `<hr>`
 - 折叠动画：二级及以上折叠时外层逐帧跟随（瞬时），属正常表现
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/list/`）。
+`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/list/`）。

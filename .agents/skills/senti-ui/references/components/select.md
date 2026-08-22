@@ -8,10 +8,10 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/select/select.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/select/select.html"></l-m>
 ```
 
-组件内部已 `import "../color/st-init.js"`，加载时自动注入 `--md-sys-color-*` 颜色体系（多次 import 不冲突）；若你的部署不含 color 包，则需自行定义这些变量。
+组件内部已 `import "../color/st-color-init.js"`，加载时自动注入 `--md-sys-color-*` 颜色体系（多次 import 不冲突）；若你的部署不含 color 包，则需自行定义这些变量。
 
 ## 语义属性
 
@@ -144,7 +144,7 @@ $("st-select").on("change", (e) => {
 
 ## 主题
 
-`st-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
+`st-color-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
 
 ## 注意事项与使用技巧
 
@@ -154,4 +154,4 @@ $("st-select").on("change", (e) => {
 - 键盘全支持：Enter/Space 打开、↑↓ 循环移动、Home/End、Escape/Tab 关闭
 - 判断"点击组件外部"必须用 `e.composedPath().includes(ele)`（composed 事件 target 在 document 层已被重定向）
 - 弹层仍挂在 shadow 内（absolute 定位），被 overflow 祖先裁剪时会截断；翻转只解决上下方向，不解决裁剪
-`index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/select/`）。
+`index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/select/`）。

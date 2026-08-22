@@ -6,7 +6,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/card/card.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/card/card.html"></l-m>
 ```
 
 ## 语义属性
@@ -47,4 +47,4 @@
 - 卡内放按钮等交互元素时避免包 interactive（点击内部按钮会同时冒泡出卡片 click）
 - 媒体区直接 `<img>` + `style="margin: -1em -1em 1em; width: calc(100% + 2em); display:block;"` 铺满
 
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/card/`）。
+`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/card/`）。

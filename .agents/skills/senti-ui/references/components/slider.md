@@ -6,7 +6,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/slider/slider.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/slider/slider.html"></l-m>
 ```
 
 ## 语义属性
@@ -43,4 +43,4 @@
 - 键盘：Tab 聚焦（焦圈画在拇指上）、`←/→` 步进、`Home/End` 到两端
 - watch 异步生效：`setAttribute` 改 min/max 后下一帧才更新视觉
 
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/slider/`）。
+`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/slider/`）。

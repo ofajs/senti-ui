@@ -6,7 +6,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/navigation/nav-bar.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-bar.html"></l-m>
 ```
 
 ## 语义属性（st-nav-item）
@@ -53,4 +53,4 @@
 - 药丸高亮自动动画跟随 active 项（对齐子项内部 icon 区域）；无 active 项时药丸隐藏
 - 底部导航场景给宿主加 `position: fixed; bottom: 0; left: 0; right: 0`
 - disabled 项原生阻断点击；icon 用 `slot="icon"`（24px 建议尺寸）
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/navigation/`）。
+`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/`）。

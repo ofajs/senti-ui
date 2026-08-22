@@ -8,20 +8,20 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/dialog.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/dialog.html"></l-m>
 ```
 
 命令式工具无需预引入组件——工具内部按需注入 `<l-m>`（dialog / button / input）并等待就绪：
 
 ```html
 <script type="module">
-  import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/alert.js";
-  import confirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/confirm.js";
-  import prompt from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/prompt.js";
+  import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/alert.js";
+  import confirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/confirm.js";
+  import prompt from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/prompt.js";
 </script>
 ```
 
-组件内部已 `import "../color/st-init.js"`，加载时自动注入 `--md-sys-color-*` 颜色体系（多次 import 不冲突）；若你的部署不含 color 包，则需自行定义这些变量。
+组件内部已 `import "../color/st-color-init.js"`，加载时自动注入 `--md-sys-color-*` 颜色体系（多次 import 不冲突）；若你的部署不含 color 包，则需自行定义这些变量。
 
 ## 语义属性
 
@@ -123,7 +123,7 @@ st-dialog::part(panel) {
 
 ## 主题
 
-`st-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
+`st-color-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
 
 ## 命令式工具：alert / confirm / prompt
 
@@ -154,7 +154,7 @@ const val = await prompt({ title: "重置密码", message: "至少 4 位", place
 - 面板定制用原生 `::part(panel)` 选择器（不是自定义变量）；字号类直接写宿主 style（可继承）
 - 多个对话框同时打开时 Escape 各管各的（都设 auto-close 时都会关）
 - **不要把 st-dialog 放在已设置 `transform`（及 `filter`/`perspective`/`will-change`）的祖先元素内**——这些属性会创建新的包含块，宿主的 `position: fixed` 遮罩与面板会改为相对该祖先定位，遮罩铺不满视口、出现"穿透"（下方内容可点、遮罩错位）。常见触发场景：做过入场动画（transform 未清除）的容器、开启了 translate 的布局包装。对话框请挂在 `document.body` 或无 transform 的顶层容器下（命令式工具 alert/confirm/prompt 已自动挂 body，不受影响）
-`index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/`）。
+`index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/`）。
 ### 命令式工具注意事项
 
 - 返回值语义：alert 确认 `true` / 关闭 `null`；confirm 确认 `true` / 取消 `false` / 关闭 `null`；prompt 确认为输入值 / 其余 `null`

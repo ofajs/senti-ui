@@ -8,10 +8,10 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="/packages/button/button.html"></l-m>
-<l-m src="/packages/button/button-group.html"></l-m>   <!-- st-button-group -->
-<l-m src="/packages/button/split-button.html"></l-m>   <!-- st-split-button -->
-<l-m src="/packages/button/icon-button.html"></l-m>     <!-- st-icon-button -->
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/button.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/button-group.html"></l-m>   <!-- st-button-group -->
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/split-button.html"></l-m>   <!-- st-split-button -->
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/icon-button.html"></l-m>     <!-- st-icon-button -->
 ```
 
 组件内部已 `import "../color/st-color-init.js"`，加载按钮时会自动注入 `--md-sys-color-*` 颜色体系（多次 import 不冲突，模块按 URL 去重）；若你的部署不含 color 包，则需自行定义这些变量。

@@ -6,14 +6,14 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="/packages/snackbar/snackbar.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/snackbar/snackbar.html"></l-m>
 ```
 
 toast 工具无需预引入组件——内部按需注入 `<l-m>`（snackbar / button）并等待就绪：
 
 ```html
 <script type="module">
-  import toast from "/packages/snackbar/toast.js";
+  import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/snackbar/toast.js";
 </script>
 ```
 

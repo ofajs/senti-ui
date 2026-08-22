@@ -14,8 +14,9 @@ const ensureComp = async (tag, src) => {
 
 const ensureDeps = () =>
   Promise.all([
-    ensureComp("st-dialog", "/packages/dialog/dialog.html"),
-    ensureComp("st-button", "/packages/button/button.html"),
+    // 相对当前模块解析：本地与 CDN（jsdelivr）引入均可正确加载
+    ensureComp("st-dialog", new URL("./dialog.html", import.meta.url).href),
+    ensureComp("st-button", new URL("../button/button.html", import.meta.url).href),
   ]);
 
 const escapeHtml = (str) => {

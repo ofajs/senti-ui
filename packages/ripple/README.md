@@ -8,7 +8,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="/packages/ripple/ripple.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/ripple/ripple.html"></l-m>
 ```
 
 组件内部已 `import "../color/st-color-init.js"`，自动注入颜色体系。

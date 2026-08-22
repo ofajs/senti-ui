@@ -6,7 +6,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="/packages/checkbox/checkbox.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/checkbox/checkbox.html"></l-m>
 ```
 
 组件内部已 `import "../color/st-color-init.js"`，自动注入 `--md-sys-color-*` 颜色体系。

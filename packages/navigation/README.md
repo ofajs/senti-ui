@@ -6,8 +6,8 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="/packages/navigation/nav-bar.html"></l-m>
-<l-m src="/packages/navigation/nav-layout.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-bar.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-layout.html"></l-m>
 ```
 
 ## 语义属性

@@ -8,16 +8,16 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="/packages/dialog/dialog.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/dialog.html"></l-m>
 ```
 
 命令式工具无需预引入组件——工具内部按需注入 `<l-m>`（dialog / button / input）并等待就绪：
 
 ```html
 <script type="module">
-  import alert from "/packages/dialog/alert.js";
-  import confirm from "/packages/dialog/confirm.js";
-  import prompt from "/packages/dialog/prompt.js";
+  import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/alert.js";
+  import confirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/confirm.js";
+  import prompt from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/prompt.js";
 </script>
 ```
 

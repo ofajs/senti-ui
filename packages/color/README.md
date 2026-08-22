@@ -9,7 +9,7 @@ Senti-UI 全库**唯一颜色来源**：从种子色按 Material Design 3（HCT 
 **普通页面**：组件内部已自动 `import "../color/st-color-init.js"`，无需手动引入。需要独立使用或消除刷新闪色时，在 `<head>` 内尽早引入一行即可（boot 会自动加载 st-color-init.js）：
 
 ```html
-<script src="/packages/boot/st-boot.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/boot/st-boot.js"></script>
 ```
 
 `st-color-init.js` 读取 localStorage 中 color 工具保存的配置（key 为 `st-color-config`：`{ seed, overrides, customs }`），无配置时用默认种子色 `#0061A4`。**同域所有引入它的页面共享配置**——工具里调好配色，全站自动跟随（一键换色）。
@@ -90,7 +90,7 @@ localStorage.setItem("st-color-config", JSON.stringify({
 ### 3. JS API（m3-theme.js，适合程序化主题）
 
 ```js
-import { generateM3Theme, themeToCss, applyTheme, expandCustoms } from "/packages/color/m3-theme.js";
+import { generateM3Theme, themeToCss, applyTheme, expandCustoms } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/m3-theme.js";
 
 applyTheme("#6750A4");                        // 生成并注入当前文档，即时生效
 applyTheme("#6750A4", { primary: "#B3261E" }, { brand: "#FF0000" });

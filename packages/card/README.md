@@ -6,7 +6,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="/packages/card/card.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/card/card.html"></l-m>
 ```
 
 ## 语义属性

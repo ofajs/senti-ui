@@ -78,8 +78,9 @@ export default async function toast(options) {
     color = options.color || null;
   }
 
-  await ensureComp("st-snackbar", "/packages/snackbar/snackbar.html");
-  await ensureComp("st-icon-button", "/packages/button/icon-button.html");
+  // 相对当前模块解析：本地与 CDN（jsdelivr）引入均可正确加载
+  await ensureComp("st-snackbar", new URL("./snackbar.html", import.meta.url).href);
+  await ensureComp("st-icon-button", new URL("../button/icon-button.html", import.meta.url).href);
   addStyles();
   initContainer();
 

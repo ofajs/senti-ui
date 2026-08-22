@@ -6,7 +6,8 @@ import { escapeHtml, createDialog } from "./util.js";
 
 const ensureInput = async () => {
   if (!customElements.get("st-input")) {
-    document.body.insertAdjacentHTML("beforeend", `<l-m src="/packages/input/input.html"></l-m>`);
+    // 相对当前模块解析：本地与 CDN（jsdelivr）引入均可正确加载
+    document.body.insertAdjacentHTML("beforeend", `<l-m src="${new URL("../input/input.html", import.meta.url).href}"></l-m>`);
   }
   await customElements.whenDefined("st-input");
 };

@@ -1,6 +1,6 @@
 # 组件详解
 
-引入地址均为完整 jsdelivr URL（`https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/...`），可直接使用。
+引入地址均为完整 jsdelivr URL（`https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/...`），可直接使用。
 每个组件的完整文档（完整属性表、插槽、事件、默认值清单、更多示例）在本目录 [components/](./components/) 下对应文件中，如按钮见 [components/button.md](./components/button.md)。
 通用规则（所有组件）：属性读写遵守 SKILL.md 的「写法优先级」（ofa API 优先，`attr(name, 值/""/null)`）；`color` 属性值是 M3 角色名或自定义变量名；尺寸默认值全 em，改 `font-size` 等比缩放。
 
@@ -56,9 +56,9 @@
 - 命令式工具（无需预引入组件）：
 
 ```js
-import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/alert.js";
-import confirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/confirm.js";
-import prompt from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/prompt.js";
+import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/alert.js";
+import confirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/confirm.js";
+import prompt from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/prompt.js";
 const ok = await confirm("确认删除？"); // true/false/null（null=被关闭）
 const name = await prompt("你的名字", "默认值"); // 值/null
 await alert("完成"); // true/null
@@ -82,7 +82,7 @@ await alert("完成"); // true/null
 - `toast` 命令式工具（无需预引入）：
 
 ```js
-import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js";
+import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/snackbar/toast.js";
 const t = toast("已保存", { duration: 3000 }); // 返回 { close, el }；duration 0 = 手动
 ```
 

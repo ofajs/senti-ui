@@ -6,7 +6,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/switch/switch.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/switch/switch.html"></l-m>
 ```
 
 ## 语义属性
@@ -46,4 +46,4 @@
 - `color` 属性只影响开启态轨道/拇指色，未选中态恒为 outline/surface 系
 - 精致动效三件套：拇指未选中收缩/选中复原 + 平移、选中边框扩展填满轨道（描边→实心底无缝过渡）、拇指内对勾描边入场
 - 不要用外部 style 强行改拇指尺寸/边框宽度（选中态的实心底靠 border-width 扩展实现）
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/switch/`）。
+`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/switch/`）。

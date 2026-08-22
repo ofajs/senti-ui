@@ -8,7 +8,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/textarea/textarea.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/textarea/textarea.html"></l-m>
 ```
 
 组件内部已 `import "../color/st-color-init.js"`，加载时自动注入 `--md-sys-color-*` 颜色体系（多次 import 不冲突）；若你的部署不含 color 包，则需自行定义这些变量。
@@ -105,4 +105,4 @@ $("st-textarea").on("input", (e) => {
 - 同 st-input：`value` 用 `el.value` 读写（`setAttribute` 无效），初始值用 `default-value`；`change` 由组件转发为 composed
 - `autosize` 时 rows 是最小高度；内容、程序赋值、外部改字号都会自动重算高度
 - 宿主不可聚焦，焦点在内部 textarea；测试用真实点击聚焦
-`index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/textarea/`）。
+`index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/textarea/`）。

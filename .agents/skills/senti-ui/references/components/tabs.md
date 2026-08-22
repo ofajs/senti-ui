@@ -6,7 +6,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/tabs/tab-bar.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tabs/tab-bar.html"></l-m>
 ```
 
 ## 语义属性（st-tab-item）
@@ -61,4 +61,4 @@ $("st-tab-bar").on("click", (e) => {
 - 指示条动画自动跟随 active 项（M3 emphasized 0.3s）；容器尺寸变化时瞬时重定位
 - disabled 项原生阻断点击、无事件冒泡；icon 用 `slot="icon"`
 - 计算属性（如当前标签文字）放 proto 上的 `get`，不要放模块顶层（会加载失败且报错被吞）
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/tabs/`）。
+`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tabs/`）。

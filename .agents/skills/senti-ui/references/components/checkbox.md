@@ -6,7 +6,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/checkbox/checkbox.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/checkbox/checkbox.html"></l-m>
 ```
 
 组件内部已 `import "../color/st-color-init.js"`，自动注入 `--md-sys-color-*` 颜色体系。
@@ -55,4 +55,4 @@ $("st-checkbox").on("change", (e) => {
 - 交互由内部透明原生 checkbox 承载（覆盖整个组件，点文字也能切换），Space 键盘可用
 - 无标签内容时（`:empty`）标签区自动隐藏
 - `color` 属性只影响选中态配色，未选中态边框恒为 on-surface-variant
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/checkbox/`）。
+`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/checkbox/`）。

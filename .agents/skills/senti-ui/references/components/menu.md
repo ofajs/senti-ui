@@ -6,7 +6,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/menu/menu.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/menu/menu.html"></l-m>
 ```
 
 ## 语义属性（st-menu）
@@ -67,4 +67,4 @@
 - 面板 fixed 定位自动翻转避让视口、min-width 不小于触发器宽度，不受祖先 overflow 裁剪
 - 点击外部关闭用 composedPath 判断（坑 #21），滚动/resize 时自动重定位
 - `align="left"` 面板左对齐触发器，默认右对齐
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/menu/`）。
+`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/menu/`）。

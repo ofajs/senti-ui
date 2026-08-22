@@ -30,7 +30,7 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 </head>
 <body>
   <!-- 按需引入组件（l-m 会异步加载并注册自定义元素） -->
-  <l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/button.html"></l-m>
+  <l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/button.html"></l-m>
 
   <st-button color="error" variant="outlined">Delete</st-button>
 </body>
@@ -47,31 +47,31 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 
 | 组件 | 标签 | 引入 |
 |------|------|------|
-| 按钮 | `st-button` | `<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/button.html">` |
-| 按钮组 | `st-button-group` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/button-group.html` |
-| 分裂按钮 | `st-split-button` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/split-button.html` |
-| 图标按钮 | `st-icon-button` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/icon-button.html` |
-| 单行输入框 | `st-input` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/input/input.html` |
-| 多行输入框 | `st-textarea` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/textarea/textarea.html` |
-| 单选下拉框 | `st-select` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/select/select.html` |
-| 对话框 | `st-dialog` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/dialog.html` |
-| 对话框命令式工具 | `alert/confirm/prompt` | `import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/alert.js"` 等 |
-| 复选框 | `st-checkbox` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/checkbox/checkbox.html` |
-| 开关 | `st-switch` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/switch/switch.html` |
-| 单选按钮 | `st-radio` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/radio/radio.html` |
-| 消息条 | `st-snackbar` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/snackbar.html` |
-| Toast 命令式工具 | `toast` | `import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js"` |
-| 滑块 | `st-slider` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/slider/slider.html` |
-| 进度 | `st-progress` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/progress/progress.html` |
-| 提示 | `st-tooltip` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/tooltip/tooltip.html` |
-| 卡片 | `st-card` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/card/card.html` |
-| 徽标 | `st-badges` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/badges/badges.html` |
-| 折叠容器 | `st-collapse` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/collapse/collapse.html` |
-| 列表 | `st-list` / `st-list-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/list/list.html` |
-| 下拉菜单 | `st-menu` / `st-menu-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/menu/menu.html` |
-| 标签栏 | `st-tab-bar` / `st-tab-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/tabs/tab-bar.html` |
-| 导航栏 | `st-nav-bar` / `st-nav-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/navigation/nav-bar.html` |
-| 波纹 | `st-ripple` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/ripple/ripple.html` |
+| 按钮 | `st-button` | `<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/button.html">` |
+| 按钮组 | `st-button-group` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/button-group.html` |
+| 分裂按钮 | `st-split-button` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/split-button.html` |
+| 图标按钮 | `st-icon-button` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/icon-button.html` |
+| 单行输入框 | `st-input` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/input/input.html` |
+| 多行输入框 | `st-textarea` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/textarea/textarea.html` |
+| 单选下拉框 | `st-select` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/select/select.html` |
+| 对话框 | `st-dialog` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/dialog.html` |
+| 对话框命令式工具 | `alert/confirm/prompt` | `import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/alert.js"` 等 |
+| 复选框 | `st-checkbox` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/checkbox/checkbox.html` |
+| 开关 | `st-switch` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/switch/switch.html` |
+| 单选按钮 | `st-radio` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/radio/radio.html` |
+| 消息条 | `st-snackbar` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/snackbar/snackbar.html` |
+| Toast 命令式工具 | `toast` | `import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/snackbar/toast.js"` |
+| 滑块 | `st-slider` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/slider/slider.html` |
+| 进度 | `st-progress` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/progress/progress.html` |
+| 提示 | `st-tooltip` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tooltip/tooltip.html` |
+| 卡片 | `st-card` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/card/card.html` |
+| 徽标 | `st-badges` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/badges/badges.html` |
+| 折叠容器 | `st-collapse` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/collapse/collapse.html` |
+| 列表 | `st-list` / `st-list-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/list/list.html` |
+| 下拉菜单 | `st-menu` / `st-menu-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/menu/menu.html` |
+| 标签栏 | `st-tab-bar` / `st-tab-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tabs/tab-bar.html` |
+| 导航栏 | `st-nav-bar` / `st-nav-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-bar.html` |
+| 波纹 | `st-ripple` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/ripple/ripple.html` |
 
 ## 必读：写法优先级（适用于所有组件文档）
 

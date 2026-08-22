@@ -39,7 +39,7 @@
 </head>
 <body>
   <!-- 按需引入组件（用哪个引哪个） -->
-  <l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/button.html"></l-m>
+  <l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/button.html"></l-m>
 
   <st-button color="error" variant="outlined">Delete</st-button>
   <st-button>
@@ -55,7 +55,7 @@
 
 ## 组件清单
 
-CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`，下表引入语句省略前缀（实际使用必须写全）。文档在各组件目录的 `README.md`（如 `.../packages/button/README.md`）。
+CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入语句省略前缀（实际使用必须写全）。文档在各组件目录的 `README.md`（如 `.../packages/button/README.md`）。
 
 | 组件 | 标签 | 引入 |
 |------|------|------|
@@ -93,8 +93,8 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`，下表�
 
 ```html
 <script type="module">
-  import confirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/confirm.js";
-  import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js";
+  import confirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/confirm.js";
+  import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/snackbar/toast.js";
 
   if (await confirm("确认删除？")) {   // true / false / null（被关闭）
     toast("已删除", { duration: 3000 }); // 左下角 toast，返回 { close, el }
@@ -104,12 +104,12 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`，下表�
 
 ## 主题定制
 
-[M3 颜色体系生成器](https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/index.html) 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），支持核心四角色 + 扩展角色 success 覆盖与自定义变量（自动展开 `--brand` / `--on-brand` 等配对 token）。配置存 localStorage——在工具里调好配色，同域所有引入 `st-color-init.js` 的页面自动跟随（一键换色）。
+[M3 颜色体系生成器](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），支持核心四角色 + 扩展角色 success 覆盖与自定义变量（自动展开 `--brand` / `--on-brand` 等配对 token）。配置存 localStorage——在工具里调好配色，同域所有引入 `st-color-init.js` 的页面自动跟随（一键换色）。
 
 需要手动控制时：
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/st-color-init.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/st-color-init.js"></script>
 ```
 
 ## AI 使用

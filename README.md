@@ -39,7 +39,7 @@ Traditional component libraries offer lots of "convenience presets" for humans (
 </head>
 <body>
   <!-- Load components on demand (only what you use) -->
-  <l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/button.html"></l-m>
+  <l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/button.html"></l-m>
 
   <st-button color="error" variant="outlined">Delete</st-button>
   <st-button>
@@ -57,31 +57,31 @@ Traditional component libraries offer lots of "convenience presets" for humans (
 
 | Component | Tag | Import |
 |------|------|------|
-| Button | `st-button` | `<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/button.html"></l-m>` |
-| Button group | `st-button-group` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/button-group.html` |
-| Split button | `st-split-button` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/split-button.html` |
-| Icon button | `st-icon-button` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/icon-button.html` |
-| Input | `st-input` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/input/input.html` |
-| Textarea | `st-textarea` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/textarea/textarea.html` |
-| Select | `st-select` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/select/select.html` |
-| Dialog | `st-dialog` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/dialog.html` |
-| Dialog imperative utils | `alert/confirm/prompt` | `import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/alert.js"` etc. |
-| Checkbox | `st-checkbox` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/checkbox/checkbox.html` |
-| Switch | `st-switch` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/switch/switch.html` |
-| Radio | `st-radio` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/radio/radio.html` |
-| Snackbar | `st-snackbar` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/snackbar.html` |
-| Toast imperative util | `toast` | `import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js"` |
-| Slider | `st-slider` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/slider/slider.html` |
-| Progress | `st-progress` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/progress/progress.html` |
-| Tooltip | `st-tooltip` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/tooltip/tooltip.html` |
-| Card | `st-card` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/card/card.html` |
-| Badges | `st-badges` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/badges/badges.html` |
-| Collapse | `st-collapse` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/collapse/collapse.html` |
-| List | `st-list` / `st-list-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/list/list.html` |
-| Menu | `st-menu` / `st-menu-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/menu/menu.html` |
-| Tabs | `st-tab-bar` / `st-tab-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/tabs/tab-bar.html` |
-| Navigation bar | `st-nav-bar` / `st-nav-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/navigation/nav-bar.html` |
-| Ripple | `st-ripple` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/ripple/ripple.html` |
+| Button | `st-button` | `<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/button.html"></l-m>` |
+| Button group | `st-button-group` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/button-group.html` |
+| Split button | `st-split-button` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/split-button.html` |
+| Icon button | `st-icon-button` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/icon-button.html` |
+| Input | `st-input` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/input/input.html` |
+| Textarea | `st-textarea` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/textarea/textarea.html` |
+| Select | `st-select` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/select/select.html` |
+| Dialog | `st-dialog` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/dialog.html` |
+| Dialog imperative utils | `alert/confirm/prompt` | `import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/alert.js"` etc. |
+| Checkbox | `st-checkbox` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/checkbox/checkbox.html` |
+| Switch | `st-switch` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/switch/switch.html` |
+| Radio | `st-radio` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/radio/radio.html` |
+| Snackbar | `st-snackbar` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/snackbar/snackbar.html` |
+| Toast imperative util | `toast` | `import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/snackbar/toast.js"` |
+| Slider | `st-slider` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/slider/slider.html` |
+| Progress | `st-progress` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/progress/progress.html` |
+| Tooltip | `st-tooltip` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tooltip/tooltip.html` |
+| Card | `st-card` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/card/card.html` |
+| Badges | `st-badges` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/badges/badges.html` |
+| Collapse | `st-collapse` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/collapse/collapse.html` |
+| List | `st-list` / `st-list-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/list/list.html` |
+| Menu | `st-menu` / `st-menu-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/menu/menu.html` |
+| Tabs | `st-tab-bar` / `st-tab-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tabs/tab-bar.html` |
+| Navigation bar | `st-nav-bar` / `st-nav-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-bar.html` |
+| Ripple | `st-ripple` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/ripple/ripple.html` |
 
 Full docs (attribute tables, slots, events, default value lists) live in each package's `README.md` (e.g. `.../packages/button/README.md`).
 
@@ -93,8 +93,8 @@ Full docs (attribute tables, slots, events, default value lists) live in each pa
 
 ```html
 <script type="module">
-  import confirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/dialog/confirm.js";
-  import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/snackbar/toast.js";
+  import confirm from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/confirm.js";
+  import toast from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/snackbar/toast.js";
 
   if (await confirm("Delete?")) {   // true / false / null (dismissed)
     toast("Deleted", { duration: 3000 }); // bottom-left toast, returns { close, el }
@@ -104,12 +104,12 @@ Full docs (attribute tables, slots, events, default value lists) live in each pa
 
 ## Theming
 
-The [M3 color generator](https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/index.html) generates a full light/dark M3 system (`--md-sys-color-*`) from a seed color, with overrides for the core four roles + the extended `success` role, plus custom variables (auto-expanded into paired tokens like `--brand` / `--on-brand`). The configuration is stored in localStorage — once set in the tool, every page on the same origin that includes `st-color-init.js` follows automatically (one-click re-theming).
+The [M3 color generator](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) generates a full light/dark M3 system (`--md-sys-color-*`) from a seed color, with overrides for the core four roles + the extended `success` role, plus custom variables (auto-expanded into paired tokens like `--brand` / `--on-brand`). The configuration is stored in localStorage — once set in the tool, every page on the same origin that includes `st-color-init.js` follows automatically (one-click re-theming).
 
 For manual control:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/st-color-init.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/st-color-init.js"></script>
 ```
 
 ## AI Usage

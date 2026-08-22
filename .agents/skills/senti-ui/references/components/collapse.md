@@ -6,7 +6,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/collapse/collapse.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/collapse/collapse.html"></l-m>
 ```
 
 ## 语义属性
@@ -38,4 +38,4 @@ $("st-collapse").attr("hide", null);  // 展开
 - 内容高度变化（含嵌套折叠引起的）由 ResizeObserver 瞬时跟随，无过渡——这是特性：嵌套折叠时外层逐帧同步内层，不会拖尾
 - 不要给 collapse 内内容的 margin 依赖外层高度（内容用 absolute 量高，顶部留 0.1px 防 margin 折叠）
 - 配合 st-list-item 的 sublist 使用时无需手动管理
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/collapse/`）。
+`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/collapse/`）。

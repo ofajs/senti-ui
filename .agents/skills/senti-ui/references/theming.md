@@ -2,7 +2,7 @@
 
 Senti-UI 全库**唯一颜色来源**：从种子色按 M3（HCT 色彩空间）规则生成完整的浅色/深色两套 token（`--md-sys-color-*` CSS 变量），由 `st-color-init.js` 动态注入。**任何场景都不要写死颜色值**——消费这些变量，深浅色模式零成本自动适配。
 
-CDN 前缀：`https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`（下称 `{cdn}`）。
+CDN 前缀：`https://cdn.jsdelivr.net/gh/ofajs/senti-ui`（下称 `{cdn}`）。
 
 ## 颜色体系从哪来
 

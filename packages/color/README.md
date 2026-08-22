@@ -72,7 +72,7 @@ M3 的 token 天生成对，**永远用配对 token，不要自己调透明度�
 
 ### 1. color 可视化工具（推荐）
 
-打开 `/packages/color/index.html`（[在线版](https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/index.html)）：改种子色、覆盖核心四角色 + success、添加自定义变量（自动展开四配对 token）。配置存 localStorage，同域页面全部跟随。
+打开 `/packages/color/index.html`（[在线版](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html)）：改种子色、覆盖核心四角色 + success、添加自定义变量（自动展开四配对 token）。配置存 localStorage，同域页面全部跟随。
 
 ### 2. 直接写 localStorage（适合 JS 初始化）
 

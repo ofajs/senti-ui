@@ -6,7 +6,7 @@
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
-<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/badges/badges.html"></l-m>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/badges/badges.html"></l-m>
 ```
 
 ## 语义属性
@@ -41,4 +41,4 @@
 - 数字变化用 `$("st-badges").attr("value", 3)`；ofa 页面绑定 `attr:value="count"` 
 - value 为非数字字符串时按文字徽标展示（不封顶、不换底色尺寸）
 
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/badges/`）。
+`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/badges/`）。

@@ -37,7 +37,7 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 </html>
 ```
 
-- 每个 `l-m` 引入一个组件文件，用哪个引哪个；组件内部会自动 import 颜色初始化模块（`st-init.js`）注入 `--md-sys-color-*` 体系，无需额外配置
+- 每个 `l-m` 引入一个组件文件，用哪个引哪个；组件内部会自动 import 颜色初始化模块（`st-color-init.js`）注入 `--md-sys-color-*` 体系，无需额外配置
 - 深浅色主题默认跟随系统；强制用 `<html class="st-light">` / `<html class="st-dark">`
 - **写任何自定义颜色前先读 [references/theming.md](./references/theming.md)**：完整 token 清单（32 个 M3 角色）、文字/背景配对规则（如 `primary` 底配 `on-primary` 字）、深浅色自动适配原理、种子色与自定义变量（`--brand` 四配对）的三种配置方式
 

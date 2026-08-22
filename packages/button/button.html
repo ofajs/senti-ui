@@ -109,7 +109,7 @@
   <button class="native" attr:type="type" :disabled="disabled !== null || loading !== null" tabindex="0"></button>
 
   <script>
-    import "../color/st-init.js";
+    import "../color/st-color-init.js";
     export default async () => ({
       tag: "st-button",
       attrs: {
@@ -128,7 +128,7 @@
       },
       proto: {
         // color 接受 M3 角色名（primary/secondary/tertiary/error…）或 color 模块的自定义变量名
-        // （如 color="brand" → 消费 --brand / --on-brand，st-init 动态注入）。
+        // （如 color="brand" → 消费 --brand / --on-brand，st-color-init 动态注入）。
         // 必须按 variant 分派后再写内联样式：内联样式会压过 :host([variant]) 的 CSS 规则，
         // 若无条件设置背景色，outlined/text 会被强制变成 filled 外观
         applyColor() {

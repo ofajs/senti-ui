@@ -49,7 +49,7 @@ Traditional component libraries offer lots of "convenience presets" for humans (
 </html>
 ```
 
-- Components automatically import the color init module (`st-init.js`) to inject the `--md-sys-color-*` system — no extra setup needed
+- Components automatically import the color init module (`st-color-init.js`) to inject the `--md-sys-color-*` system — no extra setup needed
 - Light/dark theme follows the system by default; force with `<html class="st-light">` / `<html class="st-dark">`
 - For theming (seed color, custom colors) see the [M3 color generator](#theming): once configured, all pages on the same origin follow automatically
 
@@ -104,12 +104,12 @@ Full docs (attribute tables, slots, events, default value lists) live in each pa
 
 ## Theming
 
-The [M3 color generator](https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/index.html) generates a full light/dark M3 system (`--md-sys-color-*`) from a seed color, with overrides for the core four roles + the extended `success` role, plus custom variables (auto-expanded into paired tokens like `--brand` / `--on-brand`). The configuration is stored in localStorage — once set in the tool, every page on the same origin that includes `st-init.js` follows automatically (one-click re-theming).
+The [M3 color generator](https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/index.html) generates a full light/dark M3 system (`--md-sys-color-*`) from a seed color, with overrides for the core four roles + the extended `success` role, plus custom variables (auto-expanded into paired tokens like `--brand` / `--on-brand`). The configuration is stored in localStorage — once set in the tool, every page on the same origin that includes `st-color-init.js` follows automatically (one-click re-theming).
 
 For manual control:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/st-init.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/st-color-init.js"></script>
 ```
 
 ## AI Usage

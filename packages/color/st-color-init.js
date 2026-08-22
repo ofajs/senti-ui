@@ -1,5 +1,5 @@
 /**
- * st-init.js — Senti-UI 项目初始化模块
+ * st-color-init.js — Senti-UI 项目初始化模块
  *
  * 读取 color 工具保存在 localStorage 的配置（种子色 / 角色覆盖 / 自定义变量，
  * key 为 "st-color-config"），动态生成完整 M3 颜色体系并注入 <style>；
@@ -9,9 +9,9 @@
  *
  * 用法（所有页面统一）：
  *   <head> 内尽早引入同步引导（消除刷新闪色）：
- *     <script src="/packages/color/st-boot.js"></script>
+ *     <script src="/packages/boot/st-boot.js"></script>
  *   再引入本模块：
- *     <script type="module" src="/packages/color/st-init.js"></script>
+ *     <script type="module" src="/packages/color/st-color-init.js"></script>
  *
  * 闪色治理（与 st-boot.js 配合）：本模块生成主题后会把 CSS 文本缓存到
  * localStorage（key "st-theme-css"），st-boot.js 在下次刷新时同步注入该缓存，

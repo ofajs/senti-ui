@@ -11,7 +11,7 @@
 <l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/ripple/ripple.html"></l-m>
 ```
 
-组件内部已 `import "../color/st-init.js"`，自动注入颜色体系。
+组件内部已 `import "../color/st-color-init.js"`，自动注入颜色体系。
 
 ## 基本用法
 

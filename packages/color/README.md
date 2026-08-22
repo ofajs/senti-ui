@@ -1,26 +1,26 @@
-# Color 颜色体系（M3 生成器 + st-init.js 初始化模块）
+# Color 颜色体系（M3 生成器 + st-color-init.js 初始化模块）
 
 Senti-UI 全库**唯一颜色来源**：从种子色按 Material Design 3（HCT 色彩空间）规则生成完整的浅色/深色两套 token（`--md-sys-color-*` CSS 变量），动态注入 `<style>`。组件内禁止写死颜色，一律消费这些变量。
 
-本包不是组件，是工具包：`st-init.js`（页面初始化模块）+ `m3-theme.js`（核心 API）+ `index.html`（可视化生成器）。
+本包不是组件，是工具包：`st-color-init.js`（页面初始化模块）+ `m3-theme.js`（核心 API）+ `index.html`（可视化生成器）。
 
 ## 依赖引入（使用前必须）
 
-**普通页面**：组件内部已自动 `import "../color/st-init.js"`，无需手动引入。需要独立使用或消除刷新闪色时，在 `<head>` 内尽早引入一行即可（boot 会自动加载 st-init.js）：
+**普通页面**：组件内部已自动 `import "../color/st-color-init.js"`，无需手动引入。需要独立使用或消除刷新闪色时，在 `<head>` 内尽早引入一行即可（boot 会自动加载 st-color-init.js）：
 
 ```html
-<script src="/packages/color/st-boot.js"></script>
+<script src="/packages/boot/st-boot.js"></script>
 ```
 
-`st-init.js` 读取 localStorage 中 color 工具保存的配置（key 为 `st-color-config`：`{ seed, overrides, customs }`），无配置时用默认种子色 `#0061A4`。**同域所有引入它的页面共享配置**——工具里调好配色，全站自动跟随（一键换色）。
+`st-color-init.js` 读取 localStorage 中 color 工具保存的配置（key 为 `st-color-config`：`{ seed, overrides, customs }`），无配置时用默认种子色 `#0061A4`。**同域所有引入它的页面共享配置**——工具里调好配色，全站自动跟随（一键换色）。
 
 ### 刷新闪色的治理（st-boot.js 同步引导）
 
 颜色由 JS 动态生成，模块加载前页面无色会闪一下。`st-boot.js` 是**经典同步脚本（非 module）**，首帧渲染前完成：
 
-- **刷新（有缓存）**：`st-init.js` 每次生成后把主题 CSS 缓存到 localStorage（key `st-theme-css`），`st-boot.js` 同步读缓存注入 `<style>`——零网络、零计算、零闪
-- **首次访问（无缓存）**：同步 `<link>` 引入静态兜底 `st-default.css`（默认种子色主题，`themeToCss` 生成的产物）——首帧即有默认色，`st-init.js` 随后按真实配置覆盖并写缓存
-- `st-boot.js` 会从自身 `<script src>` 推导同目录路径（st-default.css / st-init.js），放在任何路径下都可用；它注入完首帧样式后自动动态加载 `st-init.js`，页面无需再写第二个标签
+- **刷新（有缓存）**：`st-color-init.js` 每次生成后把主题 CSS 缓存到 localStorage（key `st-theme-css`），`st-boot.js` 同步读缓存注入 `<style>`——零网络、零计算、零闪
+- **首次访问（无缓存）**：同步 `<link>` 引入静态兜底 `st-default.css`（默认种子色主题，`themeToCss` 生成的产物）——首帧即有默认色，`st-color-init.js` 随后按真实配置覆盖并写缓存
+- `st-boot.js` 位于 `packages/boot/`（项目级同步引导，非 color 包私有），从自身 `<script src>` 推导相对路径引用 `../color/st-default.css` 与 `../color/st-color-init.js`，放在任何路径下都可用；它注入完首帧样式后自动动态加载 `st-color-init.js`，页面无需再写第二个标签
 
 依赖说明：`m3-theme.js` 已改为引入**本地 vendored** 的 `./vendor/material-color-utilities.js`（单文件自包含 bundle，源自 jsdelivr），不再依赖外部 CDN。
 
@@ -84,7 +84,7 @@ localStorage.setItem("st-color-config", JSON.stringify({
     { name: "brand", color: "#FF0000" },
   ],
 }));
-// 刷新页面后 st-init.js 读取生效（写入须在 st-init.js 执行前）
+// 刷新页面后 st-color-init.js 读取生效（写入须在 st-color-init.js 执行前）
 ```
 
 ### 3. JS API（m3-theme.js，适合程序化主题）
@@ -130,5 +130,5 @@ API 签名：
 
 - 未定义的 `color` 名称（如没配置过 `brand` 就使用）回退到 primary
 - `themeToCss` 的输出可作为静态 CSS 部署（不依赖 JS 生效，消除闪烁），但会失去 localStorage 一键换色能力
-- `st-init.js` 同时导出 `themeConfig`（当前配置）与 `theme`（已应用的主题数据），可 import 使用
+- `st-color-init.js` 同时导出 `themeConfig`（当前配置）与 `theme`（已应用的主题数据），可 import 使用
 - 组件 hover/active 用 state layer（currentColor 8%/12% 叠加）、disabled 用 0.38 透明度——不需要额外 token，自动与任意配色协调

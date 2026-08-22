@@ -18,7 +18,7 @@
 
 2. **颜色只走 M3 角色**
    - 组件内禁止写死任何颜色值，一律消费 `--md-sys-color-*` 变量
-   - 全局 token 由 `packages/color/st-init.js`（初始化模块）动态注入，页面统一引入它，不使用静态 CSS
+   - 全局 token 由 `packages/color/st-color-init.js`（初始化模块）动态注入，页面统一引入它，不使用静态 CSS
    - hover/active 用 state layer（currentColor 半透明叠加 8%/12%），disabled 用 0.38 透明度——自动与任意配色协调，无需变量
 
 3. **文档即 API**
@@ -35,10 +35,11 @@
 packages/{name}/
   {name}.html    # ofa.js 组件
   README.md      # AI 友好文档（自包含）
-  index.html     # 验收页加载器（引入 ofa.js + st-init.js + l-m 组件 + o-page）
+  index.html     # 验收页加载器（引入 ofa.js + st-color-init.js + l-m 组件 + o-page）
   page.html      # ofa.js 页面模块（验收页内容与逻辑，由 index.html 的 <o-page> 加载）
 CONTEXT.md       # 项目全景 + 组件总索引 + ofa.js 已知坑（新组件必须登记）
-packages/color/  # M3 体系生成器 + st-init.js（颜色唯一来源）
+packages/color/  # M3 体系生成器 + st-color-init.js（颜色唯一来源）
+packages/boot/    # st-boot.js 项目同步引导（可选增强：首帧缓存/兜底注入 + 自动加载 color init）
 ```
 
 - 组件标签：`st-` 前缀（`st-button`）

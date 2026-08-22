@@ -14,7 +14,7 @@
 <l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/button/icon-button.html"></l-m>     <!-- st-icon-button -->
 ```
 
-组件内部已 `import "../color/st-init.js"`，加载按钮时会自动注入 `--md-sys-color-*` 颜色体系（多次 import 不冲突，模块按 URL 去重）；若你的部署不含 color 包，则需自行定义这些变量。
+组件内部已 `import "../color/st-color-init.js"`，加载按钮时会自动注入 `--md-sys-color-*` 颜色体系（多次 import 不冲突，模块按 URL 去重）；若你的部署不含 color 包，则需自行定义这些变量。
 
 ## 语义属性
 
@@ -48,11 +48,11 @@ $("st-button").attr("loading", null);
 <st-button color="error" variant="outlined">Delete</st-button>
 <st-button color="error" variant="text">Delete</st-button>
 
-<!-- success 为内置扩展角色（默认绿色，token 由 st-init.js 自动注入，无需配置） -->
+<!-- success 为内置扩展角色（默认绿色，token 由 st-color-init.js 自动注入，无需配置） -->
 <st-button color="success">保存</st-button>
 
 <!-- 自定义：先在 color 工具添加变量 brand（会生成 --brand / --on-brand 等配对 token 并存入 localStorage），
-     所有引入 st-init.js 的同域页面即可使用 -->
+     所有引入 st-color-init.js 的同域页面即可使用 -->
 <st-button color="brand">Brand 按钮</st-button>
 ```
 
@@ -129,7 +129,7 @@ $("st-button").on("click", () => {});
 
 ## 主题
 
-`st-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
+`st-color-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
 
 ## st-button-group 按钮组
 

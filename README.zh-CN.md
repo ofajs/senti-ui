@@ -49,7 +49,7 @@
 </html>
 ```
 
-- 组件内部会自动 import 颜色初始化模块（`st-init.js`）注入 `--md-sys-color-*` 体系，无需额外配置
+- 组件内部会自动 import 颜色初始化模块（`st-color-init.js`）注入 `--md-sys-color-*` 体系，无需额外配置
 - 深浅色主题默认跟随系统；强制用 `<html class="st-light">` / `<html class="st-dark">`
 - 主题定制（种子色、自定义色）用 [M3 颜色体系生成器](#主题定制)：调好配色后，同域所有页面自动跟随
 
@@ -104,12 +104,12 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main`，下表�
 
 ## 主题定制
 
-[M3 颜色体系生成器](https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/index.html) 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），支持核心四角色 + 扩展角色 success 覆盖与自定义变量（自动展开 `--brand` / `--on-brand` 等配对 token）。配置存 localStorage——在工具里调好配色，同域所有引入 `st-init.js` 的页面自动跟随（一键换色）。
+[M3 颜色体系生成器](https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/index.html) 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），支持核心四角色 + 扩展角色 success 覆盖与自定义变量（自动展开 `--brand` / `--on-brand` 等配对 token）。配置存 localStorage——在工具里调好配色，同域所有引入 `st-color-init.js` 的页面自动跟随（一键换色）。
 
 需要手动控制时：
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/st-init.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui@main/packages/color/st-color-init.js"></script>
 ```
 
 ## AI 使用

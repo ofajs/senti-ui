@@ -1,0 +1,97 @@
+<!--
+  st-nav-layout — Senti-UI 响应式导航布局组件（基于 ofa.js）
+  两个插槽：nav（放 st-nav-bar）+ 默认（内容区）。
+  以自身宽度做 container query：<768px 底部导航 / 768–1023px 平板——底部导航 item 横排（parallel）/ ≥1024px 左侧窄 rail（vertical），见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: block;
+      width: 100%;
+      height: 100%;
+      container-type: inline-size;
+      box-sizing: border-box;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+    }
+    .main {
+      flex: 1;
+      min-height: 0;
+      min-width: 0;
+      overflow: auto;
+    }
+    .nav {
+      flex-shrink: 0;
+    }
+
+    /* ≥1024px（桌面）：导航移到左侧窄 rail（row-reverse 使 DOM 顺序不变），宽度跟随内容 */
+    @container (min-width: 1024px) {
+      .container { flex-direction: row-reverse; }
+      .nav {
+        height: 100%;
+        width: fit-content;
+      }
+      ::slotted(st-nav-bar) { height: 100%; }
+    }
+  </style>
+
+  <div class="container">
+    <div class="main"><slot></slot></div>
+    <div class="nav"><slot name="nav"></slot></div>
+  </div>
+
+  <script>
+    import "../color/st-color-init.js";
+    export default async () => ({
+      tag: "st-nav-layout",
+      proto: {
+        // 按容器宽度修正形态（与 container query 断点同步）：
+        // <768px 底部导航（icon 上 / 文字下）；768–1023px 平板——仍在底部，item 挂 parallel（文字在右）；
+        // ≥1024px 桌面——bar 挂 vertical（左侧窄 rail），item 摘 parallel（文字回到下方）
+        applyMode() {
+          const w = this.ele.getBoundingClientRect().width;
+          this._bars?.forEach((bar) => {
+            if (w >= 1024) bar.setAttribute("vertical", "");
+            else bar.removeAttribute("vertical");
+            const parallel = w >= 768 && w < 1024;
+            bar.querySelectorAll("st-nav-item").forEach((it) => {
+              if (parallel) it.setAttribute("parallel", "");
+              else it.removeAttribute("parallel");
+            });
+          });
+        },
+      },
+      ready() {
+        const sr = this.ele.shadowRoot;
+        this._bars = new Set();
+        this._childObserver = new MutationObserver(() => this.applyMode());
+        const navSlot = sr.querySelector('slot[name="nav"]');
+        const collect = () => {
+          this._childObserver.disconnect();
+          this._bars = new Set(
+            navSlot.assignedElements().filter((el) => el.tagName === "ST-NAV-BAR")
+          );
+          // bar 内动态增删 nav-item 时重刷 parallel
+          this._bars.forEach((bar) =>
+            this._childObserver.observe(bar, { childList: true })
+          );
+          this.applyMode();
+        };
+        navSlot.addEventListener("slotchange", collect);
+        collect();
+      },
+      attached() {
+        this._resizeObserver = new ResizeObserver(() => this.applyMode());
+        this._resizeObserver.observe(this.ele);
+      },
+      detached() {
+        this._resizeObserver?.disconnect();
+        this._childObserver?.disconnect();
+      },
+    });
+  </script>
+</template>

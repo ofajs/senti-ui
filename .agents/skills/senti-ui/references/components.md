@@ -136,6 +136,14 @@ const t = toast("已保存", { duration: 3000 }); // 返回 { close, el }；dura
 
 - item 的 `active` 切换由**外部逻辑**处理（click 冒泡传出，on:click 里切换数据）；bar 用指示条/药丸动画跟随 active 项
 
+## st-nav-layout 响应式导航布局
+
+- 插槽：`nav`（放 `st-nav-bar`）+ 默认（内容区，可滚动）；高度依赖外部给定（如 `height: 100vh`）
+- 形态属性分属两层：`vertical` 在 `st-nav-bar` 上（子项排列方向），`parallel` 在各 `st-nav-item` 上（文字在 icon 右、active 整行药丸），两者独立组合
+- 按布局容器**自身宽度**（container query）三档切换：`<768px` 底部导航 / `768–1023px` 平板——仍在底部、各 item 自动挂 `parallel`（横排）/ `≥1024px` 左侧窄 rail——bar 自动挂 `vertical`、item 摘 `parallel`（icon 上/文字下）
+- 单独用纵向导航：`<st-nav-bar vertical>` 即可
+- 引入：`<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-layout.html"></l-m>`
+
 ## st-ripple 波纹
 
 - 点击波纹，放在 `position: relative` 的父元素内使用，波纹色 currentColor

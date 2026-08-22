@@ -28,6 +28,11 @@
       flex-shrink: 0;
     }
 
+    /* 768–1023px（平板）：导航仍在底部，bar 内部上下留出内边距 */
+    @container (width >= 768px) and (width < 1024px) {
+      ::slotted(st-nav-bar) { padding-block: 0.571em; } /* 8px */
+    }
+
     /* ≥1024px（桌面）：导航移到左侧窄 rail（row-reverse 使 DOM 顺序不变），宽度跟随内容 */
     @container (min-width: 1024px) {
       .container { flex-direction: row-reverse; }

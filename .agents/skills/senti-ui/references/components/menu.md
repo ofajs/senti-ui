@@ -94,7 +94,7 @@ onCtx(e) {
 
 | 属性 | 默认值 |
 |------|--------|
-| min-width | `8em`（= 112px，且不小于触发器宽度） |
+| min-width | `6em`（= 84px，宽度由内容决定，不跟随触发器宽度） |
 | padding / 圆角 | `0.286em` / `0.857em`（= 12px） |
 | 底色 | `surface-container` |
 | max-height | `80vh`（内部滚动） |
@@ -118,7 +118,7 @@ onCtx(e) {
 
 - `open` 是运行时状态（ofa data，非标签属性）：ofa 页面用 `sync:open="menuOpen"` 双向绑定（选中后自动关闭会回写）；JS 触发用真实点击 trigger
 - trigger 必须放 `slot="trigger"`；菜单项点击后面板自动关闭，item 的 click 正常冒泡供业务监听
-- 面板 fixed 定位自动翻转避让视口、min-width 不小于触发器宽度，不受祖先 overflow 裁剪
+- 面板 fixed 定位自动翻转避让视口、宽度由内容决定（min-width 6em 兜底），不受祖先 overflow 裁剪
 - 点击外部关闭用 composedPath 判断（坑 #21），滚动/resize 时自动重定位
 - `align="left"` 面板左对齐触发器，默认右对齐
 - 多级子菜单：`st-menu` 放在 item 的 `sub-menu` 插槽内（见上文），箭头自动显示

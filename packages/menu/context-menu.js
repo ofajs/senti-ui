@@ -123,4 +123,58 @@ const contextMenu = async (source, items) => {
   });
 };
 
+// 长按呼出（移动端惯例）：在 el 上按住约 500ms 打开菜单（触屏指针专用；
+// 移动超 10px / 抬起 / 取消则中止）。返回取消函数。
+// onSelect(id|null) 回调接收选择结果；会接管 el 的 contextmenu 默认行为。
+contextMenu.longPress = (el, items, onSelect) => {
+  let timer = null;
+  let startX = 0;
+  let startY = 0;
+  let firedAt = 0;
+  const cancel = () => {
+    clearTimeout(timer);
+    timer = null;
+  };
+  const onDown = (e) => {
+    if (e.pointerType === "mouse") return; // 桌面走右键 contextmenu
+    cancel();
+    startX = e.clientX;
+    startY = e.clientY;
+    timer = setTimeout(async () => {
+      firedAt = Date.now();
+      const id = await contextMenu({ x: startX, y: startY }, items);
+      onSelect?.(id);
+    }, 500);
+  };
+  const onMove = (e) => {
+    if (timer && Math.hypot(e.clientX - startX, e.clientY - startY) > 10) cancel();
+  };
+  const onContext = (e) => {
+    // 长按触发后系统也会派发 contextmenu（Android），吞掉避免弹默认菜单
+    if (Date.now() - firedAt < 1000) e.preventDefault();
+  };
+  const onClick = (e) => {
+    // 长按已呼出菜单后手指抬起产生的 click 吞掉，避免误触发宿主点击逻辑
+    if (Date.now() - firedAt < 500) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+  el.addEventListener("pointerdown", onDown);
+  el.addEventListener("pointermove", onMove);
+  el.addEventListener("pointerup", cancel);
+  el.addEventListener("pointercancel", cancel);
+  el.addEventListener("contextmenu", onContext);
+  el.addEventListener("click", onClick, true);
+  return () => {
+    cancel();
+    el.removeEventListener("pointerdown", onDown);
+    el.removeEventListener("pointermove", onMove);
+    el.removeEventListener("pointerup", cancel);
+    el.removeEventListener("pointercancel", cancel);
+    el.removeEventListener("contextmenu", onContext);
+    el.removeEventListener("click", onClick, true);
+  };
+};
+
 export default contextMenu;

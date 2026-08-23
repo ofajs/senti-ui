@@ -158,16 +158,18 @@
         slot.addEventListener("slotchange", this._syncSub);
         this._syncSub();
 
-        ele.addEventListener("pointerenter", () => {
-          if (!this._subEle) return;
+        // 触屏跳过 hover 展开逻辑（滑动会误触一串 pointerenter），
+        // 触屏上子菜单只靠 click 切换（下面的 click 监听）
+        ele.addEventListener("pointerenter", (e) => {
+          if (!this._subEle || e.pointerType === "touch") return;
           clearTimeout(this._subCloseTimer);
           const sub = $(this._subEle);
           if (sub.open !== true) {
             this._subOpenTimer = setTimeout(() => { sub.open = true; }, 120);
           }
         });
-        ele.addEventListener("pointerleave", () => {
-          if (!this._subEle) return;
+        ele.addEventListener("pointerleave", (e) => {
+          if (!this._subEle || e.pointerType === "touch") return;
           clearTimeout(this._subOpenTimer);
           this._subCloseTimer = setTimeout(() => { $(this._subEle).open = false; }, 300);
         });

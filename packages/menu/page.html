@@ -181,6 +181,23 @@
     </p>
   </section>
 
+  <section>
+    <h3>移动端：长按呼出菜单（contextMenu.longPress，触屏按住 ~500ms）</h3>
+    <div class="ctx-region long-press-region">
+      触屏设备上在这个区域内<b>长按</b>（约 500ms）呼出菜单；滑动/提前抬起不会触发。
+      桌面仍用右键（触屏子菜单为点击开合，无 hover）。
+    </div>
+    <p
+      style="margin: 0; font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
+    >
+      返回值：<span
+        class="code"
+        style="font-family: ui-monospace, monospace"
+        >{{longPressPick}}</span
+      >
+    </p>
+  </section>
+
   <p
     style="
       margin: 0;
@@ -200,7 +217,13 @@
 
   <script>
     export default async () => ({
-      data: { lastPick: "（无）", openCount: 0, menuOpen: false, cmdPick: "（未调用）" },
+      data: {
+        lastPick: "（无）",
+        openCount: 0,
+        menuOpen: false,
+        cmdPick: "（未调用）",
+        longPressPick: "（未触发）",
+      },
       proto: {
         onOpen() {
           this.openCount += 1;
@@ -238,6 +261,28 @@
         pick(name) {
           this.lastPick = name;
         },
+      },
+      attached() {
+        // 移动端长按呼出（坑 #6：window 上的工具可能晚于 attached 就绪，须轮询标记）
+        const bind = () => {
+          if (!window.contextMenu) {
+            setTimeout(bind, 50);
+            return;
+          }
+          // contextMenu.longPress 返回取消函数，这里常驻不取消
+          window.contextMenu.longPress(
+            this.shadow.$(".long-press-region").ele,
+            [
+              { id: "cut", label: "剪切", prefix: "✂️" },
+              { id: "copy", label: "复制", prefix: "📋" },
+              { id: "paste", label: "粘贴", prefix: "📌" },
+            ],
+            (id) => {
+              this.longPressPick = id === null ? "null（取消）" : JSON.stringify(id);
+            }
+          );
+        };
+        bind();
       },
     });
   </script>

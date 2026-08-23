@@ -93,6 +93,18 @@ const id = await contextMenu(e, [
 
 items 结构：`{ id, label, prefix?, suffix?, disabled?, children? }`（叶子项的 id 即返回值）与 `{ separator: true }` 分隔线。定位自动翻转避让视口；组件按需注入 `<l-m>`，无需预引入。
 
+### 移动端
+
+- 触屏子菜单**点击开合**（无 hover；滑动不会误触展开）
+- 长按呼出：`contextMenu.longPress(el, items, onSelect?)` —— 在 `el` 上按住约 500ms 打开菜单（触屏指针专用，桌面仍用右键）；滑动超 10px / 提前抬起 / 取消则中止；会吞掉长按触发的系统 contextmenu 与抬起 click。返回取消函数（调用即解绑）。
+
+```js
+const off = contextMenu.longPress(el, [
+  { id: "copy", label: "复制" },
+  { id: "del", label: "删除" },
+], (id) => { /* id 或 null */ });
+```
+
 ## 右键菜单（openAt）
 
 不需要 trigger，JS 在 `contextmenu` 事件里调 `openAt(x, y)` 在光标处打开，面板自动翻转避让视口（右侧/下方空间不足翻到光标左/上方）。与多级子菜单可组合使用。

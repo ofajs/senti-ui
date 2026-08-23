@@ -73,7 +73,7 @@
 传定位信息 + items 数组，直接生成挂 body 的定位菜单（用完即毁），`await` 得到点击的 item id；点空白 / Escape 取消返回 `null`。
 
 ```js
-import contextMenu from "/packages/menu/context-menu.js";
+import contextMenu from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/menu/context-menu.js";
 
 // 第一个参数：带定位信息的事件（自动 preventDefault + 取 clientX/Y），或 { x, y } 坐标
 const id = await contextMenu(e, [

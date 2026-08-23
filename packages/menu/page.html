@@ -1,19 +1,55 @@
 <!-- st-menu 验收页，由同目录 index.html 通过 <o-page> 加载 -->
 <template page>
   <style>
-    :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
-    section { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
-    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+    :host {
+      display: grid;
+      gap: 24px;
+      padding: 40px;
+      align-content: start;
+    }
+    section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    h3 {
+      margin: 0;
+      font-size: 14px;
+      color: var(--md-sys-color-on-surface-variant);
+      width: 100%;
+    }
+    .ctx-region {
+      width: 100%;
+      min-height: 120px;
+      box-sizing: border-box;
+      padding: 20px;
+      border: 1px dashed var(--md-sys-color-outline-variant);
+      border-radius: 12px;
+      font-size: 14px;
+      color: var(--md-sys-color-on-surface-variant);
+      user-select: none;
+    }
   </style>
 
   <section>
     <h3>基础</h3>
     <st-menu on:open="onOpen" on:close="onClose">
       <st-button slot="trigger" variant="outlined">右对齐菜单 ▾</st-button>
-      <st-menu-item><span slot="prefix">✏️</span>编辑<span slot="suffix">⌘E</span></st-menu-item>
-      <st-menu-item><span slot="prefix">📋</span>复制<span slot="suffix">⌘C</span></st-menu-item>
-      <st-menu-item disabled><span slot="prefix">🗑</span>删除（禁用）</st-menu-item>
-      <hr>
+      <st-menu-item
+        ><span slot="prefix">✏️</span>编辑<span slot="suffix"
+          >⌘E</span
+        ></st-menu-item
+      >
+      <st-menu-item
+        ><span slot="prefix">📋</span>复制<span slot="suffix"
+          >⌘C</span
+        ></st-menu-item
+      >
+      <st-menu-item disabled
+        ><span slot="prefix">🗑</span>删除（禁用）</st-menu-item
+      >
+      <hr />
       <st-menu-item on:click="onAbout">关于</st-menu-item>
     </st-menu>
 
@@ -31,24 +67,163 @@
       <st-menu-item>选项一</st-menu-item>
       <st-menu-item>选项二</st-menu-item>
     </st-menu>
-    <span style="font-size:13px; color: var(--md-sys-color-on-surface-variant);">menuOpen 数据：<span class="code" style="font-family: ui-monospace, monospace;">{{menuOpen}}</span>（选中/点外部/Escape 关闭后自动回写 false）</span>
+    <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
+      >menuOpen 数据：<span
+        class="code"
+        style="font-family: ui-monospace, monospace"
+        >{{menuOpen}}</span
+      >（选中/点外部/Escape 关闭后自动回写 false）</span
+    >
+  </section>
+
+  <section>
+    <h3>
+      多级子菜单（st-menu 放在 item 的 sub-menu 插槽内，hover
+      展开，选中任意项整链关闭）
+    </h3>
+    <st-menu>
+      <st-button slot="trigger" variant="outlined">多级菜单 ▾</st-button>
+      <st-menu-item><span slot="prefix">📄</span>新建</st-menu-item>
+      <st-menu-item>
+        <span slot="prefix">🗂</span>导出为
+        <st-menu slot="sub-menu">
+          <st-menu-item>PDF</st-menu-item>
+          <st-menu-item>Markdown</st-menu-item>
+          <st-menu-item>
+            图片
+            <st-menu slot="sub-menu">
+              <st-menu-item>PNG</st-menu-item>
+              <st-menu-item>SVG</st-menu-item>
+            </st-menu>
+          </st-menu-item>
+        </st-menu>
+      </st-menu-item>
+      <hr />
+      <st-menu-item disabled
+        ><span slot="prefix">🗑</span>删除（禁用）</st-menu-item
+      >
+    </st-menu>
   </section>
 
   <section>
     <h3>键盘行为</h3>
-    <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant); width:100%;">
-      <span class="code" style="font-family: ui-monospace, monospace;">Escape</span> 关闭、点击组件外部关闭；菜单项 <span class="code" style="font-family: ui-monospace, monospace;">Tab</span> 良好可达、<span class="code" style="font-family: ui-monospace, monospace;">Enter</span>/<span class="code" style="font-family: ui-monospace, monospace;">Space</span> 激活
+    <p
+      style="
+        margin: 0;
+        font-size: 13px;
+        color: var(--md-sys-color-on-surface-variant);
+        width: 100%;
+      "
+    >
+      <span class="code" style="font-family: ui-monospace, monospace"
+        >Escape</span
+      >
+      关闭、点击组件外部关闭；菜单项
+      <span class="code" style="font-family: ui-monospace, monospace">Tab</span>
+      良好可达、<span class="code" style="font-family: ui-monospace, monospace"
+        >Enter</span
+      >/<span class="code" style="font-family: ui-monospace, monospace"
+        >Space</span
+      >
+      激活
     </p>
   </section>
 
-  <p style="margin:0; font-size:14px; color: var(--md-sys-color-on-surface-variant);">
-    菜单项点击：<span class="code" style="font-family: ui-monospace, monospace;">{{lastPick}}</span>
-    ｜ open/close 状态：<span class="code" style="font-family: ui-monospace, monospace;">{{openCount}}</span>
+  <section>
+    <h3>
+      右键菜单（区域内 on:contextmenu 调 openAt(x, y)，面板自动翻转避让视口）
+    </h3>
+    <div class="ctx-region" on:contextmenu="onCtx">
+      在这个区域内<b>点击右键</b>试试（菜单不会超出屏幕可视范围；靠边/角落右键会自动翻转）
+    </div>
+    <st-menu id="ctxMenu">
+      <st-menu-item on:click="pick('剪切')"
+        ><span slot="prefix">✂️</span>剪切</st-menu-item
+      >
+      <st-menu-item on:click="pick('复制')"
+        ><span slot="prefix">📋</span>复制</st-menu-item
+      >
+      <st-menu-item on:click="pick('粘贴')"
+        ><span slot="prefix">📌</span>粘贴</st-menu-item
+      >
+      <hr />
+      <st-menu-item>
+        排序
+        <st-menu slot="sub-menu">
+          <st-menu-item on:click="pick('按名称排序')">按名称</st-menu-item>
+          <st-menu-item on:click="pick('按大小排序')">按大小</st-menu-item>
+        </st-menu>
+      </st-menu-item>
+      <hr />
+      <st-menu-item on:click="pick('刷新')"
+        ><span slot="prefix">🔄</span>刷新</st-menu-item
+      >
+    </st-menu>
+  </section>
+
+  <section>
+    <h3>
+      命令式右键菜单（context-menu.js：传 event + items 数组，返回点击的 item
+      id，点空白/Escape 返回 null）
+    </h3>
+    <div class="ctx-region" on:contextmenu="onCmdCtx">
+      在这个区域内<b>点击右键</b>：菜单由 JS 数组生成、直接挂 body，
+      支持 children 子菜单与 separator 分隔线
+    </div>
+    <p
+      style="margin: 0; font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
+    >
+      返回值：<span
+        class="code"
+        style="font-family: ui-monospace, monospace"
+        >{{cmdPick}}</span
+      >
+    </p>
+  </section>
+
+  <section>
+    <h3>移动端：长按呼出菜单（contextMenu.longPress，触屏按住 ~500ms）</h3>
+    <div class="ctx-region long-press-region">
+      触屏设备上在这个区域内<b>长按</b>（约 500ms）呼出菜单；滑动/提前抬起不会触发。
+      桌面仍用右键（触屏子菜单为点击开合，无 hover）。
+    </div>
+    <p
+      style="margin: 0; font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
+    >
+      返回值：<span
+        class="code"
+        style="font-family: ui-monospace, monospace"
+        >{{longPressPick}}</span
+      >
+    </p>
+  </section>
+
+  <p
+    style="
+      margin: 0;
+      font-size: 14px;
+      color: var(--md-sys-color-on-surface-variant);
+    "
+  >
+    菜单项点击：<span class="code" style="font-family: ui-monospace, monospace"
+      >{{lastPick}}</span
+    >
+    ｜ open/close 状态：<span
+      class="code"
+      style="font-family: ui-monospace, monospace"
+      >{{openCount}}</span
+    >
   </p>
 
   <script>
     export default async () => ({
-      data: { lastPick: "（无）", openCount: 0, menuOpen: false },
+      data: {
+        lastPick: "（无）",
+        openCount: 0,
+        menuOpen: false,
+        cmdPick: "（未调用）",
+        longPressPick: "（未触发）",
+      },
       proto: {
         onOpen() {
           this.openCount += 1;
@@ -59,6 +234,55 @@
         onAbout() {
           this.lastPick = "关于";
         },
+        onCtx(e) {
+          e.preventDefault(); // 阻止浏览器默认右键菜单
+          this.shadow.$("#ctxMenu").openAt(e.clientX, e.clientY);
+        },
+        async onCmdCtx(e) {
+          const id = await window.contextMenu(e, [
+            { id: "cut", label: "剪切", prefix: "✂️" },
+            { id: "copy", label: "复制", prefix: "📋", suffix: "⌘C" },
+            { id: "paste", label: "粘贴", prefix: "📌" },
+            { separator: true },
+            {
+              id: "sort",
+              label: "排序",
+              children: [
+                { id: "sort-name", label: "按名称" },
+                { id: "sort-size", label: "按大小" },
+              ],
+            },
+            { separator: true },
+            { id: "refresh", label: "刷新", prefix: "🔄" },
+            { id: "del", label: "删除", prefix: "🗑", disabled: true },
+          ]);
+          this.cmdPick = id === null ? "null（点空白取消）" : JSON.stringify(id);
+        },
+        pick(name) {
+          this.lastPick = name;
+        },
+      },
+      attached() {
+        // 移动端长按呼出（坑 #6：window 上的工具可能晚于 attached 就绪，须轮询标记）
+        const bind = () => {
+          if (!window.contextMenu) {
+            setTimeout(bind, 50);
+            return;
+          }
+          // contextMenu.longPress 返回取消函数，这里常驻不取消
+          window.contextMenu.longPress(
+            this.shadow.$(".long-press-region").ele,
+            [
+              { id: "cut", label: "剪切", prefix: "✂️" },
+              { id: "copy", label: "复制", prefix: "📋" },
+              { id: "paste", label: "粘贴", prefix: "📌" },
+            ],
+            (id) => {
+              this.longPressPick = id === null ? "null（取消）" : JSON.stringify(id);
+            }
+          );
+        };
+        bind();
       },
     });
   </script>

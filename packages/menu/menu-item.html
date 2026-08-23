@@ -1,6 +1,7 @@
 <!--
   st-menu-item — Senti-UI 菜单项组件（基于 ofa.js）
-  语义属性：disabled；插槽 prefix / 默认（文字）/ suffix；视觉在 :host 上可直接覆盖，见 README.md
+  语义属性：disabled；插槽 prefix / 默认（文字）/ suffix / sub-menu（放 st-menu 子菜单）；
+  带 sub-menu 时自动显示 ▸ 箭头、hover 展开子菜单，视觉在 :host 上可直接覆盖，见 README.md
 -->
 <template component>
   <style>
@@ -56,6 +57,24 @@
     .prefix { margin-right: 0.857em; }
     .suffix { margin-left: 0.857em; color: var(--md-sys-color-on-surface-variant); }
 
+    /* sub-menu 插槽：仅作子菜单宿主的挂载点，不占布局
+       （子菜单面板是 fixed 定位，宿主自身零尺寸） */
+    .submenu {
+      position: absolute;
+      width: 0;
+      height: 0;
+    }
+
+    /* 带 sub-menu 时自动显示的展开箭头 */
+    .arrow {
+      display: none;
+      margin-left: 0.857em;
+      flex-shrink: 0;
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 1.25em; /* 图标 1em 随此缩放：比正文略大一点 */
+    }
+    :host([has-sub]) .arrow { display: inline-flex; }
+
     .label {
       flex: 1;
       min-width: 0;
@@ -85,6 +104,7 @@
   </style>
 
   <l-m src="../ripple/ripple.html"></l-m>
+  <l-m src="./menu.html"></l-m>
 
   <button class="native" type="button"></button>
   <div class="item">
@@ -92,8 +112,18 @@
     <div class="prefix"><slot name="prefix"></slot></div>
     <div class="label"><slot></slot></div>
     <div class="suffix"><slot name="suffix"></slot></div>
+    <span class="arrow">
+      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+        <path d="M0 0h24v24H0z" fill="none" />
+        <path
+          fill="currentColor"
+          d="M9.29 15.88L13.17 12L9.29 8.12a.996.996 0 1 1 1.41-1.41l4.59 4.59c.39.39.39 1.02 0 1.41L10.7 17.3a.996.996 0 0 1-1.41 0c-.38-.39-.39-1.03 0-1.42"
+        />
+      </svg>
+    </span>
     <st-ripple></st-ripple>
   </div>
+  <div class="submenu"><slot name="sub-menu"></slot></div>
 
   <script>
     import "../color/st-color-init.js";
@@ -106,13 +136,54 @@
         disabled() { this.applyDisabled(); },
       },
       ready() {
-        const sr = this.ele.shadowRoot;
+        const ele = this.ele;
+        const sr = ele.shadowRoot;
         // disabled 同步到内部原生 button：原生 disabled 天然阻断点击/键盘/焦点；
         // 其余 click 天然冒泡 + composed 到宿主，menu 面板监听后自动关闭
         this.applyDisabled = () => {
           sr.querySelector(".native").disabled = this.disabled !== null;
         };
         this.applyDisabled();
+
+        // sub-menu 插槽内放了 st-menu 则成为"子菜单触发项"：
+        // 自动挂 has-sub（显示 ▸ 箭头），hover 展开/移出收起（带延时缓冲），
+        // 点击切换（stopPropagation 防止冒到父面板把整链关掉）。
+        // 子菜单 open 必须经 $() 包装对象写（原生赋值不进 ofa data）
+        this._subEle = null;
+        const slot = sr.querySelector('slot[name="sub-menu"]');
+        this._syncSub = () => {
+          this._subEle = slot.assignedElements().find((el) => el.tagName === "ST-MENU") || null;
+          ele.toggleAttribute("has-sub", !!this._subEle);
+        };
+        slot.addEventListener("slotchange", this._syncSub);
+        this._syncSub();
+
+        // 触屏跳过 hover 展开逻辑（滑动会误触一串 pointerenter），
+        // 触屏上子菜单只靠 click 切换（下面的 click 监听）
+        ele.addEventListener("pointerenter", (e) => {
+          if (!this._subEle || e.pointerType === "touch") return;
+          clearTimeout(this._subCloseTimer);
+          const sub = $(this._subEle);
+          if (sub.open !== true) {
+            this._subOpenTimer = setTimeout(() => { sub.open = true; }, 120);
+          }
+        });
+        ele.addEventListener("pointerleave", (e) => {
+          if (!this._subEle || e.pointerType === "touch") return;
+          clearTimeout(this._subOpenTimer);
+          this._subCloseTimer = setTimeout(() => { $(this._subEle).open = false; }, 300);
+        });
+        ele.addEventListener("click", (e) => {
+          if (!this._subEle) return;
+          // 点击来自子菜单内部（选了子孙项）时不拦，放行给各级面板做整链关闭
+          if (e.composedPath().includes(this._subEle)) return;
+          e.stopPropagation();
+          $(this._subEle).open = !$(this._subEle).open;
+        });
+      },
+      detached() {
+        clearTimeout(this._subOpenTimer);
+        clearTimeout(this._subCloseTimer);
       },
       proto: {},
     });

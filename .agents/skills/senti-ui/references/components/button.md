@@ -150,6 +150,36 @@ $("st-button").on("click", () => {});
 
 子按钮自身的 variant / color / disabled 各自独立设置；点击事件在各自按钮上监听。
 
+### 作为选择器使用（Segmented Control / 筛选器）
+
+搭配 ofa 模板绑定语法，`st-button-group` 可以直接当选择器用——用 `attr:variant` / `attr:color` 表达选中态，用 `on:click` 写状态，不需要任何 JS 监听代码。
+
+单选（选中项 filled、其余 outlined）：
+
+```html
+<st-button-group connected>
+  <st-button attr:variant="range === 'day' ? 'filled' : 'outlined'" on:click="range = 'day'">日</st-button>
+  <st-button attr:variant="range === 'week' ? 'filled' : 'outlined'" on:click="range = 'week'">周</st-button>
+  <st-button attr:variant="range === 'month' ? 'filled' : 'outlined'" on:click="range = 'month'">月</st-button>
+</st-button-group>
+```
+
+多选筛选（选中项 filled + secondary 色、未选中 outlined）：需要页面 data 中初始化 `filters = []` 并提供 `toggleFilter` 方法（写在 o-page 的 script 中，切换某项在数组中的有无）：
+
+```html
+<st-button-group>
+  <st-button attr:variant="filters.includes('all') ? 'filled' : 'outlined'" attr:color="filters.includes('all') ? 'secondary' : null" on:click="toggleFilter('all')">全部</st-button>
+  <st-button attr:variant="filters.includes('active') ? 'filled' : 'outlined'" attr:color="filters.includes('active') ? 'secondary' : null" on:click="toggleFilter('active')">进行中</st-button>
+  <st-button attr:variant="filters.includes('done') ? 'filled' : 'outlined'" attr:color="filters.includes('done') ? 'secondary' : null" on:click="toggleFilter('done')">已完成</st-button>
+</st-button-group>
+```
+
+注意：
+
+- 选中态一律用 `attr:variant` / `attr:color` 语义切换，**不要**用 `:style` 改背景/圆角表达选中——`st-button` 的内联色会被组件配色逻辑覆盖，且 group 会内联设置子按钮 `border-radius`（见「注意事项」）
+- 纯 JS 场景切换选中态用 `$("sel").attr("variant", "filled")` / `attr("color", null)`
+- 状态变量（`range` / `filters`）需在页面 data 中初始化（如 `range = 'day'`、`filters = ['all']`），否则首次渲染无选中态
+
 ## st-split-button 分裂按钮
 
 主操作区（默认插槽）+ 箭头区（展开菜单）二合一。点主区触发主操作（`click` 冒泡到宿主，普通按钮用法一致）；点箭头展开 `menu` 插槽中的菜单（建议放 `st-menu-item`，分隔线 `<hr slot="menu">`）。

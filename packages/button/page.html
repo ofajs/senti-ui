@@ -81,6 +81,21 @@
   </section>
 
   <section>
+    <h3>button-group 作为选择器（attr:variant / attr:color 表达选中态）</h3>
+    <st-button-group connected>
+      <st-button attr:variant="range === 'day' ? 'filled' : 'outlined'" on:click="range = 'day'">日</st-button>
+      <st-button attr:variant="range === 'week' ? 'filled' : 'outlined'" on:click="range = 'week'">周</st-button>
+      <st-button attr:variant="range === 'month' ? 'filled' : 'outlined'" on:click="range = 'month'">月</st-button>
+    </st-button-group>
+    <st-button-group>
+      <st-button attr:variant="filters.includes('all') ? 'filled' : 'outlined'" attr:color="filters.includes('all') ? 'secondary' : null" on:click="toggleFilter('all')">全部</st-button>
+      <st-button attr:variant="filters.includes('active') ? 'filled' : 'outlined'" attr:color="filters.includes('active') ? 'secondary' : null" on:click="toggleFilter('active')">进行中</st-button>
+      <st-button attr:variant="filters.includes('done') ? 'filled' : 'outlined'" attr:color="filters.includes('done') ? 'secondary' : null" on:click="toggleFilter('done')">已完成</st-button>
+    </st-button-group>
+    <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant);">range={{range}}，filters={{filters}}</span>
+  </section>
+
+  <section>
     <h3>split-button（主操作 + 下拉菜单，主操作点击计数 {{splitCount}}）</h3>
     <st-split-button on:click="onMain" on:open="onMenuOpen" on:close="onMenuClose">
       发送
@@ -131,9 +146,13 @@
 
   <script>
     export default async () => ({
-      data: { busy: false, demoVariant: "filled", splitCount: 0, lastPick: "（无）", iconCount: 0 },
+      data: { busy: false, demoVariant: "filled", splitCount: 0, lastPick: "（无）", iconCount: 0, range: "day", filters: ["all"] },
       // JS 主动操作在 proto 里
       proto: {
+        toggleFilter(key) {
+          const i = this.filters.indexOf(key);
+          i === -1 ? this.filters.push(key) : this.filters.splice(i, 1);
+        },
         startTask() {
           this.busy = true;
           setTimeout(() => { this.busy = false; }, 1500);

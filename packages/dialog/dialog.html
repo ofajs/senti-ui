@@ -15,6 +15,10 @@
       z-index: 1000;
       display: grid;
       place-items: center;
+      /* 轨道必须是 minmax(0,100%)：默认 auto 轨道会被内容撑高，
+         面板的 height/max-height:100% 解析不了 → fullscreen 等高面板溢出视口 */
+      grid-template-rows: minmax(0, 100%);
+      grid-template-columns: minmax(0, 100%);
       box-sizing: border-box;
       padding: 1.43em;
       font-size: 14px;
@@ -33,9 +37,10 @@
       opacity: 0;
     }
 
-    /* M3 emphasized 动效：进入 fade + scale(0.9) 上移入场 300ms，
-       退出 fade + scale(0.95) 收缩 200ms（均为 M3 emphasized 曲线）。
-       用 animation 而非 transition：display none→grid 切换时 animation 自动重播 */
+    /* 面板入场参考 Punch-UI 中间弹窗：从上方 100px 纵向压扁（scale(1,0.5)）落下展开，
+       内容子元素延迟一层淡入（先撑开容器、再显内容，层次感）；
+       退出 fade + 上移收缩 200ms。用 animation 而非 transition：
+       display none→grid 切换时 animation 自动重播 */
     :host([open]) .scrim {
       animation: st-dlg-scrim-in 0.25s ease forwards;
     }
@@ -43,26 +48,39 @@
       animation: st-dlg-scrim-out 0.2s ease forwards;
     }
     :host([open]) .panel {
-      animation: st-dlg-in 0.3s cubic-bezier(0.2, 0, 0, 1) forwards;
+      animation: st-dlg-in 0.3s ease forwards;
     }
     :host([closing]) .panel {
       animation: st-dlg-out 0.2s cubic-bezier(0.2, 0, 0, 1) forwards;
     }
+    .panel > * {
+      opacity: 0;
+    }
+    :host([open]) .panel > * {
+      animation: st-dlg-children-in 0.2s ease 0.2s forwards;
+    }
+    :host([closing]) .panel > * {
+      animation: st-dlg-children-out 0.1s ease forwards;
+    }
     @keyframes st-dlg-scrim-in { to { opacity: 1; } }
     @keyframes st-dlg-scrim-out { from { opacity: 1; } }
     @keyframes st-dlg-in {
-      from { opacity: 0; transform: scale(0.9) translateY(-1.14em); }
+      from { opacity: 0; transform: translateY(-7.14em) scale(1, 0.5); }
       to { opacity: 1; transform: none; }
     }
     @keyframes st-dlg-out {
       from { opacity: 1; }
-      to { opacity: 0; transform: scale(0.95) translateY(-0.57em); }
+      to { opacity: 0; transform: translateY(-3.57em) scale(1, 0.7); }
     }
+    @keyframes st-dlg-children-in { to { opacity: 1; } }
+    @keyframes st-dlg-children-out { from { opacity: 1; } }
     @media (prefers-reduced-motion: reduce) {
       :host([open]) .scrim,
       :host([closing]) .scrim,
       :host([open]) .panel,
-      :host([closing]) .panel {
+      :host([closing]) .panel,
+      :host([open]) .panel > *,
+      :host([closing]) .panel > * {
         animation-duration: 0.01ms;
       }
     }

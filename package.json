@@ -1,6 +1,6 @@
 {
   "name": "senti-ui",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Senti-UI — an AI-first component library built on ofa.js with Material Design 3 color system",
   "type": "module",
   "scripts": {

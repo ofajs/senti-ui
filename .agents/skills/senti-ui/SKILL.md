@@ -1,7 +1,7 @@
 ---
 name: "senti-ui"
 description: "Senti-UI component library knowledge base (ofa.js + Material Design 3, no build step). Invoke when the user asks about Senti-UI or st-* components, wants to build a web page/app UI with senti-ui, asks about st-button / st-input / st-dialog / toast etc., theming with M3 color tokens, or developing new components based on senti-ui."
-version: "1.0.7"
+version: "1.0.8"
 ---
 
 # Senti-UI 组件库使用指南

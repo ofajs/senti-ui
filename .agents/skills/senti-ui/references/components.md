@@ -14,6 +14,7 @@
 ## st-button-group 按钮组
 
 - 属性：`connected`（连体）、`full-width`（等分）；圆角由 JS 按位置自动设置
+- 可作选择器：`attr:variant="state === 'x' ? 'filled' : 'outlined'"` + `on:click="state = 'x'"`（详见 [components/button.md](./components/button.md)）
 
 ## st-split-button 分裂按钮
 

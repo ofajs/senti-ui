@@ -68,6 +68,31 @@
 - Escape 只关闭最内层，逐次向外
 - 父菜单关闭时级联关闭所有子孙菜单
 
+## 命令式右键菜单（context-menu.js）
+
+传定位信息 + items 数组，直接生成挂 body 的定位菜单（用完即毁），`await` 得到点击的 item id；点空白 / Escape 取消返回 `null`。
+
+```js
+import contextMenu from "/packages/menu/context-menu.js";
+
+// 第一个参数：带定位信息的事件（自动 preventDefault + 取 clientX/Y），或 { x, y } 坐标
+const id = await contextMenu(e, [
+  { id: "cut", label: "剪切", prefix: "✂️" },
+  { id: "copy", label: "复制", suffix: "⌘C" },
+  { separator: true },
+  {
+    id: "sort", label: "排序", children: [   // children 为子菜单（可嵌套），父项点击只开合不选中
+      { id: "sort-name", label: "按名称" },
+      { id: "sort-size", label: "按大小" },
+    ],
+  },
+  { id: "del", label: "删除", disabled: true },
+]);
+// id → "cut" / "sort-size" 等；取消 → null
+```
+
+items 结构：`{ id, label, prefix?, suffix?, disabled?, children? }`（叶子项的 id 即返回值）与 `{ separator: true }` 分隔线。定位自动翻转避让视口；组件按需注入 `<l-m>`，无需预引入。
+
 ## 右键菜单（openAt）
 
 不需要 trigger，JS 在 `contextmenu` 事件里调 `openAt(x, y)` 在光标处打开，面板自动翻转避让视口（右侧/下方空间不足翻到光标左/上方）。与多级子菜单可组合使用。

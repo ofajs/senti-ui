@@ -106,6 +106,12 @@
           }
           const panel = this.ele.shadowRoot.querySelector(".panel");
           if (val) {
+            // 子菜单检测兜底：ofa 升级 light DOM 的时序下 ready 时 parentElement
+            // 可能尚未就绪（命令式动态构建时踩到），首次打开时再校验一次
+            if (!this._isSub && this.ele.closest("st-menu-item")) {
+              this._isSub = true;
+              this.ele.setAttribute("sub", "");
+            }
             // 先渲染再定位，避免闪烁；重新打开时取消关闭过渡并重启进入动画
             clearTimeout(this._closeTimer);
             panel.classList.remove("closing");

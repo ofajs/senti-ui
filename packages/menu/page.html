@@ -161,6 +161,26 @@
     </st-menu>
   </section>
 
+  <section>
+    <h3>
+      命令式右键菜单（context-menu.js：传 event + items 数组，返回点击的 item
+      id，点空白/Escape 返回 null）
+    </h3>
+    <div class="ctx-region" on:contextmenu="onCmdCtx">
+      在这个区域内<b>点击右键</b>：菜单由 JS 数组生成、直接挂 body，
+      支持 children 子菜单与 separator 分隔线
+    </div>
+    <p
+      style="margin: 0; font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
+    >
+      返回值：<span
+        class="code"
+        style="font-family: ui-monospace, monospace"
+        >{{cmdPick}}</span
+      >
+    </p>
+  </section>
+
   <p
     style="
       margin: 0;
@@ -180,7 +200,7 @@
 
   <script>
     export default async () => ({
-      data: { lastPick: "（无）", openCount: 0, menuOpen: false },
+      data: { lastPick: "（无）", openCount: 0, menuOpen: false, cmdPick: "（未调用）" },
       proto: {
         onOpen() {
           this.openCount += 1;
@@ -194,6 +214,26 @@
         onCtx(e) {
           e.preventDefault(); // 阻止浏览器默认右键菜单
           this.shadow.$("#ctxMenu").openAt(e.clientX, e.clientY);
+        },
+        async onCmdCtx(e) {
+          const id = await window.contextMenu(e, [
+            { id: "cut", label: "剪切", prefix: "✂️" },
+            { id: "copy", label: "复制", prefix: "📋", suffix: "⌘C" },
+            { id: "paste", label: "粘贴", prefix: "📌" },
+            { separator: true },
+            {
+              id: "sort",
+              label: "排序",
+              children: [
+                { id: "sort-name", label: "按名称" },
+                { id: "sort-size", label: "按大小" },
+              ],
+            },
+            { separator: true },
+            { id: "refresh", label: "刷新", prefix: "🔄" },
+            { id: "del", label: "删除", prefix: "🗑", disabled: true },
+          ]);
+          this.cmdPick = id === null ? "null（点空白取消）" : JSON.stringify(id);
         },
         pick(name) {
           this.lastPick = name;

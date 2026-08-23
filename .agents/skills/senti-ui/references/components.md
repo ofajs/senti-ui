@@ -131,6 +131,14 @@ const t = toast("已保存", { duration: 3000 }); // 返回 { close, el }；dura
 - `open` 运行时状态；面板 fixed 定位 JS 计算（翻转避让视口）
 - 点外部 / Escape / 选中自动关闭；事件 `open` / `close`
 - item 属性：`disabled`；菜单文字直接写在 item 内
+- 多级子菜单：`st-menu` 放在 item 的 `sub-menu` 插槽内，箭头自动显示、hover 展开、选中任意项整链关闭
+- 右键菜单：`openAt(x, y)`（ofa 页面在 `on:contextmenu` 里 `e.preventDefault()` 后调）；面板自动翻转避让视口
+- `contextMenu` 命令式工具（无需预引入）：`await contextMenu(e, [{id,label,prefix,suffix,disabled,children},{separator:true}])` → 点击的叶子项 id / 取消 null，菜单挂 body 用完即毁
+
+```js
+import contextMenu from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/menu/context-menu.js";
+const id = await contextMenu(e, [{ id: "copy", label: "复制" }, { separator: true }, { id: "del", label: "删除", disabled: true }]);
+```
 
 ## st-tab-bar / st-tab-item 标签栏 与 st-nav-bar / st-nav-item 导航栏
 

@@ -18,5 +18,10 @@
 <body>
   <l-m src="./menu.html"></l-m>
   <l-m src="../button/button.html"></l-m>  <o-page src="./page.html"></o-page>
+  <!-- 命令式工具预加载（坑 #6：页面模块内不能相对 import，须挂 window 供轮询） -->
+  <script type="module">
+    import contextMenu from "./context-menu.js";
+    window.contextMenu = contextMenu;
+  </script>
 </body>
 </html>

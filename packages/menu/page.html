@@ -1,9 +1,24 @@
 <!-- st-menu 验收页，由同目录 index.html 通过 <o-page> 加载 -->
 <template page>
   <style>
-    :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
-    section { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
-    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+    :host {
+      display: grid;
+      gap: 24px;
+      padding: 40px;
+      align-content: start;
+    }
+    section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    h3 {
+      margin: 0;
+      font-size: 14px;
+      color: var(--md-sys-color-on-surface-variant);
+      width: 100%;
+    }
     .ctx-region {
       width: 100%;
       min-height: 120px;
@@ -21,10 +36,20 @@
     <h3>基础</h3>
     <st-menu on:open="onOpen" on:close="onClose">
       <st-button slot="trigger" variant="outlined">右对齐菜单 ▾</st-button>
-      <st-menu-item><span slot="prefix">✏️</span>编辑<span slot="suffix">⌘E</span></st-menu-item>
-      <st-menu-item><span slot="prefix">📋</span>复制<span slot="suffix">⌘C</span></st-menu-item>
-      <st-menu-item disabled><span slot="prefix">🗑</span>删除（禁用）</st-menu-item>
-      <hr>
+      <st-menu-item
+        ><span slot="prefix">✏️</span>编辑<span slot="suffix"
+          >⌘E</span
+        ></st-menu-item
+      >
+      <st-menu-item
+        ><span slot="prefix">📋</span>复制<span slot="suffix"
+          >⌘C</span
+        ></st-menu-item
+      >
+      <st-menu-item disabled
+        ><span slot="prefix">🗑</span>删除（禁用）</st-menu-item
+      >
+      <hr />
       <st-menu-item on:click="onAbout">关于</st-menu-item>
     </st-menu>
 
@@ -42,59 +67,115 @@
       <st-menu-item>选项一</st-menu-item>
       <st-menu-item>选项二</st-menu-item>
     </st-menu>
-    <span style="font-size:13px; color: var(--md-sys-color-on-surface-variant);">menuOpen 数据：<span class="code" style="font-family: ui-monospace, monospace;">{{menuOpen}}</span>（选中/点外部/Escape 关闭后自动回写 false）</span>
+    <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
+      >menuOpen 数据：<span
+        class="code"
+        style="font-family: ui-monospace, monospace"
+        >{{menuOpen}}</span
+      >（选中/点外部/Escape 关闭后自动回写 false）</span
+    >
   </section>
 
   <section>
-    <h3>多级子菜单（st-menu 直接嵌套，hover 展开，选中任意项整链关闭）</h3>
+    <h3>
+      多级子菜单（st-menu 放在 item 的 sub-menu 插槽内，hover
+      展开，选中任意项整链关闭）
+    </h3>
     <st-menu>
       <st-button slot="trigger" variant="outlined">多级菜单 ▾</st-button>
       <st-menu-item><span slot="prefix">📄</span>新建</st-menu-item>
-      <st-menu>
-        <st-menu-item slot="trigger"><span slot="prefix">🗂</span>导出为<span slot="suffix">▸</span></st-menu-item>
-        <st-menu-item>PDF</st-menu-item>
-        <st-menu-item>Markdown</st-menu-item>
-        <st-menu>
-          <st-menu-item slot="trigger">图片<span slot="suffix">▸</span></st-menu-item>
-          <st-menu-item>PNG</st-menu-item>
-          <st-menu-item>SVG</st-menu-item>
+      <st-menu-item>
+        <span slot="prefix">🗂</span>导出为
+        <st-menu slot="sub-menu">
+          <st-menu-item>PDF</st-menu-item>
+          <st-menu-item>Markdown</st-menu-item>
+          <st-menu-item>
+            图片
+            <st-menu slot="sub-menu">
+              <st-menu-item>PNG</st-menu-item>
+              <st-menu-item>SVG</st-menu-item>
+            </st-menu>
+          </st-menu-item>
         </st-menu>
-      </st-menu>
-      <hr>
-      <st-menu-item disabled><span slot="prefix">🗑</span>删除（禁用）</st-menu-item>
+      </st-menu-item>
+      <hr />
+      <st-menu-item disabled
+        ><span slot="prefix">🗑</span>删除（禁用）</st-menu-item
+      >
     </st-menu>
   </section>
 
   <section>
     <h3>键盘行为</h3>
-    <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant); width:100%;">
-      <span class="code" style="font-family: ui-monospace, monospace;">Escape</span> 关闭、点击组件外部关闭；菜单项 <span class="code" style="font-family: ui-monospace, monospace;">Tab</span> 良好可达、<span class="code" style="font-family: ui-monospace, monospace;">Enter</span>/<span class="code" style="font-family: ui-monospace, monospace;">Space</span> 激活
+    <p
+      style="
+        margin: 0;
+        font-size: 13px;
+        color: var(--md-sys-color-on-surface-variant);
+        width: 100%;
+      "
+    >
+      <span class="code" style="font-family: ui-monospace, monospace"
+        >Escape</span
+      >
+      关闭、点击组件外部关闭；菜单项
+      <span class="code" style="font-family: ui-monospace, monospace">Tab</span>
+      良好可达、<span class="code" style="font-family: ui-monospace, monospace"
+        >Enter</span
+      >/<span class="code" style="font-family: ui-monospace, monospace"
+        >Space</span
+      >
+      激活
     </p>
   </section>
 
   <section>
-    <h3>右键菜单（区域内 on:contextmenu 调 openAt(x, y)，面板自动翻转避让视口）</h3>
+    <h3>
+      右键菜单（区域内 on:contextmenu 调 openAt(x, y)，面板自动翻转避让视口）
+    </h3>
     <div class="ctx-region" on:contextmenu="onCtx">
       在这个区域内<b>点击右键</b>试试（菜单不会超出屏幕可视范围；靠边/角落右键会自动翻转）
     </div>
     <st-menu id="ctxMenu">
-      <st-menu-item on:click="pick('剪切')"><span slot="prefix">✂️</span>剪切</st-menu-item>
-      <st-menu-item on:click="pick('复制')"><span slot="prefix">📋</span>复制</st-menu-item>
-      <st-menu-item on:click="pick('粘贴')"><span slot="prefix">📌</span>粘贴</st-menu-item>
-      <hr>
-      <st-menu>
-        <st-menu-item slot="trigger">排序<span slot="suffix">▸</span></st-menu-item>
-        <st-menu-item on:click="pick('按名称排序')">按名称</st-menu-item>
-        <st-menu-item on:click="pick('按大小排序')">按大小</st-menu-item>
-      </st-menu>
-      <hr>
-      <st-menu-item on:click="pick('刷新')"><span slot="prefix">🔄</span>刷新</st-menu-item>
+      <st-menu-item on:click="pick('剪切')"
+        ><span slot="prefix">✂️</span>剪切</st-menu-item
+      >
+      <st-menu-item on:click="pick('复制')"
+        ><span slot="prefix">📋</span>复制</st-menu-item
+      >
+      <st-menu-item on:click="pick('粘贴')"
+        ><span slot="prefix">📌</span>粘贴</st-menu-item
+      >
+      <hr />
+      <st-menu-item>
+        排序
+        <st-menu slot="sub-menu">
+          <st-menu-item on:click="pick('按名称排序')">按名称</st-menu-item>
+          <st-menu-item on:click="pick('按大小排序')">按大小</st-menu-item>
+        </st-menu>
+      </st-menu-item>
+      <hr />
+      <st-menu-item on:click="pick('刷新')"
+        ><span slot="prefix">🔄</span>刷新</st-menu-item
+      >
     </st-menu>
   </section>
 
-  <p style="margin:0; font-size:14px; color: var(--md-sys-color-on-surface-variant);">
-    菜单项点击：<span class="code" style="font-family: ui-monospace, monospace;">{{lastPick}}</span>
-    ｜ open/close 状态：<span class="code" style="font-family: ui-monospace, monospace;">{{openCount}}</span>
+  <p
+    style="
+      margin: 0;
+      font-size: 14px;
+      color: var(--md-sys-color-on-surface-variant);
+    "
+  >
+    菜单项点击：<span class="code" style="font-family: ui-monospace, monospace"
+      >{{lastPick}}</span
+    >
+    ｜ open/close 状态：<span
+      class="code"
+      style="font-family: ui-monospace, monospace"
+      >{{openCount}}</span
+    >
   </p>
 
   <script>

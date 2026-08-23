@@ -2,8 +2,8 @@
   st-menu — Senti-UI 下拉菜单组件（基于 ofa.js）
   语义属性：align（left|right，面板与触发器的对齐）；open 为运行时状态（el.open 读写/JS 控制）
   trigger 插槽为触发器；菜单项为 light DOM 的 st-menu-item；点击外部/Escape/选中后自动关闭，见 README.md
-  多级子菜单：st-menu 直接嵌套在父级 st-menu 内（trigger 插槽放父级菜单项），
-  自动进入子菜单模式：hover 展开、面板定位在触发项侧边并自动翻转
+  多级子菜单：st-menu 放在 st-menu-item 的 sub-menu 插槽内（自动进入子菜单模式：
+  面板定位在该 item 侧边并自动翻转，由 item 负责 hover 展开与箭头）
   右键菜单：不放 trigger，JS 调 openAt(x, y) 在光标处打开（自动翻转避让视口）
 -->
 <template component>
@@ -16,6 +16,18 @@
       line-height: 1.2;
       font-family: inherit;
       color: var(--md-sys-color-on-surface);
+    }
+
+    /* 子菜单模式（ready 时检测挂 sub 属性）：宿主零尺寸、不参与父面板布局，
+       仅作为 fixed 面板的挂载点；定位锚点由 JS 取所在 st-menu-item 的 rect */
+    :host([sub]) {
+      position: absolute;
+      width: 0;
+      height: 0;
+      display: block;
+    }
+    :host([sub]) .trigger {
+      display: none;
     }
 
     .trigger {
@@ -103,8 +115,9 @@
             this.ele.dispatchEvent(new Event("open", { bubbles: true, composed: true }));
           } else {
             // 关闭：级联关闭所有仍打开的子菜单，再做退出过渡隐藏。
-            // 面板 display:none 会连带隐藏 fixed 的子菜单面板，这里同步清状态避免重开时残留
-            for (const sub of [...this._openSubs]) sub.open = false;
+            // 面板 display:none 会连带隐藏 fixed 的子菜单面板，这里同步清状态避免重开时残留。
+            // 注意：_openSubs 里存的是原生元素，open 必须经 $() 包装对象写（原生赋值不进 ofa data）
+            for (const sub of [...this._openSubs]) $(sub).open = false;
             this._anchorPoint = null;
             panel.classList.add("closing");
             clearTimeout(this._closeTimer);
@@ -122,8 +135,10 @@
         const sr = ele.shadowRoot;
         this._openSubs = new Set();
 
-        // 子菜单模式：本组件被写在另一个 st-menu 内（light DOM 祖先链可判）
+        // 子菜单模式：本组件挂在某个 st-menu-item 的 sub-menu 插槽内（祖先链可判）。
+        // hover 展开/收起与箭头由 st-menu-item 负责，这里只负责定位与关闭链
         this._isSub = !!(ele.parentElement && ele.parentElement.closest("st-menu"));
+        if (this._isSub) ele.setAttribute("sub", "");
 
         // 点击触发器切换。子菜单模式下 click 也要停掉冒泡：
         // 否则会冒到父级面板的"点击即关闭"监听，把父菜单一起关掉
@@ -139,22 +154,6 @@
           if (this.open) this.open = false;
         });
 
-        // 子菜单 hover 展开/收起（带延时缓冲，容许触发项与面板间的移动抖动）
-        if (this._isSub) {
-          ele.addEventListener("pointerenter", () => {
-            clearTimeout(this._subOpenTimer);
-            clearTimeout(this._subCloseTimer);
-            if (!this.open) {
-              this._subOpenTimer = setTimeout(() => { this.open = true; }, 120);
-            }
-          });
-          ele.addEventListener("pointerleave", () => {
-            clearTimeout(this._subOpenTimer);
-            clearTimeout(this._subCloseTimer);
-            this._subCloseTimer = setTimeout(() => { this.open = false; }, 300);
-          });
-        }
-
         // 追踪仍打开的后代子菜单（open/close 事件 composed 冒泡到宿主）
         ele.addEventListener("open", (e) => {
           if (e.target !== ele) this._openSubs.add(e.target);
@@ -167,7 +166,7 @@
         sr.querySelector(".panel").addEventListener("pointerover", (e) => {
           const path = e.composedPath();
           for (const sub of [...this._openSubs]) {
-            if (!path.includes(sub)) sub.open = false;
+            if (!path.includes(sub)) $(sub).open = false;
           }
         });
 
@@ -220,7 +219,11 @@
               y + panelH > vh - margin ? "50% 100%" : "50% 0";
             panel.style.minWidth = "";
           } else {
-            const rect = ele.getBoundingClientRect();
+            // 子菜单锚点 = 所在的 st-menu-item（宿主本身零尺寸）
+            const anchor = this._isSub ? ele.closest("st-menu-item") : null;
+            const rect = anchor
+              ? anchor.getBoundingClientRect()
+              : ele.getBoundingClientRect();
             if (this._isSub) {
               // 子菜单：面板放触发项右侧（空间不足翻转到左侧），顶部对齐触发项
               left = rect.right + gap;

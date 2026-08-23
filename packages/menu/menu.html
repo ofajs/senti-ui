@@ -4,6 +4,7 @@
   trigger 插槽为触发器；菜单项为 light DOM 的 st-menu-item；点击外部/Escape/选中后自动关闭，见 README.md
   多级子菜单：st-menu 直接嵌套在父级 st-menu 内（trigger 插槽放父级菜单项），
   自动进入子菜单模式：hover 展开、面板定位在触发项侧边并自动翻转
+  右键菜单：不放 trigger，JS 调 openAt(x, y) 在光标处打开（自动翻转避让视口）
 -->
 <template component>
   <style>
@@ -104,6 +105,7 @@
             // 关闭：级联关闭所有仍打开的子菜单，再做退出过渡隐藏。
             // 面板 display:none 会连带隐藏 fixed 的子菜单面板，这里同步清状态避免重开时残留
             for (const sub of [...this._openSubs]) sub.open = false;
+            this._anchorPoint = null;
             panel.classList.add("closing");
             clearTimeout(this._closeTimer);
             this._closeTimer = setTimeout(() => {
@@ -127,6 +129,7 @@
         // 否则会冒到父级面板的"点击即关闭"监听，把父菜单一起关掉
         sr.querySelector(".trigger").addEventListener("click", (e) => {
           if (this._isSub) e.stopPropagation();
+          this._anchorPoint = null; // 回到触发器定位模式
           this.open = !this.open;
         });
 
@@ -186,11 +189,19 @@
         this.unbindDocEvents();
       },
       proto: {
+        // 在指定视口坐标打开（右键菜单场景）：面板左上角对齐坐标，
+        // 空间不足自动向左/上翻转，不超出可视区域。ofa 页面用法：
+        // on:contextmenu 事件里 e.preventDefault() 后调 openAt(e.clientX, e.clientY)
+        openAt(x, y) {
+          this._anchorPoint = { x, y };
+          // 已打开时（菜单开着又右键别处）watch 不会再触发，手动重定位
+          if (this.open) this.updatePosition();
+          else this.open = true;
+        },
         updatePosition() {
           if (!this.open) return;
           const ele = this.ele;
           const panel = ele.shadowRoot.querySelector(".panel");
-          const rect = ele.getBoundingClientRect();
           const panelW = panel.offsetWidth;
           const panelH = panel.offsetHeight;
           const vw = window.innerWidth;
@@ -199,31 +210,43 @@
           const gap = 4;
 
           let left, top;
-          if (this._isSub) {
-            // 子菜单：面板放触发项右侧（空间不足翻转到左侧），顶部对齐触发项
-            left = rect.right + gap;
-            if (left + panelW > vw - margin) {
-              left = Math.max(margin, rect.left - panelW - gap);
-              panel.style.transformOrigin = "100% 0";
-            } else {
-              panel.style.transformOrigin = "0 0";
-            }
-            top = Math.max(margin, Math.min(rect.top, vh - panelH - margin));
+          if (this._anchorPoint) {
+            // 坐标锚点（右键菜单）：面板左上角对齐光标，
+            // 右侧/下方空间不足时翻转到光标左/上方，再夹紧在视口内
+            const { x, y } = this._anchorPoint;
+            left = x + panelW > vw - margin ? Math.max(margin, x - panelW) : x;
+            top = y + panelH > vh - margin ? Math.max(margin, y - panelH) : y;
+            panel.style.transformOrigin =
+              y + panelH > vh - margin ? "50% 100%" : "50% 0";
             panel.style.minWidth = "";
           } else {
-            left =
-              (this.align || "right") === "left"
-                ? rect.left
-                : rect.right - panelW;
-            left = Math.max(margin, Math.min(left, vw - panelW - margin));
+            const rect = ele.getBoundingClientRect();
+            if (this._isSub) {
+              // 子菜单：面板放触发项右侧（空间不足翻转到左侧），顶部对齐触发项
+              left = rect.right + gap;
+              if (left + panelW > vw - margin) {
+                left = Math.max(margin, rect.left - panelW - gap);
+                panel.style.transformOrigin = "100% 0";
+              } else {
+                panel.style.transformOrigin = "0 0";
+              }
+              top = Math.max(margin, Math.min(rect.top, vh - panelH - margin));
+              panel.style.minWidth = "";
+            } else {
+              left =
+                (this.align || "right") === "left"
+                  ? rect.left
+                  : rect.right - panelW;
+              left = Math.max(margin, Math.min(left, vw - panelW - margin));
 
-            top = rect.bottom + gap;
-            if (top + panelH > vh - margin) {
-              // 下方空间不足时翻转到上方
-              const topAbove = rect.top - panelH - gap;
-              top = topAbove >= margin ? topAbove : Math.max(margin, vh - panelH - margin);
+              top = rect.bottom + gap;
+              if (top + panelH > vh - margin) {
+                // 下方空间不足时翻转到上方
+                const topAbove = rect.top - panelH - gap;
+                top = topAbove >= margin ? topAbove : Math.max(margin, vh - panelH - margin);
+              }
+              panel.style.minWidth = Math.max(rect.width, 112) + "px";
             }
-            panel.style.minWidth = Math.max(rect.width, 112) + "px";
           }
 
           panel.style.left = left + "px";

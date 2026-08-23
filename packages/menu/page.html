@@ -4,6 +4,17 @@
     :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
     section { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
     h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+    .ctx-region {
+      width: 100%;
+      min-height: 120px;
+      box-sizing: border-box;
+      padding: 20px;
+      border: 1px dashed var(--md-sys-color-outline-variant);
+      border-radius: 12px;
+      font-size: 14px;
+      color: var(--md-sys-color-on-surface-variant);
+      user-select: none;
+    }
   </style>
 
   <section>
@@ -61,6 +72,26 @@
     </p>
   </section>
 
+  <section>
+    <h3>右键菜单（区域内 on:contextmenu 调 openAt(x, y)，面板自动翻转避让视口）</h3>
+    <div class="ctx-region" on:contextmenu="onCtx">
+      在这个区域内<b>点击右键</b>试试（菜单不会超出屏幕可视范围；靠边/角落右键会自动翻转）
+    </div>
+    <st-menu id="ctxMenu">
+      <st-menu-item on:click="pick('剪切')"><span slot="prefix">✂️</span>剪切</st-menu-item>
+      <st-menu-item on:click="pick('复制')"><span slot="prefix">📋</span>复制</st-menu-item>
+      <st-menu-item on:click="pick('粘贴')"><span slot="prefix">📌</span>粘贴</st-menu-item>
+      <hr>
+      <st-menu>
+        <st-menu-item slot="trigger">排序<span slot="suffix">▸</span></st-menu-item>
+        <st-menu-item on:click="pick('按名称排序')">按名称</st-menu-item>
+        <st-menu-item on:click="pick('按大小排序')">按大小</st-menu-item>
+      </st-menu>
+      <hr>
+      <st-menu-item on:click="pick('刷新')"><span slot="prefix">🔄</span>刷新</st-menu-item>
+    </st-menu>
+  </section>
+
   <p style="margin:0; font-size:14px; color: var(--md-sys-color-on-surface-variant);">
     菜单项点击：<span class="code" style="font-family: ui-monospace, monospace;">{{lastPick}}</span>
     ｜ open/close 状态：<span class="code" style="font-family: ui-monospace, monospace;">{{openCount}}</span>
@@ -78,6 +109,13 @@
         },
         onAbout() {
           this.lastPick = "关于";
+        },
+        onCtx(e) {
+          e.preventDefault(); // 阻止浏览器默认右键菜单
+          this.shadow.$("#ctxMenu").openAt(e.clientX, e.clientY);
+        },
+        pick(name) {
+          this.lastPick = name;
         },
       },
     });

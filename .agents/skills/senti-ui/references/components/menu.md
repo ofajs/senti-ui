@@ -64,6 +64,28 @@
 - Escape 只关闭最内层，逐次向外
 - 父菜单关闭时级联关闭所有子孙菜单
 
+## 右键菜单（openAt）
+
+不需要 trigger，JS 在 `contextmenu` 事件里调 `openAt(x, y)` 在光标处打开，面板自动翻转避让视口（右侧/下方空间不足翻到光标左/上方）。与多级子菜单可组合使用。
+
+```html
+<div on:contextmenu="onCtx">右键区域</div>
+<st-menu id="ctxMenu">
+  <st-menu-item>剪切</st-menu-item>
+  <st-menu-item>复制</st-menu-item>
+</st-menu>
+```
+
+```js
+// ofa 页面模块
+onCtx(e) {
+  e.preventDefault(); // 阻止浏览器默认右键菜单
+  this.shadow.$("#ctxMenu").openAt(e.clientX, e.clientY);
+}
+```
+
+行为：已在别处打开时再次右键会重新定位；关闭（选中/外部点击/Escape）后 `_anchorPoint` 自动清除，不影响后续 trigger 定位。
+
 ## 默认值（st-menu 面板，直接覆盖即可）
 
 | 属性 | 默认值 |
@@ -96,6 +118,7 @@
 - 点击外部关闭用 composedPath 判断（坑 #21），滚动/resize 时自动重定位
 - `align="left"` 面板左对齐触发器，默认右对齐
 - 多级子菜单：直接嵌套 `st-menu`（见上文），trigger 插槽放父级菜单项 + suffix 放 `▸`
+- 右键菜单：不放 trigger，`on:contextmenu` 里 `e.preventDefault()` 后调 `openAt(e.clientX, e.clientY)`（见上文）
 
 ## 验证页面
 

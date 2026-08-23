@@ -36,6 +36,34 @@
 
 分隔线：菜单项之间放原生 `<hr>`。
 
+## 多级子菜单
+
+`st-menu` 直接嵌套在父级 `st-menu` 内即自动进入子菜单模式（无需额外属性）：trigger 插槽放父级菜单中的那一项（建议 suffix 放 `▸` 箭头提示），默认插槽放子级菜单项。可以任意深度嵌套。
+
+```html
+<st-menu>
+  <st-button slot="trigger" variant="outlined">操作 ▾</st-button>
+  <st-menu-item>新建</st-menu-item>
+  <st-menu>
+    <st-menu-item slot="trigger">导出为<span slot="suffix">▸</span></st-menu-item>
+    <st-menu-item>PDF</st-menu-item>
+    <st-menu>
+      <st-menu-item slot="trigger">图片<span slot="suffix">▸</span></st-menu-item>
+      <st-menu-item>PNG</st-menu-item>
+      <st-menu-item>SVG</st-menu-item>
+    </st-menu>
+  </st-menu>
+</st-menu>
+```
+
+行为：
+
+- 子菜单 **hover 展开**（120ms 延时）/**移出 300ms 后收起**，面板定位在触发项**右侧**（右侧空间不足自动翻转到左侧），点击触发项也可开合
+- 鼠标移到同级其他菜单项时，未选中的兄弟子菜单自动收起
+- **选中任意层级的菜单项 → 整条链全部关闭**（click 冒泡到各级面板）
+- Escape 只关闭最内层，逐次向外
+- 父菜单关闭时级联关闭所有子孙菜单
+
 ## 默认值（st-menu 面板，直接覆盖即可）
 
 | 属性 | 默认值 |
@@ -67,4 +95,8 @@
 - 面板 fixed 定位自动翻转避让视口、min-width 不小于触发器宽度，不受祖先 overflow 裁剪
 - 点击外部关闭用 composedPath 判断（坑 #21），滚动/resize 时自动重定位
 - `align="left"` 面板左对齐触发器，默认右对齐
-`index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/menu/`）。
+- 多级子菜单：直接嵌套 `st-menu`（见上文），trigger 插槽放父级菜单项 + suffix 放 `▸`
+
+## 验证页面
+
+`index.html`（直接访问 `/packages/menu/`）。

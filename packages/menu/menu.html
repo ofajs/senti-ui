@@ -2,6 +2,8 @@
   st-menu — Senti-UI 下拉菜单组件（基于 ofa.js）
   语义属性：align（left|right，面板与触发器的对齐）；open 为运行时状态（el.open 读写/JS 控制）
   trigger 插槽为触发器；菜单项为 light DOM 的 st-menu-item；点击外部/Escape/选中后自动关闭，见 README.md
+  多级子菜单：st-menu 直接嵌套在父级 st-menu 内（trigger 插槽放父级菜单项），
+  自动进入子菜单模式：hover 展开、面板定位在触发项侧边并自动翻转
 -->
 <template component>
   <style>
@@ -99,7 +101,9 @@
             this.bindDocEvents();
             this.ele.dispatchEvent(new Event("open", { bubbles: true, composed: true }));
           } else {
-            // 关闭：先做退出过渡，再隐藏
+            // 关闭：级联关闭所有仍打开的子菜单，再做退出过渡隐藏。
+            // 面板 display:none 会连带隐藏 fixed 的子菜单面板，这里同步清状态避免重开时残留
+            for (const sub of [...this._openSubs]) sub.open = false;
             panel.classList.add("closing");
             clearTimeout(this._closeTimer);
             this._closeTimer = setTimeout(() => {
@@ -114,15 +118,54 @@
       ready() {
         const ele = this.ele;
         const sr = ele.shadowRoot;
+        this._openSubs = new Set();
 
-        // 点击触发器切换
-        sr.querySelector(".trigger").addEventListener("click", () => {
+        // 子菜单模式：本组件被写在另一个 st-menu 内（light DOM 祖先链可判）
+        this._isSub = !!(ele.parentElement && ele.parentElement.closest("st-menu"));
+
+        // 点击触发器切换。子菜单模式下 click 也要停掉冒泡：
+        // 否则会冒到父级面板的"点击即关闭"监听，把父菜单一起关掉
+        sr.querySelector(".trigger").addEventListener("click", (e) => {
+          if (this._isSub) e.stopPropagation();
           this.open = !this.open;
         });
 
-        // 菜单内任意点击后自动关闭（不阻止冒泡，菜单项 click 正常传出）
+        // 菜单内任意点击后自动关闭（不阻止冒泡，菜单项 click 正常传出）；
+        // 点击子菜单里的菜单项时，冒泡到这里的正是"整链关闭"语义
         sr.querySelector(".panel").addEventListener("click", () => {
           if (this.open) this.open = false;
+        });
+
+        // 子菜单 hover 展开/收起（带延时缓冲，容许触发项与面板间的移动抖动）
+        if (this._isSub) {
+          ele.addEventListener("pointerenter", () => {
+            clearTimeout(this._subOpenTimer);
+            clearTimeout(this._subCloseTimer);
+            if (!this.open) {
+              this._subOpenTimer = setTimeout(() => { this.open = true; }, 120);
+            }
+          });
+          ele.addEventListener("pointerleave", () => {
+            clearTimeout(this._subOpenTimer);
+            clearTimeout(this._subCloseTimer);
+            this._subCloseTimer = setTimeout(() => { this.open = false; }, 300);
+          });
+        }
+
+        // 追踪仍打开的后代子菜单（open/close 事件 composed 冒泡到宿主）
+        ele.addEventListener("open", (e) => {
+          if (e.target !== ele) this._openSubs.add(e.target);
+        });
+        ele.addEventListener("close", (e) => {
+          if (e.target !== ele) this._openSubs.delete(e.target);
+        });
+
+        // 鼠标移到本菜单的其他项时，关闭不在指针路径上的子菜单（hover 切换兄弟子菜单）
+        sr.querySelector(".panel").addEventListener("pointerover", (e) => {
+          const path = e.composedPath();
+          for (const sub of [...this._openSubs]) {
+            if (!path.includes(sub)) sub.open = false;
+          }
         });
 
         this._onDocPointerDown = (e) => {
@@ -131,12 +174,15 @@
           this.open = false;
         };
         this._onDocKeydown = (e) => {
-          if (e.key === "Escape" && this.open) this.open = false;
+          // Escape 只关最内层：还有打开的子菜单时交由子菜单自己处理
+          if (e.key === "Escape" && this.open && !this._openSubs.size) this.open = false;
         };
         this._onReposition = () => this.updatePosition();
       },
       detached() {
         clearTimeout(this._closeTimer);
+        clearTimeout(this._subOpenTimer);
+        clearTimeout(this._subCloseTimer);
         this.unbindDocEvents();
       },
       proto: {
@@ -152,22 +198,36 @@
           const margin = 8;
           const gap = 4;
 
-          let left =
-            (this.align || "right") === "left"
-              ? rect.left
-              : rect.right - panelW;
-          left = Math.max(margin, Math.min(left, vw - panelW - margin));
+          let left, top;
+          if (this._isSub) {
+            // 子菜单：面板放触发项右侧（空间不足翻转到左侧），顶部对齐触发项
+            left = rect.right + gap;
+            if (left + panelW > vw - margin) {
+              left = Math.max(margin, rect.left - panelW - gap);
+              panel.style.transformOrigin = "100% 0";
+            } else {
+              panel.style.transformOrigin = "0 0";
+            }
+            top = Math.max(margin, Math.min(rect.top, vh - panelH - margin));
+            panel.style.minWidth = "";
+          } else {
+            left =
+              (this.align || "right") === "left"
+                ? rect.left
+                : rect.right - panelW;
+            left = Math.max(margin, Math.min(left, vw - panelW - margin));
 
-          let top = rect.bottom + gap;
-          if (top + panelH > vh - margin) {
-            // 下方空间不足时翻转到上方
-            const topAbove = rect.top - panelH - gap;
-            top = topAbove >= margin ? topAbove : Math.max(margin, vh - panelH - margin);
+            top = rect.bottom + gap;
+            if (top + panelH > vh - margin) {
+              // 下方空间不足时翻转到上方
+              const topAbove = rect.top - panelH - gap;
+              top = topAbove >= margin ? topAbove : Math.max(margin, vh - panelH - margin);
+            }
+            panel.style.minWidth = Math.max(rect.width, 112) + "px";
           }
 
           panel.style.left = left + "px";
           panel.style.top = top + "px";
-          panel.style.minWidth = Math.max(rect.width, 112) + "px";
         },
         bindDocEvents() {
           if (this._docBound) return;

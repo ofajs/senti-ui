@@ -35,6 +35,26 @@
   </section>
 
   <section>
+    <h3>多级子菜单（st-menu 直接嵌套，hover 展开，选中任意项整链关闭）</h3>
+    <st-menu>
+      <st-button slot="trigger" variant="outlined">多级菜单 ▾</st-button>
+      <st-menu-item><span slot="prefix">📄</span>新建</st-menu-item>
+      <st-menu>
+        <st-menu-item slot="trigger"><span slot="prefix">🗂</span>导出为<span slot="suffix">▸</span></st-menu-item>
+        <st-menu-item>PDF</st-menu-item>
+        <st-menu-item>Markdown</st-menu-item>
+        <st-menu>
+          <st-menu-item slot="trigger">图片<span slot="suffix">▸</span></st-menu-item>
+          <st-menu-item>PNG</st-menu-item>
+          <st-menu-item>SVG</st-menu-item>
+        </st-menu>
+      </st-menu>
+      <hr>
+      <st-menu-item disabled><span slot="prefix">🗑</span>删除（禁用）</st-menu-item>
+    </st-menu>
+  </section>
+
+  <section>
     <h3>键盘行为</h3>
     <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant); width:100%;">
       <span class="code" style="font-family: ui-monospace, monospace;">Escape</span> 关闭、点击组件外部关闭；菜单项 <span class="code" style="font-family: ui-monospace, monospace;">Tab</span> 良好可达、<span class="code" style="font-family: ui-monospace, monospace;">Enter</span>/<span class="code" style="font-family: ui-monospace, monospace;">Space</span> 激活

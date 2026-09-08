@@ -19,6 +19,7 @@
  */
 
 import { applyTheme, themeToCss } from "./m3-theme.js";
+import "./st-theme-mode.js";
 
 const STORAGE_KEY = "st-color-config";
 const CSS_CACHE_KEY = "st-theme-css";

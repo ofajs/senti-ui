@@ -135,7 +135,11 @@ For a single project, copy it into that project's `.agents/skills/` (or `.zcode/
 **Option 2: zip package**
 
 ```bash
-# This repo provides a packing script; output is .agents/skills/senti-ui-skill.zip (unzips to a senti-ui/ directory)
+# Download the pre-built zip directly (no clone needed)
+curl -fsSL -o senti-ui-skill.zip https://raw.githubusercontent.com/ofajs/senti-ui/main/.agents/skills/senti-ui-skill.zip
+unzip senti-ui-skill.zip -d ~/.agents/skills/
+
+# Or pack it yourself from a cloned repo (output is .agents/skills/senti-ui-skill.zip, unzips to a senti-ui/ directory)
 npm run pack-skill   # runs scripts/pack-skill.mjs (zero-dependency Node script)
 
 unzip .agents/skills/senti-ui-skill.zip -d ~/.agents/skills/

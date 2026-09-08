@@ -135,7 +135,11 @@ ln -s "$(pwd)/senti-ui/.agents/skills/senti-ui" ~/.agents/skills/senti-ui
 **方式二：zip 包**
 
 ```bash
-# 本仓库已提供打包脚本，产物为 .agents/skills/senti-ui-skill.zip（解压得到 senti-ui/ 目录）
+# 直接下载已打包好的 zip（无需克隆仓库）
+curl -fsSL -o senti-ui-skill.zip https://raw.githubusercontent.com/ofajs/senti-ui/main/.agents/skills/senti-ui-skill.zip
+unzip senti-ui-skill.zip -d ~/.agents/skills/
+
+# 或在克隆的仓库内自行打包（产物为 .agents/skills/senti-ui-skill.zip，解压得到 senti-ui/ 目录）
 npm run pack-skill   # 即 scripts/pack-skill.mjs（零依赖 Node 脚本）
 
 unzip .agents/skills/senti-ui-skill.zip -d ~/.agents/skills/

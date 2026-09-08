@@ -5,7 +5,7 @@
  *   <script src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/boot/st-boot.js"></script>
  *
  * 定位：不是组件运行的前提（组件会自动加载所需初始化模块），只负责"必须赶首帧"的事，
- * 目前为消除颜色闪色；以后的首帧需求（暗色预判、字体等）以 BOOT_TASKS 清单项扩展。
+ * 目前为消除颜色闪色 + 主题模式预挂类；以后的首帧需求（字体等）以 BOOT_TASKS 清单项扩展。
  *
  * 每个任务 = 首帧同步注入 + 异步 init 模块：
  *   同步阶段（阻塞解析、先于首帧渲染）：
@@ -25,6 +25,21 @@
   var me = document.currentScript;
   var parent = (me && me.parentNode) || document.head;
   var base = (me && me.src || "").replace(/[^/]*$/, ""); // .../packages/boot/
+
+  // 主题模式预挂类（首帧同步，消除强制浅/深色时的闪色）：
+  // localStorage "st-theme-mode" 为 "light"/"dark" 时给 <html> 挂
+  // st-light / st-dark 类；缺失或 "auto" 不挂类（跟随系统）。
+  // 持久化与跨窗口同步（storage 事件）见 ../color/st-theme-mode.js。
+  try {
+    var mode = localStorage.getItem("st-theme-mode");
+    if (mode === "light" || mode === "dark") {
+      document.documentElement.classList.add(
+        mode === "light" ? "st-light" : "st-dark"
+      );
+    }
+  } catch (e) {
+    /* localStorage 不可用时跟随系统 */
+  }
 
   for (var i = 0; i < BOOT_TASKS.length; i++) {
     var task = BOOT_TASKS[i];

@@ -54,6 +54,18 @@ M3 的 token 天生成对，**永远用配对 token，不要自己调透明度�
 
 - **默认跟随系统**（`prefers-color-scheme`），token 自动换值，同时 `color-scheme` 让原生控件跟随
 - 强制：`<html class="st-light">` / `<html class="st-dark">`（优先级高于系统）
+- **全局主题模式（st-theme-mode）**：模式偏好持久化在 localStorage key `st-theme-mode`（`"auto"` / `"light"` / `"dark"`，与 `st-color-config` 同模式）。`st-boot.js` 首帧同步读 key 给 `<html>` 挂类（强制浅/深色无闪色）；`st-color-init.js` 自动引入 `st-theme-mode.js`，任一窗口写 key 后同源其他窗口经 `storage` 事件实时跟随——**同域所有引入 st-boot 或任一 st-* 组件的页面共享，一处切换全站生效**：
+
+```js
+import {
+  getThemeMode,   // () => "auto" | "light" | "dark"
+  setThemeMode,   // (mode) => 持久化 + 当前文档立即挂类；其他窗口自动跟随
+  applyThemeMode, // (mode) => 仅应用到当前文档，不持久化
+} from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/st-theme-mode.js";
+
+setThemeMode("dark");
+```
+
 - 自定义 CSS 只要消费 `--md-sys-color-*`，深浅色自动适配——这就是"颜色只走 M3 角色"的原因
 
 ## 自定义配色（三种方式）

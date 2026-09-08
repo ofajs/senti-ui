@@ -157,3 +157,12 @@ const id = await contextMenu(e, [{ id: "copy", label: "复制" }, { separator: t
 
 - 点击波纹，放在 `position: relative` 的父元素内使用，波纹色 currentColor
 - st-button 等已内嵌，无需重复添加
+
+## st-theme-mode 全局主题模式工具（无需预引入）
+
+模式偏好持久化在 localStorage key `st-theme-mode`（`auto` / `light` / `dark`）；`st-boot.js` 首帧同步挂 `st-light` / `st-dark` 类，`st-color-init.js` 自动引入本模块，跨窗口经 `storage` 事件实时跟随——同域引入 st-boot 或任一 st-* 组件的页面全部自动生效（详见 theming.md）。
+
+```js
+import { getThemeMode, setThemeMode, applyThemeMode } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/st-theme-mode.js";
+setThemeMode("dark"); // 持久化 + 当前文档立即生效；其他窗口自动跟随
+```

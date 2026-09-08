@@ -24,6 +24,21 @@ Senti-UI 全库**唯一颜色来源**：从种子色按 Material Design 3（HCT 
 
 依赖说明：`m3-theme.js` 已改为引入**本地 vendored** 的 `./vendor/material-color-utilities.js`（单文件自包含 bundle，源自 jsdelivr），不再依赖外部 CDN。
 
+### 全局主题模式（st-theme-mode.js：auto / light / dark）
+
+浅深色切换的偏好持久化在 localStorage（key `st-theme-mode`，与 `st-color-config` 同模式）：值为 `"light"` / `"dark"` 时在 `<html>` 上挂 `st-light` / `st-dark` 类强制主题；缺失或 `"auto"` 不挂类，由 CSS 的 `@media (prefers-color-scheme: dark) { html:not(.st-light) }` 通道跟随系统。
+
+`st-color-init.js` 引入了 `st-theme-mode.js`（导出 `getThemeMode` / `setThemeMode` / `applyThemeMode`），因此**同域所有引入 st-boot 或任一 st-\* 组件的页面共享模式偏好**——一处切换，全站自动跟随：
+
+- 首帧：`st-boot.js` 同步读 key 给 `<html>` 挂类，强制浅/深色无闪色
+- 运行时：任一窗口调用 `setThemeMode(mode)` 写 localStorage，同源其他窗口经 `storage` 事件实时跟随
+
+```js
+import { setThemeMode } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/st-theme-mode.js";
+setThemeMode("dark"); // "auto" | "light" | "dark"
+```
+
+
 ## 可用颜色 token 完整清单
 
 每套主题 32 个 token，浅色/深色同名自动换值。**变量名规则**：camelCase → kebab-case，如 `onPrimary` → `--md-sys-color-on-primary`。

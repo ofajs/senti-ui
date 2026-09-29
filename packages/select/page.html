@@ -72,6 +72,19 @@
   </section>
 
   <section>
+    <h3>st-option 组件选项（富内容 + label 闭合态文本）</h3>
+    <st-select placeholder="选择部署方式" default-value="relay">
+      <st-option value="direct" label="直连"><span style="margin-right:8px;">⚡</span><b>直连</b> Direct</st-option>
+      <st-option value="relay" label="邀请码">
+        <span style="margin-right:8px;">🔑</span><b>邀请码</b>
+        <span lang="en" style="opacity:0.62;">Invite code</span>
+      </st-option>
+      <st-option label="无 value（取 label 属性）">缺省 value 演示</st-option>
+    </st-select>
+    <p>st-option 内部 span / 自定义元素均可，插槽内容克隆渲染到下拉项；<span class="code">label</span> 属性控制闭合态显示文本（原生 option 同样支持 label），解决富内容/多语言下闭合态文本拼接问题</p>
+  </section>
+
+  <section>
     <h3>动态选项</h3>
     <!-- 正确姿势：:options 数据绑定（数组 [{ value, label }]） -->
     <st-select :options="cities" placeholder=":options 数据绑定" on:change="onCity"></st-select>

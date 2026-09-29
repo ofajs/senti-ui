@@ -43,9 +43,11 @@
 
 - 属性：`variant`（`outlined`(默认)/`filled`）、`default-value`、`placeholder`、`color`、`disabled`
 - **`value` 是运行时状态**（`el.value` 读写）
-- 选项写在 light DOM 原生 `<option>`（value 缺省取文本；option 内可嵌 HTML，渲染到下拉项）
+- 选项写在 light DOM：原生 `<option>` 或 `<st-option>` 组件（随 select.html 自动加载，无需单独引入）
+  - `label` 属性（两者都支持）控制闭合态显示文本；`value` 缺省先取 `label` 再取文本
+  - 富内容（内部 span/自定义元素）推荐 `st-option`：`value`/`label` 属性 + 默认插槽克隆渲染到下拉项
 - 弹层：自绘 M3 风格，自动上下弹翻转、键盘 ↑↓/Enter/Escape/Home/End、点外关闭；`change` composed
-- 限制：弹层在 shadow 内，被 overflow 祖先裁剪；动态选项支持 `el.options = [...]` / `:options` / o-fill 嵌套
+- 限制：弹层在 shadow 内，被 overflow 祖先裁剪；动态选项支持 `el.options = [...]` / `:options` / o-fill 嵌套（已渲染选项改属性不生效）
 
 ## st-dialog 对话框
 

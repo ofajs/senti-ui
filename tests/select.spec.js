@@ -87,6 +87,38 @@ test("JS 写 el.value 更新选中（不派发 change）", async ({ page }) => {
   expect(events).toHaveLength(0);
 });
 
+test("st-option：default-value 初始化 + label 属性控制闭合态文本", async ({ page }) => {
+  expect(await page.evaluate(() => document.querySelector("#sel-st-option").value)).toBe("relay");
+  const label = await page.evaluate(
+    () => document.querySelector("#sel-st-option").shadowRoot.querySelector("#st-label").textContent
+  );
+  // 闭合态显示 label 属性（"邀请码"），不拼接插槽内多语言富内容
+  expect(label).toBe("邀请码");
+});
+
+test("st-option：点击选中富内容项，value 与 change 正常", async ({ page }) => {
+  await page.locator("#sel-st-option").click();
+  await page.locator("#sel-st-option .opt").filter({ hasText: "Direct" }).click();
+
+  expect(await page.evaluate(() => document.querySelector("#sel-st-option").value)).toBe("direct");
+  const label = await page.evaluate(
+    () => document.querySelector("#sel-st-option").shadowRoot.querySelector("#st-label").textContent
+  );
+  expect(label).toBe("直连");
+  const events = await page.evaluate(() =>
+    window.events.filter((e) => e.id === "sel-st-option" && e.type === "change")
+  );
+  expect(events).toHaveLength(1);
+  expect(events[0].value).toBe("direct");
+});
+
+test("st-option：value 缺省时取 label 属性", async ({ page }) => {
+  await page.locator("#sel-st-option").click();
+  await page.locator("#sel-st-option .opt").filter({ hasText: "缺省 value 演示" }).click();
+
+  expect(await page.evaluate(() => document.querySelector("#sel-st-option").value)).toBe("无value取label");
+});
+
 test("disabled 属性生效：无法打开弹层", async ({ page }) => {
   const opacity = await page.evaluate(() => getComputedStyle(document.querySelector("#sel-disabled")).opacity);
   expect(parseFloat(opacity)).toBeCloseTo(0.38, 2);

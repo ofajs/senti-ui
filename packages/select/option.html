@@ -1,0 +1,21 @@
+<!--
+  st-option — Senti-UI 下拉选项组件（st-select 的选项数据源，基于 ofa.js）
+  语义属性：value（选中值）/ label（闭合态显示文本）；默认插槽内容作为富内容克隆渲染到下拉项
+  由 select.html 模板内 <l-m> 自动加载，无需单独引入
+-->
+<template component>
+  <style>
+    /* 仅作 st-select 的选项数据源（value/label 属性 + 插槽富内容），不自行渲染 */
+    :host { display: none; }
+  </style>
+
+  <script>
+    export default async () => ({
+      tag: "st-option",
+      attrs: {
+        value: null, // 选中值；缺省取 label 属性，再取插槽文本
+        label: null, // 闭合状态显示文本；缺省取插槽文本
+      },
+    });
+  </script>
+</template>

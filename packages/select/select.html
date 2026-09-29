@@ -2,7 +2,7 @@
   st-select — Senti-UI 单选下拉框组件（基于 ofa.js）
   语义属性：variant(filled|outlined) / default-value / placeholder / color / disabled
   value 是运行时状态（ofa data），通过 el.value 读写，不作为标签属性
-  选项写在 light DOM：<st-select><option value="x">Label</option>...</st-select>
+  选项写在 light DOM：原生 <option> 或 <st-option> 组件（label 属性定闭合态文本，插槽放富内容）
   视觉全部在 :host 上，直接用原生 CSS 属性定制，见 README.md
 -->
 <template component>
@@ -183,8 +183,10 @@
     }
     .opt[data-selected] .check { display: inline-block; }
 
-    /* light DOM 里的 <option> 只作数据源，不参与渲染 */
+    /* light DOM 里的 <option>/<st-option> 只作数据源，不参与渲染；
+       l-m 是 flex item 会参与 gap 布局，必须隐藏（坑 #14） */
     slot { display: none; }
+    l-m { display: none; }
   </style>
 
   <span class="outline-ring"></span>
@@ -192,6 +194,7 @@
   <span class="label" id="st-label"></span>
   <span class="arrow"></span>
   <div class="listbox" id="st-listbox"></div>
+  <l-m src="./option.html"></l-m>
   <slot id="st-slot"></slot>
 
   <script>
@@ -255,17 +258,21 @@
           },
         });
 
-        // 读取 light DOM 的 <option> 作为数据源。
+        // 读取 light DOM 的 <option> / <st-option> 作为数据源。
         // 支持容器组件（如 o-fill）包裹：o-fill 把条目渲染进自身 shadowRoot，
-        // 这里深入其 shadow 收集 option，并用 MutationObserver 跟随其重渲染
+        // 这里深入其 shadow 收集，并用 MutationObserver 跟随其重渲染
         this._optObservers = [];
         const collectFrom = (el) => {
-          if (el.tagName === "OPTION") return [el];
+          if (el.tagName === "OPTION" || el.tagName === "ST-OPTION") return [el];
           const seen = new Set();
           const found = [];
-          [...el.querySelectorAll("option"), ...(el.shadowRoot ? el.shadowRoot.querySelectorAll("option") : [])]
-            .forEach((o) => { if (!seen.has(o)) { seen.add(o); found.push(o); } });
+          const pull = (root) =>
+            [...root.querySelectorAll("option, st-option")].forEach((o) => {
+              if (!seen.has(o)) { seen.add(o); found.push(o); }
+            });
+          pull(el);
           if (el.shadowRoot) {
+            pull(el.shadowRoot);
             const mo = new MutationObserver(() => readOptions());
             mo.observe(el.shadowRoot, { childList: true, subtree: true });
             this._optObservers.push(mo);
@@ -282,7 +289,12 @@
           this._opts = this.slotEl
             .assignedElements()
             .flatMap((el) => collectFrom(el))
-            .map((el) => ({ value: el.getAttribute("value") ?? el.textContent.trim(), label: el.textContent.trim(), el }));
+            .map((el) => {
+              const text = el.textContent.trim();
+              // label 属性定闭合态显示文本（富内容/多语言场景），缺省取插槽文本
+              const label = el.getAttribute("label") ?? text;
+              return { value: el.getAttribute("value") ?? label, label, el };
+            });
           this.buildList();
           // attached 时读取 default-value 属性作为初始值写入 data.value
           if (this.value === null) {
@@ -358,8 +370,9 @@
           this._opts.forEach((opt, i) => {
             const item = document.createElement("div");
             item.className = "opt";
-            // option 内有子元素时克隆渲染（支持富内容），否则退回纯文本 label
-            if (opt.el?.childNodes.length) {
+            // 有实际内容（元素或非空白文本）时克隆渲染（支持富内容），否则退回纯文本 label
+            const rich = opt.el && [...opt.el.childNodes].some((n) => n.nodeType === 1 || (n.nodeType === 3 && n.textContent.trim()));
+            if (rich) {
               [...opt.el.childNodes].forEach((n) => item.appendChild(n.cloneNode(true)));
             } else {
               item.textContent = opt.label;

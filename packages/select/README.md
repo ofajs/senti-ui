@@ -2,7 +2,7 @@
 
 基于 ofa.js 的单选下拉框组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设，也不需要自定义 CSS 变量）。
 
-组件的视觉样式全部定义在宿主元素（`:host`）上。选项写在 light DOM 的原生 `<option>` 元素里（只作数据源，不参与渲染），组件读取后自绘 M3 风格下拉列表。
+组件的视觉样式全部定义在宿主元素（`:host`）上。选项写在 light DOM：原生 `<option>` 元素或 `<st-option>` 组件（只作数据源，不参与渲染），组件读取后自绘 M3 风格下拉列表。
 
 ## 依赖引入（使用前必须）
 
@@ -24,7 +24,7 @@
 | `color` | M3 角色名 / 自定义变量名 | 无 | 语义色：控制 focus 描边/底线色（如 `color="error"` 用于校验错误态） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互、关闭弹层 |
 
-选项写法（`value` 缺省时取文本）：
+选项写法（`value` 缺省时取 `label` 属性，再取文本）：
 
 ```html
 <st-select placeholder="请选择">
@@ -34,16 +34,34 @@
 </st-select>
 ```
 
-**富内容选项**：`<option>` 内可以嵌套自定义元素/HTML，子节点会被克隆渲染到下拉项中（闭合状态显示 option 的纯文本）：
+`label` 属性（`<option>` 与 `<st-option>` 都支持）控制**闭合状态**显示的文本，缺省取元素的文本内容；value 缺省时同样先取它：
 
 ```html
-<st-select placeholder="选择水果">
-  <option value="apple"><span style="margin-right:8px;">🍎</span><b>苹果</b> Apple</option>
-  <option value="banana"><span style="margin-right:8px;">🍌</span><b>香蕉</b> Banana</option>
+<option value="relay" label="邀请码">...</option>
+```
+
+**富内容选项**：选项内可以嵌套自定义元素/HTML（span 等内联元素、任意自定义组件），子节点会被克隆渲染到下拉项中。原生 `<option>` 受浏览器解析限制，富内容场景推荐用 **`<st-option>`** 组件（随 `select.html` 自动加载，无需单独引入）：
+
+```html
+<st-select placeholder="选择部署方式">
+  <st-option value="direct" label="直连"><span style="margin-right:8px;">⚡</span><b>直连</b> Direct</st-option>
+  <st-option value="relay" label="邀请码">
+    <span lang="cn">邀请码</span><span lang="en">Invite code</span>
+  </st-option>
 </st-select>
 ```
 
-**动态选项**：三种方式任选——`el.options = [...]`、`:options` 数据绑定，或 **o-fill 嵌套**（组件会深入容器内部收集渲染出的 `<option>`，并用 MutationObserver 跟随数据重渲染自动更新列表）：
+st-option 语义属性：
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `value` | string | 取 `label` 属性，再取插槽文本 | 选中值 |
+| `label` | string | 取插槽文本 | 闭合状态显示文本 |
+| 默认插槽 | — | — | 富内容：克隆渲染到下拉项（闭合态不显示，闭合态显示 label） |
+
+选项内只放纯文本时（无元素、无实际文本的空白节点不算富内容），下拉项直接显示 label/文本。
+
+**动态选项**：三种方式任选——`el.options = [...]`、`:options` 数据绑定，或 **o-fill 嵌套**（组件会深入容器内部收集渲染出的 `<option>` / `<st-option>`，并用 MutationObserver 跟随数据重渲染自动更新列表）：
 
 ```html
 <!-- 方式一：:options 数据绑定（数组 [{ value, label }]，ofa 页面内） -->
@@ -149,8 +167,10 @@ document.querySelector("st-select").addEventListener("change", (e) => {
 ## 注意事项与使用技巧
 
 - `value` 是运行时状态：`el.value = "x"` 改选中（不派发 change）；初始选中用 `default-value`
+- 选项元素（`option` / `st-option`）是纯数据源：收集发生在 attached 与 slotchange/o-fill 重渲染时，**直接改已渲染选项的 `value`/`label` 属性不会生效**——动态选项用 `el.options`、`:options` 或 o-fill 嵌套
+- 富内容/多语言场景用 `st-option` + `label` 属性：插槽内容做下拉项展示，`label` 做闭合态文本（原生 `<option>` 受浏览器解析限制，内部元素可能不保真）
+- st-option 由 `select.html` 内部 `<l-m>` 自动加载，无需单独引入；`st-select` 内可混用 `<option>` 与 `<st-option>`（保持书写顺序）
 - 下拉弹层渲染在组件 shadow 内（绝对定位），被 `overflow: hidden` 祖先裁剪时会截断——该场景调整布局
-- 动态选项三种方式：`el.options = [...]`、`:options` 绑定、o-fill 嵌套（组件会深入容器收集渲染出的 option）
 - 键盘全支持：Enter/Space 打开、↑↓ 循环移动、Home/End、Escape/Tab 关闭
 - 判断"点击组件外部"必须用 `e.composedPath().includes(ele)`（composed 事件 target 在 document 层已被重定向）
 - 弹层仍挂在 shadow 内（absolute 定位），被 overflow 祖先裁剪时会截断；翻转只解决上下方向，不解决裁剪

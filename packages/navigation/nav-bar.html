@@ -59,12 +59,20 @@
         vertical: null, // 子项排列方向：横向一行（默认）/ 纵向一列
       },
       proto: {
-        // 定位 active 药丸到 active 项的指示区域（30ms 合并连续切换）
+        // 定位 active 药丸到 active 项的指示区域（30ms 合并连续切换）。
+        // 必须用布局坐标（offsetLeft/Top/Width/Height）而非 getBoundingClientRect：
+        // 后者含祖先 transform——导航在 st-dialog 等容器里时，初始定位常撞上
+        // 容器开启动画的中间态（scale/translate 未归位），量出压扁 / 偏移的值；
+        // 且祖先动画结束不触发自身 ResizeObserver，错位就此定格（实测踩坑）。
+        // offset 系是纯布局值，对祖先 transform 与动画免疫
         updateActive() {
           if (this._timer) return;
           this._timer = setTimeout(() => {
             this._timer = null;
             const ele = this.ele;
+            // 隐藏态（display:none 祖先）没有盒子，offset 全 0：跳过定位，
+            // 等可见时 ResizeObserver 会再触发
+            if (!ele.offsetWidth && !ele.offsetHeight) return;
             const items = ele.querySelectorAll("st-nav-item");
             const active = Array.from(items).find((it) => it.hasAttribute("active"));
             const bg = ele.shadowRoot.querySelector(".active-bg");
@@ -72,16 +80,23 @@
               bg.style.opacity = "0";
               return;
             }
-            // 对齐指示区：active 子项带 parallel（文字在右）时整行背景，否则子项内部药丸区（icon 背景区）
+            // 对齐指示区：active 子项带 parallel（文字在右）时整行背景
+            // （item 相对 bar 的布局坐标），否则子项内部药丸区（.pill 相对
+            // item 的布局坐标 + item 在 bar 内的偏移；item host 是
+            // position:relative，恰好是 .pill 的 offsetParent）
             const pill = active.shadowRoot.querySelector(".pill");
-            const target = active.hasAttribute("parallel") ? active : (pill || active);
-            const pillRect = target.getBoundingClientRect();
-            const hostRect = ele.getBoundingClientRect();
+            if (active.hasAttribute("parallel") || !pill) {
+              bg.style.left = active.offsetLeft + "px";
+              bg.style.top = active.offsetTop + "px";
+              bg.style.width = active.offsetWidth + "px";
+              bg.style.height = active.offsetHeight + "px";
+            } else {
+              bg.style.left = active.offsetLeft + pill.offsetLeft + "px";
+              bg.style.top = active.offsetTop + pill.offsetTop + "px";
+              bg.style.width = pill.offsetWidth + "px";
+              bg.style.height = pill.offsetHeight + "px";
+            }
             bg.style.opacity = "1";
-            bg.style.left = pillRect.left - hostRect.left + "px";
-            bg.style.top = pillRect.top - hostRect.top + "px";
-            bg.style.width = pillRect.width + "px";
-            bg.style.height = pillRect.height + "px";
           }, 30);
         },
       },

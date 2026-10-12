@@ -50,6 +50,22 @@
     </div>
   </st-nav-layout>
 
+  <h3>隐藏容器内的初始 active（模拟对话框内导航）</h3>
+  <p style="margin:0 0 8px; font-size:13px; color: var(--md-sys-color-on-surface-variant); width:100%;">
+    对话框打开前导航在 display:none 容器里、且 active 不是第一项——打开瞬间药丸应直接落在「发现」项上（回归：初始曾错位到别的位置）
+  </p>
+  <st-button on:click="openDlg">打开对话框</st-button>
+  <st-dialog class="nav-dlg" sync:open="dlgOpen" auto-close>
+    <div class="panel" style="display: flex; flex-direction: column; gap: 16px; min-width: min(520px, 80vw);">
+      <div class="panel">对话框内导航：初始 active 在第二项</div>
+      <st-nav-bar>
+        <st-nav-item attr:active="dlgCurrent === 0" on:click="selectDlg(0)"><span slot="icon">🏠</span>首页</st-nav-item>
+        <st-nav-item attr:active="dlgCurrent === 1" on:click="selectDlg(1)"><span slot="icon">🔍</span>发现</st-nav-item>
+        <st-nav-item attr:active="dlgCurrent === 2" on:click="selectDlg(2)"><span slot="icon">👤</span>我的</st-nav-item>
+      </st-nav-bar>
+    </div>
+  </st-dialog>
+
   <section>
     <h3>事件监听与键盘</h3>
     <p style="margin:0; font-size:13px; color: var(--md-sys-color-on-surface-variant); width:100%;">
@@ -66,6 +82,8 @@
         railLabels: ["收件箱", "标签", "已发送"],
         layoutCurrent: 0,
         layoutLabels: ["首页", "发现", "我的"],
+        dlgOpen: false,
+        dlgCurrent: 1, // 初始 active 不在第一项：隐藏期定位错误会直接显形
       },
       proto: {
         get currentLabel() {
@@ -85,6 +103,12 @@
         },
         selectLayout(i) {
           this.layoutCurrent = i;
+        },
+        openDlg() {
+          this.dlgOpen = true;
+        },
+        selectDlg(i) {
+          this.dlgCurrent = i;
         },
       },
     });

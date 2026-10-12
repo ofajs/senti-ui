@@ -169,6 +169,9 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 41. **组件内布局定位不要用 `getBoundingClientRect`，用 `offsetLeft/Top/Width/Height` 系**——rect 是视口几何，含所有祖先的 transform：导航/指示类组件放在 st-dialog 等带入场动画（scale/translate）的容器里时，初始定位会量到动画中间态（实测：药丸高度被 scale(1,0.5) 压成一半、位置偏移），且**祖先动画结束不会触发自身的 ResizeObserver**，错位就此定格；display:none 祖先下 rect 还全是 0。offset 系是纯布局值，对祖先 transform 与隐藏免疫（隐藏时为 0，正好用来跳过定位、等可见时 ResizeObserver 再触发）。相对定位：element.offsetLeft 相对其 offsetParent（最近 positioned 祖先）的 padding 边缘，与 absolute 子元素在同一 containing block 里的定位基准一致，跨一层 shadow 时逐层相加即可（如 pill 相对 item + item 相对 bar）
 
+42. **`position:fixed` 弹层的 containing block 不保证是视口——transform 祖先会接管它**（实测：st-menu 放进 st-dialog，菜单整体向右下漂移一个对话框面板原点、冲出面板被裁）。原因：st-dialog 面板入场动画 `fill: forwards` 结束后 `::part(panel)` 的 computed transform 保持 `matrix(1,0,0,1,0,0)` ≠ `none`（动画遗产序列化成单位矩阵），按规范它成为所有 fixed 后代的 containing block，组件按视口坐标写的 `left/top` 被重新解释为相对对话框面板 → 双重偏移。排查技巧：光 DOM `parentElement` 链查不到肇事者（slot 内容的布局祖先是宿主 shadow 内部元素），必须沿 `assignedSlot || parentElement` 的 flattened tree 上溯查 computed transform。正确写法（组件侧免疫，任何容器通用）：定位前把弹层摆到 `0,0` 读 `getBoundingClientRect()` 得 containing block 的视口原点，把算好的视口坐标减去该原点再写入——containing block 是视口时差值为 0、行为不变。注意探测时机：同步于 `display:block` 之后、入场动画首帧之前执行才干净（强制布局会把自家动画 from 态 transform 算进探测读数，实测差 `translateY(-0.429em)+scale(0.98)` ≈ 6px/2.6px）；稳妥做法是探测期间 `animation:none`、定位完恢复让动画从头播（st-menu updatePosition 即此实现）。与坑 #41 同族：#41 是量测用 offset 系躲祖先 transform，本条是 fixed 定位坐标系数换算——两者根源都是「transform 祖先改变几何基准」
+
+
 ### 测试/验证类坑（非 ofa.js）
 
 24. **外部脚本无法直接调用 o-page 页面模块的 proto 方法**——`document.querySelector('o-page').setRole(...)` 报 `not a function`（proto 方法挂在 ofa 实例上，宿主原生元素不可见）；自动化验证时改用真实交互触发（如 Playwright 对 `input[type=color]` fill 色值、直接 click 按钮），ofa 的 `on:input` / `on:click` 处理器正常响应

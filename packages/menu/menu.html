@@ -112,11 +112,16 @@
               this._isSub = true;
               this.ele.setAttribute("sub", "");
             }
-            // 先渲染再定位，避免闪烁；重新打开时取消关闭过渡并重启进入动画
+            // 先渲染再定位，避免闪烁；重新打开时取消关闭过渡并重启进入动画。
+            // 定位探测期间禁用入场动画：其 from 态 transform 会被强制布局
+            // 算进 containing block 原点探测（差一个 translateY+scale 偏移），
+            // 定位完恢复让动画从头播
             clearTimeout(this._closeTimer);
             panel.classList.remove("closing");
             panel.style.display = "block";
+            panel.style.animation = "none";
             this.updatePosition();
+            panel.style.animation = "";
             this.bindDocEvents();
             this.ele.dispatchEvent(new Event("open", { bubbles: true, composed: true }));
           } else {
@@ -260,8 +265,19 @@
             }
           }
 
-          panel.style.left = left + "px";
-          panel.style.top = top + "px";
+          // 面板是 position:fixed，但 fixed 的 containing block 不保证是视口：
+          // 任何 computed transform ≠ none 的祖先都会接管它（实测 st-dialog 的
+          // 入场动画 fill:forwards 结束后 ::part(panel) computed transform 保持
+          // matrix(1,0,0,1,0,0)，对话框内的菜单整体漂移一个面板原点）。先把面板
+          // 摆到 0,0 读出 containing block 的视口原点，把上面算好的视口坐标换算
+          // 成相对坐标再写入——containing block 是视口时差值为 0，行为不变。
+          // 首次打开时本函数同步于 display:block 之后、入场动画首帧之前执行，
+          // 探测读数不受面板自身动画影响
+          panel.style.left = "0px";
+          panel.style.top = "0px";
+          const cbOrigin = panel.getBoundingClientRect();
+          panel.style.left = left - cbOrigin.left + "px";
+          panel.style.top = top - cbOrigin.top + "px";
         },
         bindDocEvents() {
           if (this._docBound) return;

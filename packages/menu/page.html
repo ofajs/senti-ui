@@ -78,6 +78,28 @@
 
   <section>
     <h3>
+      对话框内的下拉菜单（fixed 面板在 transform 容器内不漂移——st-dialog
+      面板动画结束后 computed transform 保持单位矩阵、接管 fixed containing
+      block，组件已按 containing block 原点换算定位）
+    </h3>
+    <st-button variant="outlined" on:click="dlgOpen = true">打开对话框 ▾</st-button>
+    <st-dialog sync:open="dlgOpen" auto-close>
+      <div style="display: flex; gap: 16px; align-items: center">
+        <st-menu>
+          <st-button slot="trigger" variant="filled">对话框内菜单 ▾</st-button>
+          <st-menu-item><span slot="prefix">✅</span>操作一</st-menu-item>
+          <st-menu-item><span slot="prefix">🔧</span>操作二</st-menu-item>
+        </st-menu>
+        <span
+          style="font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
+          >菜单应贴着按钮右对齐、出现在按钮正下方，不向右下漂移出对话框</span
+        >
+      </div>
+    </st-dialog>
+  </section>
+
+  <section>
+    <h3>
       多级子菜单（st-menu 放在 item 的 sub-menu 插槽内，hover
       展开，选中任意项整链关闭）
     </h3>
@@ -221,6 +243,7 @@
         lastPick: "（无）",
         openCount: 0,
         menuOpen: false,
+        dlgOpen: false,
         cmdPick: "（未调用）",
         longPressPick: "（未触发）",
       },

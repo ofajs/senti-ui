@@ -1,6 +1,6 @@
 # st-menu / st-menu-item 下拉菜单组件
 
-基于 ofa.js 的下拉菜单。`trigger` 插槽为触发器；菜单项写在 light DOM 的 `st-menu-item`；面板 fixed 定位自动翻转避让视口，弹层不随祖先 overflow 裁剪。
+基于 ofa.js 的下拉菜单。`trigger` 插槽为触发器；菜单项写在 light DOM 的 `st-menu-item`；面板 fixed 定位自动翻转避让视口，弹层不随祖先 overflow 裁剪；在 st-dialog 等 transform 容器内定位依然正确（自动换算 containing block）。
 
 ## 依赖引入（使用前必须）
 
@@ -155,7 +155,7 @@ onCtx(e) {
 
 - `open` 是运行时状态（ofa data，非标签属性）：ofa 页面用 `sync:open="menuOpen"` 双向绑定（选中后自动关闭会回写）；JS 触发用真实点击 trigger
 - trigger 必须放 `slot="trigger"`；菜单项点击后面板自动关闭，item 的 click 正常冒泡供业务监听
-- 面板 fixed 定位自动翻转避让视口、宽度由内容决定（min-width 6em 兜底），不受祖先 overflow 裁剪
+- 面板 fixed 定位自动翻转避让视口、宽度由内容决定（min-width 6em 兜底），不受祖先 overflow 裁剪；transform 容器（如 st-dialog）内自动按 containing block 原点换算，不漂移（坑 #42）
 - 点击外部关闭用 composedPath 判断（坑 #21），滚动/resize 时自动重定位
 - `align="left"` 面板左对齐触发器，默认右对齐
 - 多级子菜单：`st-menu` 放在 item 的 `sub-menu` 插槽内（见上文），箭头自动显示

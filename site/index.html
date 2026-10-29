@@ -972,7 +972,423 @@
               transition: none;
             }
           }
-        </style>
+        
+    /* ---------- 组件目录（shadcn 式卡片） ---------- */
+    .intro {
+      max-width: var(--site-max);
+      margin: 0 auto;
+      padding: clamp(44px, 6vw, 72px) var(--gutter) clamp(30px, 4vw, 44px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 36px;
+      flex-wrap: wrap;
+    }
+    .intro-copy {
+      flex: 1 1 520px;
+      min-width: 0;
+    }
+    .intro h1 {
+      margin: 18px 0 0;
+      font-size: clamp(40px, 5.4vw, 64px);
+      line-height: 1;
+      letter-spacing: -0.045em;
+      font-weight: 800;
+    }
+    .intro .lead {
+      max-width: 620px;
+      margin-top: 18px;
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 15px;
+      line-height: 1.75;
+    }
+    .intro-side {
+      flex: 0 1 360px;
+      display: grid;
+      gap: 14px;
+      min-width: 0;
+    }
+    .intro-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      padding-top: 14px;
+      border-top: 1px solid var(--md-sys-color-outline-variant);
+    }
+    .intro-stats strong {
+      display: block;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+    .intro-stats span {
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 10.5px;
+    }
+    .intro-hint {
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 11px;
+    }
+    .nav-link-doc {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .catalog {
+      max-width: var(--site-max);
+      margin: 0 auto;
+      padding: clamp(36px, 4vw, 52px) var(--gutter) clamp(52px, 6vw, 76px);
+      scroll-margin-top: 86px;
+    }
+    .catalog-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 28px;
+      margin-bottom: 24px;
+    }
+    .catalog-head h2 {
+      margin-top: 8px;
+      font-size: clamp(28px, 3.4vw, 38px);
+      line-height: 1.1;
+      letter-spacing: -0.035em;
+    }
+    .catalog-desc {
+      max-width: 620px;
+      margin-top: 10px;
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .catalog-meta {
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 11px;
+      white-space: nowrap;
+      padding-bottom: 4px;
+    }
+    .comp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+    .comp {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: 16px;
+      background: var(--md-sys-color-surface-container-lowest);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+    .comp:hover {
+      border-color: color-mix(in srgb, var(--md-sys-color-primary) 42%, var(--md-sys-color-outline-variant));
+      box-shadow: 0 10px 30px -22px rgb(0 0 0 / 0.45);
+    }
+    .comp-preview {
+      flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      align-content: center;
+      gap: 10px;
+      min-height: 172px;
+      padding: 22px 20px;
+      border-radius: 15px 15px 0 0;
+      background-color: var(--md-sys-color-surface);
+      background-image: radial-gradient(
+        circle at 1px 1px,
+        color-mix(in srgb, var(--md-sys-color-outline-variant) 72%, transparent) 1px,
+        transparent 0
+      );
+      background-size: 16px 16px;
+    }
+    .comp-preview > * {
+      max-width: 100%;
+    }
+    .comp-preview st-input,
+    .comp-preview st-textarea,
+    .comp-preview st-select,
+    .comp-preview st-slider {
+      width: 100%;
+      max-width: 320px;
+    }
+    .comp-preview st-snackbar {
+      position: static;
+      width: 100%;
+      max-width: 340px;
+    }
+    .comp-preview st-list {
+      width: 100%;
+    }
+    .comp-preview st-tab-bar,
+    .comp-preview st-nav-bar {
+      width: 100%;
+    }
+    .comp-preview st-collapse {
+      width: 100%;
+      max-width: 320px;
+    }
+    .comp-preview-nav {
+      padding: 14px;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .stack {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      width: 100%;
+      max-width: 260px;
+    }
+    .result {
+      width: 100%;
+      color: var(--md-sys-color-on-surface-variant);
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 10.5px;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+    .mini-note {
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 10.5px;
+    }
+    .mini-copy {
+      margin: 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+    .comp-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 11px 13px;
+      border-top: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: 0 0 15px 15px;
+      background: var(--md-sys-color-surface-container-low);
+    }
+    .comp-id {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      min-width: 0;
+    }
+    .comp-id h3 {
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+    }
+    .comp-id code {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--md-sys-color-on-surface-variant);
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 10px;
+    }
+    .comp-link {
+      flex: none;
+      display: grid;
+      place-items: center;
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 14px;
+      text-decoration: none;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .comp-link:hover {
+      background: var(--md-sys-color-surface-container-high);
+      color: var(--md-sys-color-primary);
+    }
+    .ripple-tile {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 100%;
+      max-width: 240px;
+      height: 58px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: color-mix(in srgb, var(--md-sys-color-primary) 13%, var(--md-sys-color-surface));
+      color: var(--md-sys-color-primary);
+      font-size: 12.5px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .tool-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+    }
+    .tool-row st-button {
+      font-size: 11px;
+      height: 30px;
+      padding: 0 10px;
+    }
+    .ctx-mini {
+      width: 100%;
+      max-width: 260px;
+      padding: 8px 10px;
+      border: 1px dashed var(--md-sys-color-outline);
+      border-radius: 10px;
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 10.5px;
+      text-align: center;
+      cursor: context-menu;
+      user-select: none;
+    }
+    .progress-stack {
+      display: grid;
+      gap: 12px;
+      width: 100%;
+      max-width: 260px;
+      justify-items: center;
+    }
+    .progress-stack > st-progress:first-child {
+      width: 100%;
+    }
+    .mini-card {
+      display: grid;
+      gap: 3px;
+      width: 100%;
+      max-width: 250px;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 12px;
+    }
+    .mini-card strong {
+      font-size: 13px;
+    }
+    .mini-card span {
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 10.5px;
+    }
+    .site-list {
+      width: 100%;
+    }
+    .nav-layout-mini {
+      width: 100%;
+      height: 150px;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .nav-layout-mini-body {
+      display: grid;
+      align-content: center;
+      gap: 3px;
+      height: 100%;
+      padding: 14px;
+      background: var(--md-sys-color-surface-container-lowest);
+    }
+    .nav-layout-mini-body strong {
+      font-size: 13px;
+    }
+    .nav-layout-mini-body span {
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 10.5px;
+      line-height: 1.5;
+    }
+    .skin-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .skin-card {
+      display: grid;
+      align-content: start;
+      gap: 12px;
+      padding: 20px;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: 22px;
+      background: var(--md-sys-color-surface-container-low);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+    .skin-card.active {
+      border-color: var(--md-sys-color-primary);
+      box-shadow: 0 0 0 1px var(--md-sys-color-primary) inset;
+    }
+    .skin-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .skin-card-head h3 {
+      font-size: 15px;
+      letter-spacing: -0.01em;
+    }
+    .skin-chip {
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--md-sys-color-surface-container-high);
+      color: var(--md-sys-color-on-surface-variant);
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 10px;
+    }
+    .skin-desc {
+      min-height: 3.4em;
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+    .skin-preview {
+      display: grid;
+      gap: 9px;
+      padding: 16px;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: 16px;
+      background:
+        radial-gradient(120% 120% at 10% 0%, color-mix(in srgb, var(--md-sys-color-primary-container) 70%, transparent), transparent 58%),
+        radial-gradient(100% 100% at 100% 100%, color-mix(in srgb, var(--md-sys-color-tertiary-container) 60%, transparent), transparent 62%),
+        var(--md-sys-color-surface-container);
+    }
+    .skin-preview st-input {
+      width: 100%;
+    }
+    .skin-card > st-button {
+      justify-self: start;
+    }
+    @media (max-width: 1024px) {
+      .skin-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 900px) {
+      .catalog-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .intro {
+        align-items: flex-start;
+      }
+    }
+    @media (max-width: 640px) {
+      .skin-cards {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .comp-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+  </style>
 
         <header class="top">
           <div class="top-inner">
@@ -981,10 +1397,10 @@
               <span>Senti<span class="brand-accent">UI</span></span>
             </button>
             <nav class="top-nav" aria-label="页面导航">
-              <button class="nav-link" on:click="jump('actions')">组件</button>
+              <button class="nav-link" on:click="jump('components')">组件</button>
               <button class="nav-link" on:click="jump('skins')">材质</button>
-              <button class="nav-link" on:click="jump('why')">理念</button>
               <button class="nav-link" on:click="jump('start')">开始</button>
+              <a class="nav-link nav-link-doc" href="../docs/index.html" target="_blank" rel="noreferrer">文档 ↗</a>
             </nav>
             <div class="top-actions">
               <button class="top-btn" on:click="cycleTheme" title="切换主题模式">◐ {{themeLabel}}</button>
@@ -993,521 +1409,477 @@
           </div>
         </header>
 
-        <main>
-          <section class="hero" id="top">
-            <div class="hero-copy">
-              <p class="eyebrow"><span class="dot"></span>ofa.js v5 · Material Design 3 · zero build</p>
-              <h1>语义组件，<br /><span class="grad">任意材质。</span></h1>
-              <p class="lead">
-                按钮、输入、选择、对话框、菜单、导航……同一批 <code>st-*</code> 标签，同一套 M3 颜色。<br />
-                想换风格时，只换皮肤，不换组件。
-              </p>
-              <div class="cta">
-                <st-button on:click="jump('actions')">浏览组件 <span slot="suffix">↓</span></st-button>
-                <st-button variant="outlined" on:click="openRepo">查看源码 ↗</st-button>
-              </div>
-              <dl class="stats">
-                <div><dt>29</dt><dd>自定义标签</dd></div>
-                <div><dt>20</dt><dd>组件模块</dd></div>
-                <div><dt>3</dt><dd>内置材质</dd></div>
-                <div><dt>0</dt><dd>构建步骤</dd></div>
-              </dl>
+          <main>
+    <section class="intro" id="top">
+      <div class="intro-copy">
+        <p class="eyebrow"><span class="dot"></span>ofa.js v5 · Material Design 3 · zero build</p>
+        <h1>语义组件，<br /><span class="grad">任意材质。</span></h1>
+        <p class="lead">
+          20 个模块、29 个标签，全部可交互。属性只表达语义，颜色只走 M3，材质交给皮肤。
+          下面每一张卡片都是真实组件，不是截图。
+        </p>
+      </div>
+      <div class="intro-side">
+        <div class="skin-row">
+          <span class="skin-row-label">材质</span>
+          <st-button class="skin-pick" attr:variant="skin === 'm3' ? 'filled' : 'outlined'" on:click="pickSkin('m3')">M3</st-button>
+          <st-button class="skin-pick" attr:variant="skin === 'apple' ? 'filled' : 'outlined'" on:click="pickSkin('apple')">Apple 毛玻璃</st-button>
+          <st-button class="skin-pick" attr:variant="skin === 'shadcn' ? 'filled' : 'outlined'" on:click="pickSkin('shadcn')">shadcn</st-button>
+        </div>
+        <div class="intro-stats">
+          <div><strong>20</strong><span>组件模块</span></div>
+          <div><strong>29</strong><span>自定义标签</span></div>
+          <div><strong>3</strong><span>内置材质</span></div>
+          <div><strong>0</strong><span>构建步骤</span></div>
+        </div>
+        <div class="cta">
+          <st-button on:click="jump('components')">浏览组件 <span slot="suffix">↓</span></st-button>
+          <st-button variant="outlined" on:click="openRepo">源码 ↗</st-button>
+        </div>
+        <p class="intro-hint">当前材质：{{skinLabel}} · 颜色仍来自 M3</p>
+      </div>
+    </section>
+
+    <section class="catalog" id="components">
+      <div class="catalog-head">
+        <div>
+          <p class="section-kicker">CATALOG / 25 CARDS</p>
+          <h2>所有组件</h2>
+          <p class="catalog-desc">卡片里的组件可以直接点、输入、开合；每张卡片右下角 ↗ 进入该组件的完整文档与验收页。</p>
+        </div>
+        <p class="catalog-meta">动作 · 输入 · 反馈 · 内容 · 导航</p>
+      </div>
+
+      <div class="comp-grid">
+        <!-- ===== 动作 ===== -->
+        <article class="comp">
+          <div class="comp-preview">
+            <div class="row">
+              <st-button>Filled</st-button>
+              <st-button variant="outlined">Outlined</st-button>
+              <st-button variant="text">Text</st-button>
             </div>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Button</h3><code>st-button</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/button.html" target="_blank" rel="noreferrer" aria-label="Button 文档">↗</a>
+          </div>
+        </article>
 
-            <div class="hero-side">
-              <div class="skin-row">
-                <span class="skin-row-label">材质</span>
-                <st-button class="skin-pick" attr:variant="skin === 'm3' ? 'filled' : 'outlined'" on:click="pickSkin('m3')">M3</st-button>
-                <st-button class="skin-pick" attr:variant="skin === 'apple' ? 'filled' : 'outlined'" on:click="pickSkin('apple')">Apple 毛玻璃</st-button>
-                <st-button class="skin-pick" attr:variant="skin === 'shadcn' ? 'filled' : 'outlined'" on:click="pickSkin('shadcn')">shadcn</st-button>
-              </div>
+        <article class="comp">
+          <div class="comp-preview">
+            <st-button-group connected>
+              <st-button>日</st-button>
+              <st-button variant="outlined">周</st-button>
+              <st-button variant="outlined">月</st-button>
+            </st-button-group>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Button Group</h3><code>st-button-group</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/button.html" target="_blank" rel="noreferrer" aria-label="Button Group 文档">↗</a>
+          </div>
+        </article>
 
-              <div class="preview">
-                <div class="preview-head">
-                  <span class="live"><i></i>LIVE PREVIEW</span>
-                  <span class="preview-chip">{{skinLabel}}</span>
-                </div>
-                <h2 class="preview-title">欢迎回来</h2>
-                <p class="preview-sub">这一小块表单，就是换肤的全部范围。</p>
+        <article class="comp">
+          <div class="comp-preview">
+            <st-split-button on:click="splitAction">
+              发送
+              <st-menu-item slot="menu" on:click="splitPick('邮件')">邮件</st-menu-item>
+              <st-menu-item slot="menu" on:click="splitPick('链接')">链接</st-menu-item>
+            </st-split-button>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Split Button</h3><code>st-split-button</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/button.html" target="_blank" rel="noreferrer" aria-label="Split Button 文档">↗</a>
+          </div>
+        </article>
 
-                <div class="field">
-                  <span class="field-label">邮箱</span>
-                  <st-input placeholder="you@example.com"><span slot="prefix">✉</span></st-input>
-                </div>
-                <div class="field">
-                  <span class="field-label">密码</span>
-                  <st-input type="password" placeholder="••••••••"><span slot="prefix">⌘</span></st-input>
-                </div>
-
-                <div class="preview-row">
-                  <st-switch attr:checked="remember" on:change="remember = !remember">记住我</st-switch>
-                  <st-button variant="text" on:click="forgot">忘记密码？</st-button>
-                </div>
-
-                <st-button class="block" on:click="fakeLogin">登录</st-button>
-                <p class="preview-foot">还没有账号？<st-button variant="text" on:click="fakeLogin">创建账号</st-button></p>
-              </div>
-              <p class="preview-hint">当前材质：{{skinLabel}} · 颜色仍来自 M3（右上角可切深色）</p>
+        <article class="comp">
+          <div class="comp-preview">
+            <div class="row">
+              <st-icon-button title="收藏">★</st-icon-button>
+              <st-icon-button variant="filled" title="完成">✓</st-icon-button>
+              <st-icon-button variant="tonal" color="error" title="删除">⌫</st-icon-button>
+              <st-icon-button variant="outlined" title="设置">⚙</st-icon-button>
             </div>
-          </section>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Icon Button</h3><code>st-icon-button</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/button.html" target="_blank" rel="noreferrer" aria-label="Icon Button 文档">↗</a>
+          </div>
+        </article>
 
-          <section class="section" id="why">
-            <div class="section-head">
-              <div>
-                <p class="section-kicker">01 / WHY</p>
-                <h2>为什么是 Senti-UI</h2>
-              </div>
-              <p class="section-desc">
-                传统组件库把“人”的便利预设塞进 API；Senti-UI 只保留语义，把外观交还给原生 CSS，把材质交给皮肤。
-              </p>
+        <article class="comp">
+          <div class="comp-preview">
+            <div class="row">
+              <st-badges value="8"><st-icon-button title="通知">🔔</st-icon-button></st-badges>
+              <st-badges value="99+"><st-icon-button title="消息">✉</st-icon-button></st-badges>
+              <st-badges color="success"><st-icon-button variant="outlined" title="在线">●</st-icon-button></st-badges>
             </div>
-            <div class="principles">
-              <article class="principle">
-                <span class="num">01</span>
-                <h3>语义用属性</h3>
-                <p><span class="mono">disabled</span> / <span class="mono">loading</span> / <span class="mono">variant</span> 只表达状态与行为。没有 size 枚举，外观直接写原生 CSS。</p>
-              </article>
-              <article class="principle">
-                <span class="num">02</span>
-                <h3>颜色只走 M3</h3>
-                <p>所有组件消费 <span class="mono">--md-sys-color-*</span>。种子色、error、success 与深浅色主题永远一致。</p>
-              </article>
-              <article class="principle">
-                <span class="num">03</span>
-                <h3>材质可以换</h3>
-                <p>皮肤只改圆角、密度、描边、阴影、毛玻璃与动效；同一套组件可以长得像 M3、Apple 或 shadcn。</p>
-              </article>
-              <article class="principle">
-                <span class="num">04</span>
-                <h3>零构建</h3>
-                <p>一个 <span class="mono">l-m</span> 标签引入组件，CDN 即用；没有打包器，没有运行时编译配置。</p>
-              </article>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Badges</h3><code>st-badges</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/badges.html" target="_blank" rel="noreferrer" aria-label="Badges 文档">↗</a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <div class="ripple-tile">点我试试<st-ripple></st-ripple></div>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Ripple</h3><code>st-ripple</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/ripple.html" target="_blank" rel="noreferrer" aria-label="Ripple 文档">↗</a>
+          </div>
+        </article>
+
+        <!-- ===== 输入 ===== -->
+        <article class="comp">
+          <div class="comp-preview">
+            <st-input placeholder="you@example.com"><span slot="prefix">✉</span></st-input>
+            <st-input color="error" placeholder="校验错误态"></st-input>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Input</h3><code>st-input</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/input.html" target="_blank" rel="noreferrer" aria-label="Input 文档">↗</a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <st-textarea rows="2" placeholder="写点什么……"></st-textarea>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Textarea</h3><code>st-textarea</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/textarea.html" target="_blank" rel="noreferrer" aria-label="Textarea 文档">↗</a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <st-select placeholder="选择水果" on:change="fruitChange">
+              <option value="apple">苹果</option>
+              <option value="banana">香蕉</option>
+              <st-option value="mango" label="芒果">🥭 芒果（富内容）</st-option>
+            </st-select>
+            <span class="result">当前值：{{fruit || "（未选择）"}}</span>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Select</h3><code>st-select</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/select.html" target="_blank" rel="noreferrer" aria-label="Select 文档">↗</a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <div class="stack">
+              <st-checkbox attr:checked="agree" on:change="agree = !agree">我同意服务条款</st-checkbox>
+              <st-checkbox indeterminate>全选（不确定态）</st-checkbox>
             </div>
-          </section>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Checkbox</h3><code>st-checkbox</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/checkbox.html" target="_blank" rel="noreferrer" aria-label="Checkbox 文档">↗</a>
+          </div>
+        </article>
 
-          <section class="section" id="actions">
-            <div class="section-head">
-              <div>
-                <p class="section-kicker">02 / ACTIONS</p>
-                <h2>动作与反馈</h2>
-              </div>
-              <p class="section-desc">按钮、图标按钮、按钮组、分裂按钮、徽标与波纹。全部支持键盘聚焦、Enter / Space 激活与禁用态。</p>
+        <article class="comp">
+          <div class="comp-preview">
+            <div class="stack">
+              <st-switch attr:checked="notify" on:change="notify = !notify">接收通知</st-switch>
+              <st-switch disabled>禁用</st-switch>
             </div>
-            <div class="specs">
-              <st-card variant="outlined" class="spec">
-                <div class="spec-head"><h3>按钮</h3><code class="tag">st-button</code></div>
-                <div class="spec-body">
-                  <st-button>Filled</st-button>
-                  <st-button variant="outlined">Outlined</st-button>
-                  <st-button variant="text">Text</st-button>
-                  <st-button loading>Loading</st-button>
-                  <st-button disabled>Disabled</st-button>
-                </div>
-                <p class="spec-note">三种 M3 variant + loading。高度、圆角、间距全部是 em，改 font-size 即整体缩放。</p>
-              </st-card>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Switch</h3><code>st-switch</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/switch.html" target="_blank" rel="noreferrer" aria-label="Switch 文档">↗</a>
+          </div>
+        </article>
 
-              <st-card variant="outlined" class="spec">
-                <div class="spec-head"><h3>语义色</h3><code class="tag">color</code></div>
-                <div class="spec-body">
-                  <st-button color="error">Delete</st-button>
-                  <st-button color="success">Save</st-button>
-                  <st-button color="tertiary" variant="outlined">Accent</st-button>
-                  <st-button color="error" variant="text">Danger</st-button>
-                </div>
-                <p class="spec-note"><span class="mono">color</span> 接受 M3 角色名或 color 工具里的自定义变量名，换肤时语义不变。</p>
-              </st-card>
-
-              <st-card variant="outlined" class="spec">
-                <div class="spec-head"><h3>图标按钮与徽标</h3><code class="tag">st-icon-button · st-badges</code></div>
-                <div class="spec-body">
-                  <st-icon-button title="收藏">★</st-icon-button>
-                  <st-icon-button variant="filled" title="完成">✓</st-icon-button>
-                  <st-icon-button variant="tonal" color="error" title="删除">⌫</st-icon-button>
-                  <st-icon-button variant="outlined" title="设置">⚙</st-icon-button>
-                  <st-badges value="12"><st-icon-button title="通知">🔔</st-icon-button></st-badges>
-                </div>
-                <p class="spec-note">图标按钮必须配 title / aria-label；徽标可封顶、可换色、可标在任意元素上。</p>
-              </st-card>
-
-              <st-card variant="outlined" class="spec">
-                <div class="spec-head"><h3>按钮组</h3><code class="tag">st-button-group</code></div>
-                <div class="spec-body">
-                  <st-button-group connected>
-                    <st-button>日</st-button>
-                    <st-button variant="outlined">周</st-button>
-                    <st-button variant="outlined">月</st-button>
-                  </st-button-group>
-                </div>
-                <p class="spec-note">connected 连体、full-width 等分；圆角由 JS 按位置自动计算。</p>
-              </st-card>
-
-              <st-card variant="outlined" class="spec">
-                <div class="spec-head"><h3>分裂按钮</h3><code class="tag">st-split-button</code></div>
-                <div class="spec-body">
-                  <st-split-button on:click="splitAction">
-                    发送
-                    <span slot="prefix">↗</span>
-                    <st-menu-item slot="menu" on:click="splitPick('发送到邮箱')">发送到邮箱</st-menu-item>
-                    <st-menu-item slot="menu" on:click="splitPick('发送到云盘')">发送到云盘</st-menu-item>
-                    <st-menu-item slot="menu" disabled>定时发送</st-menu-item>
-                  </st-split-button>
-                </div>
-                <p class="spec-note">主区点按触发主操作，箭头开合菜单；菜单面板自动翻转避让视口。</p>
-              </st-card>
-
-              <st-card variant="outlined" class="spec">
-                <div class="spec-head"><h3>波纹</h3><code class="tag">st-ripple</code></div>
-                <div class="ripple-tile">点我试试<st-ripple></st-ripple></div>
-                <p class="spec-note">放在 position: relative 的父元素里即可；按钮已内建波纹，Apple / shadcn 皮肤会把它关掉。</p>
-              </st-card>
+        <article class="comp">
+          <div class="comp-preview">
+            <div class="stack">
+              <st-radio name="plan" attr:checked="plan === 'free'" on:change="plan = 'free'">免费版</st-radio>
+              <st-radio name="plan" attr:checked="plan === 'pro'" on:change="plan = 'pro'">专业版</st-radio>
             </div>
-          </section>
+            <span class="result">当前方案：{{plan}}</span>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Radio</h3><code>st-radio</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/radio.html" target="_blank" rel="noreferrer" aria-label="Radio 文档">↗</a>
+          </div>
+        </article>
 
-          <section class="section" id="inputs">
-            <div class="section-head">
-              <div>
-                <p class="section-kicker">03 / INPUTS</p>
-                <h2>输入与选择</h2>
-              </div>
-              <p class="section-desc">输入、文本域、下拉、复选、开关、单选、滑块。value 是运行时状态，用 <span class="mono">el.value</span> 读写。</p>
+        <article class="comp">
+          <div class="comp-preview">
+            <st-slider default-value="64" on:input="volumeChange" on:change="volumeChange"></st-slider>
+            <span class="result">音量：{{volume}}</span>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Slider</h3><code>st-slider</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/slider.html" target="_blank" rel="noreferrer" aria-label="Slider 文档">↗</a>
+          </div>
+        </article>
+
+        <!-- ===== 反馈 ===== -->
+        <article class="comp">
+          <div class="comp-preview">
+            <st-button variant="outlined" on:click="dialogOpen = true">打开对话框</st-button>
+            <span class="mini-note">headline / actions / auto-close</span>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Dialog</h3><code>st-dialog</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/dialog.html" target="_blank" rel="noreferrer" aria-label="Dialog 文档">↗</a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <st-menu>
+              <st-button slot="trigger" variant="outlined">打开菜单 ▾</st-button>
+              <st-menu-item on:click="menuPick('编辑')"><span slot="prefix">✏</span>编辑</st-menu-item>
+              <st-menu-item on:click="menuPick('复制')"><span slot="prefix">⧉</span>复制</st-menu-item>
+              <st-menu-item disabled><span slot="prefix">⌫</span>删除（禁用）</st-menu-item>
+            </st-menu>
+            <span class="mini-note">Escape / 点外部关闭</span>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Menu</h3><code>st-menu</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/menu.html" target="_blank" rel="noreferrer" aria-label="Menu 文档">↗</a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <st-snackbar open>
+              已保存全部更改
+              <st-button slot="action" variant="text" color="inverse-primary" on:click="showUndo">撤销</st-button>
+            </st-snackbar>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Snackbar</h3><code>st-snackbar</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/snackbar.html" target="_blank" rel="noreferrer" aria-label="Snackbar 文档">↗</a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <div class="tool-row">
+              <st-button variant="outlined" on:click="runToast">toast</st-button>
+              <st-button variant="outlined" on:click="runAlert">alert</st-button>
+              <st-button variant="outlined" on:click="runConfirm">confirm</st-button>
+              <st-button variant="outlined" on:click="runPrompt">prompt</st-button>
             </div>
-            <div class="specs">
-              <st-card variant="outlined" class="spec half">
-                <div class="spec-head"><h3>输入框</h3><code class="tag">st-input</code></div>
-                <div class="spec-body col">
-                  <st-input placeholder="you@example.com"><span slot="prefix">✉</span></st-input>
-                  <st-input color="error" placeholder="校验错误态"><span slot="prefix">!</span></st-input>
-                  <st-input variant="filled" placeholder="Filled 变体" default-value="已填充"></st-input>
-                </div>
-                <p class="spec-note">outlined / filled、prefix / suffix、color 校验态；focus 描边与 caret 跟随语义色。</p>
-              </st-card>
+            <span class="result">{{lastTool}}</span>
+            <div class="ctx-mini" on:contextmenu="openCtx">右键：contextMenu</div>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Command tools</h3><code>toast · alert · confirm</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/snackbar.html" target="_blank" rel="noreferrer" aria-label="命令式工具文档">↗</a>
+          </div>
+        </article>
 
-              <st-card variant="outlined" class="spec half">
-                <div class="spec-head"><h3>多行文本</h3><code class="tag">st-textarea</code></div>
-                <div class="spec-body col">
-                  <st-textarea rows="3" placeholder="写点什么……"></st-textarea>
-                  <st-textarea autosize default-value="autosize：高度跟随内容自动撑开。"></st-textarea>
-                </div>
-                <p class="spec-note">rows 为最小高度；autosize 用 ResizeObserver 跟随内容与字号变化。</p>
-              </st-card>
+        <article class="comp">
+          <div class="comp-preview">
+            <st-tooltip content="删除这条记录">
+              <st-button variant="outlined">悬停 / 聚焦我</st-button>
+            </st-tooltip>
+            <span class="mini-note">fixed 气泡，自动翻转</span>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Tooltip</h3><code>st-tooltip</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/tooltip.html" target="_blank" rel="noreferrer" aria-label="Tooltip 文档">↗</a>
+          </div>
+        </article>
 
-              <st-card variant="outlined" class="spec half">
-                <div class="spec-head"><h3>下拉选择</h3><code class="tag">st-select</code></div>
-                <div class="spec-body col">
-                  <st-select placeholder="选择一种水果" on:change="fruitChange">
-                    <option value="apple">苹果</option>
-                    <option value="banana">香蕉</option>
-                    <option value="cherry">樱桃</option>
-                    <option value="durian">榴莲</option>
-                    <st-option value="mango" label="芒果（st-option）">🥭 芒果 · 富内容选项</st-option>
-                  </st-select>
-                  <span class="result">当前值：{{fruit || "（未选择）"}}</span>
-                </div>
-                <p class="spec-note">支持原生 option 与 st-option 富内容；键盘 ↑↓ / Enter / Escape / Home / End 全支持。</p>
-              </st-card>
-
-              <st-card variant="outlined" class="spec half">
-                <div class="spec-head"><h3>复选与开关</h3><code class="tag">st-checkbox · st-switch</code></div>
-                <div class="spec-body col">
-                  <st-checkbox attr:checked="agree" on:change="agree = !agree">我同意服务条款</st-checkbox>
-                  <st-checkbox indeterminate>全选（不确定态）</st-checkbox>
-                  <st-switch attr:checked="notify" on:change="notify = !notify">接收通知</st-switch>
-                </div>
-                <p class="spec-note">内部是透明原生 input，天然支持 Space / Tab；change 事件 composed，可直接在宿主监听。</p>
-              </st-card>
-
-              <st-card variant="outlined" class="spec half">
-                <div class="spec-head"><h3>单选</h3><code class="tag">st-radio</code></div>
-                <div class="spec-body col">
-                  <st-radio name="plan" attr:checked="plan === 'free'" on:change="plan = 'free'">免费版</st-radio>
-                  <st-radio name="plan" attr:checked="plan === 'pro'" on:change="plan = 'pro'">专业版</st-radio>
-                  <st-radio name="plan" attr:checked="plan === 'team'" on:change="plan = 'team'">团队版</st-radio>
-                  <span class="result">当前方案：{{plan}}</span>
-                </div>
-                <p class="spec-note">同名 radio 在同一容器内互斥；跨 shadow 时由组件手动维护分组。</p>
-              </st-card>
-
-              <st-card variant="outlined" class="spec half">
-                <div class="spec-head"><h3>滑块</h3><code class="tag">st-slider</code></div>
-                <div class="spec-body col">
-                  <st-slider default-value="64" on:input="volumeChange" on:change="volumeChange"></st-slider>
-                  <st-slider color="success" default-value="82"></st-slider>
-                  <span class="result">音量：{{volume}}</span>
-                </div>
-                <p class="spec-note">内部原生 range 承载拖拽与键盘；聚焦时显示数值气泡。</p>
-              </st-card>
-            </div>
-          </section>
-
-          <section class="section" id="feedback">
-            <div class="section-head">
-              <div>
-                <p class="section-kicker">04 / FEEDBACK</p>
-                <h2>反馈与浮层</h2>
-              </div>
-              <p class="section-desc">对话框、菜单、消息条、Toast、提示、进度。所有交互都支持 Escape 关闭与点击外部关闭。</p>
-            </div>
-            <div class="specs">
-              <st-card variant="outlined" class="spec">
-                <div class="spec-head"><h3>对话框</h3><code class="tag">st-dialog</code></div>
-                <div class="spec-body">
-                  <st-button variant="outlined" on:click="openDlg">打开对话框</st-button>
-                </div>
-                <p class="spec-note">headline / 默认 / actions 三插槽，auto-close 支持遮罩与 Escape；open 是运行时状态。</p>
-              </st-card>
-
-              <st-card variant="outlined" class="spec">
-                <div class="spec-head"><h3>下拉菜单</h3><code class="tag">st-menu</code></div>
-                <div class="spec-body">
-                  <st-menu>
-                    <st-button slot="trigger" variant="outlined">打开菜单 ▾</st-button>
-                    <st-menu-item on:click="menuPick('编辑')"><span slot="prefix">✏</span>编辑</st-menu-item>
-                    <st-menu-item on:click="menuPick('复制')"><span slot="prefix">⧉</span>复制</st-menu-item>
-                    <hr />
-                    <st-menu-item on:click="menuPick('归档')"><span slot="prefix">▣</span>归档</st-menu-item>
-                    <st-menu-item disabled><span slot="prefix">⌫</span>删除（禁用）</st-menu-item>
-                  </st-menu>
-                </div>
-                <p class="spec-note">点击外部 / Escape / 选中自动关闭；菜单项支持 prefix、suffix 与子菜单。</p>
-                <p class="result">最近选择：{{lastAction}}</p>
-                <div class="ctx-tile" on:contextmenu="openCtx">右键这里：contextMenu 命令式菜单</div>
-                <p class="result">contextMenu → {{ctxResult}}</p>
-              </st-card>
-
-              <st-card variant="outlined" class="spec">
-                <div class="spec-head"><h3>消息条</h3><code class="tag">st-snackbar</code></div>
-                <div class="snackbar-stage">
-                  <st-snackbar open>
-                    已保存全部更改
-                    <st-button slot="action" variant="text" color="inverse-primary" on:click="showUndo">撤销</st-button>
-                  </st-snackbar>
-                </div>
-                <p class="spec-note">默认次级色底、上滑入场；duration 自动关闭并派发 close。演示里固定为静态，避免遮挡页面。</p>
-              </st-card>
-
-              <st-card variant="outlined" class="spec">
-                <div class="spec-head"><h3>Toast 与命令式对话框</h3><code class="tag">toast · alert · confirm · prompt</code></div>
-                <div class="tool-row">
-                  <st-button variant="outlined" on:click="runToast">toast</st-button>
-                  <st-button variant="outlined" on:click="runAlert">alert</st-button>
-                  <st-button variant="outlined" on:click="runConfirm">confirm</st-button>
-                  <st-button variant="outlined" on:click="runPrompt">prompt</st-button>
-                </div>
-                <p class="result">{{lastTool}}</p>
-                <p class="spec-note">Promise 化、用完即毁；返回值对齐原生语义（confirm → true / false / null）。</p>
-              </st-card>
-
-              <st-card variant="outlined" class="spec">
-                <div class="spec-head"><h3>提示</h3><code class="tag">st-tooltip</code></div>
-                <div class="spec-body">
-                  <st-tooltip content="删除这条记录">
-                    <st-button variant="outlined">悬停 / 聚焦我</st-button>
-                  </st-tooltip>
-                  <st-tooltip content="用 sync:open 控制的气泡" sync:open="tipOpen">
-                    <st-button variant="text" on:click="tipOpen = !tipOpen">点我开合</st-button>
-                  </st-tooltip>
-                </div>
-                <p class="spec-note">气泡 fixed 定位、自动上下翻转；content 按纯文本渲染，不注入 HTML。</p>
-              </st-card>
-
-              <st-card variant="outlined" class="spec">
-                <div class="spec-head"><h3>进度</h3><code class="tag">st-progress</code></div>
-                <div class="spec-body col">
-                  <div class="progress-row"><span>64%</span><st-progress value="64"></st-progress></div>
-                  <div class="progress-row"><span>不定</span><st-progress indeterminate></st-progress></div>
-                  <div class="progress-row"><span>环形</span><st-progress circular value="72"></st-progress><st-progress circular indeterminate></st-progress></div>
-                </div>
-                <p class="spec-note">线形 / 环形 × 确定 / 不定四态；缺省 value 自动视为不定。</p>
-              </st-card>
-            </div>
-          </section>
-
-          <section class="section" id="content">
-            <div class="section-head">
-              <div>
-                <p class="section-kicker">05 / CONTENT</p>
-                <h2>内容与层级</h2>
-              </div>
-              <p class="section-desc">卡片、列表、折叠。用最少的容器组件，组合出信息密度合适的页面。</p>
-            </div>
-            <div class="specs">
-              <st-card variant="outlined" class="spec half">
-                <div class="spec-head"><h3>卡片</h3><code class="tag">st-card</code></div>
-                <div class="mini-cards">
-                  <st-card variant="filled" class="mini-card"><strong>Filled</strong><span>surface-container-highest</span></st-card>
-                  <st-card variant="outlined" class="mini-card"><strong>Outlined</strong><span>outline-variant</span></st-card>
-                </div>
-                <p class="spec-note">elevated / filled / outlined 三类型；interactive 时整卡可点并带波纹。</p>
-              </st-card>
-
-              <st-card variant="outlined" class="spec half">
-                <div class="spec-head"><h3>列表</h3><code class="tag">st-list · st-list-item</code></div>
-                <st-list class="site-list">
-                  <st-list-item button on:click="listPick('收件箱')">
-                    <span slot="prefix">📥</span>
-                    <div>收件箱<span secondary>12 封未读</span></div>
-                    <span slot="suffix">→</span>
-                  </st-list-item>
-                  <st-list-item collapsible expanded>
-                    <span slot="prefix">📁</span>
-                    <div>项目</div>
-                    <st-list slot="sublist">
-                      <st-list-item button on:click="listPick('设计系统')">设计系统</st-list-item>
-                      <st-list-item button on:click="listPick('组件库')">组件库</st-list-item>
-                    </st-list>
-                  </st-list-item>
-                </st-list>
-                <p class="spec-note">button / disabled / collapsible + sublist；首尾项自动大圆角，嵌套层级自动缩进。</p>
-              </st-card>
-
-              <st-card variant="outlined" class="spec wide">
-                <div class="spec-head"><h3>折叠容器</h3><code class="tag">st-collapse</code></div>
-                <div class="spec-body col">
-                  <st-button variant="outlined" style="justify-self: start;" on:click="toggleCollapse">{{collapsed ? "展开内容" : "收起内容"}}</st-button>
-                  <st-collapse attr:hide="collapsed">
-                    <p class="spec-note" style="margin: 0;">
-                      高度过渡由 ResizeObserver 跟随内容；内容变化、字号变化都会自动重新量取。
-                      用 <span class="mono">attr:hide</span> 控制显隐，也可以在 JS 里设置 <span class="mono">hide</span> 属性。
-                    </p>
-                  </st-collapse>
-                </div>
-                <p class="spec-note">当前状态：{{collapsed ? "已收起" : "已展开"}}</p>
-              </st-card>
-            </div>
-          </section>
-
-          <section class="section" id="navigation">
-            <div class="section-head">
-              <div>
-                <p class="section-kicker">06 / NAVIGATION</p>
-                <h2>导航与布局</h2>
-              </div>
-              <p class="section-desc">标签栏、导航栏、响应式导航布局。指示条 / 药丸背景会跟随 active 项平滑移动。</p>
-            </div>
-            <div class="specs">
-              <st-card variant="outlined" class="spec half">
-                <div class="spec-head"><h3>标签栏</h3><code class="tag">st-tab-bar · st-tab-item</code></div>
-                <st-tab-bar>
-                  <st-tab-item attr:active="tab === 0" on:click="tab = 0"><span slot="icon">◐</span>概览</st-tab-item>
-                  <st-tab-item attr:active="tab === 1" on:click="tab = 1"><span slot="icon">◫</span>活动</st-tab-item>
-                  <st-tab-item attr:active="tab === 2" on:click="tab = 2"><span slot="icon">⚙</span>设置</st-tab-item>
-                </st-tab-bar>
-                <div class="tabs-panel">当前页：{{tabLabel}}</div>
-              </st-card>
-
-              <st-card variant="outlined" class="spec half">
-                <div class="spec-head"><h3>导航栏</h3><code class="tag">st-nav-bar · st-nav-item</code></div>
-                <st-nav-bar>
-                  <st-nav-item attr:active="navTab === 0" on:click="navTab = 0"><span slot="icon">⌂</span>首页</st-nav-item>
-                  <st-nav-item attr:active="navTab === 1" on:click="navTab = 1"><span slot="icon">⌕</span>发现</st-nav-item>
-                  <st-nav-item attr:active="navTab === 2" on:click="navTab = 2"><span slot="icon">◉</span>我的</st-nav-item>
-                </st-nav-bar>
-                <div class="tabs-panel">当前项：{{navLabel}}</div>
-              </st-card>
-
-              <st-card variant="outlined" class="spec wide">
-                <div class="spec-head"><h3>响应式导航布局</h3><code class="tag">st-nav-layout</code></div>
-                <st-nav-layout class="nav-layout">
-                  <st-nav-bar slot="nav">
-                    <st-nav-item attr:active="railTab === 0" on:click="railTab = 0"><span slot="icon">◫</span>概览</st-nav-item>
-                    <st-nav-item attr:active="railTab === 1" on:click="railTab = 1"><span slot="icon">✦</span>组件</st-nav-item>
-                    <st-nav-item attr:active="railTab === 2" on:click="railTab = 2"><span slot="icon">◐</span>材质</st-nav-item>
-                  </st-nav-bar>
-                  <div class="nav-layout-body">
-                    <span class="section-kicker">CONTENT AREA</span>
-                    <h4>{{railLabel}}</h4>
-                    <p>容器查询驱动：&lt;768px 底部导航；768–1023px 仍在底部、item 横向排列；≥1024px 变成左侧窄 rail。</p>
-                    <p>拖动窗口宽度，观察导航位置与形态自动切换。</p>
-                    <div class="rail-stats">
-                      <div><strong>29</strong><span>自定义标签</span></div>
-                      <div><strong>3</strong><span>内置材质</span></div>
-                      <div><strong>0</strong><span>构建步骤</span></div>
-                    </div>
-                  </div>
-                </st-nav-layout>
-              </st-card>
-            </div>
-          </section>
-
-          <section class="section" id="skins">
-            <div class="section-head">
-              <div>
-                <p class="section-kicker">07 / MATERIALS</p>
-                <h2>一套组件，三种材质</h2>
-              </div>
-              <p class="section-desc">
-                下面三张卡片各自锁定了一种材质（通过局部 <span class="mono">data-skin</span>），所以能同页并排比较。
-                点「应用到全站」切换整页材质；颜色始终来自 M3。
-              </p>
-            </div>
-            <div class="skin-cards">
-              <article class="skin-card" class:active="skin === 'm3'">
-                <div class="skin-card-head"><h3>M3 材质</h3><span class="skin-chip">m3</span></div>
-                <p class="skin-desc">全圆角、state layer、波纹，Material Design 3 的默认触感。</p>
-                <div class="skin-preview" data-skin="m3">
-                  <st-button>Button</st-button>
-                  <st-input placeholder="Input"></st-input>
-                </div>
-                <st-button variant="text" on:click="pickSkin('m3')">应用到全站 →</st-button>
-              </article>
-
-              <article class="skin-card" class:active="skin === 'apple'">
-                <div class="skin-card-head"><h3>Apple 毛玻璃</h3><span class="skin-chip">apple</span></div>
-                <p class="skin-desc">半透明表面 + backdrop blur、更小圆角、外侧柔光焦点环，无波纹。</p>
-                <div class="skin-preview" data-skin="apple">
-                  <st-button>Button</st-button>
-                  <st-input placeholder="Input"></st-input>
-                </div>
-                <st-button variant="text" on:click="pickSkin('apple')">应用到全站 →</st-button>
-              </article>
-
-              <article class="skin-card" class:active="skin === 'shadcn'">
-                <div class="skin-card-head"><h3>shadcn 扁平</h3><span class="skin-chip">shadcn</span></div>
-                <p class="skin-desc">6px 圆角、1px 细描边、极轻阴影、外扩 focus ring，紧凑密度。</p>
-                <div class="skin-preview" data-skin="shadcn">
-                  <st-button>Button</st-button>
-                  <st-input placeholder="Input"></st-input>
-                </div>
-                <st-button variant="text" on:click="pickSkin('shadcn')">应用到全站 →</st-button>
-              </article>
-            </div>
-            <p class="spec-note">
-              皮肤契约：只声明 <span class="mono">[data-skin="名称"]</span> 作用域下的 <span class="mono">--st-*</span> token，
-              不写宿主选择器——组件可能在嵌套 shadow 里，CSS 变量才是可靠通道。
-              完整 token 表见 <a href="https://github.com/ofajs/senti-ui/blob/main/packages/skin/README.md" target="_blank" rel="noreferrer">packages/skin/README.md</a>。
-            </p>
-          </section>
-
-          <section class="section" id="start">
-            <div class="start-grid">
-              <div class="start-copy">
-                <p class="section-kicker">08 / START</p>
-                <h2>三行引入，直接写页面。</h2>
-                <p style="margin-top: 12px;">
-                  不需要 Node、打包器或配置文件。ofa.js v5 + 一个 <span class="mono">l-m</span> 标签，组件在浏览器里完成注册。
-                </p>
-                <ul class="start-list">
-                  <li>颜色由组件自动引入的 st-color-init.js 注入，深浅色跟随系统。</li>
-                  <li>皮肤可选：加 <span class="mono">data-skin</span> 与一行 CSS，或调用 setSkin()。</li>
-                  <li>需要文档与全部属性表：<a href="../docs/index.html" target="_blank" rel="noreferrer">打开组件文档</a>。</li>
-                </ul>
-                <div class="cta">
-                  <st-button on:click="copyCode">{{copied ? "已复制 ✓" : "复制安装代码"}}</st-button>
-                  <st-button variant="outlined" on:click="openRepo">GitHub ↗</st-button>
-                </div>
-              </div>
-
-              <div class="code-panel">
-                <div class="code-head">
-                  <span class="dots"><i></i><i></i><i></i></span>
-                  <span class="code-file">index.html</span>
-                  <st-button class="copy-btn" variant="text" on:click="copyCode">{{copied ? "已复制" : "复制"}}</st-button>
-                </div>
-                <pre class="code">{{installCode}}</pre>
+        <article class="comp">
+          <div class="comp-preview">
+            <div class="progress-stack">
+              <st-progress value="64"></st-progress>
+              <div class="row">
+                <st-progress circular value="72"></st-progress>
+                <st-progress circular indeterminate></st-progress>
               </div>
             </div>
-          </section>
-        </main>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Progress</h3><code>st-progress</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/progress.html" target="_blank" rel="noreferrer" aria-label="Progress 文档">↗</a>
+          </div>
+        </article>
+
+        <!-- ===== 内容 ===== -->
+        <article class="comp">
+          <div class="comp-preview">
+            <st-card variant="filled" class="mini-card">
+              <strong>Card</strong>
+              <span>elevated / filled / outlined</span>
+            </st-card>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Card</h3><code>st-card</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/card.html" target="_blank" rel="noreferrer" aria-label="Card 文档">↗</a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <st-list class="site-list">
+              <st-list-item button on:click="listPick('收件箱')">
+                <span slot="prefix">📥</span>
+                <div>收件箱<span secondary>12 封未读</span></div>
+              </st-list-item>
+              <st-list-item button on:click="listPick('已发送')">
+                <span slot="prefix">📤</span>
+                <div>已发送</div>
+              </st-list-item>
+            </st-list>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>List</h3><code>st-list</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/list.html" target="_blank" rel="noreferrer" aria-label="List 文档">↗</a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <st-button variant="outlined" on:click="toggleCollapse">{{collapsed ? "展开内容" : "收起内容"}}</st-button>
+            <st-collapse attr:hide="collapsed">
+              <p class="mini-copy">高度过渡由 ResizeObserver 跟随内容，展开/收起不丢状态。</p>
+            </st-collapse>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Collapse</h3><code>st-collapse</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/collapse.html" target="_blank" rel="noreferrer" aria-label="Collapse 文档">↗</a>
+          </div>
+        </article>
+
+        <!-- ===== 导航 ===== -->
+        <article class="comp">
+          <div class="comp-preview">
+            <st-tab-bar>
+              <st-tab-item attr:active="tab === 0" on:click="tab = 0"><span slot="icon">◐</span>概览</st-tab-item>
+              <st-tab-item attr:active="tab === 1" on:click="tab = 1"><span slot="icon">◫</span>活动</st-tab-item>
+              <st-tab-item attr:active="tab === 2" on:click="tab = 2"><span slot="icon">⚙</span>设置</st-tab-item>
+            </st-tab-bar>
+            <span class="result">当前页：{{tabLabel}}</span>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Tabs</h3><code>st-tab-bar</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/tabs.html" target="_blank" rel="noreferrer" aria-label="Tabs 文档">↗</a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <st-nav-bar>
+              <st-nav-item attr:active="navTab === 0" on:click="navTab = 0"><span slot="icon">⌂</span>首页</st-nav-item>
+              <st-nav-item attr:active="navTab === 1" on:click="navTab = 1"><span slot="icon">⌕</span>发现</st-nav-item>
+              <st-nav-item attr:active="navTab === 2" on:click="navTab = 2"><span slot="icon">◉</span>我的</st-nav-item>
+            </st-nav-bar>
+            <span class="result">当前项：{{navLabel}}</span>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Navigation</h3><code>st-nav-bar</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/navigation.html" target="_blank" rel="noreferrer" aria-label="Navigation 文档">↗</a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview comp-preview-nav">
+            <st-nav-layout class="nav-layout-mini">
+              <st-nav-bar slot="nav">
+                <st-nav-item attr:active="railTab === 0" on:click="railTab = 0"><span slot="icon">◫</span>概览</st-nav-item>
+                <st-nav-item attr:active="railTab === 1" on:click="railTab = 1"><span slot="icon">✦</span>组件</st-nav-item>
+                <st-nav-item attr:active="railTab === 2" on:click="railTab = 2"><span slot="icon">◐</span>材质</st-nav-item>
+              </st-nav-bar>
+              <div class="nav-layout-mini-body">
+                <strong>{{railLabel}}</strong>
+                <span>容器宽度 &lt; 768px 时自动变成底部导航。</span>
+              </div>
+            </st-nav-layout>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Nav Layout</h3><code>st-nav-layout</code></div>
+            <a class="comp-link" href="../docs/index.html#/docs/pages/navigation.html" target="_blank" rel="noreferrer" aria-label="Nav Layout 文档">↗</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="skins">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">MATERIALS</p>
+          <h2>三种材质，同页对比</h2>
+        </div>
+        <p class="section-desc">下面三张卡片各自锁定一种材质（局部 data-skin），颜色仍来自 M3。点「应用到全站」切换整页材质。</p>
+      </div>
+      <div class="skin-cards">
+        <article class="skin-card" class:active="skin === 'm3'">
+          <div class="skin-card-head"><h3>M3 材质</h3><span class="skin-chip">m3</span></div>
+          <p class="skin-desc">全圆角、state layer、波纹，Material Design 3 的默认触感。</p>
+          <div class="skin-preview" data-skin="m3">
+            <st-button>Button</st-button>
+            <st-input placeholder="Input"></st-input>
+          </div>
+          <st-button variant="text" on:click="pickSkin('m3')">应用到全站 →</st-button>
+        </article>
+        <article class="skin-card" class:active="skin === 'apple'">
+          <div class="skin-card-head"><h3>Apple 毛玻璃</h3><span class="skin-chip">apple</span></div>
+          <p class="skin-desc">半透明表面 + backdrop blur、更小圆角、外侧柔光焦点环，无波纹。</p>
+          <div class="skin-preview" data-skin="apple">
+            <st-button>Button</st-button>
+            <st-input placeholder="Input"></st-input>
+          </div>
+          <st-button variant="text" on:click="pickSkin('apple')">应用到全站 →</st-button>
+        </article>
+        <article class="skin-card" class:active="skin === 'shadcn'">
+          <div class="skin-card-head"><h3>shadcn 扁平</h3><span class="skin-chip">shadcn</span></div>
+          <p class="skin-desc">6px 圆角、1px 细描边、极轻阴影、外扩 focus ring，紧凑密度。</p>
+          <div class="skin-preview" data-skin="shadcn">
+            <st-button>Button</st-button>
+            <st-input placeholder="Input"></st-input>
+          </div>
+          <st-button variant="text" on:click="pickSkin('shadcn')">应用到全站 →</st-button>
+        </article>
+      </div>
+      <p class="spec-note">
+        皮肤契约：只声明 <span class="mono">[data-skin="名称"]</span> 作用域下的 <span class="mono">--st-*</span> token，
+        不写宿主选择器。完整 token 表见
+        <a href="https://github.com/ofajs/senti-ui/blob/main/packages/skin/README.md" target="_blank" rel="noreferrer">packages/skin/README.md</a>。
+      </p>
+    </section>
+
+    <section class="section" id="start">
+      <div class="start-grid">
+        <div class="start-copy">
+          <p class="section-kicker">QUICK START</p>
+          <h2>三行引入，直接写页面。</h2>
+          <p style="margin-top: 12px;">
+            不需要 Node、打包器或配置文件。ofa.js v5 + 一个 <span class="mono">l-m</span> 标签，组件在浏览器里完成注册。
+          </p>
+          <ul class="start-list">
+            <li>颜色由组件自动引入的 st-color-init.js 注入，深浅色跟随系统。</li>
+            <li>皮肤可选：加 <span class="mono">data-skin</span> 与一行 CSS，或调用 setSkin()。</li>
+            <li>完整属性表与验收页：<a href="../docs/index.html" target="_blank" rel="noreferrer">打开组件文档</a>。</li>
+          </ul>
+          <div class="cta">
+            <st-button on:click="copyCode">{{copied ? "已复制 ✓" : "复制安装代码"}}</st-button>
+            <st-button variant="outlined" on:click="openRepo">GitHub ↗</st-button>
+          </div>
+        </div>
+        <div class="code-panel">
+          <div class="code-head">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="code-file">index.html</span>
+            <st-button class="copy-btn" variant="text" on:click="copyCode">{{copied ? "已复制" : "复制"}}</st-button>
+          </div>
+          <pre class="code">{{installCode}}</pre>
+        </div>
+      </div>
+    </section>
+  </main>
 
         <footer class="footer">
           <div class="footer-brand">

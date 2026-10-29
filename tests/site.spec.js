@@ -33,10 +33,11 @@ test("官网首页：29 个 st-* 标签全部升级，无页面错误", async ({
         return !el || !el.shadowRoot;
       }),
       heading: sr.querySelector("h1").textContent.trim(),
-      sections: [...sr.querySelectorAll("main section.section[id]")].map((el) => el.id),
+      sections: [...sr.querySelectorAll("main section[id]")].map((el) => el.id),
       path: location.pathname,
       hasOApp: !!document.querySelector("o-app"),
       templateRemoved: !document.querySelector("o-app template[page]"),
+      cards: sr.querySelectorAll(".comp").length,
     };
   });
 
@@ -47,16 +48,8 @@ test("官网首页：29 个 st-* 标签全部升级，无页面错误", async ({
   expect(state.path).toBe("/site/");
   expect(state.hasOApp).toBe(true);
   expect(state.templateRemoved).toBe(true);
-  expect(state.sections).toEqual([
-    "why",
-    "actions",
-    "inputs",
-    "feedback",
-    "content",
-    "navigation",
-    "skins",
-    "start",
-  ]);
+  expect(state.sections).toEqual(["top", "components", "skins", "start"]);
+  expect(state.cards).toBe(25);
   expect(errors).toEqual([]);
 
   // SCSR 刷新：同一真实路径重新加载后仍能还原页面

@@ -1413,7 +1413,7 @@
           <st-button on:click="jump('components')">浏览组件 <span slot="suffix">↓</span></st-button>
           <st-button variant="outlined" on:click="goDocs">组件文档 ↗</st-button>
         </div>
-        <p class="intro-hint">颜色仍来自 M3 · 顶部「材质」菜单切换全站材质</p>
+        <p class="intro-hint">颜色仍来自 M3 · 材质由 data-skin 与皮肤 CSS 决定</p>
       </div>
     </section>
 
@@ -1790,7 +1790,7 @@
           <p class="section-kicker">MATERIALS</p>
           <h2>三种材质，同页对比</h2>
         </div>
-        <p class="section-desc">下面三张卡片各自锁定一种材质（局部 data-skin），颜色仍来自 M3。用顶部「材质」菜单切换全站材质。</p>
+        <p class="section-desc">下面三张卡片各自锁定一种材质（局部 data-skin），颜色仍来自 M3。全站换肤用 setSkin()，或在 &lt;html&gt; 上设置 data-skin。</p>
       </div>
       <div class="skin-cards">
         <article class="skin-card">

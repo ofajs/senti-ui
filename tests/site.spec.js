@@ -108,35 +108,35 @@ test("SCSR：index.html 真实路径可直达", async ({ page }) => {
   expect(state.sharedHeader).toBe(true);
 });
 
-test("共享 header：材质菜单 / 主题 / 导航 / 对话框", async ({ page }) => {
+test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
   await page.goto("/site/", { waitUntil: "networkidle", timeout: 60_000 });
   await waitHome(page);
 
-  // 材质菜单（st-menu + st-menu-item + st-button）
-  await page.evaluate(() => {
+  const chrome = await page.evaluate(() => {
     const layout = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
     );
-    layout.shadowRoot.querySelector(".skin-menu st-button").click();
+    const sr = layout.shadowRoot;
+    return {
+      brand: sr.querySelector(".brand-btn").textContent.trim(),
+      logoMark: !!sr.querySelector(".brand-mark"),
+      skinMenu: !!sr.querySelector(".skin-menu"),
+      nav: [...sr.querySelectorAll(".layout-nav st-button")].map((b) => ({
+        text: b.textContent.trim(),
+        variant: b.getAttribute("variant"),
+        active: b.classList.contains("active"),
+        color: getComputedStyle(b).color,
+      })),
+    };
   });
-  await page.waitForTimeout(350);
-  await page.evaluate(() => {
-    const layout = [...document.querySelectorAll("o-page")].find(
-      (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
-    );
-    [...layout.shadowRoot.querySelectorAll("st-menu-item")]
-      .find((el) => el.textContent.includes("shadcn"))
-      .click();
-  });
-  await page.waitForFunction(() => document.documentElement.dataset.skin === "shadcn");
-  const radius = await page.evaluate(() => {
-    const child = [...document.querySelectorAll("o-page")].find(
-      (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp")
-    );
-    return parseFloat(getComputedStyle(child.shadowRoot.querySelector("st-button")).borderRadius);
-  });
-  expect(radius).toBeGreaterThan(5);
-  expect(radius).toBeLessThan(8);
+  expect(chrome.brand).toBe("SentiUI");
+  expect(chrome.logoMark).toBe(true);
+  expect(chrome.skinMenu).toBe(false);
+  expect(chrome.nav.map((x) => [x.text, x.variant, x.active])).toEqual([
+    ["组件", "text", true],
+    ["文档", "text", false],
+  ]);
+  expect(chrome.nav[0].color).not.toBe(chrome.nav[1].color);
 
   // 主题（st-icon-button + st-tooltip）auto → light → dark
   for (let i = 0; i < 2; i++) {
@@ -240,9 +240,10 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
       active: [...dsr.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
         x.textContent.replace(/\s+/g, " ").trim()
       ),
-      headerNav: [...layout.shadowRoot.querySelectorAll(".layout-nav st-button")].map((b) =>
-        b.getAttribute("variant")
-      ),
+      headerNav: [...layout.shadowRoot.querySelectorAll(".layout-nav st-button")].map((b) => ({
+        variant: b.getAttribute("variant"),
+        active: b.classList.contains("active"),
+      })),
       sidebar: !!dsr.querySelector(".docs-side"),
       picker: !!dsr.querySelector(".docs-picker"),
       pickerValue: dsr.querySelector(".docs-picker").value,
@@ -267,7 +268,10 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(state.pages).toBe(3);
   expect(state.sideItems).toBe(22);
   expect(state.active[0]).toContain("Input");
-  expect(state.headerNav).toEqual(["outlined", "filled"]);
+  expect(state.headerNav).toEqual([
+    { variant: "text", active: false },
+    { variant: "text", active: true },
+  ]);
   expect(state.sidebar).toBe(true);
   expect(state.picker).toBe(true);
   expect(state.pickerValue).toBe("input");

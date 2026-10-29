@@ -20,7 +20,7 @@ site/
   index.html       # 组件目录首页（export const parent = "./layout.html"）
   docs/
     layout.html    # 二级父页：左侧组件目录 / 移动端 picker + <slot>（parent 指向上级 layout）
-    index.html     # 文档概览：21 张组件卡片（parent = "./layout.html"）
+    index.html     # 文档概览：21 张卡片，按基础 / 辅助分组（parent = "./layout.html"）
     button.html    # 每个组件一页（共 21 页，均 parent = "./layout.html"）
     input.html
     ...
@@ -53,14 +53,14 @@ site/
 </body>
 ```
 
-- `layout.html` 是 SCSR 的**共享父页**：header（品牌 / 组件与文档导航 / 材质菜单 / 主题 / GitHub）、footer、以及主题与材质的全局状态都在这里；子页在 `<slot>` 中渲染，切页时布局不销毁；
+- `layout.html` 是 SCSR 的**共享父页**：header（favicon 同款标记 + SentiUI 字标 / 组件与文档文字导航 / 主题 / GitHub）、footer、以及主题状态都在这里；子页在 `<slot>` 中渲染，切页时布局不销毁；材质切换改用 `data-skin` / `setSkin()`，header 不再放材质菜单；
 - `index.html` 声明 `export const parent = "./layout.html"`；`docs/layout.html` 再声明 `export const parent = "../layout.html"`，形成**多级嵌套布局**；`docs/` 下每个组件页声明 `export const parent = "./layout.html"`；
 - 文档左侧组件目录（`st-list` + `st-list-item`）和移动端 `st-select` 只存在于 `docs/layout.html` 一处；同父页的组件互相切换时侧栏不销毁、不重排，只替换 `<slot>` 里的正文；
 - 页面切换动画：`app-config.js` 的 `pageAnime` 让离场页淡出，两级 layout 的 `::slotted(o-page)` 让新页以不透明背景轻微上滑入场（0.24s，`prefers-reduced-motion` 下关闭）；新页不透明 + 覆盖，避免两页内容叠在一起闪烁；
 - **slot 外层必须是相对容器**（`.docs-body { position: relative }`）：离场页会被 scsr 设为 `position: absolute`，没有相对容器时会相对视口定位，切换瞬间露出旧内容造成“闪一下”；
 - **滚动容器固定为 `.site-scroll`**：文档 head 里 `html, body { height: 100%; overflow: hidden }`，layout 内部用 `.shell { height: 100dvh; overflow: hidden }` + `.site-scroll { overflow-y: auto; overscroll-behavior-y: none }`。这样整页不会在底部继续触发根节点的弹性回弹，header / 阅读进度 / 回到顶部始终固定在视口；滚动进度、`toTop()`、路由切换后的复位都基于 `.site-scroll` 而不是 `window`；
 - 页面入场动画不要用 `animation-fill-mode: both` 保留 `transform`：identity transform 也会成为 `position: fixed` 的包含块，对话框/菜单会相对页面而不是视口定位（内部滚动后尤其明显）。动画结束后必须回到 `transform: none`；
-- header 尽量用 senti-ui 组件搭：`st-button-group` + `st-button`（导航）、`st-menu` + `st-menu-item` + `st-button`（材质）、`st-icon-button` + `st-tooltip`（主题 / GitHub）、品牌也是 `st-button`；导航用页面实例的 `goto()` 保持真实路径与共享布局；
+- header 用 senti-ui 组件搭：两个 `variant="text"` 的 `st-button` 做「组件 / 文档」导航（当前项用 `class:active` 换成 primary 色，不使用 button-group）、`st-icon-button` + `st-tooltip`（主题 / GitHub）、品牌也是 `st-button`：favicon 同款圆角方块 + 白点标记 + SentiUI 字标；导航用页面实例的 `goto()` 保持真实路径与共享布局；
 - scsr 接管后，把当前 URL（`/site/`、`/site/index.html`、`/site/docs/button.html` 等）收编为 `<o-page src>`，用同一份 HTML 的 `template[page]` 转译成页面模块，然后移除内联 template；
 - 页面本体随后渲染在 `o-page` 的 shadow 内，`:host` 样式、`this.ele.shadowRoot` 等写法与普通页面模块一致；
 - `app-config.js` **不声明 home**：首页就是当前 URL 的页面，声明 home 会与 scsr 竞争；
@@ -76,7 +76,7 @@ site/
 
 采用 shadcn 式的组件目录首页：
 
-- 共享 header（来自 `layout.html`）：组件 / 文档切换、材质菜单、深浅色、GitHub
+- 共享 header（来自 `layout.html`）：组件 / 文档文字切换、深浅色、GitHub
 - 紧凑 intro：标题、一句话说明、统计数据、组件文档 / 源码入口
 - **25 张组件卡片**（`CATALOG / 25 CARDS`）：每张卡片 = 真实组件预览 + 名称 + 标签 + 站内文档 ↗
   - 预览区可交互：按钮、输入、选择、开关、滑块、标签栏、导航、折叠、对话框、菜单、Toast 等都能直接操作
@@ -91,7 +91,9 @@ site/
 
 不再依赖旧的 `docs/` 目录（该目录准备删除）。每个组件一个独立 SCSR 页面，全部共用 `layout.html` 和文档侧栏：
 
-- `/site/docs/index.html`：21 张组件卡片概览
+- `/site/docs/index.html`：21 张组件卡片概览，分为「基础组件 18」与「辅助组件 3」
+  - 基础组件：按钮、表单控件、反馈、内容与导航，承担完整业务流程
+  - 辅助组件：波纹、折叠、提示，在基础组件之上做锦上添花
 - `/site/docs/{button,input,...,navigation}.html`：每个组件一页，包含
   - 一句话说明、分类、标签、上一页 / 下一页
   - 可交互的真实组件示例
@@ -105,7 +107,7 @@ site/
 - 仍然是 SCSR：每个组件页都是可直达、可刷新、可分享的真实文档
 - 页面切换有淡入 + 轻微上滑动画；header / 阅读进度常驻，内容区不因侧栏出现而重排
 
-新增组件文档时：在 `site/docs/` 复制一个页面改内容；只改 `site/docs/layout.html` 一处，补上侧栏项与移动端 `<option>`；再在 `site/docs/index.html` 补一张卡，并同步首页卡片的 `./docs/{id}.html` 链接。组件页本身不再包含侧栏。
+新增组件文档时：在 `site/docs/` 复制一个页面改内容；只改 `site/docs/layout.html` 一处，补上侧栏项与移动端 `<option>`；再在 `site/docs/index.html` 补一张卡（放进基础或辅助分组，并同步该组计数），并同步首页卡片的 `./docs/{id}.html` 链接。组件页本身不再包含侧栏。
 
 ## 首屏与无 JS
 
@@ -160,7 +162,7 @@ npm test
 
 - `/site/` 目录直开：25 张卡片、29 个 `st-*` 全部升级、无页面错误、`template[page]` 已被 scsr 移除、页面内没有 `/docs/` 链接；
 - 皮肤 / 主题 / 对话框交互；
-- 共享 layout：首页两个 `o-page`（layout + 子页）、header 导航 / 材质菜单 / 主题 / 回到首页；
+- 共享 layout：首页两个 `o-page`（layout + 子页）、header 文字导航 / 主题 / 回到首页，且 header 无材质菜单，品牌标记与 favicon 一致；
 - 组件文档：三层 `o-page`（site layout + docs layout + 组件页）、侧栏只有一份、每页 4 组以上示例、侧栏切换、移动端 picker 跟随当前页、上一页 / 下一页、阅读进度、页面切换动画；
 - 滚动外壳：`body` 不滚动、内部 `.site-scroll` 滚动、`overscroll-behavior-y: none`，header / 侧栏固定，阅读进度随内部滚动更新，路由切换复位；
 - 固定弹层：页面动画结束后 `transform` 必须回到 `none`，对话框遮罩覆盖整个视口；

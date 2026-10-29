@@ -61,29 +61,39 @@
             padding: 0 10px;
             gap: 8px;
             border-radius: 11px;
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 800;
-            letter-spacing: -0.03em;
+            letter-spacing: -0.04em;
             color: var(--md-sys-color-on-surface);
           }
+          /* 与站点 favicon 同一枚标记：圆角方块 + 白色圆点 */
           .brand-mark {
             display: block;
             width: 22px;
             height: 22px;
-            border-radius: 7px;
-            background: linear-gradient(140deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
+            color: var(--md-sys-color-primary);
           }
+          .brand-mark svg { display: block; width: 100%; height: 100%; }
           .brand-accent { color: var(--md-sys-color-primary); }
 
           .layout-nav {
-            margin-left: 4px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-left: 8px;
             font-size: 12px;
           }
           .layout-nav st-button {
             height: 32px;
-            padding: 0 13px;
+            padding: 0 12px;
+            border-radius: 9px;
             font-size: 12px;
             font-weight: 500;
+            color: var(--md-sys-color-on-surface-variant);
+          }
+          .layout-nav st-button.active {
+            color: var(--md-sys-color-primary);
+            font-weight: 600;
           }
 
           .top-actions {
@@ -92,19 +102,11 @@
             gap: 7px;
             margin-left: auto;
           }
-          .compact-btn {
-            height: 32px;
-            padding: 0 12px;
-            font-size: 12px;
-            font-weight: 500;
-          }
           .top-actions st-icon-button {
             width: 34px;
             height: 34px;
             font-size: 15px;
           }
-          .skin-menu { display: inline-flex; }
-
           /* body overflow:hidden 后，整站唯一的滚动容器在这里；
              overscroll-behavior 阻断滚动链，避免到底部再触发根节点弹性。 */
           .site-scroll {
@@ -193,7 +195,6 @@
             .top-inner { gap: 8px; }
             .top-actions { gap: 4px; }
             .github-btn { display: none; }
-            .compact-btn { padding: 0 10px; }
             .footer { flex-direction: column; align-items: flex-start; }
           }
         </style>
@@ -202,23 +203,21 @@
         <header class="top">
           <div class="top-inner">
             <st-button class="brand-btn" variant="text" on:click="go('./index.html')">
-              <span slot="prefix" class="brand-mark" aria-hidden="true"></span>
+              <span slot="prefix" class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="64" height="64" rx="18" fill="currentColor" />
+                  <circle cx="32" cy="32" r="13" fill="var(--md-sys-color-on-primary)" />
+                </svg>
+              </span>
               <span>Senti<span class="brand-accent">UI</span></span>
             </st-button>
 
-            <st-button-group connected class="layout-nav">
-              <st-button attr:variant="page === 'home' ? 'filled' : 'outlined'" on:click="go('./index.html')">组件</st-button>
-              <st-button attr:variant="page === 'docs' ? 'filled' : 'outlined'" on:click="go('./docs/index.html')">文档</st-button>
-            </st-button-group>
+            <nav class="layout-nav" aria-label="主导航">
+              <st-button variant="text" class:active="page === 'home'" on:click="go('./index.html')">组件</st-button>
+              <st-button variant="text" class:active="page === 'docs'" on:click="go('./docs/index.html')">文档</st-button>
+            </nav>
 
             <div class="top-actions">
-              <st-menu class="skin-menu" align="right">
-                <st-button slot="trigger" variant="outlined" class="compact-btn">材质：{{skinLabel}} ▾</st-button>
-                <st-menu-item on:click="pickSkin('m3')">M3 材质</st-menu-item>
-                <st-menu-item on:click="pickSkin('apple')">Apple 毛玻璃</st-menu-item>
-                <st-menu-item on:click="pickSkin('shadcn')">shadcn 扁平</st-menu-item>
-              </st-menu>
-
               <st-tooltip content="切换深浅色主题">
                 <st-icon-button title="切换主题" on:click="cycleTheme">◐</st-icon-button>
               </st-tooltip>
@@ -260,7 +259,6 @@
               page: "home",
               readProgress: 0,
               themeMode: "auto",
-              skin: "m3",
             },
             ready() {
               this.detectPage();
@@ -296,9 +294,6 @@
               get themeLabel() {
                 return { auto: "跟随系统", light: "浅色", dark: "深色" }[this.themeMode] || "跟随系统";
               },
-              get skinLabel() {
-                return { m3: "M3", apple: "Apple 毛玻璃", shadcn: "shadcn 扁平" }[this.skin] || "M3";
-              },
               detectPage() {
                 const path = location.pathname;
                 const inDocs = /\/docs(\/|$)/.test(path);
@@ -329,10 +324,6 @@
                 else location.href = path;
               },
               syncChrome() {
-                this.skin =
-                  document.documentElement.dataset.skin ||
-                  localStorage.getItem("st-skin") ||
-                  "m3";
                 if (window.__site) this.themeMode = window.__site.getThemeMode();
                 else {
                   try {
@@ -347,10 +338,6 @@
                 const next = order[(order.indexOf(this.themeMode) + 1) % order.length];
                 this.themeMode = next;
                 if (window.__site) window.__site.setThemeMode(next);
-              },
-              pickSkin(id) {
-                this.skin = id;
-                if (window.__site) window.__site.setSkin(id);
               },
               openRepo() {
                 window.open("https://github.com/ofajs/senti-ui", "_blank", "noopener");

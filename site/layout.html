@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Senti-UI</title>
+  </head>
+  <body>
+    <!-- SCSR 共享布局父页：子页 export const parent = "./layout.html"。
+         本文件只作为页面模块被引用；header / footer / 主题与材质控制都收在这里。 -->
+    <o-app src="./app-config.js">
+      <template page>
+        <style>
+          :host {
+            --site-max: 1240px;
+            --gutter: clamp(20px, 4vw, 40px);
+            display: block;
+            background: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
+              system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+          }
+          *, *::before, *::after { box-sizing: border-box; }
+          button { font: inherit; }
+          a { color: inherit; }
+
+          .top {
+            position: sticky;
+            top: 0;
+            z-index: 60;
+            background: var(--md-sys-color-surface);
+            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+          }
+          .top-inner {
+            max-width: var(--site-max);
+            margin: 0 auto;
+            padding: 10px var(--gutter);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+          }
+
+          .brand-btn {
+            height: 38px;
+            padding: 0 10px;
+            gap: 8px;
+            border-radius: 11px;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--md-sys-color-on-surface);
+          }
+          .brand-mark {
+            display: block;
+            width: 22px;
+            height: 22px;
+            border-radius: 7px;
+            background: linear-gradient(140deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
+          }
+          .brand-accent { color: var(--md-sys-color-primary); }
+
+          .layout-nav {
+            margin-left: 4px;
+            font-size: 12px;
+          }
+          .layout-nav st-button {
+            height: 32px;
+            padding: 0 13px;
+            font-size: 12px;
+            font-weight: 500;
+          }
+
+          .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-left: auto;
+          }
+          .compact-btn {
+            height: 32px;
+            padding: 0 12px;
+            font-size: 12px;
+            font-weight: 500;
+          }
+          .top-actions st-icon-button {
+            width: 34px;
+            height: 34px;
+            font-size: 15px;
+          }
+          .skin-menu { display: inline-flex; }
+
+          .site-main {
+            display: block;
+            min-height: calc(100vh - 190px);
+            position: relative;
+          }
+          ::slotted(o-page) {
+            display: block;
+            animation: st-page-in 0.3s cubic-bezier(0.32, 0.72, 0, 1) both;
+          }
+          @keyframes st-page-in {
+            from { opacity: 0; transform: translateX(16px); }
+            to { opacity: 1; transform: none; }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            ::slotted(o-page) { animation: none; }
+          }
+
+          .read-progress {
+            display: none;
+            position: sticky;
+            top: 59px;
+            z-index: 30;
+            height: 3px;
+          }
+          .read-progress.show { display: block; }
+          .read-progress st-progress {
+            display: block;
+            width: 100%;
+            font-size: 10px;
+          }
+
+          .docs-grid { display: block; }
+          .site-main.docs .docs-grid {
+            display: grid;
+            grid-template-columns: 232px minmax(0, 1fr);
+            gap: clamp(24px, 3.5vw, 44px);
+            max-width: var(--site-max);
+            margin: 0 auto;
+            padding: 18px var(--gutter) 64px;
+            align-items: start;
+          }
+          .docs-side { display: none; }
+          .site-main.docs .docs-side {
+            display: block;
+            position: sticky;
+            top: 74px;
+            max-height: calc(100vh - 92px);
+            overflow: auto;
+            padding-right: 6px;
+          }
+          .docs-slot { min-width: 0; overflow-x: clip; }
+          .side-title {
+            padding: 2px 10px 8px;
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+          }
+          .side-group {
+            margin: 14px 0 3px;
+            padding: 0 10px;
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 9.5px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+          }
+          .docs-side st-list { gap: 1px; }
+          .docs-side st-list-item {
+            font-size: 12px;
+            border-radius: 9px;
+          }
+          .docs-side st-list-item.active {
+            background: var(--md-sys-color-secondary-container);
+            color: var(--md-sys-color-on-secondary-container);
+          }
+          .docs-side st-list-item code[slot="suffix"] {
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 9px;
+            opacity: 0.75;
+            white-space: nowrap;
+          }
+          .to-top {
+            display: none;
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 35;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--md-sys-color-surface-container-high);
+            box-shadow: 0 6px 20px -10px rgb(0 0 0 / 0.5);
+          }
+          .to-top.show { display: grid; place-items: center; }
+
+          .footer {
+            max-width: var(--site-max);
+            margin: 0 auto;
+            padding: 26px var(--gutter) 38px;
+            border-top: 1px solid var(--md-sys-color-outline-variant);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 11.5px;
+          }
+          .footer-links { display: flex; gap: 3px; flex-wrap: wrap; }
+          .footer-links a {
+            padding: 5px 9px;
+            border-radius: 999px;
+            color: inherit;
+            text-decoration: none;
+          }
+          .footer-links a:hover {
+            background: var(--md-sys-color-surface-container-low);
+            color: var(--md-sys-color-on-surface);
+          }
+
+          @media (max-width: 760px) {
+            .layout-nav { display: none; }
+            .top-inner { gap: 8px; }
+            .top-actions { gap: 4px; }
+            .github-btn { display: none; }
+            .compact-btn { padding: 0 10px; }
+            .footer { flex-direction: column; align-items: flex-start; }
+          }
+        </style>
+
+        <header class="top">
+          <div class="top-inner">
+            <st-button class="brand-btn" variant="text" on:click="go('./index.html')">
+              <span slot="prefix" class="brand-mark" aria-hidden="true"></span>
+              <span>Senti<span class="brand-accent">UI</span></span>
+            </st-button>
+
+            <st-button-group connected class="layout-nav">
+              <st-button attr:variant="page === 'home' ? 'filled' : 'outlined'" on:click="go('./index.html')">组件</st-button>
+              <st-button attr:variant="page === 'docs' ? 'filled' : 'outlined'" on:click="go('./docs/index.html')">文档</st-button>
+            </st-button-group>
+
+            <div class="top-actions">
+              <st-menu class="skin-menu" align="right">
+                <st-button slot="trigger" variant="outlined" class="compact-btn">材质：{{skinLabel}} ▾</st-button>
+                <st-menu-item on:click="pickSkin('m3')">M3 材质</st-menu-item>
+                <st-menu-item on:click="pickSkin('apple')">Apple 毛玻璃</st-menu-item>
+                <st-menu-item on:click="pickSkin('shadcn')">shadcn 扁平</st-menu-item>
+              </st-menu>
+
+              <st-tooltip content="切换深浅色主题">
+                <st-icon-button title="切换主题" on:click="cycleTheme">◐</st-icon-button>
+              </st-tooltip>
+
+              <st-tooltip content="GitHub 仓库">
+                <st-icon-button class="github-btn" title="GitHub" on:click="openRepo">↗</st-icon-button>
+              </st-tooltip>
+            </div>
+          </div>
+        </header>
+
+        <div class="read-progress" class:show="page === 'docs'">
+          <st-progress attr:value="readProgress"></st-progress>
+        </div>
+
+        <main class="site-main" class:docs="page === 'docs'">
+          <div class="docs-grid">
+            <aside class="docs-side">
+            <p class="side-title">Components · 21</p>
+            <p class="side-group">动作</p>
+            <st-list class="side-list">
+              <st-list-item button class:active="activeDoc === 'button'" on:click="goDoc('button')">
+    <span>Button</span><code slot="suffix">st-button</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'ripple'" on:click="goDoc('ripple')">
+    <span>Ripple</span><code slot="suffix">st-ripple</code>
+  </st-list-item>
+            </st-list>
+            <p class="side-group">表单</p>
+            <st-list class="side-list">
+              <st-list-item button class:active="activeDoc === 'input'" on:click="goDoc('input')">
+    <span>Input</span><code slot="suffix">st-input</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'textarea'" on:click="goDoc('textarea')">
+    <span>Textarea</span><code slot="suffix">st-textarea</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'select'" on:click="goDoc('select')">
+    <span>Select</span><code slot="suffix">st-select</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'checkbox'" on:click="goDoc('checkbox')">
+    <span>Checkbox</span><code slot="suffix">st-checkbox</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'switch'" on:click="goDoc('switch')">
+    <span>Switch</span><code slot="suffix">st-switch</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'radio'" on:click="goDoc('radio')">
+    <span>Radio</span><code slot="suffix">st-radio</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'slider'" on:click="goDoc('slider')">
+    <span>Slider</span><code slot="suffix">st-slider</code>
+  </st-list-item>
+            </st-list>
+            <p class="side-group">反馈</p>
+            <st-list class="side-list">
+              <st-list-item button class:active="activeDoc === 'dialog'" on:click="goDoc('dialog')">
+    <span>Dialog</span><code slot="suffix">st-dialog</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'menu'" on:click="goDoc('menu')">
+    <span>Menu</span><code slot="suffix">st-menu</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'snackbar'" on:click="goDoc('snackbar')">
+    <span>Snackbar</span><code slot="suffix">st-snackbar</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'tooltip'" on:click="goDoc('tooltip')">
+    <span>Tooltip</span><code slot="suffix">st-tooltip</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'progress'" on:click="goDoc('progress')">
+    <span>Progress</span><code slot="suffix">st-progress</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'tools'" on:click="goDoc('tools')">
+    <span>Command tools</span><code slot="suffix">toast</code>
+  </st-list-item>
+            </st-list>
+            <p class="side-group">内容</p>
+            <st-list class="side-list">
+              <st-list-item button class:active="activeDoc === 'card'" on:click="goDoc('card')">
+    <span>Card</span><code slot="suffix">st-card</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'badges'" on:click="goDoc('badges')">
+    <span>Badges</span><code slot="suffix">st-badges</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'collapse'" on:click="goDoc('collapse')">
+    <span>Collapse</span><code slot="suffix">st-collapse</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'list'" on:click="goDoc('list')">
+    <span>List</span><code slot="suffix">st-list</code>
+  </st-list-item>
+            </st-list>
+            <p class="side-group">导航</p>
+            <st-list class="side-list">
+              <st-list-item button class:active="activeDoc === 'tabs'" on:click="goDoc('tabs')">
+    <span>Tabs</span><code slot="suffix">st-tab-bar</code>
+  </st-list-item>
+              <st-list-item button class:active="activeDoc === 'navigation'" on:click="goDoc('navigation')">
+    <span>Navigation</span><code slot="suffix">st-nav-bar</code>
+  </st-list-item>
+            </st-list>
+            </aside>
+            <div class="docs-slot"><slot></slot></div>
+          </div>
+        </main>
+
+        <st-tooltip content="回到顶部">
+          <st-icon-button class="to-top" class:show="page === 'docs'" title="回到顶部" on:click="toTop">↑</st-icon-button>
+        </st-tooltip>
+
+        <footer class="footer">
+          <span>Senti-UI · 语义组件，任意材质。</span>
+          <nav class="footer-links" aria-label="页脚导航">
+            <a href="./index.html">组件目录</a>
+            <a href="./docs/index.html">组件文档</a>
+            <a href="./index.html#start">快速开始</a>
+            <a href="https://github.com/ofajs/senti-ui" target="_blank" rel="noreferrer">GitHub</a>
+          </nav>
+          <span>ofa.js v5 · Material Design 3 · SCSR</span>
+        </footer>
+
+        <script>
+          export default async () => ({
+            data: {
+              page: "home",
+              activeDoc: "",
+              readProgress: 0,
+              themeMode: "auto",
+              skin: "m3",
+            },
+            ready() {
+              this.detectPage();
+              this.syncChrome();
+              this._onPop = () => this.detectPage();
+              this._onScroll = () => this.updateProgress();
+              window.addEventListener("popstate", this._onPop);
+              window.addEventListener("scroll", this._onScroll, { passive: true });
+              this.updateProgress();
+              if (!window.__site) {
+                this._poll = setInterval(() => {
+                  if (window.__site) {
+                    this.syncChrome();
+                    clearInterval(this._poll);
+                  }
+                }, 60);
+                setTimeout(() => clearInterval(this._poll), 4000);
+              }
+            },
+            detached() {
+              window.removeEventListener("popstate", this._onPop);
+              window.removeEventListener("scroll", this._onScroll);
+              clearInterval(this._poll);
+            },
+            routerChange() {
+              this.detectPage();
+              this.syncChrome();
+              this.updateProgress();
+            },
+            proto: {
+              get themeLabel() {
+                return { auto: "跟随系统", light: "浅色", dark: "深色" }[this.themeMode] || "跟随系统";
+              },
+              get skinLabel() {
+                return { m3: "M3", apple: "Apple 毛玻璃", shadcn: "shadcn 扁平" }[this.skin] || "M3";
+              },
+              detectPage() {
+                const path = location.pathname;
+                const inDocs = /\/docs(\/|$)/.test(path);
+                this.page = inDocs ? "docs" : "home";
+                const file = path.split("/").pop().replace(/\.html$/, "");
+                this.activeDoc = inDocs && file !== "" && file !== "docs" && file !== "index" ? file : "";
+              },
+              updateProgress() {
+                if (this.page !== "docs") {
+                  this.readProgress = 0;
+                  return;
+                }
+                const max = document.documentElement.scrollHeight - window.innerHeight;
+                this.readProgress = max > 0 ? Math.min(100, Math.max(0, Math.round((window.scrollY / max) * 100))) : 0;
+              },
+              goDoc(id) {
+                this.page = "docs";
+                this.activeDoc = id;
+                this.goto("./docs/" + id + ".html");
+              },
+              toTop() {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              },
+              go(path) {
+                const inDocs = path.indexOf("docs/") >= 0;
+                this.page = inDocs ? "docs" : "home";
+                const m = path.match(/docs\/([^/]+)\.html$/);
+                this.activeDoc = m && m[1] !== "index" ? m[1] : "";
+                if (this.goto) this.goto(path);
+                else location.href = path;
+              },
+              syncChrome() {
+                this.skin =
+                  document.documentElement.dataset.skin ||
+                  localStorage.getItem("st-skin") ||
+                  "m3";
+                if (window.__site) this.themeMode = window.__site.getThemeMode();
+                else {
+                  try {
+                    this.themeMode = localStorage.getItem("st-theme-mode") || "auto";
+                  } catch {
+                    this.themeMode = "auto";
+                  }
+                }
+              },
+              cycleTheme() {
+                const order = ["auto", "light", "dark"];
+                const next = order[(order.indexOf(this.themeMode) + 1) % order.length];
+                this.themeMode = next;
+                if (window.__site) window.__site.setThemeMode(next);
+              },
+              pickSkin(id) {
+                this.skin = id;
+                if (window.__site) window.__site.setSkin(id);
+              },
+              openRepo() {
+                window.open("https://github.com/ofajs/senti-ui", "_blank", "noopener");
+              },
+            },
+          });
+        </script>
+      </template>
+    </o-app>
+
+    <script type="module">
+      import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+      import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+    </script>
+  </body>
+</html>

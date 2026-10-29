@@ -127,7 +127,7 @@ Switch at runtime with `setSkin("shadcn")` from `packages/skin/st-skin.js` (pers
 
 ## Website
 
-A single-page showcase lives in [`site/`](./site/index.html), built with **SCSR** (ofa.js v5 real-path documents): every component on one page, live skin + light/dark switching, and three side-by-side material previews. Each URL is a real HTML document; scsr turns it into an o-app page after load.
+A single-page showcase lives in [`site/`](./site/index.html), built with **SCSR** (ofa.js v5 real-path documents): every component on one page, live skin + light/dark switching, and three side-by-side material previews. Each URL is a real HTML document; scsr turns it into an o-app page after load. Component docs live under [`site/docs/`](./site/docs/index.html) — one real SCSR page per component, with live examples, attribute tables and slots/events.
 
 ```bash
 npm run dev

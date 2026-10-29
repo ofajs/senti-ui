@@ -95,7 +95,7 @@
     <div class="nojs">
       <h1>Senti-UI</h1>
       <p>语义组件，任意材质。官网的实时换肤与组件演示需要 JavaScript；文档与源码无需脚本即可查看。</p>
-      <p><a href="../docs/index.html">打开组件文档</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+      <p><a href="./docs/index.html">打开组件文档</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
     </div>
   </noscript>
 
@@ -1390,25 +1390,6 @@
 
   </style>
 
-        <header class="top">
-          <div class="top-inner">
-            <button class="brand" on:click="goTop">
-              <span class="brand-mark" aria-hidden="true"></span>
-              <span>Senti<span class="brand-accent">UI</span></span>
-            </button>
-            <nav class="top-nav" aria-label="页面导航">
-              <button class="nav-link" on:click="jump('components')">组件</button>
-              <button class="nav-link" on:click="jump('skins')">材质</button>
-              <button class="nav-link" on:click="jump('start')">开始</button>
-              <a class="nav-link nav-link-doc" href="../docs/index.html" target="_blank" rel="noreferrer">文档 ↗</a>
-            </nav>
-            <div class="top-actions">
-              <button class="top-btn" on:click="cycleTheme" title="切换主题模式">◐ {{themeLabel}}</button>
-              <button class="top-btn top-btn-strong" on:click="openRepo">GitHub ↗</button>
-            </div>
-          </div>
-        </header>
-
           <main>
     <section class="intro" id="top">
       <div class="intro-copy">
@@ -1420,12 +1401,6 @@
         </p>
       </div>
       <div class="intro-side">
-        <div class="skin-row">
-          <span class="skin-row-label">材质</span>
-          <st-button class="skin-pick" attr:variant="skin === 'm3' ? 'filled' : 'outlined'" on:click="pickSkin('m3')">M3</st-button>
-          <st-button class="skin-pick" attr:variant="skin === 'apple' ? 'filled' : 'outlined'" on:click="pickSkin('apple')">Apple 毛玻璃</st-button>
-          <st-button class="skin-pick" attr:variant="skin === 'shadcn' ? 'filled' : 'outlined'" on:click="pickSkin('shadcn')">shadcn</st-button>
-        </div>
         <div class="intro-stats">
           <div><strong>20</strong><span>组件模块</span></div>
           <div><strong>29</strong><span>自定义标签</span></div>
@@ -1434,9 +1409,9 @@
         </div>
         <div class="cta">
           <st-button on:click="jump('components')">浏览组件 <span slot="suffix">↓</span></st-button>
-          <st-button variant="outlined" on:click="openRepo">源码 ↗</st-button>
+          <st-button variant="outlined" on:click="goDocs">组件文档 ↗</st-button>
         </div>
-        <p class="intro-hint">当前材质：{{skinLabel}} · 颜色仍来自 M3</p>
+        <p class="intro-hint">颜色仍来自 M3 · 顶部「材质」菜单切换全站材质</p>
       </div>
     </section>
 
@@ -1462,7 +1437,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Button</h3><code>st-button</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/button.html" target="_blank" rel="noreferrer" aria-label="Button 文档">↗</a>
+            <a class="comp-link" href="./docs/button.html" rel="noreferrer" aria-label="Button 文档">↗</a>
           </div>
         </article>
 
@@ -1476,7 +1451,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Button Group</h3><code>st-button-group</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/button.html" target="_blank" rel="noreferrer" aria-label="Button Group 文档">↗</a>
+            <a class="comp-link" href="./docs/button.html" rel="noreferrer" aria-label="Button Group 文档">↗</a>
           </div>
         </article>
 
@@ -1490,7 +1465,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Split Button</h3><code>st-split-button</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/button.html" target="_blank" rel="noreferrer" aria-label="Split Button 文档">↗</a>
+            <a class="comp-link" href="./docs/button.html" rel="noreferrer" aria-label="Split Button 文档">↗</a>
           </div>
         </article>
 
@@ -1505,7 +1480,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Icon Button</h3><code>st-icon-button</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/button.html" target="_blank" rel="noreferrer" aria-label="Icon Button 文档">↗</a>
+            <a class="comp-link" href="./docs/button.html" rel="noreferrer" aria-label="Icon Button 文档">↗</a>
           </div>
         </article>
 
@@ -1519,7 +1494,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Badges</h3><code>st-badges</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/badges.html" target="_blank" rel="noreferrer" aria-label="Badges 文档">↗</a>
+            <a class="comp-link" href="./docs/badges.html" rel="noreferrer" aria-label="Badges 文档">↗</a>
           </div>
         </article>
 
@@ -1529,7 +1504,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Ripple</h3><code>st-ripple</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/ripple.html" target="_blank" rel="noreferrer" aria-label="Ripple 文档">↗</a>
+            <a class="comp-link" href="./docs/ripple.html" rel="noreferrer" aria-label="Ripple 文档">↗</a>
           </div>
         </article>
 
@@ -1541,7 +1516,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Input</h3><code>st-input</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/input.html" target="_blank" rel="noreferrer" aria-label="Input 文档">↗</a>
+            <a class="comp-link" href="./docs/input.html" rel="noreferrer" aria-label="Input 文档">↗</a>
           </div>
         </article>
 
@@ -1551,7 +1526,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Textarea</h3><code>st-textarea</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/textarea.html" target="_blank" rel="noreferrer" aria-label="Textarea 文档">↗</a>
+            <a class="comp-link" href="./docs/textarea.html" rel="noreferrer" aria-label="Textarea 文档">↗</a>
           </div>
         </article>
 
@@ -1566,7 +1541,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Select</h3><code>st-select</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/select.html" target="_blank" rel="noreferrer" aria-label="Select 文档">↗</a>
+            <a class="comp-link" href="./docs/select.html" rel="noreferrer" aria-label="Select 文档">↗</a>
           </div>
         </article>
 
@@ -1579,7 +1554,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Checkbox</h3><code>st-checkbox</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/checkbox.html" target="_blank" rel="noreferrer" aria-label="Checkbox 文档">↗</a>
+            <a class="comp-link" href="./docs/checkbox.html" rel="noreferrer" aria-label="Checkbox 文档">↗</a>
           </div>
         </article>
 
@@ -1592,7 +1567,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Switch</h3><code>st-switch</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/switch.html" target="_blank" rel="noreferrer" aria-label="Switch 文档">↗</a>
+            <a class="comp-link" href="./docs/switch.html" rel="noreferrer" aria-label="Switch 文档">↗</a>
           </div>
         </article>
 
@@ -1606,7 +1581,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Radio</h3><code>st-radio</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/radio.html" target="_blank" rel="noreferrer" aria-label="Radio 文档">↗</a>
+            <a class="comp-link" href="./docs/radio.html" rel="noreferrer" aria-label="Radio 文档">↗</a>
           </div>
         </article>
 
@@ -1617,7 +1592,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Slider</h3><code>st-slider</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/slider.html" target="_blank" rel="noreferrer" aria-label="Slider 文档">↗</a>
+            <a class="comp-link" href="./docs/slider.html" rel="noreferrer" aria-label="Slider 文档">↗</a>
           </div>
         </article>
 
@@ -1629,7 +1604,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Dialog</h3><code>st-dialog</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/dialog.html" target="_blank" rel="noreferrer" aria-label="Dialog 文档">↗</a>
+            <a class="comp-link" href="./docs/dialog.html" rel="noreferrer" aria-label="Dialog 文档">↗</a>
           </div>
         </article>
 
@@ -1645,7 +1620,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Menu</h3><code>st-menu</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/menu.html" target="_blank" rel="noreferrer" aria-label="Menu 文档">↗</a>
+            <a class="comp-link" href="./docs/menu.html" rel="noreferrer" aria-label="Menu 文档">↗</a>
           </div>
         </article>
 
@@ -1658,7 +1633,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Snackbar</h3><code>st-snackbar</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/snackbar.html" target="_blank" rel="noreferrer" aria-label="Snackbar 文档">↗</a>
+            <a class="comp-link" href="./docs/snackbar.html" rel="noreferrer" aria-label="Snackbar 文档">↗</a>
           </div>
         </article>
 
@@ -1675,7 +1650,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Command tools</h3><code>toast · alert · confirm</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/snackbar.html" target="_blank" rel="noreferrer" aria-label="命令式工具文档">↗</a>
+            <a class="comp-link" href="./docs/tools.html" rel="noreferrer" aria-label="命令式工具文档">↗</a>
           </div>
         </article>
 
@@ -1688,7 +1663,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Tooltip</h3><code>st-tooltip</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/tooltip.html" target="_blank" rel="noreferrer" aria-label="Tooltip 文档">↗</a>
+            <a class="comp-link" href="./docs/tooltip.html" rel="noreferrer" aria-label="Tooltip 文档">↗</a>
           </div>
         </article>
 
@@ -1704,7 +1679,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Progress</h3><code>st-progress</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/progress.html" target="_blank" rel="noreferrer" aria-label="Progress 文档">↗</a>
+            <a class="comp-link" href="./docs/progress.html" rel="noreferrer" aria-label="Progress 文档">↗</a>
           </div>
         </article>
 
@@ -1718,7 +1693,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Card</h3><code>st-card</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/card.html" target="_blank" rel="noreferrer" aria-label="Card 文档">↗</a>
+            <a class="comp-link" href="./docs/card.html" rel="noreferrer" aria-label="Card 文档">↗</a>
           </div>
         </article>
 
@@ -1737,7 +1712,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>List</h3><code>st-list</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/list.html" target="_blank" rel="noreferrer" aria-label="List 文档">↗</a>
+            <a class="comp-link" href="./docs/list.html" rel="noreferrer" aria-label="List 文档">↗</a>
           </div>
         </article>
 
@@ -1750,7 +1725,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Collapse</h3><code>st-collapse</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/collapse.html" target="_blank" rel="noreferrer" aria-label="Collapse 文档">↗</a>
+            <a class="comp-link" href="./docs/collapse.html" rel="noreferrer" aria-label="Collapse 文档">↗</a>
           </div>
         </article>
 
@@ -1766,7 +1741,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Tabs</h3><code>st-tab-bar</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/tabs.html" target="_blank" rel="noreferrer" aria-label="Tabs 文档">↗</a>
+            <a class="comp-link" href="./docs/tabs.html" rel="noreferrer" aria-label="Tabs 文档">↗</a>
           </div>
         </article>
 
@@ -1781,7 +1756,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Navigation</h3><code>st-nav-bar</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/navigation.html" target="_blank" rel="noreferrer" aria-label="Navigation 文档">↗</a>
+            <a class="comp-link" href="./docs/navigation.html" rel="noreferrer" aria-label="Navigation 文档">↗</a>
           </div>
         </article>
 
@@ -1801,7 +1776,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Nav Layout</h3><code>st-nav-layout</code></div>
-            <a class="comp-link" href="../docs/index.html#/docs/pages/navigation.html" target="_blank" rel="noreferrer" aria-label="Nav Layout 文档">↗</a>
+            <a class="comp-link" href="./docs/navigation.html" rel="noreferrer" aria-label="Nav Layout 文档">↗</a>
           </div>
         </article>
       </div>
@@ -1813,35 +1788,32 @@
           <p class="section-kicker">MATERIALS</p>
           <h2>三种材质，同页对比</h2>
         </div>
-        <p class="section-desc">下面三张卡片各自锁定一种材质（局部 data-skin），颜色仍来自 M3。点「应用到全站」切换整页材质。</p>
+        <p class="section-desc">下面三张卡片各自锁定一种材质（局部 data-skin），颜色仍来自 M3。用顶部「材质」菜单切换全站材质。</p>
       </div>
       <div class="skin-cards">
-        <article class="skin-card" class:active="skin === 'm3'">
+        <article class="skin-card">
           <div class="skin-card-head"><h3>M3 材质</h3><span class="skin-chip">m3</span></div>
           <p class="skin-desc">全圆角、state layer、波纹，Material Design 3 的默认触感。</p>
           <div class="skin-preview" data-skin="m3">
             <st-button>Button</st-button>
             <st-input placeholder="Input"></st-input>
           </div>
-          <st-button variant="text" on:click="pickSkin('m3')">应用到全站 →</st-button>
         </article>
-        <article class="skin-card" class:active="skin === 'apple'">
+        <article class="skin-card">
           <div class="skin-card-head"><h3>Apple 毛玻璃</h3><span class="skin-chip">apple</span></div>
           <p class="skin-desc">半透明表面 + backdrop blur、更小圆角、外侧柔光焦点环，无波纹。</p>
           <div class="skin-preview" data-skin="apple">
             <st-button>Button</st-button>
             <st-input placeholder="Input"></st-input>
           </div>
-          <st-button variant="text" on:click="pickSkin('apple')">应用到全站 →</st-button>
         </article>
-        <article class="skin-card" class:active="skin === 'shadcn'">
+        <article class="skin-card">
           <div class="skin-card-head"><h3>shadcn 扁平</h3><span class="skin-chip">shadcn</span></div>
           <p class="skin-desc">6px 圆角、1px 细描边、极轻阴影、外扩 focus ring，紧凑密度。</p>
           <div class="skin-preview" data-skin="shadcn">
             <st-button>Button</st-button>
             <st-input placeholder="Input"></st-input>
           </div>
-          <st-button variant="text" on:click="pickSkin('shadcn')">应用到全站 →</st-button>
         </article>
       </div>
       <p class="spec-note">
@@ -1862,7 +1834,7 @@
           <ul class="start-list">
             <li>颜色由组件自动引入的 st-color-init.js 注入，深浅色跟随系统。</li>
             <li>皮肤可选：加 <span class="mono">data-skin</span> 与一行 CSS，或调用 setSkin()。</li>
-            <li>完整属性表与验收页：<a href="../docs/index.html" target="_blank" rel="noreferrer">打开组件文档</a>。</li>
+            <li>完整属性表与验收页：<a href="./docs/index.html">打开组件文档</a>。</li>
           </ul>
           <div class="cta">
             <st-button on:click="copyCode">{{copied ? "已复制 ✓" : "复制安装代码"}}</st-button>
@@ -1881,23 +1853,6 @@
     </section>
   </main>
 
-        <footer class="footer">
-          <div class="footer-brand">
-            <span class="brand-mark" aria-hidden="true"></span>
-            <div>
-              <strong>Senti-UI</strong>
-              <p>语义组件，任意材质。</p>
-            </div>
-          </div>
-          <nav class="footer-links" aria-label="页脚导航">
-            <a href="../docs/index.html" target="_blank" rel="noreferrer">组件文档</a>
-            <a href="../packages/skin/index.html" target="_blank" rel="noreferrer">皮肤示例</a>
-            <a href="https://github.com/ofajs/senti-ui" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="https://github.com/ofajs/ofa.js" target="_blank" rel="noreferrer">ofa.js</a>
-          </nav>
-          <p class="footer-note">ofa.js v5 · Material Design 3 · Apache-2.0 · 无构建、纯静态</p>
-        </footer>
-
         <st-dialog sync:open="dialogOpen" auto-close on:close="dialogOpen = false">
           <h2 slot="headline">删除这个项目？</h2>
           <p>这是一个真实的 <span class="mono">st-dialog</span>。面板、遮罩、入场动效、焦点管理都由组件负责。</p>
@@ -1911,10 +1866,10 @@
         </st-dialog>
 
         <script>
+          export const parent = "./layout.html";
+
           export default async () => ({
             data: {
-              themeMode: "auto",
-              skin: "m3",
               remember: true,
               agree: true,
               notify: true,
@@ -1940,28 +1895,7 @@
                 '\x3Cl-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/button.html">\x3C/l-m>\n\n' +
                 '\x3Cst-button color="error">Delete\x3C/st-button>',
             },
-            ready() {
-              this.syncChrome();
-              if (!window.__site) {
-                this._poll = setInterval(() => {
-                  if (window.__site) {
-                    this.syncChrome();
-                    clearInterval(this._poll);
-                  }
-                }, 60);
-                setTimeout(() => clearInterval(this._poll), 4000);
-              }
-            },
-            detached() {
-              clearInterval(this._poll);
-            },
             proto: {
-              get themeLabel() {
-                return { auto: "跟随系统", light: "浅色", dark: "深色" }[this.themeMode] || "跟随系统";
-              },
-              get skinLabel() {
-                return { m3: "M3", apple: "Apple 毛玻璃", shadcn: "shadcn 扁平" }[this.skin] || "M3";
-              },
               get tabLabel() {
                 return this.tabLabels[this.tab] || "";
               },
@@ -1970,21 +1904,6 @@
               },
               get railLabel() {
                 return this.railLabels[this.railTab] || "";
-              },
-              syncChrome() {
-                this.skin =
-                  document.documentElement.dataset.skin ||
-                  localStorage.getItem("st-skin") ||
-                  "m3";
-                if (window.__site) {
-                  this.themeMode = window.__site.getThemeMode();
-                } else {
-                  try {
-                    this.themeMode = localStorage.getItem("st-theme-mode") || "auto";
-                  } catch {
-                    this.themeMode = "auto";
-                  }
-                }
               },
               toast(message) {
                 if (window.__site) window.__site.toast(message);
@@ -1996,20 +1915,11 @@
               goTop() {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               },
+              goDocs() {
+                this.goto("./docs/index.html");
+              },
               openRepo() {
                 window.open("https://github.com/ofajs/senti-ui", "_blank", "noopener");
-              },
-              cycleTheme() {
-                const order = ["auto", "light", "dark"];
-                const index = order.indexOf(this.themeMode);
-                const next = order[(index + 1) % order.length];
-                this.themeMode = next;
-                if (window.__site) window.__site.setThemeMode(next);
-              },
-              pickSkin(id) {
-                this.skin = id;
-                if (window.__site) window.__site.setSkin(id);
-                this.toast("材质 → " + this.skinLabel);
               },
               fakeLogin() {
                 this.toast("登录成功（演示）");

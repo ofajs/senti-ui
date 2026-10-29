@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkbox — 组件文档 — Senti-UI</title>
+  <meta name="description" content="Checkbox（st-checkbox）用法：复选框：选中 / 不确定 / 禁用 / 语义色。内部透明原生 checkbox 承载键盘。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+    }
+    body {
+      font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
+    .nojs h1 { margin: 0 0 12px; font-size: 32px; }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>Checkbox</h1>
+      <p>组件文档的示例与目录需要 JavaScript；也可以回到首页或查看 GitHub 源码。</p>
+      <p><a href="../index.html">组件目录</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+    </div>
+  </noscript>
+
+  <l-m src="../../packages/button/button.html"></l-m>
+  <l-m src="../../packages/button/button-group.html"></l-m>
+  <l-m src="../../packages/button/split-button.html"></l-m>
+  <l-m src="../../packages/button/icon-button.html"></l-m>
+  <l-m src="../../packages/input/input.html"></l-m>
+  <l-m src="../../packages/textarea/textarea.html"></l-m>
+  <l-m src="../../packages/select/select.html"></l-m>
+  <l-m src="../../packages/dialog/dialog.html"></l-m>
+  <l-m src="../../packages/checkbox/checkbox.html"></l-m>
+  <l-m src="../../packages/switch/switch.html"></l-m>
+  <l-m src="../../packages/radio/radio.html"></l-m>
+  <l-m src="../../packages/snackbar/snackbar.html"></l-m>
+  <l-m src="../../packages/slider/slider.html"></l-m>
+  <l-m src="../../packages/progress/progress.html"></l-m>
+  <l-m src="../../packages/tooltip/tooltip.html"></l-m>
+  <l-m src="../../packages/card/card.html"></l-m>
+  <l-m src="../../packages/badges/badges.html"></l-m>
+  <l-m src="../../packages/collapse/collapse.html"></l-m>
+  <l-m src="../../packages/list/list.html"></l-m>
+  <l-m src="../../packages/menu/menu.html"></l-m>
+  <l-m src="../../packages/tabs/tab-bar.html"></l-m>
+  <l-m src="../../packages/navigation/nav-bar.html"></l-m>
+  <l-m src="../../packages/navigation/nav-layout.html"></l-m>
+  <l-m src="../../packages/ripple/ripple.html"></l-m>
+
+  <o-app src="../app-config.js">
+    <template page>
+      <link rel="stylesheet" href="../docs.css" />
+      <article class="doc-page">
+        <header class="doc-hero">
+          <p class="doc-kicker">表单 · 6 / 21</p>
+          <h1>Checkbox <code>st-checkbox</code></h1>
+          <p class="doc-lead">复选框：选中 / 不确定 / 禁用 / 语义色。内部透明原生 checkbox 承载键盘。</p>
+          <div class="doc-links">
+            <a href="../index.html">组件目录</a>
+            <a href="https://github.com/ofajs/senti-ui/blob/main/packages/checkbox/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
+          </div>
+        </header>
+
+        <div class="demo">
+          <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-checkbox</code></div>
+          <div class="demo-stage">
+            <st-checkbox checked>已选中</st-checkbox>
+<st-checkbox indeterminate>不确定态</st-checkbox>
+<st-checkbox color="error" checked>错误色</st-checkbox>
+<st-checkbox disabled>禁用</st-checkbox>
+          </div>
+        </div>
+
+        <div class="doc-cols">
+          <div class="doc-block">
+            <h3>属性</h3>
+            <table class="api">
+              <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+              <tbody><tr><td><code>checked</code></td><td>boolean</td><td>无</td><td>选中态</td></tr><tr><td><code>indeterminate</code></td><td>boolean</td><td>无</td><td>不确定态；用户点击后退化为选中</td></tr><tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>阻断交互</td></tr><tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>选中态底色 / 对勾色</td></tr></tbody>
+            </table>
+          </div>
+          <div class="doc-block">
+            <h3>插槽 / 事件 / 注意</h3>
+            <ul class="api-list"><li>默认插槽：标签文字；无内容时自动隐藏文字区。</li><li>事件：<code>change</code>（composed），切换后 <code>checked</code> 属性已同步。</li><li>布尔属性用 <code>attr:checked="expr"</code> 绑定；Space 可切换。</li></ul>
+          </div>
+        </div>
+
+        <details class="snippet">
+          <summary>示例代码</summary>
+          <pre><code>&lt;st-checkbox attr:checked="agree" on:change="agree = !agree"&gt;
+  我同意服务条款
+&lt;/st-checkbox&gt;</code></pre>
+        </details>
+
+        <nav class="doc-pager" aria-label="上下篇">
+          <a class="pager-link" olink href="./select.html"><span>上一页</span>← Select</a><a class="pager-link pager-next" olink href="./switch.html"><span>下一页</span>Switch →</a>
+        </nav>
+      </article>
+
+      <script>
+        export const parent = "../layout.html";
+
+        export default async () => ({
+          data: {
+            selectValue: "",
+            dialogOpen: false,
+            collapsed: false,
+            tab: 0,
+            tabLabels: ["概览", "活动", "设置"],
+            navTab: 0,
+            navLabels: ["首页", "发现", "我的"],
+            toolResult: "（未调用）",
+          },
+          proto: {
+            get tabLabel() {
+              return this.tabLabels[this.tab] || "";
+            },
+            get navLabel() {
+              return this.navLabels[this.navTab] || "";
+            },
+            onSelect(e) {
+              this.selectValue = e.target.value || "";
+            },
+            runToast() {
+              if (!window.__site) return;
+              this.toolResult = "toast → 已弹出（3s）";
+              window.__site.toast("这是一条 toast。");
+            },
+            async runAlert() {
+              if (!window.__site) return;
+              const ok = await window.__site.alert({ title: "操作成功", message: "这是 alert 命令式对话框。", ok: "知道了" });
+              this.toolResult = "alert → " + ok;
+            },
+            async runConfirm() {
+              if (!window.__site) return;
+              const ok = await window.__site.confirm({ title: "确认删除", message: "确定删除这条记录吗？", yes: "删除", cancel: "取消", color: "error" });
+              this.toolResult = "confirm → " + ok;
+            },
+            async runPrompt() {
+              if (!window.__site) return;
+              const value = await window.__site.prompt({ title: "重命名", message: "输入新的名称", placeholder: "新名称" });
+              this.toolResult = "prompt → " + JSON.stringify(value);
+            },
+            openCtx(e) {
+              e.preventDefault();
+              if (!window.__site) return;
+              const self = this;
+              window.__site.contextMenu(e, [
+                { id: "copy", label: "复制", prefix: "⧉" },
+                { id: "rename", label: "重命名", prefix: "✏" },
+                { separator: true },
+                { id: "delete", label: "删除", prefix: "⌫", disabled: true },
+              ]).then((id) => { self.toolResult = "contextMenu → " + (id || "未选择"); });
+            },
+          },
+        });
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = { setThemeMode, getThemeMode, setSkin, alert, confirm, prompt, toast, contextMenu };
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

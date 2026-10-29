@@ -127,7 +127,7 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 
 ## 官网首页
 
-单页聚合官网在 [`site/`](./site/index.html)：全部组件摆在一页，支持实时换肤、深浅色切换与三种材质并排对比。采用 **ofa.js v5 + scsr**（真实路径文档；加载后由 scsr 收编为 o-app 页面）。
+单页聚合官网在 [`site/`](./site/index.html)：全部组件摆在一页，支持实时换肤、深浅色切换与三种材质并排对比。采用 **ofa.js v5 + scsr**（真实路径文档；加载后由 scsr 收编为 o-app 页面）。组件使用说明在 [`site/docs/`](./site/docs/index.html)：每个组件一个独立 SCSR 页，包含可交互示例、属性表、插槽 / 事件。
 
 ```bash
 npm run dev

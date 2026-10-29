@@ -116,18 +116,23 @@ test("皮肤可关闭波纹：shadcn 下波纹初始 opacity 为 0", async ({ pa
     const btn = document.querySelector("#btn-filled");
     return btn && getComputedStyle(btn).boxShadow !== "none";
   });
-  const opacity = await page.evaluate(() => {
-    const btn = document.querySelector("#btn-filled");
-    btn.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, composed: true, clientX: 8, clientY: 8 }));
-    btn.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, composed: true }));
-    return new Promise((resolve) =>
-      setTimeout(() => {
-        const ripple = btn.shadowRoot.querySelector("st-ripple")?.shadowRoot?.querySelector(".ripple");
-        resolve(ripple ? getComputedStyle(ripple).opacity : null);
-      }, 80)
-    );
-  });
-  expect(opacity).toBe("0");
+  await expect
+    .poll(
+      () =>
+        page.evaluate(() => {
+          const btn = document.querySelector("#btn-filled");
+          btn.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, composed: true, clientX: 8, clientY: 8 }));
+          btn.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, composed: true }));
+          return new Promise((resolve) =>
+            setTimeout(() => {
+              const ripple = btn.shadowRoot.querySelector("st-ripple")?.shadowRoot?.querySelector(".ripple");
+              resolve(ripple ? getComputedStyle(ripple).opacity : "missing");
+            }, 60)
+          );
+        }),
+      { timeout: 3_000 }
+    )
+    .toBe("0");
 });
 
 test("输入框焦点环：shadcn 藏内嵌描边、改画外侧 ring", async ({ page }) => {

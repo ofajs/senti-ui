@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>组件文档 — Senti-UI</title>
+  <meta name="description" content="Senti-UI 组件文档：每个组件一页，包含可交互示例、属性表、插槽 / 事件与示例代码。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+    }
+    body {
+      font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
+    .nojs h1 { margin: 0 0 12px; font-size: 32px; }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>组件文档</h1>
+      <p>组件文档的示例与目录需要 JavaScript；也可以回到首页或查看 GitHub 源码。</p>
+      <p><a href="../index.html">组件目录</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+    </div>
+  </noscript>
+
+  <l-m src="../../packages/button/button.html"></l-m>
+  <l-m src="../../packages/button/button-group.html"></l-m>
+  <l-m src="../../packages/button/split-button.html"></l-m>
+  <l-m src="../../packages/button/icon-button.html"></l-m>
+  <l-m src="../../packages/input/input.html"></l-m>
+  <l-m src="../../packages/textarea/textarea.html"></l-m>
+  <l-m src="../../packages/select/select.html"></l-m>
+  <l-m src="../../packages/dialog/dialog.html"></l-m>
+  <l-m src="../../packages/checkbox/checkbox.html"></l-m>
+  <l-m src="../../packages/switch/switch.html"></l-m>
+  <l-m src="../../packages/radio/radio.html"></l-m>
+  <l-m src="../../packages/snackbar/snackbar.html"></l-m>
+  <l-m src="../../packages/slider/slider.html"></l-m>
+  <l-m src="../../packages/progress/progress.html"></l-m>
+  <l-m src="../../packages/tooltip/tooltip.html"></l-m>
+  <l-m src="../../packages/card/card.html"></l-m>
+  <l-m src="../../packages/badges/badges.html"></l-m>
+  <l-m src="../../packages/collapse/collapse.html"></l-m>
+  <l-m src="../../packages/list/list.html"></l-m>
+  <l-m src="../../packages/menu/menu.html"></l-m>
+  <l-m src="../../packages/tabs/tab-bar.html"></l-m>
+  <l-m src="../../packages/navigation/nav-bar.html"></l-m>
+  <l-m src="../../packages/navigation/nav-layout.html"></l-m>
+  <l-m src="../../packages/ripple/ripple.html"></l-m>
+
+  <o-app src="../app-config.js">
+    <template page>
+      <link rel="stylesheet" href="../docs.css" />
+      <article class="docs-index">
+        <header class="doc-hero">
+          <p class="doc-kicker">DOCS / COMPONENTS</p>
+          <h1>组件文档</h1>
+          <p class="doc-lead">
+            20 个模块、29 个标签的独立使用说明。每个组件一页，包含可交互示例、属性表、
+            插槽 / 事件与示例代码；左侧目录与 header 在所有页面间共享。
+          </p>
+        </header>
+        <div class="docs-cards">
+        <st-card interactive class="docs-card" on:click="openDoc('button')">
+          <span class="cat">动作</span>
+          <h2>Button</h2>
+          <code>st-button</code>
+          <p>三种 M3 variant、语义色、loading 与图标插槽。按钮组、分裂按钮、图标按钮同属一个包。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('ripple')">
+          <span class="cat">动作</span>
+          <h2>Ripple</h2>
+          <code>st-ripple</code>
+          <p>点击波纹。放在 position: relative 的父元素里即可；st-button 与 interactive 卡片已内嵌。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('input')">
+          <span class="cat">表单</span>
+          <h2>Input</h2>
+          <code>st-input</code>
+          <p>单行输入框：outlined / filled、前后缀、语义色校验态。value 是运行时状态。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('textarea')">
+          <span class="cat">表单</span>
+          <h2>Textarea</h2>
+          <code>st-textarea</code>
+          <p>多行输入框，与 st-input 同范式；可用 autosize 跟随内容自动撑开。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('select')">
+          <span class="cat">表单</span>
+          <h2>Select</h2>
+          <code>st-select</code>
+          <p>单选下拉框。选项写在 light DOM：原生 option 或 st-option 富内容；键盘全支持。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('checkbox')">
+          <span class="cat">表单</span>
+          <h2>Checkbox</h2>
+          <code>st-checkbox</code>
+          <p>复选框：选中 / 不确定 / 禁用 / 语义色。内部透明原生 checkbox 承载键盘。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('switch')">
+          <span class="cat">表单</span>
+          <h2>Switch</h2>
+          <code>st-switch</code>
+          <p>开关：轨道 / 拇指弹性动画，选中态可换语义色。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('radio')">
+          <span class="cat">表单</span>
+          <h2>Radio</h2>
+          <code>st-radio</code>
+          <p>单选按钮：同 name、同父容器内互斥；选中圆点弹性入场。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('slider')">
+          <span class="cat">表单</span>
+          <h2>Slider</h2>
+          <code>st-slider</code>
+          <p>滑块：内部原生 range 承载拖拽与键盘；聚焦 / 拖动时显示数值气泡。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('dialog')">
+          <span class="cat">反馈</span>
+          <h2>Dialog</h2>
+          <code>st-dialog</code>
+          <p>模态对话框：headline / 默认 / actions 三插槽，auto-close 支持遮罩与 Escape。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('menu')">
+          <span class="cat">反馈</span>
+          <h2>Menu</h2>
+          <code>st-menu</code>
+          <p>下拉菜单：trigger 插槽 + light DOM 菜单项；自动翻转、点外部 / Escape 关闭，支持多级子菜单。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('snackbar')">
+          <span class="cat">反馈</span>
+          <h2>Snackbar</h2>
+          <code>st-snackbar</code>
+          <p>消息条：默认次级色底、上滑入场；duration 到时自动关闭。命令式版本是 toast。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('tooltip')">
+          <span class="cat">反馈</span>
+          <h2>Tooltip</h2>
+          <code>st-tooltip</code>
+          <p>提示气泡：悬停 / 聚焦显示，fixed 定位自动上下翻转；content 按纯文本渲染。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('progress')">
+          <span class="cat">反馈</span>
+          <h2>Progress</h2>
+          <code>st-progress</code>
+          <p>进度：线形 / 环形 × 确定 / 不定。缺省 value 自动视为不定。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('tools')">
+          <span class="cat">反馈</span>
+          <h2>Command tools</h2>
+          <code>toast · alert · confirm · prompt</code>
+          <p>命令式工具：Promise 化、用完即毁。基于 st-snackbar / st-dialog，可在任意 JS 中调用。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('card')">
+          <span class="cat">内容</span>
+          <h2>Card</h2>
+          <code>st-card</code>
+          <p>卡片容器：elevated / filled / outlined 三类型；interactive 时整卡可点并带波纹。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('badges')">
+          <span class="cat">内容</span>
+          <h2>Badges</h2>
+          <code>st-badges</code>
+          <p>徽标：小圆点 / 数字封顶 / 文字徽标，钉在默认插槽元素右上角，pointer-events: none。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('collapse')">
+          <span class="cat">内容</span>
+          <h2>Collapse</h2>
+          <code>st-collapse</code>
+          <p>高度过渡折叠容器：hide 收起，展开时高度跟随内容（ResizeObserver）。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('list')">
+          <span class="cat">内容</span>
+          <h2>List</h2>
+          <code>st-list</code>
+          <p>列表与列表项：可点击 / 禁用 / 可折叠 + 子列表；首尾项自动大圆角。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('tabs')">
+          <span class="cat">导航</span>
+          <h2>Tabs</h2>
+          <code>st-tab-bar</code>
+          <p>标签栏：指示条跟随 active 项平滑移动；active 切换由外部逻辑处理。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        <st-card interactive class="docs-card" on:click="openDoc('navigation')">
+          <span class="cat">导航</span>
+          <h2>Navigation</h2>
+          <code>st-nav-bar</code>
+          <p>导航栏 / 导航项 / 响应式布局：药丸背景跟随 active；nav-layout 按容器宽度自动切换底部导航与左侧 rail。</p>
+          <span class="more">查看用法 →</span>
+        </st-card>
+        </div>
+      </article>
+      <script>
+        export const parent = "../layout.html";
+
+        export default async () => ({
+          proto: {
+            openDoc(id) {
+              this.goto("./" + id + ".html");
+            },
+          },
+        });
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = { setThemeMode, getThemeMode, setSkin, alert, confirm, prompt, toast, contextMenu };
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

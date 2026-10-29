@@ -2,7 +2,7 @@
 
 基于 ofa.js 的单选按钮组件。语义由属性表达，视觉默认值全用 em，交互由内部透明原生 `<input type="radio">` 承载（点击/键盘/焦点）。
 
-**同组互斥**：原生 radio 的 name 分组不跨 shadow root，组件用 `name` 属性作为分组键，选中时自动取消**同一最近容器**内同 `name` 的其他 `st-radio`。
+**同组互斥**：原生 radio 的 name 分组不跨 shadow root，组件用 `name` 属性作为分组键，选中时自动取消**同一树作用域**（document 或同一个 o-page shadow root）内同 `name` 的其他 `st-radio`。
 
 ## 依赖引入（使用前必须）
 
@@ -48,7 +48,8 @@
 
 ## 注意事项与使用技巧
 
-- **同组互斥靠 `name` 属性**：原生 radio 分组不跨 shadow root，组件在最近容器内查询同 `name` 兄弟手动互斥——分组项必须写在同一个父容器里
+- **同组互斥靠 `name` 属性**：原生 radio 分组不跨 shadow root，组件在**同一树作用域**（document 或同一个 o-page shadow root）内查询同 `name` 的 `st-radio` 手动互斥——不再要求写在同一个父容器里
+- 无障碍：默认插槽文字会成为内部 radio 的可访问名称；也可用宿主 `aria-label` / `aria-labelledby` 覆盖
 - 被取消选中的兄弟项**不**派发 change，只有被点击的项派发
 - `checked` / `disabled` 用 attribute 方式修改；`color` 只影响选中态描边/圆点色
 - 无标签内容时标签区自动隐藏

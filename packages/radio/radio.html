@@ -78,6 +78,7 @@
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-radio",
       attrs: {
@@ -100,15 +101,24 @@
           if (!input.checked) return;
           ele.setAttribute("checked", "");
           if (this.name) {
-            const scope = ele.closest("st-list, st-menu, fieldset, form, div, section") || document;
-            scope.querySelectorAll(`st-radio[name="${this.name}"]`).forEach((sib) => {
+            // 同组互斥按“树作用域”查找：document 里的同名 radio、或同一个
+            // o-page/o-app shadow root 里的同名 radio（closest(div) 会漏掉兄弟容器）
+            const scope = ele.getRootNode();
+            const selector = `st-radio[name="${CSS.escape(this.name)}"]`;
+            scope.querySelectorAll(selector).forEach((sib) => {
               if (sib !== ele && sib.hasAttribute("checked")) sib.removeAttribute("checked");
             });
           }
           ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
         });
 
+        // 标签文字是 slot 内容、与原生 input 是兄弟节点，必须同步为可访问名称
+        this._a11yCleanup = syncAccessibleName(ele, input, { fromSlot: true });
+
         this.applyState();
+      },
+      detached() {
+        this._a11yCleanup?.();
       },
       proto: {
         // watch 初始化也会触发一次（坑 #27），applyState 无副作用，天然安全

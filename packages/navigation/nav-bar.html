@@ -116,6 +116,7 @@
       },
       ready() {
         const ele = this.ele;
+        queueMicrotask(() => ele.setAttribute("role", "navigation"));
         this._itemObserver = new MutationObserver(() => this.updateActive());
         const observeItems = () => {
           ele.querySelectorAll("st-nav-item").forEach((it) => {

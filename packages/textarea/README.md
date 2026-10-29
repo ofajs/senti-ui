@@ -105,6 +105,8 @@ document.querySelector("st-textarea").addEventListener("input", (e) => {
 - 同 st-input：`value` 用 `el.value` 读写（`setAttribute` 无效），初始值用 `default-value`；`change` 由组件转发为 composed
 - `autosize` 时 rows 是最小高度；内容、程序赋值、外部改字号都会自动重算高度
 - 宿主不可聚焦，焦点在内部 textarea；测试用真实点击聚焦
+- `color` 同时作用于 caret、focus 描边与底线（内部 `--st-accent`）
+- 无障碍：宿主 `aria-label` / `aria-labelledby` / `title` 会同步到内部 textarea
 ## 验证页面
 
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `/packages/textarea/`）。

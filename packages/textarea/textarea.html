@@ -34,7 +34,7 @@
     .outline-ring {
       position: absolute;
       inset: -1px; /* 盖在 1px 边框外侧，视觉 = 边框加粗到 2px */
-      border: 2px solid var(--md-sys-color-primary);
+      border: 2px solid var(--st-accent, var(--md-sys-color-primary));
       border-radius: inherit;
       opacity: 0;
       pointer-events: none;
@@ -59,7 +59,7 @@
       bottom: 0;
       height: 2px;
       width: 0;
-      background-color: var(--md-sys-color-primary);
+      background-color: var(--st-accent, var(--md-sys-color-primary));
       transition: width 200ms cubic-bezier(0.2, 0, 0, 1);
     }
     :host(:focus-within) .bottom-line { width: 100%; }
@@ -80,7 +80,7 @@
       font: inherit;
       line-height: 1.7;
       color: inherit;
-      caret-color: var(--md-sys-color-primary);
+      caret-color: var(--st-accent, var(--md-sys-color-primary));
       cursor: inherit;
       resize: none; /* 默认关闭拖拽手柄，高度由 rows/内容/style 决定 */
     }
@@ -107,6 +107,7 @@
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-textarea",
       attrs: {
@@ -123,7 +124,12 @@
       },
       watch: {
         color() { this.applyColor(); },
-        autosize() { if (this.autosize !== null) this.adjustHeight(); },
+        autosize() {
+          const ta = this.ele.shadowRoot?.querySelector(".native");
+          if (!ta) return;
+          if (this.autosize !== null) this.adjustHeight();
+          else ta.style.height = ""; // 退出 autosize：清掉内联高度，回到 rows 自然高度
+        },
         // 外部改 this.value（data）时兜底同步并按 autosize 撑高
         value() {
           const ta = this.ele.shadowRoot.querySelector(".native");
@@ -164,7 +170,16 @@
         if (this.autosize !== null) this.adjustHeight();
         // autosize：height:auto 时量 scrollHeight 再设回；rows 属性即最小高度。
         // ResizeObserver 兜底外部改 font-size 等引起的行高变化
-        new ResizeObserver(() => { if (this.autosize !== null) this.adjustHeight(); }).observe(ta);
+        this._resizeObserver = new ResizeObserver(() => {
+          if (this.autosize !== null) this.adjustHeight();
+        });
+        this._resizeObserver.observe(ta);
+        // 宿主 aria-label / aria-labelledby / title → 内部 textarea 的可访问名称
+        this._a11yCleanup = syncAccessibleName(ele, ta);
+      },
+      detached() {
+        this._resizeObserver?.disconnect();
+        this._a11yCleanup?.();
       },
       proto: {
         // autosize 模式下按内容撑开高度（rows 为最小高度）
@@ -175,16 +190,14 @@
         },
         // color 接受 M3 角色名或 color 模块自定义变量名，控制 caret 与 focus 描边/底线颜色
         applyColor() {
+          const s = this.ele.style;
+          s.removeProperty("--st-accent");
           const name = this.color;
-          this.ele.style.caretColor = name
-            ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
-            : "";
-          const active = name
-            ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
-            : "";
-          const sr = this.ele.shadowRoot;
-          sr.querySelector(".outline-ring").style.borderColor = active; // 空串 = 回退 CSS 默认 primary
-          sr.querySelector(".bottom-line").style.backgroundColor = active;
+          if (!name) return;
+          s.setProperty(
+            "--st-accent",
+            `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
+          );
         },
         focus() { this.ele.shadowRoot.querySelector(".native").focus(); },
         blur() { this.ele.shadowRoot.querySelector(".native").blur(); },

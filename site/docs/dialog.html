@@ -283,7 +283,7 @@ const name = await prompt({ title: "重命名", message: "输入新的名称", p
                   <li>插槽：<code>headline</code>（建议放 h2）、默认（正文，超高时内部滚动）、<code>actions</code>（右对齐横排）；空区块自动隐藏。</li>
                   <li>事件：<code>close</code>（bubbles + composed），只在遮罩 / Escape 交互关闭时派发；外部改数据关闭不派发。</li>
                   <li>面板：<code>::part(panel)</code> 覆盖宽度 / 圆角 / 底色；默认宽 <code>min(34.29em, 100%)</code>、padding <code>1.43em</code>、圆角 <code>1.714em</code>。</li>
-                  <li>焦点：打开时移入面板容器；Escape / 遮罩仅在 auto-close 时生效；多个对话框同时打开各管各的。</li>
+                  <li>焦点：打开时移入面板容器并在内部循环（焦点陷阱），关闭后归还打开元素；Escape / 遮罩仅在 auto-close 时生效，多个对话框叠加时 Escape 只关最上层；打开期间锁定背景滚动。</li>
                   <li>注意：对话框别放进设置过 transform / filter 的祖先，否则 fixed 遮罩会错位；宿主的 z-index 是 1000。</li>
                 </ul>
               </div>

@@ -116,6 +116,16 @@
         color() { this.applyColor(); },
       },
       ready() {
+        const ele = this.ele;
+        this._a11yReady = false;
+        // 构造期不能写宿主属性：延后设置角色并重新应用状态
+        queueMicrotask(() => {
+          ele.setAttribute("role", "progressbar");
+          ele.setAttribute("aria-valuemin", "0");
+          ele.setAttribute("aria-valuemax", "100");
+          this._a11yReady = true;
+          this.applyState();
+        });
         this.applyState();
         this.applyColor();
       },
@@ -131,6 +141,16 @@
             this.value !== null && this.value !== "" && !Number.isNaN(Number(this.value));
           const indeterminate = this.indeterminate !== null || !hasValue;
           const v = Math.min(Math.max(Number(this.value ?? 0) || 0, 0), 100);
+          // 语义：不定态不暴露 aria-valuenow，用 aria-busy 表示进行中
+          if (this._a11yReady) {
+            if (indeterminate) {
+              this.ele.removeAttribute("aria-valuenow");
+              this.ele.setAttribute("aria-busy", "true");
+            } else {
+              this.ele.setAttribute("aria-valuenow", String(v));
+              this.ele.removeAttribute("aria-busy");
+            }
+          }
           const svg = sr.querySelector("svg.circular");
           if (indeterminate) {
             bar.style.width = "30%";

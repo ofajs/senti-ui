@@ -19,24 +19,25 @@
       border-radius: 50%; /* M3 图标按钮为圆形 */
       font-size: 14px;
       font-family: inherit;
-      background-color: transparent;
-      color: var(--md-sys-color-on-surface-variant);
+      background-color: var(--st-icon-bg, transparent);
+      color: var(--st-icon-fg, var(--md-sys-color-on-surface-variant));
+      border-color: var(--st-icon-border, transparent);
       cursor: pointer;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* M3 四种图标按钮类型 */
+    /* M3 四种图标按钮类型（color 属性通过 --st-icon-* 覆盖，不直接写内联样式） */
     :host([variant="filled"]) {
-      background-color: var(--md-sys-color-primary);
-      color: var(--md-sys-color-on-primary);
+      background-color: var(--st-icon-bg, var(--md-sys-color-primary));
+      color: var(--st-icon-fg, var(--md-sys-color-on-primary));
     }
     :host([variant="tonal"]) {
-      background-color: var(--md-sys-color-secondary-container);
-      color: var(--md-sys-color-on-secondary-container);
+      background-color: var(--st-icon-bg, var(--md-sys-color-secondary-container));
+      color: var(--st-icon-fg, var(--md-sys-color-on-secondary-container));
     }
     :host([variant="outlined"]) {
-      border-color: var(--md-sys-color-outline);
+      border-color: var(--st-icon-border, var(--md-sys-color-outline));
     }
 
     /* M3 state layer：currentColor 半透明叠加 */
@@ -89,6 +90,7 @@
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-icon-button",
       attrs: {
@@ -108,41 +110,38 @@
           sr.querySelector(".native").disabled = this.disabled !== null;
         };
         this.applyDisabled();
+        // 无文字按钮：把宿主 aria-label / title 转给内部原生 button
+        this._a11yCleanup = syncAccessibleName(this.ele, sr.querySelector(".native"));
         this.applyColor();
       },
+      detached() {
+        this._a11yCleanup?.();
+      },
       proto: {
-        // color 接受 M3 角色名或 color 模块自定义变量名，按 variant 分派（同 st-button；
-        // 内联样式会压过 :host([variant]) 规则，必须先读 variant 再写，坑 #15）
+        // color 接受 M3 角色名或 color 模块自定义变量名，只写自己的 --st-icon-* 变量，
+        // 不碰宿主 style（否则会清掉使用者写在 style="" 上的原生 CSS，见坑 #46）
         applyColor() {
           const s = this.ele.style;
-          const name = this.color;
-          if (!name) {
-            s.background = "";
-            s.color = "";
-            s.borderColor = "";
-            return;
+          for (const prop of ["--st-icon-bg", "--st-icon-fg", "--st-icon-border"]) {
+            s.removeProperty(prop);
           }
+          const name = this.color;
+          if (!name) return;
           const main = `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`;
           const on = `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-primary)))`;
           const container = `var(--md-sys-color-${name}-container, var(--${name}-container, var(--md-sys-color-secondary-container)))`;
           const onContainer = `var(--md-sys-color-on-${name}-container, var(--on-${name}-container, var(--md-sys-color-on-secondary-container)))`;
           if (this.variant === "filled") {
-            s.background = main;
-            s.color = on;
-            s.borderColor = "";
+            s.setProperty("--st-icon-bg", main);
+            s.setProperty("--st-icon-fg", on);
           } else if (this.variant === "tonal") {
-            s.background = container;
-            s.color = onContainer;
-            s.borderColor = "";
+            s.setProperty("--st-icon-bg", container);
+            s.setProperty("--st-icon-fg", onContainer);
           } else if (this.variant === "outlined") {
-            s.background = "";
-            s.color = main;
-            s.borderColor = main;
+            s.setProperty("--st-icon-fg", main);
+            s.setProperty("--st-icon-border", main);
           } else {
-            // standard
-            s.background = "";
-            s.color = main;
-            s.borderColor = "";
+            s.setProperty("--st-icon-fg", main);
           }
         },
       },

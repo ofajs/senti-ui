@@ -55,6 +55,7 @@ el.addEventListener("change", (e) => {
 - 交互由内部透明原生 checkbox 承载（覆盖整个组件，点文字也能切换），Space 键盘可用
 - 无标签内容时（`:empty`）标签区自动隐藏
 - `color` 属性只影响选中态配色，未选中态边框恒为 on-surface-variant
+- 无障碍：默认插槽文字会成为内部 checkbox 的可访问名称；也可用宿主 `aria-label` / `aria-labelledby` 覆盖
 ## 验证页面
 
 `index.html`（直接访问 `/packages/checkbox/`）。

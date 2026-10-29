@@ -26,7 +26,7 @@
 ## st-split-button 分裂按钮
 
 - 主区 click 冒泡做主操作 + 箭头区开合菜单（菜单项用 `st-menu-item`）
-- `open` 为运行时状态，支持 `sync:open`
+- `open` 为运行时状态，支持 `sync:open` / `attr("open", "")`；`menu-label` 可改箭头区可访问名称
 
 ## st-icon-button 图标按钮
 
@@ -55,6 +55,7 @@
   - `label` 属性（两者都支持）控制闭合态显示文本；`value` 缺省先取 `label` 再取文本
   - 富内容（内部 span/自定义元素）推荐 `st-option`：`value`/`label` 属性 + 默认插槽克隆渲染到下拉项
 - 弹层：自绘 M3 风格，自动上下弹翻转、键盘 ↑↓/Enter/Escape/Home/End、点外关闭；`change` composed
+- 无障碍：`role="combobox"` + `aria-expanded/controls/activedescendant`，弹层 `listbox` / 选项 `option`；disabled 移出 Tab 顺序
 - 限制：弹层在 shadow 内，被 overflow 祖先裁剪；动态选项支持 `el.options = [...]` / `:options` / o-fill 嵌套（已渲染选项改属性不生效）
 
 ## st-dialog 对话框
@@ -63,7 +64,7 @@
 - 属性：`auto-close`（遮罩点击/Escape 关闭并派发 `close`）
 - **`open` 是运行时状态**：推荐 `sync:open="xxx"` 双向绑定（auto-close 关闭自动回写）；纯 JS 用 `$("st-dialog").attr("open", "") / attr("open", null)`
 - 插槽：`headline` / 默认 / `actions`（空区块自动隐藏）
-- 焦点：打开时自动移入面板；M3 emphasized 动效
+- 焦点：`role="dialog"` + `aria-modal`，打开移入面板、Tab 焦点陷阱、关闭归还焦点、背景滚动锁；M3 emphasized 动效
 - 命令式工具（无需预引入组件）：
 
 ```js

@@ -47,8 +47,13 @@
           if (!content) return; // watch 初始触发可能早于 shadow 就绪（坑 #27）
           if (this.hide !== null) {
             ele.style.height = "0px";
+            // 高度为 0 的内容仍会留在 Tab 顺序与无障碍树里：一起 inert + aria-hidden
+            ele.inert = true;
+            ele.setAttribute("aria-hidden", "true");
             return;
           }
+          ele.inert = false;
+          ele.removeAttribute("aria-hidden");
           const target = height ?? content.scrollHeight;
           ele.style.height = target + "px";
         },

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Snackbar — 组件文档 — Senti-UI</title>
-  <meta name="description" content="Snackbar（st-snackbar）用法：消息条：默认次级色底、上滑入场；duration 到时自动关闭。命令式版本是 toast。" />
+  <meta name="description" content="Snackbar（st-snackbar）用法：消息条：默认次级色底、即时显示；duration 到时自动关闭（toast 工具另带滑入/滑出）。命令式版本是 toast。" />
   <meta name="theme-color" content="#0061A4" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
   <script type="module">
@@ -74,13 +74,13 @@
 
             <section class="doc-section">
               <h2>显示、隐藏与 action 插槽</h2>
-              <p class="doc-section-lead">open 是布尔属性，页面里用 attr:open 绑定数据。action 插槽放操作按钮；按钮颜色必须用 st-button 的 color 属性（默认反色底上用 inverse-primary），内联 style 会被按钮自身的配色覆盖。</p>
+              <p class="doc-section-lead">open 是布尔属性，页面里用 attr:open 绑定数据。action 插槽放操作按钮；按钮颜色必须用 st-button 的 color 属性（默认 secondary 底上用 on-secondary）；内联 style 也能生效，但不会自动配对 on-角色色。</p>
               <div class="demo">
                 <div class="demo-top"><span class="live"><i></i>LIVE</span><code>open / action</code></div>
                 <div class="demo-stage">
                   <st-snackbar attr:open="snackOpen">
                     已删除 1 个项目
-                    <st-button slot="action" variant="text" color="inverse-primary" on:click="snackOpen = false">撤销</st-button>
+                    <st-button slot="action" variant="text" color="on-secondary" on:click="snackOpen = false">撤销</st-button>
                   </st-snackbar>
                   <div class="row">
                     <st-button variant="outlined" on:click="snackOpen = true">显示消息条</st-button>
@@ -93,7 +93,7 @@
                 <summary>示例代码</summary>
                 <pre><code>&lt;st-snackbar attr:open="snackOpen"&gt;
   已删除 1 个项目
-  &lt;st-button slot="action" variant="text" color="inverse-primary" on:click="snackOpen = false"&gt;撤销&lt;/st-button&gt;
+  &lt;st-button slot="action" variant="text" color="on-secondary" on:click="snackOpen = false"&gt;撤销&lt;/st-button&gt;
 &lt;/st-snackbar&gt;
 &lt;st-button on:click="snackOpen = true"&gt;显示消息条&lt;/st-button&gt;
 
@@ -113,7 +113,7 @@
                 <div class="demo-stage">
                   <st-snackbar attr:open="autoOpen" duration="3000" on:close="onAutoClose">
                     设置已保存，消息条将在 3 秒后消失
-                    <st-button slot="action" variant="text" color="inverse-primary" on:click="autoOpen = false">立即关闭</st-button>
+                    <st-button slot="action" variant="text" color="on-secondary" on:click="autoOpen = false">立即关闭</st-button>
                   </st-snackbar>
                   <st-button variant="outlined" on:click="openAuto">显示 3 秒消息</st-button>
                   <span class="demo-note">autoOpen = {{autoOpen}} · close 触发 {{closeCount}} 次 · 最近：{{lastClose}}</span>
@@ -223,7 +223,7 @@ toast("第 3 条");</code></pre>
                 <div class="demo-stage block">
                   <st-snackbar attr:open="longOpen">
                     网络连接已断开，正在尝试重新连接。恢复后会自动同步你的数据，无需手动操作。
-                    <st-button slot="action" variant="text" color="inverse-primary" on:click="openDetail">查看详情</st-button>
+                    <st-button slot="action" variant="text" color="on-secondary" on:click="openDetail">查看详情</st-button>
                   </st-snackbar>
                   <st-snackbar open>短消息：没有 action 时上下留白更宽松。</st-snackbar>
                   <div class="row">
@@ -237,7 +237,7 @@ toast("第 3 条");</code></pre>
                 <summary>示例代码</summary>
                 <pre><code>&lt;st-snackbar attr:open="longOpen"&gt;
   网络连接已断开，正在尝试重新连接……
-  &lt;st-button slot="action" variant="text" color="inverse-primary" on:click="openDetail"&gt;
+  &lt;st-button slot="action" variant="text" color="on-secondary" on:click="openDetail"&gt;
     查看详情
   &lt;/st-button&gt;
 &lt;/st-snackbar&gt;</code></pre>

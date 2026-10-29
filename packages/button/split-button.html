@@ -18,21 +18,22 @@
       font-size: 14px;
       font-family: inherit;
       font-weight: 500;
-      background-color: var(--md-sys-color-primary);
-      color: var(--md-sys-color-on-primary);
+      background-color: var(--st-split-bg, var(--md-sys-color-primary));
+      color: var(--st-split-fg, var(--md-sys-color-on-primary));
+      border-color: var(--st-split-border, transparent);
       white-space: nowrap;
       cursor: pointer;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
     :host([variant="outlined"]) {
-      background-color: transparent;
-      color: var(--md-sys-color-primary);
-      border-color: var(--md-sys-color-outline);
+      background-color: var(--st-split-bg, transparent);
+      color: var(--st-split-fg, var(--md-sys-color-primary));
+      border-color: var(--st-split-border, var(--md-sys-color-outline));
     }
     :host([variant="text"]) {
-      background-color: transparent;
-      color: var(--md-sys-color-primary);
+      background-color: var(--st-split-bg, transparent);
+      color: var(--st-split-fg, var(--md-sys-color-primary));
     }
 
     :host([disabled]) {
@@ -161,6 +162,7 @@
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-split-button",
       attrs: {
@@ -168,6 +170,7 @@
         color: null,
         disabled: null,
         menuAlign: "right",
+        menuLabel: "打开菜单",
       },
       data: {
         // open 是运行时状态（data，非标签属性）：选中菜单项 / 外部点击自动关闭改 this.open，
@@ -179,13 +182,31 @@
           // data watch 初始化也会触发一次（坑 #27），值未变时无副作用
           const panel = this.ele.shadowRoot.querySelector(".panel");
           const caret = this.ele.shadowRoot.querySelector(".caret-icon");
+          const caretZone = this.ele.shadowRoot.querySelector(".caret-zone");
+          // data → 宿主属性（兼容 setAttribute / CSS，也便于外部读取状态）
+          if (val) this.ele.setAttribute("open", "");
+          else this.ele.removeAttribute("open");
+          caretZone.setAttribute("aria-expanded", val ? "true" : "false");
           caret.classList.toggle("open", val);
           if (val) {
             // 先渲染再定位，避免闪烁；重新打开时取消关闭过渡并重启进入动画
             clearTimeout(this._closeTimer);
             panel.classList.remove("closing");
             panel.style.display = "block";
+            // 定位探测期间禁用入场动画，定位完成后只启动一次（避免重复重播）
+            panel.style.animation = "none";
             this.updatePosition();
+            // 菜单项是 slot 里的自定义元素，升级后宽度可能变化：下一帧再定位一次
+            requestAnimationFrame(() => {
+              if (!this.open) return;
+              this.updatePosition();
+              panel.style.animation = "";
+            });
+            // 菜单项升级/字体度量稳定后可能再变宽：延迟兜底重定位一次
+            clearTimeout(this._repositionTimer);
+            this._repositionTimer = setTimeout(() => {
+              if (this.open) this.updatePosition();
+            }, 120);
             this.bindDocEvents();
             this.ele.dispatchEvent(new Event("open", { bubbles: true, composed: true }));
           } else {
@@ -203,10 +224,33 @@
         variant() { this.applyColor(); },
         // watch 初始化也会触发一次（坑 #27），applyDisabled 无副作用
         disabled() { this.applyDisabled?.(); },
+        menuLabel() {
+          this.ele.shadowRoot
+            ?.querySelector(".caret-zone")
+            ?.setAttribute("aria-label", this.menuLabel || "打开菜单");
+        },
       },
       ready() {
         const ele = this.ele;
         const sr = ele.shadowRoot;
+        const mainZone = sr.querySelector(".main-zone");
+        const caretZone = sr.querySelector(".caret-zone");
+
+        // 主区名称来自默认插槽（排除 menu 插槽里的菜单项文字）；箭头区用固定语义标签
+        this._a11yCleanup = syncAccessibleName(ele, mainZone, {
+          fromSlot: true,
+          excludeSlots: ["menu"],
+        });
+        caretZone.setAttribute("aria-label", this.menuLabel || "打开菜单");
+        caretZone.setAttribute("aria-expanded", this.open === true ? "true" : "false");
+
+        // 属性 → data 兼容路径（README 曾承诺 setAttribute("open") 有效）
+        if (ele.hasAttribute("open")) this.open = true;
+        this._attrObserver = new MutationObserver(() => {
+          const attrOpen = ele.hasAttribute("open");
+          if (attrOpen !== (this.open === true)) this.open = attrOpen;
+        });
+        this._attrObserver.observe(ele, { attributes: true, attributeFilter: ["open"] });
 
         this._onDocPointerDown = (e) => {
           // 坑 #21：composed 事件必须用 composedPath 判断
@@ -246,18 +290,30 @@
           if (this.open) this.open = false;
         });
 
+        // 面板宽度变化（菜单项升级/内容变化）时重新对齐
+        this._panelObserver = new ResizeObserver(() => {
+          if (this.open) this.updatePosition();
+        });
+        this._panelObserver.observe(sr.querySelector(".panel"));
+
         this.applyDisabled();
         this.applyColor();
       },
       detached() {
         clearTimeout(this._closeTimer);
+        clearTimeout(this._repositionTimer);
         this.unbindDocEvents();
+        this._attrObserver?.disconnect();
+        this._panelObserver?.disconnect();
+        this._a11yCleanup?.();
       },
       proto: {
         updatePosition() {
           if (!this.open) return;
           const panel = this.ele.shadowRoot.querySelector(".panel");
           const rect = this.ele.getBoundingClientRect();
+          // 先应用 min-width 再量宽度，避免“量完又变宽”导致右对齐偏出
+          panel.style.minWidth = Math.max(rect.width, 112) + "px";
           const panelW = panel.offsetWidth;
           const panelH = panel.offsetHeight;
           const vw = window.innerWidth;
@@ -277,9 +333,13 @@
             top = topAbove >= margin ? topAbove : Math.max(margin, vh - panelH - margin);
           }
 
-          panel.style.left = left + "px";
-          panel.style.top = top + "px";
-          panel.style.minWidth = Math.max(rect.width, 112) + "px";
+          // position:fixed 的 containing block 可能是最近的 transform 祖先（坑 #42）：
+          // 先摆到 0,0 量出原点，再把视口坐标换算成相对坐标，任何容器内都不会漂移。
+          panel.style.left = "0px";
+          panel.style.top = "0px";
+          const cbOrigin = panel.getBoundingClientRect();
+          panel.style.left = left - cbOrigin.left + "px";
+          panel.style.top = top - cbOrigin.top + "px";
         },
         bindDocEvents() {
           if (this._docBound) return;
@@ -298,29 +358,24 @@
           this._docBound = false;
         },
         // color 接受 M3 角色名或 color 模块自定义变量名，按 variant 分派（同 st-button）
+        // 只写自己的 --st-split-* 变量，不碰宿主 style（避免清掉使用者内联样式，坑 #46）
         applyColor() {
           const s = this.ele.style;
-          const name = this.color;
-          if (!name) {
-            s.background = "";
-            s.color = "";
-            s.borderColor = "";
-            return;
+          for (const prop of ["--st-split-bg", "--st-split-fg", "--st-split-border"]) {
+            s.removeProperty(prop);
           }
+          const name = this.color;
+          if (!name) return;
           const main = `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`;
           const on = `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-primary)))`;
           if (this.variant === "outlined") {
-            s.background = "";
-            s.color = main;
-            s.borderColor = main;
+            s.setProperty("--st-split-fg", main);
+            s.setProperty("--st-split-border", main);
           } else if (this.variant === "text") {
-            s.background = "";
-            s.color = main;
-            s.borderColor = "";
+            s.setProperty("--st-split-fg", main);
           } else {
-            s.background = main;
-            s.color = on;
-            s.borderColor = "";
+            s.setProperty("--st-split-bg", main);
+            s.setProperty("--st-split-fg", on);
           }
         },
       },

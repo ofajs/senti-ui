@@ -64,7 +64,7 @@ document.querySelector("st-input").addEventListener("input", (e) => {
 `color` 接受 **M3 角色名**（`primary` / `error` / `success` 等）或 **color 工具里定义的自定义变量名**，控制 caret 与 focus 边框颜色。典型用法是校验错误态：
 
 ```html
-<st-input color="error" value="非法输入"></st-input>
+<st-input color="error" default-value="非法输入"></st-input>
 ```
 
 未定义的名称回退到 primary。不设 `color` 时 focus 边框/caret 为 primary。
@@ -136,6 +136,7 @@ document.querySelector("st-input").addEventListener("input", (e) => {
 - 事件回调里读 `e.target.value` 安全（value 已反射到宿主 property）
 - 布尔属性 readonly 的 watch 同步是异步的，setAttribute 后稍等再断言
 - 宿主本身不可聚焦（无 tabindex），焦点在内部 `.native` input 上；自动化测试用真实点击聚焦
+- 无障碍：宿主上的 `aria-label` / `aria-labelledby` / `title` 会同步到内部 input（`st-input` 没有文字标签插槽）
 ## 验证页面
 
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `/packages/input/`）。

@@ -64,6 +64,10 @@
       },
       ready() {
         const ele = this.ele;
+        queueMicrotask(() => {
+          ele.setAttribute("role", "tablist");
+          ele.setAttribute("aria-orientation", "horizontal");
+        });
         // 子项 active 变化（属性监听，跨组件不依赖 ofa 实例方法）
         this._itemObserver = new MutationObserver(() => this.updateIndicator());
         const observeItems = () => {

@@ -56,3 +56,5 @@ $("st-checkbox").on("change", (e) => {
 - 无标签内容时（`:empty`）标签区自动隐藏
 - `color` 属性只影响选中态配色，未选中态边框恒为 on-surface-variant
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/checkbox/`）。
+
+- 无障碍：默认插槽文字会成为内部 checkbox 的可访问名称，也可用宿主 `aria-label` 覆盖

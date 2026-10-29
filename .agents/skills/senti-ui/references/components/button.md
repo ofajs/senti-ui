@@ -255,7 +255,7 @@ $("st-button").on("click", () => {});
 
 ## 注意事项与使用技巧
 
-- **换色优先用 `color` 属性**：它写入 `--st-accent` 系列变量，皮肤能据此组合材质（半透明/渐变/毛玻璃）。内联 `style="background/color"` 也有效且不会被清空，但会绕过皮肤材质；放在反色/彩色容器（如 snackbar）里时用 `color="inverse-primary"` / `color="on-error"` 这类角色名
+- **换色优先用 `color` 属性**：它写入 `--st-accent` 系列变量，皮肤能据此组合材质（半透明/渐变/毛玻璃）。内联 `style="background/color"` 也有效且不会被清空，但会绕过皮肤材质；放在彩色容器（如 snackbar）里时用 `color="on-secondary"` / `color="on-error"` 这类角色名
 - `variant` 运行时切换用 `attr:variant="expr"` 绑定（ofa 页面内），JS 里用 `setAttribute`（直接改 property 不触发更新）
 - 布尔属性（disabled/loading）在 JS 里用 `setAttribute` / `removeAttribute`，ofa 页面里绑定用 `attr:loading="busy"`（`:prop` 会把 false 序列化成属性字符串导致永远禁用）
 - `setAttribute` 触发组件 watch 是异步的（下一轮微任务），设置后同步读状态会得到旧值
@@ -265,3 +265,5 @@ $("st-button").on("click", () => {});
 - st-split-button 的菜单项来自 `st-menu-item`（split-button 内部已加载，无需额外引入）
 - **st-icon-button 必须配 `title` / `aria-label`**（无文字，缺名称时屏幕阅读器读不出用途）；其 color 分派多了 tonal 分支（container 配对色）
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/`）。
+
+- 无障碍：插槽文字 / `aria-label` 会同步到内部原生 button；`st-icon-button` 的 `title` / `aria-label` 会转发；split-button 新增 `menu-label`（箭头区可访问名称，默认“打开菜单”）

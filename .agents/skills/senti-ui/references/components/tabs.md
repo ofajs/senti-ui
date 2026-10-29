@@ -62,3 +62,5 @@ $("st-tab-bar").on("click", (e) => {
 - disabled 项原生阻断点击、无事件冒泡；icon 用 `slot="icon"`
 - 计算属性（如当前标签文字）放 proto 上的 `get`，不要放模块顶层（会加载失败且报错被吞）
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tabs/`）。
+
+- 无障碍：bar `role="tablist"`，item 内部 button `role="tab"` + `aria-selected`

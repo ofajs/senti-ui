@@ -121,6 +121,7 @@
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-slider",
       attrs: {
@@ -139,6 +140,9 @@
         value() { this.applyVisual(); },
         color() { this.applyColor(); },
         disabled() { this.applyState(); },
+        min() { this.applyState(); },
+        max() { this.applyState(); },
+        step() { this.applyState(); },
       },
       ready() {
         const ele = this.ele;
@@ -171,8 +175,17 @@
 
         this.applyState();
         this.applyColor();
+        // 内部 range 的可访问名称来自宿主 aria-label / title
+        this._a11yCleanup = syncAccessibleName(ele, input);
+        // 宿主尺寸变化（隐藏→显示、窗口缩放、容器变宽）时重算几何
+        this._resizeObserver = new ResizeObserver(() => this.applyVisual());
+        this._resizeObserver.observe(ele);
         // setAttribute 的 watch 异步（坑 #18），初始同步一次
         requestAnimationFrame(() => { this.applyState(); this.applyVisual(); });
+      },
+      detached() {
+        this._resizeObserver?.disconnect();
+        this._a11yCleanup?.();
       },
       proto: {
         applyState() {
@@ -196,11 +209,16 @@
           const min = Number(input.min || 0);
           const max = Number(input.max || 100);
           const v = Math.min(Math.max(Number(input.value || min), min), max);
+          // max/min 变化后把越界值夹回范围（同时回写 data，el.value 不残留旧值）
+          if (this.value !== null && Number(this.value) !== v) this.value = String(v);
           const pct = max > min ? ((v - min) / (max - min)) * 100 : 0;
 
-          // 轨道内缩区宽 = 100% - 2×拇指半径(0.714em→占宿主宽的比例需换算)
-          const hostW = this.ele.getBoundingClientRect().width || 1;
-          const padPx = (0.714 * 14) * (parseFloat(getComputedStyle(this.ele).fontSize) / 14);
+          // 用布局宽度而不是 getBoundingClientRect：后者含祖先 transform，
+          // 且在 display:none 时量到 0；隐藏时直接跳过，等 ResizeObserver 再算
+          const hostW = this.ele.clientWidth;
+          if (!hostW) return;
+          const fontSize = parseFloat(getComputedStyle(this.ele).fontSize) || 14;
+          const padPx = 0.714 * fontSize;
           // M3：激活段从轨道左端延伸到拇指中心（fill 有 left 内缩起点，宽度要减去起点）
           const thumbLeft = padPx + (pct / 100) * (hostW - padPx * 2);
           sr.querySelector(".fill").style.width = ((thumbLeft - padPx) / hostW) * 100 + "%";

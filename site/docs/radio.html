@@ -260,7 +260,7 @@
                 <table class="api">
                   <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
                   <tbody>
-                    <tr><td><code>name</code></td><td>string</td><td>无</td><td>分组键：选中时取消最近容器内同 name 的其他 st-radio</td></tr>
+                    <tr><td><code>name</code></td><td>string</td><td>无</td><td>分组键：选中时取消同一树作用域内同 name 的其他 st-radio</td></tr>
                     <tr><td><code>checked</code></td><td>boolean</td><td>无</td><td>选中态；页面里用 <code>attr:checked="expr"</code> 绑定</td></tr>
                     <tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>0.38 透明度、阻断点击与键盘</td></tr>
                     <tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>只影响选中态的圆环与圆点</td></tr>
@@ -274,7 +274,7 @@
                   <li>事件：<code>change</code>（bubbles + composed），仅被点中的那一项派发；被取消的兄弟项不派发。</li>
                   <li>键盘：Tab 聚焦、Space / Enter 选中；焦点环画在圆圈外圈。</li>
                   <li>尺寸：圆环 <code>1.571em</code>、圆点 <code>0.714em</code>、标签间距 <code>0.857em</code>，改 <code>font-size</code> 全部等比缩放。</li>
-                  <li>分组必须同父容器：原生 radio 的 name 分组不跨 shadow root，组件用最近容器手动互斥。</li>
+                  <li>分组按树作用域：原生 radio 的 name 分组不跨 shadow root，组件在同一 document / o-page shadow root 内手动互斥（不再要求同父容器）。</li>
                 </ul>
               </div>
             </div>

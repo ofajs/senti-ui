@@ -110,3 +110,5 @@
 ## 验证页面
 
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/`）。
+
+- 无障碍：bar `role="navigation"`，active item 内部 button 带 `aria-current="page"`

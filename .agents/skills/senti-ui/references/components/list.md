@@ -79,3 +79,5 @@
 - 副文本：子元素加 `secondary` 属性；分隔线直接放 `<hr>`
 - 折叠动画：二级及以上折叠时外层逐帧跟随（瞬时），属正常表现
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/list/`）。
+
+- 无障碍：条目文字同步为内部 button 名称；`collapsible` 项暴露 `aria-expanded`；波纹只在 `button` / `collapsible` 项出现

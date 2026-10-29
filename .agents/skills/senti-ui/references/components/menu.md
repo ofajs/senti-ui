@@ -164,3 +164,5 @@ onCtx(e) {
 ## 验证页面
 
 `index.html`（直接访问 `/packages/menu/`）。
+
+- 无障碍：panel `role="menu"`、item 原生按钮 `role="menuitem"`；触发器自动 `aria-haspopup` / `aria-expanded`；Escape 捕获阶段只关最内层

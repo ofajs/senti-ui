@@ -23,8 +23,9 @@
 ## 行为
 
 - 悬停（pointerenter/leave）或聚焦（focusin/out，触发器需可聚焦，如 st-button）显示/隐藏
-- `Escape` 关闭；气泡 `pointer-events: none` 不挡交互
-- 定位：触发器上方居中，上方放不下自动翻到下方；水平方向夹在视口内
+- `Escape` 只关闭 tooltip（不会连带关闭外层 dialog）；气泡 `pointer-events: none` 不挡交互
+- 定位：触发器上方居中，上方放不下自动翻到下方；水平方向夹在视口内；打开期间滚动/缩放会跟随触发器
+- 气泡 `role="tooltip"`，`aria-hidden` 随开合切换
 
 ## 默认值（直接覆盖即可）
 
@@ -39,7 +40,7 @@
 ## 注意事项与使用技巧
 
 - `content` 是纯文本渲染（防注入）；需要富文本请自行扩展
-- `open` 为运行时状态：ofa 页面用 `sync:open`，JS 用 setAttribute 兼容路径
+- `open` 为运行时状态：ofa 页面用 `sync:open`，JS 用 `setAttribute("open","")` / `removeAttribute("open")`（组件内部同步并重新定位）
 - 提示不要承载关键信息（触屏设备无悬停）
 
 ## 验证页面

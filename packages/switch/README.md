@@ -46,6 +46,7 @@ JS 修改状态用 attribute 方式：`el.setAttribute("checked", "")` / `el.rem
 - `color` 属性只影响开启态轨道/拇指色，未选中态恒为 outline/surface 系
 - 精致动效三件套：拇指未选中收缩/选中复原 + 平移、选中边框扩展填满轨道（描边→实心底无缝过渡）、拇指内对勾描边入场
 - 不要用外部 style 强行改拇指尺寸/边框宽度（选中态的实心底靠 border-width 扩展实现）
+- 无障碍：默认插槽文字会成为内部 checkbox 的可访问名称；也可用宿主 `aria-label` / `aria-labelledby` 覆盖
 ## 验证页面
 
 `index.html`（直接访问 `/packages/switch/`）。

@@ -107,7 +107,7 @@
 
   <l-m src="../ripple/ripple.html"></l-m>
 
-  <button class="native" type="button"></button>
+  <button class="native" type="button" role="link"></button>
   <div class="container">
     <div class="pill">
       <span class="layer"></span>
@@ -118,6 +118,7 @@
   </div>
 <script>
   import "../color/st-color-init.js";
+  import { syncAccessibleName } from "../a11y/a11y.js";
   export default async () => ({
     tag: "st-nav-item",
     attrs: {
@@ -127,14 +128,26 @@
     },
     watch: {
       disabled() { this.applyDisabled(); },
+      active() { this.applyState?.(); },
     },
     ready() {
       const sr = this.ele.shadowRoot;
+      const native = sr.querySelector(".native");
       // disabled 同步到内部原生 button：原生 disabled 天然阻断点击/键盘/焦点
       this.applyDisabled = () => {
-        sr.querySelector(".native").disabled = this.disabled !== null;
+        native.disabled = this.disabled !== null;
+        native.setAttribute("aria-disabled", this.disabled !== null ? "true" : "false");
+      };
+      this.applyState = () => {
+        if (this.active !== null) native.setAttribute("aria-current", "page");
+        else native.removeAttribute("aria-current");
       };
       this.applyDisabled();
+      this.applyState();
+      this._a11yCleanup = syncAccessibleName(this.ele, native, { fromSlot: true });
+    },
+    detached() {
+      this._a11yCleanup?.();
     },
     proto: {},
   });

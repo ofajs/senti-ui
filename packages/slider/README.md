@@ -20,7 +20,7 @@
 
 ## 运行时状态
 
-- `value`：**data（非标签属性）**，`el.value` 读写；ofa 页面绑定用 `attr:value="xxx"`（注意是标签属性反射，组件内部同步）。`setAttribute("value")` 无效，初始值用 `default-value`
+- `value`：**data（非标签属性）**，`el.value` 读写；ofa 页面绑定用 `sync:value="xxx"`（双向）或 `:value="xxx"`（单向）。`setAttribute("value")` / `attr:value` 都不会改变运行时值，初始值用 `default-value`
 
 ## 事件
 
@@ -41,7 +41,9 @@
 
 - `value` 是运行时状态：JS 用 `el.value`，`setAttribute("value")` 无效
 - 键盘：Tab 聚焦（焦圈画在拇指上）、`←/→` 步进、`Home/End` 到两端
-- watch 异步生效：`setAttribute` 改 min/max 后下一帧才更新视觉
+- `min` / `max` / `step` 是标签属性：`setAttribute` 后下一帧生效并重新约束视觉；越界的 `value` 会自动夹回范围
+- 宿主尺寸变化（隐藏→显示、容器变宽）由 ResizeObserver 自动重算，不需要手动刷新
+- 无障碍：宿主 `aria-label` / `aria-labelledby` / `title` 会同步到内部 range，作为滑块的可访问名称
 
 ## 验证页面
 

@@ -34,6 +34,9 @@
   <st-card id="card-elev"></st-card>
   <st-card id="card-outlined" variant="outlined"></st-card>
   <st-card id="card-click" interactive>可点击卡片</st-card>
+  <st-card id="card-nested" interactive aria-label="带操作卡片">
+    卡片内容 <button id="card-inner-btn">内部按钮</button>
+  </st-card>
 
   <st-badges id="bd-dot"><span>●</span></st-badges>
   <st-badges id="bd-num" value="8"><span>●</span></st-badges>
@@ -46,6 +49,8 @@
       ["input", "change"].forEach((t) => el.addEventListener(t, () => window.events.push({ id: el.id, type: t, value: el.value })));
     });
     document.querySelector("#card-click").addEventListener("click", () => window.events.push("card-click"));
+    document.querySelector("#card-nested").addEventListener("click", () => window.events.push("card-nested"));
+    document.querySelector("#card-inner-btn").addEventListener("click", (e) => { e.stopPropagation(); window.events.push("card-inner"); });
   </script>
 </body>
 </html>

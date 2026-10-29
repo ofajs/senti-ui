@@ -138,6 +138,15 @@
 
   <script>
     import "../color/st-color-init.js";
+    import {
+      lockScroll,
+      unlockScroll,
+      getDeepActiveElement,
+      trapTab,
+    } from "../a11y/a11y.js";
+
+    // 打开中的对话框栈：Escape 只关最上层，叠加时不会一次全关
+    const openDialogs = [];
     export default async () => ({
       tag: "st-dialog",
       attrs: {
@@ -159,25 +168,67 @@
 
           clearTimeout(this._closingTimer);
           if (isOpen) {
-            // 打开：撤掉残留的退出过渡态，焦点移到面板容器（tabindex=-1），
-            // 键盘用户随后可 Tab 进内部控件
+            // 打开：撤掉残留的退出过渡态，记录 opener 供关闭后归还焦点，
+            // 锁背景滚动，焦点移到面板容器（tabindex=-1），键盘用户随后 Tab 进内部
             this._wasOpen = true;
+            this._prevFocus = getDeepActiveElement();
+            if (!openDialogs.includes(ele)) openDialogs.push(ele);
+            lockScroll();
             ele.removeAttribute("closing");
             const panel = ele.shadowRoot.querySelector(".panel");
             // watch 异步触发，等面板可见后再聚焦
-            requestAnimationFrame(() => panel.focus());
+            requestAnimationFrame(() => {
+              if (this.open === true) panel.focus();
+            });
           } else if (this._wasOpen) {
             // 关闭：短暂保留 closing 态播完退出动画（200ms），再彻底隐藏。
             // data watch 初始化也会以初始值 false 触发一次，用 _wasOpen 区分（坑 #27）
             this._wasOpen = false;
+            const index = openDialogs.indexOf(ele);
+            if (index !== -1) openDialogs.splice(index, 1);
+            unlockScroll();
             ele.setAttribute("closing", "");
             this._closingTimer = setTimeout(() => ele.removeAttribute("closing"), 250);
+            this._restoreFocus?.();
           }
         },
       },
       ready() {
         const ele = this.ele;
         const sr = ele.shadowRoot;
+
+        // 模态语义：screen reader 才知道这是覆盖在页面上的对话框。
+        // 必须延后到构造结束：自定义元素构造函数内 setAttribute 会抛
+        // "The result must not have attributes"（命令式 createElement 会炸）
+        queueMicrotask(() => {
+          ele.setAttribute("role", "dialog");
+          ele.setAttribute("aria-modal", "true");
+        });
+
+        // 用 headline 文本做可访问名称（没有 headline 时保留作者自己写的 label）
+        this._syncLabel = () => {
+          // 作者显式设置的 label 优先；只有“我们自动写的那一个”才跟随 headline 更新
+          if (ele.hasAttribute("aria-labelledby")) return;
+          if (ele.hasAttribute("aria-label") && !this._autoLabel) return;
+          const text = sr
+            .querySelector('slot[name="headline"]')
+            .assignedElements()
+            .map((node) => node.textContent.trim())
+            .filter(Boolean)
+            .join(" ");
+          this._autoLabel = !!text;
+          if (text) ele.setAttribute("aria-label", text);
+          else ele.removeAttribute("aria-label");
+        };
+        sr.querySelector('slot[name="headline"]').addEventListener("slotchange", this._syncLabel);
+        queueMicrotask(() => this._syncLabel());
+
+        // 关闭后把焦点还给打开它的元素
+        this._restoreFocus = () => {
+          const target = this._prevFocus;
+          this._prevFocus = null;
+          if (target && target.isConnected) target.focus();
+        };
 
         // 属性 → data 兼容路径：标签裸属性 / 外部 setAttribute 同样有效
         // （值一致时 data 不变化，不会与 watch 的反射形成循环）
@@ -203,16 +254,48 @@
         // 点击遮罩关闭（受 auto-close 约束）
         sr.querySelector(".scrim").addEventListener("click", () => this.closeSelf());
 
-        // Escape 关闭（受 auto-close 约束）
+        // Escape 只关最上层（受 auto-close 约束），Tab 在对话框内循环。
+        // 用冒泡阶段而不是捕获：select/menu 会先消费 Escape，避免一次按键关两层。
         this._onKeydown = (e) => {
-          if (e.key === "Escape") this.closeSelf();
+          if (this.open !== true) return;
+          if (openDialogs[openDialogs.length - 1] !== ele) return;
+          if (e.key === "Escape") {
+            if (this.autoClose !== null) {
+              e.stopPropagation();
+              this.closeSelf();
+            }
+            return;
+          }
+          if (e.key === "Tab") {
+            if (!trapTab(ele, e)) {
+              e.preventDefault();
+              sr.querySelector(".panel").focus();
+            }
+          }
         };
         document.addEventListener("keydown", this._onKeydown);
+
+        // 焦点守卫：Tab 从最后一个元素离开或程序化 focus 逃逸时拉回面板
+        this._onFocusIn = (e) => {
+          if (this.open !== true) return;
+          if (openDialogs[openDialogs.length - 1] !== ele) return;
+          if (!e.composedPath().includes(ele)) {
+            e.stopPropagation();
+            sr.querySelector(".panel").focus();
+          }
+        };
+        document.addEventListener("focusin", this._onFocusIn, true);
       },
       detached() {
         document.removeEventListener("keydown", this._onKeydown);
+        document.removeEventListener("focusin", this._onFocusIn, true);
         clearTimeout(this._closingTimer);
         this._attrObserver?.disconnect();
+        const index = openDialogs.indexOf(this.ele);
+        if (index !== -1) {
+          openDialogs.splice(index, 1);
+          unlockScroll();
+        }
       },
       proto: {
         // 关闭（仅在 auto-close 时允许交互触发），并派发 close 事件供外部监听。

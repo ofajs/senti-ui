@@ -193,12 +193,13 @@
   <span class="line-clip"><span class="bottom-line"></span></span>
   <span class="label" id="st-label"></span>
   <span class="arrow"></span>
-  <div class="listbox" id="st-listbox"></div>
+  <div class="listbox" id="st-listbox" role="listbox"></div>
   <l-m src="./option.html"></l-m>
   <slot id="st-slot"></slot>
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-select",
       attrs: {
@@ -227,7 +228,7 @@
           this.buildList();
           this.syncSelected(false);
         },
-        disabled() { this.close(); },
+        disabled() { this.close(); this.syncDisabled?.(); },
       },
       ready() {
         this.applyColor();
@@ -237,6 +238,28 @@
         this.listEl = sr.querySelector("#st-listbox");
         this.slotEl = sr.querySelector("#st-slot");
         this.activeIndex = -1;
+
+        // 自绘 listbox 的组合框语义（ARIA 角色 + 展开状态 + 选项选中态）。
+        // 宿主属性延后到构造结束再写，避免命令式 createElement 时抛
+        // "The result must not have attributes"
+        this.listEl.setAttribute("role", "listbox");
+        this._a11yReady = false;
+        this.syncDisabled = () => {
+          if (!this._a11yReady) return;
+          const disabled = this.disabled !== null;
+          ele.tabIndex = disabled ? -1 : 0;
+          if (disabled) ele.setAttribute("aria-disabled", "true");
+          else ele.removeAttribute("aria-disabled");
+        };
+        queueMicrotask(() => {
+          ele.setAttribute("role", "combobox");
+          ele.setAttribute("aria-haspopup", "listbox");
+          ele.setAttribute("aria-controls", "st-listbox");
+          ele.setAttribute("aria-expanded", "false");
+          this._a11yCleanup = syncAccessibleName(ele, ele);
+          this._a11yReady = true;
+          this.syncDisabled();
+        });
 
         // 宿主 value 用 getter/setter 反射到 data（ofa 的 data 不在原生属性上）
         Object.defineProperty(ele, "value", {
@@ -322,8 +345,8 @@
           }
         }
 
-        // 键盘可达：宿主本身可聚焦
-        ele.tabIndex = 0;
+        // 键盘可达：宿主本身可聚焦；disabled 状态由上方 queueMicrotask 中的
+        // syncDisabled 应用（构造期不能写宿主属性）
         ele.addEventListener("keydown", (e) => this.onKeydown(e));
         ele.addEventListener("click", () => {
           if (this.disabled === null) this.isOpen() ? this.close() : this.openList();
@@ -336,6 +359,7 @@
       detached() {
         document.removeEventListener("pointerdown", this._onDocDown);
         clearTimeout(this._closeTimer);
+        this._a11yCleanup?.();
       },
       proto: {
         isOpen() { return this.ele.hasAttribute("open"); },
@@ -346,6 +370,7 @@
           ele.removeAttribute("closing"); // 重新打开时取消退出过渡、重启进入动画
           ele.removeAttribute("drop-up");
           ele.setAttribute("open", "");
+          ele.setAttribute("aria-expanded", "true");
           // 按视口剩余空间翻转：下方放不下且上方更宽裕时向上弹
           const rect = ele.getBoundingClientRect();
           const below = window.innerHeight - rect.bottom - 8;
@@ -361,6 +386,8 @@
           const ele = this.ele;
           if (!this.isOpen() && !ele.hasAttribute("closing")) return;
           ele.removeAttribute("open");
+          ele.setAttribute("aria-expanded", "false");
+          ele.removeAttribute("aria-activedescendant");
           clearTimeout(this._closeTimer);
           ele.setAttribute("closing", ""); // 播 150ms 退出动画后再隐藏
           this._closeTimer = setTimeout(() => ele.removeAttribute("closing"), 180);
@@ -370,6 +397,8 @@
           this._opts.forEach((opt, i) => {
             const item = document.createElement("div");
             item.className = "opt";
+            item.id = `st-opt-${i}`;
+            item.setAttribute("role", "option");
             // 有实际内容（元素或非空白文本）时克隆渲染（支持富内容），否则退回纯文本 label
             const rich = opt.el && [...opt.el.childNodes].some((n) => n.nodeType === 1 || (n.nodeType === 3 && n.textContent.trim()));
             if (rich) {
@@ -392,7 +421,9 @@
           this.labelEl.textContent = opt ? opt.label : (this.placeholder || "");
           this.labelEl.classList.toggle("placeholder", !opt);
           [...this.listEl.children].forEach((item, i) => {
-            item.toggleAttribute("data-selected", this._opts[i].value === this.value);
+            const selected = this._opts[i].value === this.value;
+            item.toggleAttribute("data-selected", selected);
+            item.setAttribute("aria-selected", selected ? "true" : "false");
           });
         },
         select(i) {
@@ -407,6 +438,9 @@
           [...this.listEl.children].forEach((item, j) => {
             item.toggleAttribute("data-active", j === i);
           });
+          if (i >= 0 && this.listEl.children[i]) {
+            this.ele.setAttribute("aria-activedescendant", this.listEl.children[i].id);
+          }
           if (scroll && i >= 0) this.listEl.children[i].scrollIntoView({ block: "nearest" });
         },
         onKeydown(e) {
@@ -434,7 +468,15 @@
             case "End":
               if (open) { e.preventDefault(); this.setActive(n - 1, true); }
               break;
-            case "Escape": case "Tab":
+            case "Escape":
+              // 只关下拉：不让 Escape 继续冒泡把外层 dialog 一起关掉
+              if (open) {
+                e.stopPropagation();
+                e.preventDefault();
+              }
+              this.close();
+              break;
+            case "Tab":
               this.close();
               break;
           }

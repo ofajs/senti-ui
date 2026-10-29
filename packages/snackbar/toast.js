@@ -90,10 +90,10 @@ export default async function toast(options) {
   snackbarEl.textContent = message;
 
   // 关闭按钮：用小号 st-icon-button（font-size 缩小整体等比缩小，不撑高消息条）；
-  // 颜色用 color 属性——默认反色底上 inverse-primary，彩色底上 on-角色色
+  // 颜色用 color 属性——默认 secondary 底上 on-secondary，彩色底上 on-角色色
   const closeBtn = document.createElement("st-icon-button");
   closeBtn.setAttribute("slot", "action");
-  closeBtn.setAttribute("color", color ? `on-${color}` : "inverse-primary");
+  closeBtn.setAttribute("color", color ? `on-${color}` : "on-secondary");
   closeBtn.setAttribute("title", "关闭");
   closeBtn.style.fontSize = "10px"; /* 40px 默认太大，10px → 约 28px */
   closeBtn.textContent = "✕";

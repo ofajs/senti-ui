@@ -54,14 +54,17 @@
           return false;
         };
 
+        const enabled = () =>
+          !target.hasAttribute("disabled") && this.ele.getClientRects().length > 0;
+
         target.addEventListener("pointerdown", (e) => {
-          if (fromNested(e)) return;
+          if (!enabled() || fromNested(e)) return;
           const rect = this.ele.getBoundingClientRect();
           this.spawn(e.clientX - rect.left, e.clientY - rect.top, rect);
         });
         // 键盘激活（Enter/Space 产生的 click 无坐标，detail 为 0）：从中心扩散
         target.addEventListener("click", (e) => {
-          if (e.detail !== 0 || fromNested(e)) return;
+          if (!enabled() || e.detail !== 0 || fromNested(e)) return;
           const rect = this.ele.getBoundingClientRect();
           this.spawn(rect.width / 2, rect.height / 2, rect);
         });

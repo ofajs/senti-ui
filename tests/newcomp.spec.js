@@ -149,13 +149,22 @@ test("card：三种 variant 配色差异", async ({ page }) => {
   expect(styles.outlined.border).not.toBe(styles.elev.border);
 });
 
-test("card：interactive 点击冒泡，focus 有焦圈元素", async ({ page }) => {
-  await page.locator("#card-click .native").click();
+test("card：interactive 点击冒泡且宿主自身承载 button 语义", async ({ page }) => {
+  await page.locator("#card-click").click();
   await page.waitForTimeout(100);
   expect(await page.evaluate(() => window.events)).toContain("card-click");
   expect(
-    await page.evaluate(() => document.querySelector("#card-click").shadowRoot.querySelector(".native").tagName)
-  ).toBe("BUTTON");
+    await page.evaluate(() => {
+      const el = document.querySelector("#card-click");
+      return { role: el.getAttribute("role"), tab: el.tabIndex };
+    })
+  ).toEqual({ role: "button", tab: 0 });
+});
+
+test("card：interactive 卡片内的按钮仍可点击（覆盖层不再拦截）", async ({ page }) => {
+  await page.locator("#card-inner-btn").click();
+  await page.waitForTimeout(100);
+  expect(await page.evaluate(() => window.events)).toContain("card-inner");
 });
 
 // ---------- st-badges ----------

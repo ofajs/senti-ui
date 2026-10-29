@@ -74,9 +74,10 @@ document.querySelector("st-dialog").addEventListener("close", () => {
 
 ## 内建行为
 
-- **M3 emphasized 动效**：打开时遮罩淡入（250ms）+ 面板 `scale(0.9)` 上移入场（300ms，M3 emphasized 曲线）；关闭时反向退出（200ms），动画播完后才彻底隐藏。系统开启"减少动态效果"（`prefers-reduced-motion`）时动画时长自动趋零
-- 打开时焦点自动移入面板容器（`tabindex="-1"`），键盘用户可直接 Tab 到内部控件；面板本身不画 focus ring（由内部交互元素各自承载）
-- Escape / 遮罩点击仅在 `auto-close` 存在时生效；多个对话框同时打开时各管各的
+- **M3 emphasized 动效**：打开时遮罩淡入（250ms）+ 面板从上方 `translateY(-7.14em) scale(1, 0.5)` 展开入场（300ms）；关闭时反向退出（200ms），动画播完后才彻底隐藏。系统开启"减少动态效果"（`prefers-reduced-motion`）时动画时长自动趋零
+- **模态语义**：宿主自动获得 `role="dialog"`、`aria-modal="true"`，用 headline 文本作为 `aria-label`（也可自行传 `aria-label` / `aria-labelledby` 覆盖）
+- 打开时焦点自动移入面板容器（`tabindex="-1"`），Tab / Shift+Tab 在对话框内循环（焦点陷阱）；关闭后焦点归还打开它的元素；打开期间锁定背景滚动（叠加对话框用引用计数）
+- Escape / 遮罩点击仅在 `auto-close` 存在时生效；叠加时 Escape 只关最上层（select/menu/tooltip 会先消费自己的 Escape）
 - 关闭后组件仍留在 DOM（`display: none`）；快速关闭再打开会立即取消退出动画重新入场
 - 内部交互关闭改的是 data `open`（`this.open = false`），`sync:open` 绑定的上层数据自动同步；close 事件同时派发
 - 组件从 DOM 移除时自动清理 document 级键盘监听与关闭动画定时器
@@ -119,7 +120,7 @@ st-dialog::part(panel) {
 |------|--------|
 | `z-index` | `1000` |
 | `padding` | `1.43em`（面板与视口的留白） |
-| 遮罩 | 轻磨砂玻璃：rgba(0,0,0,0.28) + `backdrop-filter: blur(0.357em)`（= 5px，M3 scrim 规范基色的变体，不随配色变化） |
+| 遮罩 | 轻磨砂玻璃：rgba(0,0,0,0.28) + `backdrop-filter: blur(2px)`（M3 scrim 规范基色的变体，不随配色变化） |
 
 ## 主题
 
@@ -152,7 +153,7 @@ const val = await prompt({ title: "重置密码", message: "至少 4 位", place
 - 兼容路径：标签裸属性 `open`、`setAttribute` / `removeAttribute` 也有效（内部 MutationObserver 同步进 data），但 ofa 绑定场景仍推荐 `sync:open`
 - `close` 事件只在**交互关闭**（auto-close）时派发；外部关闭不派发——若需统一感知，监听后自行维护状态
 - 面板定制用原生 `::part(panel)` 选择器（不是自定义变量）；字号类直接写宿主 style（可继承）
-- 多个对话框同时打开时 Escape 各管各的（都设 auto-close 时都会关）
+- 多个对话框同时打开时只允许最上层响应 Escape；关闭后焦点回到打开它的元素
 - **不要把 st-dialog 放在已设置 `transform`（及 `filter`/`perspective`/`will-change`）的祖先元素内**——这些属性会创建新的包含块，宿主的 `position: fixed` 遮罩与面板会改为相对该祖先定位，遮罩铺不满视口、出现"穿透"（下方内容可点、遮罩错位）。常见触发场景：做过入场动画（transform 未清除）的容器、开启了 translate 的布局包装。对话框请挂在 `document.body` 或无 transform 的顶层容器下（命令式工具 alert/confirm/prompt 已自动挂 body，不受影响）
 ## 验证页面
 

@@ -218,6 +218,7 @@ document.querySelector("st-button").addEventListener("click", () => {});
 | `color` | M3 角色名 / 自定义变量名 | 无 | 同 st-button 语义配色 |
 | `disabled` | boolean | 无 | 禁用整组（主区 + 箭头区原生阻断） |
 | `menu-align` | `"left" \| "right"` | `"right"` | 面板与按钮的水平对齐 |
+| `menu-label` | string | `"打开菜单"` | 箭头按钮的可访问名称（图标按钮没有文字） |
 
 - `open` 是**运行时状态（data）**：ofa 页面用 `sync:open="xxx"` 双向绑定（选中菜单项 / 点外部 / Escape 自动关闭会回写）；兼容 `setAttribute` / `removeAttribute`
 - 插槽：`prefix`（主区前置图标）/ 默认（主操作文字）/ `menu`（菜单内容）
@@ -268,14 +269,16 @@ document.querySelector("st-button").addEventListener("click", () => {});
 
 ## 注意事项与使用技巧
 
-- **换色优先用 `color` 属性**：它写入 `--st-accent` 系列变量，皮肤能据此组合材质（半透明/渐变/毛玻璃）。内联 `style="background/color"` 也有效且不会被清空，但会绕过皮肤的材质合成；放在反色/彩色容器（如 snackbar）里时用 `color="inverse-primary"` / `color="on-error"` 这类角色名
+- **换色优先用 `color` 属性**：它写入 `--st-accent` 系列变量，皮肤能据此组合材质（半透明/渐变/毛玻璃）。内联 `style="background/color"` 也有效且不会被清空，但会绕过皮肤的材质合成；放在彩色容器（如 snackbar）里时用 `color="on-secondary"` / `color="on-error"` 这类角色名
 - `variant` 运行时切换用 `attr:variant="expr"` 绑定（ofa 页面内），JS 里用 `setAttribute`（直接改 property 不触发更新）
 - 布尔属性（disabled/loading）在 JS 里用 `setAttribute` / `removeAttribute`，ofa 页面里绑定用 `attr:loading="busy"`（`:prop` 会把 false 序列化成属性字符串导致永远禁用）
 - `setAttribute` 触发组件 watch 是异步的（下一轮微任务），设置后同步读状态会得到旧值
-- loading 态自动阻断点击，不需要再叠加 disabled
+- loading 态自动阻断点击并设置 `aria-busy="true"`，不需要再叠加 disabled
+- 无障碍：插槽文字/`aria-label` 会同步到内部原生 button 的可访问名称；`st-icon-button` 的 `title` / `aria-label` 同样会转发
 - **st-button-group 的圆角在 attached 后由 JS 按位置设置**（内联在子按钮上）——不用 `::slotted(:first-child)` 位置选择器（ofa 升级/重排 light DOM 时序下不可靠）；外部不要给子按钮单独写 `border-radius`，需整体定制在 group 宿主上覆盖字号即可等比缩放；子项增删（slotchange）自动重算
 - **st-split-button 点主区 = 主操作（click），点箭头 = 开菜单**，两者互不干扰；菜单项点击后面板自动关闭并截断冒泡，不会误触发主操作
 - st-split-button 的菜单项来自 `st-menu-item`（split-button 内部已加载，无需额外引入）
+- split-button 的 `setAttribute("open","")` / `removeAttribute("open")` 现在会同步 data 并定位面板；箭头按钮暴露 `aria-haspopup="menu"` + `aria-expanded`
 - **st-icon-button 必须配 `title` / `aria-label`**（无文字，缺名称时屏幕阅读器读不出用途）；其 color 分派多了 tonal 分支（container 配对色）
 ## 验证页面
 

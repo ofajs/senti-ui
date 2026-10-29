@@ -54,7 +54,7 @@
   </style>
 
   <slot></slot>
-  <div class="bubble"></div>
+  <div class="bubble" role="tooltip" aria-hidden="true"></div>
 
   <script>
     import "../color/st-color-init.js";
@@ -72,10 +72,24 @@
       watch: {
         open(val) {
           const ele = this.ele;
+          const bubble = ele.shadowRoot?.querySelector(".bubble");
           // data → 属性反射（CSS :host([open]) 显隐选择器依赖属性）
           if (val) ele.setAttribute("open", "");
           else ele.removeAttribute("open");
-          if (val) this.updatePosition();
+          if (bubble) bubble.setAttribute("aria-hidden", val ? "false" : "true");
+          if (val) {
+            // 首次定位时先停入场动画，定位完再启动（只播一次）
+            if (bubble) bubble.style.animation = "none";
+            this.updatePosition?.();
+            requestAnimationFrame(() => {
+              if (!this.open) return;
+              this.updatePosition?.();
+              if (bubble) bubble.style.animation = "";
+            });
+            this.bindReposition?.();
+          } else {
+            this.unbindReposition?.();
+          }
         },
         content() { this.applyContent(); },
         disabled() { if (this.disabled !== null) this.open = false; },
@@ -88,6 +102,28 @@
         };
         this.applyContent();
 
+        // 属性 → data 兼容路径（README 承诺 setAttribute("open") 有效）
+        if (ele.hasAttribute("open")) this.open = true;
+        this._attrObserver = new MutationObserver(() => {
+          const attrOpen = ele.hasAttribute("open");
+          if (attrOpen !== (this.open === true)) this.open = attrOpen;
+        });
+        this._attrObserver.observe(ele, { attributes: true, attributeFilter: ["open"] });
+
+        this._onReposition = () => this.updatePosition();
+        this.bindReposition = () => {
+          if (this._repositionBound) return;
+          window.addEventListener("resize", this._onReposition, true);
+          document.addEventListener("scroll", this._onReposition, true);
+          this._repositionBound = true;
+        };
+        this.unbindReposition = () => {
+          if (!this._repositionBound) return;
+          window.removeEventListener("resize", this._onReposition, true);
+          document.removeEventListener("scroll", this._onReposition, true);
+          this._repositionBound = false;
+        };
+
         // 悬停/聚焦开合（disabled 时不响应）
         const show = () => { if (this.disabled === null) this.open = true; };
         const hide = () => { this.open = false; };
@@ -95,11 +131,19 @@
         ele.addEventListener("pointerleave", hide);
         ele.addEventListener("focusin", show);
         ele.addEventListener("focusout", hide);
-        this._onKeydown = (e) => { if (e.key === "Escape") this.open = false; };
-        document.addEventListener("keydown", this._onKeydown);
+        // 捕获阶段消费 Escape：只关 tooltip，不连带关掉外层 dialog
+        this._onKeydown = (e) => {
+          if (e.key === "Escape" && this.open) {
+            e.stopPropagation();
+            this.open = false;
+          }
+        };
+        document.addEventListener("keydown", this._onKeydown, true);
       },
       detached() {
-        document.removeEventListener("keydown", this._onKeydown);
+        document.removeEventListener("keydown", this._onKeydown, true);
+        this.unbindReposition();
+        this._attrObserver?.disconnect();
         clearTimeout(this._showTimer);
       },
       proto: {
@@ -121,8 +165,13 @@
           } else {
             ele.setAttribute("drop-up", "");
           }
-          bubble.style.left = left + "px";
-          bubble.style.top = top + "px";
+          // fixed 的 containing block 可能被祖先 transform 接管（坑 #42）：
+          // 先归零量原点，再写相对坐标，放进 dialog 等动画容器也不会偏移
+          bubble.style.left = "0px";
+          bubble.style.top = "0px";
+          const origin = bubble.getBoundingClientRect();
+          bubble.style.left = left - origin.left + "px";
+          bubble.style.top = top - origin.top + "px";
         },
       },
     });

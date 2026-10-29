@@ -9,6 +9,7 @@
   <l-m src="/packages/button/button.html"></l-m>
 </head>
 <body>
+  <button id="opener">打开对话框</button>
   <st-dialog id="dlg-basic">
     <h2 slot="headline">基础标题</h2>
     <p>正文内容</p>
@@ -23,6 +24,11 @@
     <div slot="actions">
       <st-button id="btn-confirm">确定</st-button>
     </div>
+  </st-dialog>
+
+  <st-dialog id="dlg-autoclose-2" auto-close>
+    <h2 slot="headline">第二层</h2>
+    <p>第二层内容</p>
   </st-dialog>
 
   <st-dialog id="dlg-bare"></st-dialog>
@@ -41,6 +47,9 @@
     window.confirm = confirm;
     window.prompt = prompt;
     window.__stDialogUtilsReady = true;
+    document.querySelector("#opener").addEventListener("click", () => {
+      document.querySelector("#dlg-autoclose").setAttribute("open", "");
+    });
   </script>
 </body>
 </html>

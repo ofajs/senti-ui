@@ -129,6 +129,7 @@
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-button",
       attrs: {
@@ -141,9 +142,20 @@
       watch: {
         color() { this.applyColor(); },
         variant() { this.applyColor(); },
+        loading() { this.syncBusy?.(); },
       },
       ready() {
+        const native = this.ele.shadowRoot.querySelector(".native");
+        // 内部 button 与 slot 文字是兄弟节点，必须把文字/aria-label 同步成可访问名称
+        this._a11yCleanup = syncAccessibleName(this.ele, native, { fromSlot: true });
+        this.syncBusy = () => {
+          native.setAttribute("aria-busy", this.loading !== null ? "true" : "false");
+        };
+        this.syncBusy();
         this.applyColor();
+      },
+      detached() {
+        this._a11yCleanup?.();
       },
       proto: {
         // color 接受 M3 角色名（primary/secondary/tertiary/error…）或 color 模块的自定义变量名

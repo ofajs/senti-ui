@@ -129,6 +129,7 @@
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-input",
       attrs: {
@@ -175,6 +176,11 @@
         input.addEventListener("change", () => {
           ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
         });
+        // 宿主 aria-label / aria-labelledby / title → 内部 input 的可访问名称
+        this._a11yCleanup = syncAccessibleName(ele, input);
+      },
+      detached() {
+        this._a11yCleanup?.();
       },
       proto: {
         // color 接受 M3 角色名或 color 模块自定义变量名，控制 caret 与 focus 描边/底线颜色。

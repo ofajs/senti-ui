@@ -178,3 +178,5 @@ $("st-select").on("change", (e) => {
 ## 验证页面
 
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/select/`）。
+
+- 无障碍：宿主 `role="combobox"` + `aria-expanded` / `aria-controls` / `aria-activedescendant`；弹层 `role="listbox"`、选项 `role="option"` + `aria-selected`；disabled 时移出 Tab 顺序

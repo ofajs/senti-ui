@@ -160,6 +160,7 @@ onCtx(e) {
 - `align="left"` 面板左对齐触发器，默认右对齐
 - 多级子菜单：`st-menu` 放在 item 的 `sub-menu` 插槽内（见上文），箭头自动显示
 - 右键菜单：不放 trigger，`on:contextmenu` 里 `e.preventDefault()` 后调 `openAt(e.clientX, e.clientY)`（见上文）
+- 无障碍：面板 `role="menu"`、菜单项原生按钮 `role="menuitem"`；触发器自动获得 `aria-haspopup="menu"` + `aria-expanded`；Escape 在捕获阶段只关最内层菜单
 
 ## 验证页面
 

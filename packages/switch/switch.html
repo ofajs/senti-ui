@@ -118,6 +118,7 @@
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-switch",
       attrs: {
@@ -141,7 +142,13 @@
           ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
         });
 
+        // 标签文字是 slot 内容、与原生 input 是兄弟节点，必须同步为可访问名称
+        this._a11yCleanup = syncAccessibleName(ele, input, { fromSlot: true });
+
         this.applyState();
+      },
+      detached() {
+        this._a11yCleanup?.();
       },
       proto: {
         // watch 初始化也会触发一次（坑 #27），applyState 无副作用，天然安全。

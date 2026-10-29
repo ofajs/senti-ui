@@ -25,6 +25,7 @@
 - **外观直接用原生 CSS 属性定制**——组件视觉全部定义在 `:host` 上，`<st-button style="height:32px; border-radius:8px">` 直接生效
 - **尺寸默认值全用 em**——只改 `font-size` 即整体等比缩放
 - **颜色永不写死**，一律消费 `--md-sys-color-*` M3 角色变量，自动适配深浅色主题
+- **材质可换，颜色不换**——皮肤只改形状与材质（圆角、密度、描边、毛玻璃、动效），M3 角色色始终生效；组件的标签与属性完全不变
 - **`color` 属性是语义引用**：值是 M3 角色名或 color 工具里定义的自定义变量名（如 `color="brand"` 消费 `--brand/--on-brand`），与 color 工具联动实现一键换色
 - **文档写给 AI 读**：自包含、结构化、只含事实
 
@@ -110,6 +111,27 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 
 ```html
 <script type="module" src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/st-color-init.js"></script>
+```
+
+## 皮肤（材质层）
+
+同一批组件可以只换**材质**、不换颜色：`m3`（默认）/ `apple`（毛玻璃）/ `shadcn`（扁平细描边）。皮肤只影响圆角、密度、描边、阴影、毛玻璃、焦点环、动效与波纹；所有皮肤消费同一套 M3 角色变量，种子色、`error`、`success` 与深浅色主题继续生效。
+
+```html
+<html data-skin="apple">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/apple.css">
+<st-button color="error">删除</st-button>
+```
+
+运行时用 `packages/skin/st-skin.js` 的 `setSkin("shadcn")` 切换（持久化并跨同源窗口同步）。当前已接入 `st-button` 与 `st-input`；完整 token / `part` 契约与自定义皮肤写法见 [packages/skin/README.md](./packages/skin/README.md)。
+
+## 官网首页
+
+单页聚合官网在 [`site/`](./site/index.html)：全部组件摆在一页，支持实时换肤、深浅色切换与三种材质并排对比。采用 **ofa.js v5 + scsr**（真实路径文档；加载后由 scsr 收编为 o-app 页面）。
+
+```bash
+npm run dev
+# http://localhost:8642/site/
 ```
 
 ## AI 使用

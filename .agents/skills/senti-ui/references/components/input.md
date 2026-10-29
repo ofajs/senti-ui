@@ -1,6 +1,6 @@
 # st-input 单行输入框组件
 
-基于 ofa.js 的单行输入框组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设，也不需要自定义 CSS 变量）。
+基于 ofa.js 的单行输入框组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设；使用者不需要自定义 CSS 变量，材质由 `--st-*` 皮肤 token 控制，见 [skin.md](./skin.md)）。
 
 组件的视觉样式全部定义在宿主元素（`:host`）上，`st-input` 本身就是一个普通的可样式化元素。内部有一个透明的原生 `<input>` 负责语义（输入/键盘/焦点/disabled/readonly）。
 
@@ -96,7 +96,7 @@ $("st-input").on("input", (e) => {
 <st-input variant="filled" style="border-radius: 999px; border-bottom: 1px solid var(--md-sys-color-on-surface-variant);"></st-input>
 ```
 
-### 默认值（直接覆盖即可）
+### 默认值（直接覆盖即可；实现为 `var(--st-*, 默认值)`，不加载皮肤与旧版一致）
 
 | 属性 | 默认值 |
 |------|--------|
@@ -121,6 +121,21 @@ $("st-input").on("input", (e) => {
 ## 主题
 
 `st-color-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
+
+## 皮肤（材质）
+
+`st-input` 已接入皮肤 token：高度、圆角、内边距、字体、描边、背景、底边线、阴影、毛玻璃、焦点环形态、disabled。颜色仍由 M3 与 `color` 属性决定。
+
+```html
+<html data-skin="shadcn">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/shadcn.css">
+<st-input color="error" placeholder="校验错误态"></st-input>
+```
+
+- 运行时：`import { setSkin } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js"; setSkin("shadcn")`
+- 主要 token：`--st-height` / `--st-field-radius` / `--st-field-padding` / `--st-field-bg` / `--st-field-filled-bg` / `--st-field-border` / `--st-field-underline` / `--st-field-shadow` / `--st-backdrop-filter` / `--st-field-focus-ring-opacity` / `--st-field-focus-shadow` / `--st-field-underline-color`
+- part（light DOM 时可用）：`focus-ring` / `underline` / `control`
+- 完整 token 表见 [skin.md](./skin.md)
 
 ## 注意事项与使用技巧
 

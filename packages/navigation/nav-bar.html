@@ -75,11 +75,25 @@
             if (!ele.offsetWidth && !ele.offsetHeight) return;
             const items = ele.querySelectorAll("st-nav-item");
             const active = Array.from(items).find((it) => it.hasAttribute("active"));
-            const bg = ele.shadowRoot.querySelector(".active-bg");
+            const bg = ele.shadowRoot && ele.shadowRoot.querySelector(".active-bg");
+            if (!bg) return;
             if (!active) {
               bg.style.opacity = "0";
               return;
             }
+            // ofa v5 时序：子项可能尚未升级（shadowRoot 未就绪），此时读 .pill 会炸。
+            // 先跳过、稍后重试（最多 20 次），升级完成后 ResizeObserver 也会再触发。
+            if (!active.shadowRoot) {
+              this._upgradeTries = (this._upgradeTries || 0) + 1;
+              if (this._upgradeTries <= 20 && !this._retryTimer) {
+                this._retryTimer = setTimeout(() => {
+                  this._retryTimer = null;
+                  this.updateActive();
+                }, 50);
+              }
+              return;
+            }
+            this._upgradeTries = 0;
             // 对齐指示区：active 子项带 parallel（文字在右）时整行背景
             // （item 相对 bar 的布局坐标），否则子项内部药丸区（.pill 相对
             // item 的布局坐标 + item 在 bar 内的偏移；item host 是
@@ -115,16 +129,20 @@
       },
       attached() {
         // 尺寸变化时瞬时重定位（不带动画）
-        const bg = () => this.ele.shadowRoot.querySelector(".active-bg");
+        const bg = () =>
+          this.ele.shadowRoot && this.ele.shadowRoot.querySelector(".active-bg");
         this._resizeObserver = new ResizeObserver(() => {
-          bg().classList.add("not-animate");
+          const ind = bg();
+          if (!ind) return;
+          ind.classList.add("not-animate");
           this.updateActive();
           clearTimeout(this._resizeTimer);
-          this._resizeTimer = setTimeout(() => bg().classList.remove("not-animate"), 50);
+          this._resizeTimer = setTimeout(() => ind.classList.remove("not-animate"), 50);
         });
         this._resizeObserver.observe(this.ele);
       },
       detached() {
+        clearTimeout(this._retryTimer);
         this._itemObserver?.disconnect();
         this._childObserver?.disconnect();
         this._resizeObserver?.disconnect();

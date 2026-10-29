@@ -2,7 +2,8 @@
   st-input — Senti-UI 单行输入框组件（基于 ofa.js）
   语义属性：variant(filled|outlined) / default-value / disabled / readonly / type / placeholder / color
   value 是运行时状态（ofa data），通过 el.value 读写，不作为标签属性
-  视觉全部在 :host 上，直接用原生 CSS 属性定制，见 README.md
+  视觉全部在 :host 上，直接用原生 CSS 属性定制；
+  材质（圆角/密度/描边/阴影/毛玻璃/焦点环）通过 --st-* 皮肤 token 消费，换肤见 packages/skin/README.md
 -->
 <template component>
   <style>
@@ -14,38 +15,51 @@
       position: relative; /* 聚焦描边/底线浮层的定位基准 */
       gap: 0.571em;
       box-sizing: border-box;
-      height: 2.857em;
+      height: var(--st-height, 2.857em);
       min-width: 13.571em; /* M3 最小填充宽度 = 190px @ 14px */
-      padding: 0 1em;
-      border: 1px solid var(--md-sys-color-outline);
-      border-radius: 0.5em; /* 默认圆角：比 M3 文本域的 4px 稍圆润 */
-      font-size: 14px;
-      font-family: inherit;
+      padding: var(--st-field-padding, 0 1em);
+      border: var(--st-border-width, 1px) solid
+        var(--st-field-border, var(--md-sys-color-outline));
+      border-radius: var(--st-field-radius, 0.5em); /* 默认圆角：比 M3 文本域的 4px 稍圆润 */
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
+      letter-spacing: var(--st-letter-spacing, normal);
       line-height: 1;
       color: var(--md-sys-color-on-surface);
-      background-color: transparent;
+      background-color: var(--st-field-bg, transparent);
+      /* 材质（皮肤）：默认 none = 与 M3 原样一致 */
+      box-shadow: var(--st-field-shadow, none);
+      -webkit-backdrop-filter: var(--st-backdrop-filter, none);
+      backdrop-filter: var(--st-backdrop-filter, none);
       cursor: text;
     }
 
     /* M3 filled 变体：无全边框，仅底边分隔线，容器底色 */
     :host([variant="filled"]) {
-      background-color: var(--md-sys-color-surface-container-highest);
+      background-color: var(--st-field-filled-bg, var(--md-sys-color-surface-container-highest));
       border-color: transparent;
-      border-bottom-color: var(--md-sys-color-on-surface-variant);
-      border-radius: 0.5em 0.5em 0 0;
+      border-bottom-color: var(--st-field-underline, var(--md-sys-color-on-surface-variant));
+      border-radius: var(--st-field-radius, 0.5em) var(--st-field-radius, 0.5em) 0 0;
     }
 
     /* focus 描边/底线：绝对定位浮层，不挤占布局，由 CSS 过渡呈现动画 */
     .outline-ring {
       position: absolute;
       inset: -1px; /* 盖在 1px 边框外侧，视觉 = 边框加粗到 2px */
-      border: 2px solid var(--md-sys-color-primary);
+      border: 2px solid
+        var(--st-field-focus-ring-color, var(--st-accent, var(--md-sys-color-primary)));
       border-radius: inherit;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 150ms ease;
+      transition: opacity var(--st-motion-duration, 150ms) ease;
     }
-    :host(:focus-within) .outline-ring { opacity: 1; }
+    :host(:focus-within) .outline-ring {
+      opacity: var(--st-field-focus-ring-opacity, 1);
+    }
+    /* 皮肤可用外侧 focus 光圈（token 自带 box-shadow），默认不改变 M3 外观 */
+    :host(:focus-within) {
+      box-shadow: var(--st-field-focus-shadow, var(--st-field-shadow, none));
+    }
     :host([variant="filled"]) .outline-ring { display: none; }
 
     /* filled 聚焦底线：裁剪容器跟随宿主圆角，2px 线在内部从左到右展开盖在 1px 底边框上 */
@@ -64,13 +78,16 @@
       bottom: 0;
       height: 2px;
       width: 0;
-      background-color: var(--md-sys-color-primary);
+      background-color: var(
+        --st-field-underline-color,
+        var(--st-accent, var(--md-sys-color-primary))
+      );
       transition: width 200ms cubic-bezier(0.2, 0, 0, 1);
     }
     :host(:focus-within) .bottom-line { width: 100%; }
 
     :host([disabled]) {
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
       cursor: not-allowed;
     }
     :host([disabled]) .outline-ring,
@@ -84,7 +101,7 @@
       height: 100%;
       font: inherit;
       color: inherit;
-      caret-color: var(--md-sys-color-primary);
+      caret-color: var(--st-caret-color, var(--st-accent, var(--md-sys-color-primary)));
       cursor: inherit;
     }
     .native:focus { outline: none; }
@@ -100,10 +117,10 @@
     }
   </style>
 
-  <span class="outline-ring"></span>
-  <span class="line-clip"><span class="bottom-line"></span></span>
+  <span class="outline-ring" part="focus-ring"></span>
+  <span class="line-clip" part="underline"><span class="bottom-line"></span></span>
   <slot name="prefix"></slot>
-  <input class="native"
+  <input class="native" part="control"
     attr:type="type"
     attr:placeholder="placeholder"
     :value="value === null ? '' : value"
@@ -160,20 +177,18 @@
         });
       },
       proto: {
-        // color 接受 M3 角色名或 color 模块自定义变量名，控制 caret 与 focus 描边/底线颜色
+        // color 接受 M3 角色名或 color 模块自定义变量名，控制 caret 与 focus 描边/底线颜色。
+        // 只写 --st-accent 变量：caret / focus ring / 底线都在 CSS 里消费它，
+        // 皮肤也因此能继续用同一语义色组合自己的材质（无需知道 color 属性实现）。
         applyColor() {
+          const s = this.ele.style;
+          s.removeProperty("--st-accent");
           const name = this.color;
-          this.ele.style.caretColor = name
-            ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
-            : "";
-          const active = name
-            ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
-            : "";
-          const sr = this.ele.shadowRoot;
-          const ring = sr.querySelector(".outline-ring");
-          const line = sr.querySelector(".bottom-line");
-          ring.style.borderColor = active; // 空串 = 回退到 CSS 默认 primary
-          line.style.backgroundColor = active;
+          if (!name) return;
+          s.setProperty(
+            "--st-accent",
+            `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
+          );
         },
         focus() { this.ele.shadowRoot.querySelector(".native").focus(); },
         blur() { this.ele.shadowRoot.querySelector(".native").blur(); },

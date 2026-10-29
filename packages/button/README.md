@@ -98,6 +98,9 @@ document.querySelector("st-button").addEventListener("click", () => {});
 
 ### 默认值（直接覆盖即可）
 
+> 下列默认值都以皮肤 token 的形式声明（`var(--st-*, 默认值)`），不加载皮肤时与旧版完全一致。
+> 皮肤 token 见 [packages/skin/README.md](../skin/README.md)。
+
 | 属性 | 默认值 |
 |------|--------|
 | `height` | `2.857em`（= 40px @ 14px 字号，M3 标准） |
@@ -130,6 +133,31 @@ document.querySelector("st-button").addEventListener("click", () => {});
 ## 主题
 
 `st-color-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
+
+## 皮肤（材质）
+
+外观中的“材质”部分由皮肤决定，`st-button` 已接入皮肤 token：
+圆角、高度、内边距、字号/字体、描边、阴影、毛玻璃、高光、焦点环、state layer、disabled 透明度与波纹开关。
+颜色不参与换肤——`color` 属性与 M3 角色变量始终生效。
+
+```html
+<html data-skin="apple">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/apple.css">
+<st-button color="error">Delete</st-button>
+```
+
+- 运行时切换：`import { setSkin } from ".../packages/skin/st-skin.js"; setSkin("apple")`
+- 皮肤只写 CSS 变量、不写宿主选择器（组件可能在 `o-page` 的 shadow 内），完整 token 表与自定义皮肤写法见 [packages/skin/README.md](../skin/README.md)
+- 本组件消费的主要 token：`--st-height` / `--st-font-size` / `--st-font` / `--st-letter-spacing` / `--st-control-radius` / `--st-control-padding` / `--st-border-width` / `--st-outlined-bg` / `--st-outlined-border` / `--st-fill-alpha` / `--st-shadow` / `--st-backdrop-filter` / `--st-sheen` / `--st-focus-ring-*` / `--st-state-hover` / `--st-state-press` / `--st-disabled-opacity` / `--st-motion-duration`
+- `color` 属性在宿主上写入 `--st-accent` / `--st-on-accent` / `--st-outlined-border`，皮肤据此组合材质（如半透明填充），因此**换色优先用 `color` 属性**
+- 暴露的 part（组件在 light DOM 时可用）：`part="state-layer"` / `part="loader"` / `part="control"`
+
+```html
+<st-button style="font-size: 12px;">12px</st-button>
+<!-- 内联 background/color 现在会正常生效（applyColor 只写 CSS 变量，不再清空内联样式）；
+     但内联色会跳过皮肤的材质组合，语义换色仍推荐 color 属性 -->
+<st-button style="background: var(--md-sys-color-error); color: var(--md-sys-color-on-error);">Error</st-button>
+```
 
 ## st-button-group 按钮组
 
@@ -176,7 +204,7 @@ document.querySelector("st-button").addEventListener("click", () => {});
 
 注意：
 
-- 选中态一律用 `attr:variant` / `attr:color` 语义切换，**不要**用 `:style` 改背景/圆角表达选中——`st-button` 的内联色会被组件配色逻辑覆盖，且 group 会内联设置子按钮 `border-radius`（见「注意事项」）
+- 选中态一律用 `attr:variant` / `attr:color` 语义切换，**不要**用 `:style` 改背景/圆角表达选中——group 会内联设置子按钮 `border-radius`，内联样式也会绕过皮肤材质（见「注意事项」）
 - 纯 JS 场景切换选中态用 `$("sel").attr("variant", "filled")` / `attr("color", null)`
 - 状态变量（`range` / `filters`）需在页面 data 中初始化（如 `range = 'day'`、`filters = ['all']`），否则首次渲染无选中态
 
@@ -240,7 +268,7 @@ document.querySelector("st-button").addEventListener("click", () => {});
 
 ## 注意事项与使用技巧
 
-- **给 st-button 换色必须用它的 `color` 属性，不能写内联 `style="color: ..."`**——内联色会被组件自身的配色逻辑（applyColor）覆盖；放在反色/彩色容器（如 snackbar）里时用 `color="inverse-primary"` / `color="on-error"` 这类角色名
+- **换色优先用 `color` 属性**：它写入 `--st-accent` 系列变量，皮肤能据此组合材质（半透明/渐变/毛玻璃）。内联 `style="background/color"` 也有效且不会被清空，但会绕过皮肤的材质合成；放在反色/彩色容器（如 snackbar）里时用 `color="inverse-primary"` / `color="on-error"` 这类角色名
 - `variant` 运行时切换用 `attr:variant="expr"` 绑定（ofa 页面内），JS 里用 `setAttribute`（直接改 property 不触发更新）
 - 布尔属性（disabled/loading）在 JS 里用 `setAttribute` / `removeAttribute`，ofa 页面里绑定用 `attr:loading="busy"`（`:prop` 会把 false 序列化成属性字符串导致永远禁用）
 - `setAttribute` 触发组件 watch 是异步的（下一轮微任务），设置后同步读状态会得到旧值

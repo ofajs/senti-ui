@@ -1,0 +1,62 @@
+/**
+ * apple.css — Apple（毛玻璃 / SF 风）皮肤
+ *
+ * 只改材质：半透明表面 + backdrop blur + 更小圆角 + 更轻的描边与阴影。
+ * 颜色仍然全部来自 M3 角色变量（--md-sys-color-*），所以种子色、error、
+ * success、深浅色主题都继续生效。
+ *
+ * 重要：皮肤文件只声明 token，不写 st-* 宿主选择器。组件经常位于
+ * o-page / o-app 的 shadow 内，文档树选择器跨不进去；而 CSS 变量可以
+ * 正常继承穿透 shadow，因此 token 是唯一可靠的换肤通道。
+ *
+ * 使用：<html data-skin="apple"> + 引入本文件（或 setSkin("apple")）。
+ */
+[data-skin="apple"] {
+  /* 尺寸：36px 高（14px 字号下 2.571em），比 M3 略紧凑 */
+  --st-height: 2.571em;
+  --st-font-size: 14px;
+  --st-control-radius: 0.714em; /* 10px */
+  --st-field-radius: 0.857em; /* 12px */
+  --st-control-padding: 0 1.143em;
+  --st-field-padding: 0 0.929em;
+  --st-border-width: 1px;
+
+  /* 半透明表面：surface 系角色混入透明度，深浅色主题自动适配 */
+  --st-outlined-bg: color-mix(in srgb, var(--md-sys-color-surface) 58%, transparent);
+  --st-outlined-border: color-mix(in srgb, var(--md-sys-color-outline) 32%, transparent);
+  --st-field-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 55%, transparent);
+  --st-field-filled-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 65%, transparent);
+  --st-field-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
+  --st-field-underline: transparent;
+  --st-fill-alpha: 100%;
+
+  /* 毛玻璃与浮起：黑色阴影属于材质而非主题色，故不随配色变化 */
+  --st-shadow: 0 1px 1px rgb(0 0 0 / 0.05), 0 8px 24px -6px rgb(0 0 0 / 0.18);
+  --st-field-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  --st-backdrop-filter: blur(18px) saturate(180%);
+  --st-sheen: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--md-sys-color-on-primary) 10%, transparent),
+    transparent 55%
+  );
+
+  /* 焦点：按钮用 accent 半透明外发光；输入框隐藏内嵌描边，改画外侧光圈 */
+  --st-focus-ring-width: 4px;
+  --st-focus-ring-offset: 1px;
+  --st-focus-ring-color: color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
+  --st-field-focus-shadow: 0 0 0 4px color-mix(in srgb, var(--md-sys-color-primary) 22%, transparent),
+    var(--st-field-shadow);
+  --st-field-focus-ring-opacity: 0;
+  --st-field-underline-color: transparent;
+
+  /* 状态与动效 */
+  --st-state-hover: 0.06;
+  --st-state-press: 0.1;
+  --st-disabled-opacity: 0.4;
+  --st-ripple-opacity: 0; /* Apple 风格无波纹 */
+  --st-motion-duration: 220ms;
+
+  /* 字体：系统栈，不引入外部字体文件 */
+  --st-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  --st-letter-spacing: -0.01em;
+}

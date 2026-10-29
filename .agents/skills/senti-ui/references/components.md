@@ -4,12 +4,19 @@
 每个组件的完整文档（完整属性表、插槽、事件、默认值清单、更多示例）在本目录 [components/](./components/) 下对应文件中，如按钮见 [components/button.md](./components/button.md)。
 通用规则（所有组件）：属性读写遵守 SKILL.md 的「写法优先级」（ofa API 优先，`attr(name, 值/""/null)`）；`color` 属性值是 M3 角色名或自定义变量名；尺寸默认值全 em，改 `font-size` 等比缩放。
 
+## 皮肤 st-skin（材质层）
+
+- `m3`（默认）/ `apple`（毛玻璃）/ `shadcn`（扁平）；只改材质，颜色仍走 M3
+- 切换：`import { setSkin } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js"; setSkin("apple")`；静态：`<html data-skin="apple">` + `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/apple.css">`
+- 已接入 `st-button` / `st-input`；token / part 表与自定义皮肤见 [components/skin.md](./components/skin.md)
+
 ## st-button 按钮
 
 - 属性：`variant`（`filled`(默认)/`outlined`/`text`）、`color`、`disabled`、`loading`（spinner + 自动禁用）、`type`
 - 插槽：默认（文字）、`prefix` / `suffix`
 - 事件：`click` 直接在宿主监听（内部原生 button 转发，Enter/Space/Tab 天然可用）
 - 示例：`<st-button color="error" variant="outlined"><span slot="prefix">🔍</span>Search</st-button>`
+- 皮肤：已 token 化（高度/圆角/阴影/毛玻璃/焦点环等），part：`state-layer` / `loader` / `control`
 
 ## st-button-group 按钮组
 
@@ -33,6 +40,7 @@
 - **`value` 是运行时状态**：JS 用 `el.value` 读写（已反射到宿主 property，`e.target.value` 可用）；`setAttribute("value")` 无效
 - 插槽：`prefix` / `suffix`
 - 事件：`input` / `change`（已转发为 composed）直接在宿主监听；方法 `focus()` / `blur()`
+- 皮肤：已 token 化（圆角/背景/焦点环/外侧光圈等），part：`focus-ring` / `underline` / `control`
 
 ## st-textarea 多行输入框
 

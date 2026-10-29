@@ -1,7 +1,8 @@
 <!--
   st-button — Senti-UI 按钮组件（基于 ofa.js）
   语义属性：variant(filled|outlined|text) / disabled / loading
-  视觉全部在 :host 上，直接用原生 CSS 属性（style="height:32px; border-radius:8px; ..."）定制，见 README.md
+  视觉全部在 :host 上，直接用原生 CSS 属性（style="height:32px; border-radius:8px; ..."）定制；
+  材质（圆角/密度/描边/阴影/毛玻璃/动效）通过 --st-* 皮肤 token 消费，换肤见 packages/skin/README.md
 -->
 <template component>
   <style>
@@ -14,17 +15,28 @@
       gap: 0.571em;
       box-sizing: border-box;
       position: relative;
-      height: 2.857em;
+      height: var(--st-height, 2.857em);
       min-width: 3.429em;
-      padding: 0 1.429em; /* = 圆角半径：文字刚好落在圆角转弯处 */
-      border: 1px solid transparent;
-      border-radius: 1.429em;
-      font-size: 14px;
+      padding: var(--st-control-padding, 0 1.429em); /* = 圆角半径：文字刚好落在圆角转弯处 */
+      border: var(--st-border-width, 1px) solid transparent;
+      border-radius: var(--st-control-radius, 1.429em);
+      font-size: var(--st-font-size, 14px);
       font-weight: 500;
-      font-family: inherit;
+      font-family: var(--st-font, inherit);
+      letter-spacing: var(--st-letter-spacing, normal);
       line-height: 1;
-      background-color: var(--md-sys-color-primary);
-      color: var(--md-sys-color-on-primary);
+      /* 颜色始终来自 M3 角色；--st-accent / --st-on-accent 由 color 属性或皮肤写入 */
+      background-color: color-mix(
+        in srgb,
+        var(--st-accent, var(--md-sys-color-primary)) var(--st-fill-alpha, 100%),
+        transparent
+      );
+      color: var(--st-on-accent, var(--md-sys-color-on-primary));
+      /* 材质（皮肤）：默认 none = 与 M3 原样一致 */
+      box-shadow: var(--st-shadow, none);
+      background-image: var(--st-sheen, none);
+      -webkit-backdrop-filter: var(--st-backdrop-filter, none);
+      backdrop-filter: var(--st-backdrop-filter, none);
       white-space: nowrap;
       cursor: pointer;
       user-select: none;
@@ -32,14 +44,19 @@
     }
 
     :host([variant="outlined"]) {
-      background-color: transparent;
-      color: var(--md-sys-color-primary);
-      border-color: var(--md-sys-color-outline);
+      background-color: var(--st-outlined-bg, transparent);
+      color: var(--st-accent, var(--md-sys-color-primary));
+      border-color: var(--st-outlined-border, var(--md-sys-color-outline));
     }
 
     :host([variant="text"]) {
       background-color: transparent;
-      color: var(--md-sys-color-primary);
+      background-image: none;
+      color: var(--st-accent, var(--md-sys-color-primary));
+      border-color: transparent;
+      box-shadow: none;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
     }
 
     /* M3 state layer：currentColor 半透明叠加，无需额外变量 */
@@ -51,11 +68,11 @@
       opacity: 0;
       pointer-events: none;
     }
-    :host(:hover) .layer { opacity: 0.08; }
-    :host(:active) .layer { opacity: 0.12; }
+    :host(:hover) .layer { opacity: var(--st-state-hover, 0.08); }
+    :host(:active) .layer { opacity: var(--st-state-press, 0.12); }
 
     :host([disabled]) {
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
       cursor: not-allowed;
     }
     :host([disabled]) .layer { opacity: 0; }
@@ -73,8 +90,9 @@
     }
     .native:focus-visible {
       /* 不用 currentColor：filled 按钮文字为白色时白圈画在浅色页面上不可见 */
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: 2px;
+      outline: var(--st-focus-ring-width, 2px) solid
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
     }
 
     ::slotted([slot="prefix"]),
@@ -100,14 +118,14 @@
     }
   </style>
 
-  <span class="layer"></span>
+  <span class="layer" part="state-layer"></span>
   <l-m src="../ripple/ripple.html"></l-m>
   <st-ripple></st-ripple>
   <slot name="prefix"></slot>
-  <span class="loader"></span>
+  <span class="loader" part="loader"></span>
   <slot></slot>
   <slot name="suffix"></slot>
-  <button class="native" attr:type="type" :disabled="disabled !== null || loading !== null" tabindex="0"></button>
+  <button class="native" part="control" attr:type="type" :disabled="disabled !== null || loading !== null"></button>
 
   <script>
     import "../color/st-color-init.js";
@@ -130,32 +148,21 @@
       proto: {
         // color 接受 M3 角色名（primary/secondary/tertiary/error…）或 color 模块的自定义变量名
         // （如 color="brand" → 消费 --brand / --on-brand，st-color-init 动态注入）。
-        // 必须按 variant 分派后再写内联样式：内联样式会压过 :host([variant]) 的 CSS 规则，
-        // 若无条件设置背景色，outlined/text 会被强制变成 filled 外观
+        // 只写 CSS 变量、不直接写 background/color：这样皮肤仍能用自己的材质组合
+        // （半透明、渐变、毛玻璃）消费同一个语义色，而 variant 分派继续交给 :host 规则。
         applyColor() {
           const s = this.ele.style;
+          s.removeProperty("--st-accent");
+          s.removeProperty("--st-on-accent");
+          s.removeProperty("--st-outlined-border");
           const name = this.color;
-          if (!name) {
-            s.background = "";
-            s.color = "";
-            s.borderColor = "";
-            return;
-          }
+          if (!name) return;
           const main = `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`;
           const on = `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-primary)))`;
-          if (this.variant === "outlined") {
-            s.background = "";
-            s.color = main;
-            s.borderColor = main;
-          } else if (this.variant === "text") {
-            s.background = "";
-            s.color = main;
-            s.borderColor = "";
-          } else {
-            s.background = main;
-            s.color = on;
-            s.borderColor = "";
-          }
+          s.setProperty("--st-accent", main);
+          s.setProperty("--st-on-accent", on);
+          // outlined 默认描边走 outline，color 语义色应同时作用于描边
+          s.setProperty("--st-outlined-border", main);
         },
       },
     });

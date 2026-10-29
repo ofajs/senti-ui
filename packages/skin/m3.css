@@ -1,0 +1,49 @@
+/**
+ * m3.css — 默认皮肤：Material Design 3 材质
+ *
+ * 只声明 token，值等于各组件的内置默认值（未加载任何皮肤时长相一致）。
+ * 颜色全部引用 M3 角色变量，不写死任何色值。
+ *
+ * 重要：皮肤文件只声明 token（CSS 变量），不写 st-* 宿主选择器或 ::part
+ * 作为必要机制——组件可能位于 o-page / o-app 的 shadow 内，文档树的
+ * 选择器跨不进去，而 CSS 变量可以继承穿透。::part 仅作为可选能力保留
+ * （组件在 light DOM 时可用），换肤本身不依赖它。
+ */
+[data-skin="m3"] {
+  /* 尺寸与形状 */
+  --st-height: 2.857em;
+  --st-font-size: 14px;
+  --st-font: inherit;
+  --st-letter-spacing: normal;
+  --st-control-radius: 1.429em;
+  --st-field-radius: 0.5em;
+  --st-control-padding: 0 1.429em;
+  --st-field-padding: 0 1em;
+  --st-border-width: 1px;
+
+  /* 表面（背景 / 描边） */
+  --st-outlined-bg: transparent;
+  --st-outlined-border: var(--md-sys-color-outline);
+  --st-field-bg: transparent;
+  --st-field-filled-bg: var(--md-sys-color-surface-container-highest);
+  --st-field-border: var(--md-sys-color-outline);
+  --st-field-underline: var(--md-sys-color-on-surface-variant);
+  --st-fill-alpha: 100%;
+
+  /* 材质（阴影 / 毛玻璃 / 高光） */
+  --st-shadow: none;
+  --st-field-shadow: none;
+  --st-backdrop-filter: none;
+  --st-sheen: none;
+
+  /* 焦点与状态 */
+  --st-focus-ring-width: 2px;
+  --st-focus-ring-offset: 2px;
+  --st-focus-ring-color: var(--md-sys-color-on-surface);
+  --st-field-focus-ring-opacity: 1;
+  --st-state-hover: 0.08;
+  --st-state-press: 0.12;
+  --st-disabled-opacity: 0.38;
+  --st-ripple-opacity: 0.28;
+  --st-motion-duration: 150ms;
+}

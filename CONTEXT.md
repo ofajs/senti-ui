@@ -10,7 +10,8 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 传统组件库为人设计大量"便利预设"（`size="small"` 这类枚举）。对 AI 来说这些没有价值——AI 直接写 style/CSS 更精确灵活，预设只是多余的记忆负担。因此本库没有 size 类预设；
 
-- **属性只表达语义**（disabled / loading / M3 规范内的 variant / `color` 语义色引用），**外观直接用原生 CSS 属性定制**——`color` 属性的值是 M3 角色名或 color 模块自定义变量名（如 `color="brand"` 消费 `--brand/--on-brand`），与 color 工具联动实现一键换色，它引用的是语义而非样式预设——组件视觉全部定义在 `:host` 上，`style="height:32px; border-radius:8px"` 直接生效，不发明 `--st-*` 样式代理变量；交互语义由内部透明原生元素（`.native` 模式）承载
+- **属性只表达语义**（disabled / loading / M3 规范内的 variant / `color` 语义色引用），**外观直接用原生 CSS 属性定制**——`color` 属性的值是 M3 角色名或 color 模块自定义变量名（如 `color="brand"` 消费 `--brand/--on-brand`），与 color 工具联动实现一键换色，它引用的是语义而非样式预设——组件视觉全部定义在 `:host` 上，`style="height:32px; border-radius:8px"` 直接生效；交互语义由内部透明原生元素（`.native` 模式）承载
+- **材质与语义分离（皮肤系统）**：`--st-*` 变量只属于**皮肤作者 API**（`packages/skin/`），用于表达圆角/密度/边框/阴影/毛玻璃/焦点环/动效等材质；使用者仍然只写原生 CSS，不接触这些变量。**颜色不参与换肤**，所有皮肤消费同一套 `--md-sys-color-*`。禁止的只是“给使用者偷懒的组件尺寸预设”（如 `--st-btn-height`），不是皮肤 token 层
 - **尺寸类默认值用 em**（height / padding / border-radius / gap 等，以组件默认 font-size 为基准换算，视觉不变）——AI 只改 `font-size` 即可整体等比缩放；需要非等比尺寸时仍可单独覆写任一属性
 - **颜色永不写死**，一律消费 `--md-sys-color-*` M3 角色变量
 - **文档写给 AI 读**：自包含、结构化、只含事实，AI 按需检索即可正确使用组件
@@ -30,6 +31,8 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 ```
 
 `st-color-init.js` 是项目初始化模块（取代了原静态 `css/st-m3.css`）：读取 color 工具保存在 localStorage 的配置（种子色/角色覆盖/自定义变量），动态生成完整 M3 体系并注入 `<style>`——**在 color 工具里调好配色，全站页面（同域）自动跟随**；无保存配置时用默认种子色 `#0061A4`。体系默认注入内置扩展角色 `success`（`--md-sys-color-success` / `on-success` / `success-container` / `on-success-container`，默认绿色 `#006E1C` 按 M3 tone 规则推导，不随主种子色变化，可在工具中覆盖）。主题切换：默认跟随系统；强制用 `<html class="st-light">` / `<html class="st-dark">`。**全局主题模式**（`packages/color/st-theme-mode.js`，st-color-init 自动引入）：模式偏好持久化在 localStorage `st-theme-mode`（`auto` / `light` / `dark`），`st-boot.js` 首帧同步挂类（强制浅/深色无闪色），导出 `getThemeMode` / `setThemeMode` / `applyThemeMode`，跨窗口经 `storage` 事件实时跟随——同域所有引入 st-boot 或任一 st-* 组件的页面共享，一处切换全站生效。
+
+皮肤（可选）：`<html data-skin="apple">` + 引入 `packages/skin/apple.css`（或运行时 `import { setSkin } from "/packages/skin/st-skin.js"`）。皮肤只改材质、不改颜色，切换会持久化到 localStorage 并在同源窗口间同步；首帧固定皮肤用静态 link 可避免一次样式切换。详见 [packages/skin/README.md](./packages/skin/README.md)。
 
 `st-boot.js` 是**同步引导脚本（经典 script，非 module，页面唯一需要引入的标签，须放 head）**，消除刷新闪色：刷新时同步注入 `st-color-init.js` 预先缓存的 CSS（key `st-theme-css`，零闪）；首次访问无缓存则同步 `<link>` 静态兜底 `st-default.css`（默认种子色主题）；注入完首帧样式后自动动态加载 `st-color-init.js`（module），由它按配置生成真实主题覆盖并更新缓存。缓存每次页面加载都会被 `st-color-init.js` 重写（key `st-theme-css`），旧结构缓存自然被新结构覆盖。三条 CSS 生成路径（`applyTheme` 动态 `<style>`、`themeToCss` 缓存/静态文件、`st-default.css` 兜底）输出**同一结构**：浅色块、`html.st-dark` 深色块、`@media (prefers-color-scheme: dark) { html:not(.st-light) }` 深色跟随块，每块都带对应 `color-scheme` 声明——深色系统下 `color-scheme` 计算值为 dark（原生滚动条/表单控件跟随）且首帧不闪浅色。`material-color-utilities` 已 vendored 到 `packages/color/vendor/`，无外部 CDN 依赖。
 
@@ -106,13 +109,16 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 | 工具 | 说明 | 入口 |
 |------|------|------|
+| 皮肤系统 | 材质层换肤：`m3` / `apple`（毛玻璃）/ `shadcn`（扁平）；只改圆角、密度、描边、阴影、毛玻璃、焦点环、动效、波纹，颜色仍走 M3；`st-skin.js` 提供 `setSkin/getSkin/applySkin/registerSkin`，皮肤 CSS 只声明 `[data-skin="名称"]` 作用域下的 token；当前已接入 st-button / st-input，其余组件待迁移。完整 token/part 表见 [packages/skin/README.md](./packages/skin/README.md) | [packages/skin/index.html](./packages/skin/index.html)（JS：`st-skin.js`） |
 | M3 颜色体系生成器 | 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），可即时预览、复制 CSS；含 `st-color-init.js` 项目初始化模块（各页面引入，动态注入颜色体系并跟随 localStorage 配置）；核心模块 `m3-theme.js` 提供 `generateM3Theme` / `themeToCss` / `applyTheme` / `expandCustoms` 四个 API；内置扩展角色 success（默认绿 `#006E1C`，不随种子色变化）；支持核心四角色 + success 手动覆盖与自定义变量（自动按 M3 tone 规则展开 on/container 配对 token），配置存 localStorage；完整 token 清单与配对规则见 [packages/color/README.md](./packages/color/README.md) | [packages/color/index.html](./packages/color/index.html)（JS：`packages/color/m3-theme.js`） |
+| 官网首页（SCSR 真实路径） | `site/` 目录：ofa.js **v5 分支 + scsr**，单页聚合全部 29 个 `st-*` 标签。`index.html` 即完整文档：页面内容内联在 `<o-app><template page>`，scsr 把当前 URL（`/site/` 或 `/site/index.html`）收编为 o-page 后移除内联 template；`app-config.js` 不声明 home。支持目录直开、真实路径、后续多 HTML 页扩展。Hero 实时换肤、深浅色、分区展柜与三张局部 `data-skin` 材质卡；命令式工具/皮肤 API 挂 `window.__site`；页面 shadow 内额外 `<link>` 皮肤 CSS 才能同页对比。无 JS 时 template 惰性，用 `<noscript>` 兜底（坑 #50） | [site/index.html](./site/index.html) |
 | 组件官网 | `docs/` 目录，o-router + o-app 微应用（入口 `docs/index.html`）：`layout.html` 侧边栏布局（parent/slot 嵌套）+ `pages/home.html` 首页 + 每组件一页薄包装（预载 l-m 后 `<o-page>` 内嵌对应验收页 `packages/{name}/page.html`）；dialog/snackbar 的命令式工具在入口 index.html 预加载挂 window（坑 #6）；新增组件时在 `docs/layout.html` 的 components 数组登记并建 `docs/pages/{name}.html` | [docs/index.html](./docs/index.html) |
 
-## 当前状态（2026-08-20）
+## 当前状态（2026-10-29）
 
 当前 20 个模块（含 4 个双标签模块，2026-08-21 新增 slider/progress/tooltip/card/badges 五件套——参考 MUI 清单筛选引入），st-button 作为整个库设计范式的样板：
 
+- **皮肤系统**（`packages/skin/`，2026-10-29 试点）：把“材质”从组件里抽成 token 层，内置 `m3` / `apple`（毛玻璃）/ `shadcn`（扁平）三套皮肤。切换只改 `<html data-skin>`，颜色始终来自 M3；`st-button` / `st-input` 已 token 化（圆角、密度、描边、阴影、毛玻璃、字体、焦点环、state layer、波纹），不加载皮肤时外观与 token 化前完全一致（已用截图 diff 验证 input 零差异、button 仅修复内联样式被清空的旧 bug）。其余组件逐步迁移；新增组件必须按 skin README 的接入清单消费 token。
 - **st-button**（`packages/button/`）：三种 variant（filled/outlined/text）、disabled、loading、prefix/suffix 插槽；`color` 语义色属性可与 variant 自由组合（按 M3 规范分派：filled 用角色色底/on-角色色字，outlined/text 用角色色作前景与描边，运行时切换 variant 亦生效）；外观完全由原生 CSS 属性定制（视觉在 `:host` 上，内部透明 `.native` 原生 button 承载交互语义）。已在浏览器中完成功能与双主题验证。
 - **st-button-group / st-split-button**（`packages/button/`，2026-08-21 从 Punch-UI 重构）：按钮组（connected 连体/full-width 等分；**圆角在 attached 后由 JS 按位置设置**，不用 ::slotted(:first-child) 位置选择器——ofa 升级 light DOM 时序下不可靠，slotchange 自动重算）；分裂按钮（主区 click 冒泡做主操作 + 箭头区开合菜单，菜单项用 st-menu-item；open 为 data 运行时状态支持 sync:open；面板行为同 st-menu）。案例与 st-button 写在同一验收页。
 - **st-icon-button**（`packages/button/icon-button.html`）：圆形图标按钮，四种 M3 variant（standard 透明 / filled / tonal container 配对 / outlined）+ `color` 属性（tonal 分支消费 container 配对 token）+ disabled；图标插槽默认 1.571em；使用时必须配 title/aria-label（无文字）。案例与 st-button 同验收页。
@@ -172,6 +178,20 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 42. **`position:fixed` 弹层的 containing block 不保证是视口——transform 祖先会接管它**（实测：st-menu 放进 st-dialog，菜单整体向右下漂移一个对话框面板原点、冲出面板被裁）。原因：st-dialog 面板入场动画 `fill: forwards` 结束后 `::part(panel)` 的 computed transform 保持 `matrix(1,0,0,1,0,0)` ≠ `none`（动画遗产序列化成单位矩阵），按规范它成为所有 fixed 后代的 containing block，组件按视口坐标写的 `left/top` 被重新解释为相对对话框面板 → 双重偏移。排查技巧：光 DOM `parentElement` 链查不到肇事者（slot 内容的布局祖先是宿主 shadow 内部元素），必须沿 `assignedSlot || parentElement` 的 flattened tree 上溯查 computed transform。正确写法（组件侧免疫，任何容器通用）：定位前把弹层摆到 `0,0` 读 `getBoundingClientRect()` 得 containing block 的视口原点，把算好的视口坐标减去该原点再写入——containing block 是视口时差值为 0、行为不变。注意探测时机：同步于 `display:block` 之后、入场动画首帧之前执行才干净（强制布局会把自家动画 from 态 transform 算进探测读数，实测差 `translateY(-0.429em)+scale(0.98)` ≈ 6px/2.6px）；稳妥做法是探测期间 `animation:none`、定位完恢复让动画从头播（st-menu updatePosition 即此实现）。与坑 #41 同族：#41 是量测用 offset 系躲祖先 transform，本条是 fixed 定位坐标系数换算——两者根源都是「transform 祖先改变几何基准」
 
 
+43. **文档树的 CSS 选择器跨不进 `o-page` / `o-app` 的 shadow，CSS 变量可以**——皮肤曾用 `[data-skin] st-input:focus-within { box-shadow: ... }` 在验收页（组件在 o-page shadow 内）静默失效，但 token 化圆角/背景全部正常。结论：跨 shadow 的换肤机制只能走 CSS 变量（token），宿主选择器与 `::part()` 只对 light DOM 内的组件有效；组件把可换肤的视觉全部写成 `var(--st-xxx, 旧默认值)`。
+
+44. **皮肤规则不要用 `@layer` 包**——实测分层声明会输给 shadow 内未分层的 `:host` 规则（`box-shadow`/焦点环这类宿主级覆盖静默失效），而无层级的外部规则能正常覆盖。皮肤只写 token 时不受影响；若确需宿主级规则，保持无层并用 `:where()` 降低特异性，别用 `@layer`。
+
+45. **自定义属性 `--a: var(--b)` 在声明元素处解析后再继承，祖先 token 不会跟随子元素的内联覆盖**——设计皮肤时若在 `:root` 写 `--st-fill: var(--st-accent)`，子元素 `style="--st-accent: error"` 不会改变 `--st-fill`（它已在 root 处解析成 primary）。需要“跟随语义色”的组合要么用数值 token（`--st-fill-alpha`）在组件端用 `color-mix` 组合，要么把变量声明在组件宿主上。
+
+46. **`applyColor` 无条件清空内联样式会误伤页面定制**——旧 st-button 的 `applyColor()` 在无 `color` 时执行 `style.background = ""` / `color = ""`，把验收页 `<st-button style="background: var(--md-sys-color-error)">` 一起清掉（表现为“内联样式不生效”）。正确写法：只 `removeProperty()` 自己写入的变量（`--st-accent` 等），不要清空整个 style 属性；本次 token 化顺带修复。
+
+47. **`::part()` 不能跨 shadow 边界**——`o-page` 里的 `st-input::part(focus-ring)` 从文档树选不中（part 只能由同一棵树的规则命中）；part 仅作为 light DOM 场景的可选能力保留，换肤机制不要依赖它。
+
+49. **ofa.js v5 下子组件可能晚于父组件升级（ready 时子元素 shadowRoot 仍为 null）**——官网首页用 v5 时 `st-nav-bar` 的 `updateActive()` 在 ready 阶段读 `st-nav-item.shadowRoot.querySelector(".pill")` 直接抛错（两个 nav-bar 两条 pageerror），药丸指示条也不出现。正确写法：测量/定位前守卫子项 `shadowRoot`，缺失时用短定时器重试（nav-bar 已加，最多 20 次 × 50ms）；不要假设父组件 ready 时子组件一定已升级。
+
+50. **SCSR 的 `template[page]` 在脚本执行前是惰性的，“无 JS 可见/首屏 SSR”不成立**——实测禁用 JavaScript 打开 SCSR 页面时正文为空（template 内容不渲染），scsr 只在 JS 执行后把它收编进 o-page shadow；“服务端投递完整 HTML”只保证源码里有全文。需要真正的无 JS 首屏/SEO 时，要在服务端把内容预渲染到 `o-app` 之外（或改用真 SSR/SSG），不要只依赖 template；至少给一个 `<noscript>` 兜底。官网 `site/` 已按此加兜底。
+
 ### 测试/验证类坑（非 ofa.js）
 
 24. **外部脚本无法直接调用 o-page 页面模块的 proto 方法**——`document.querySelector('o-page').setRole(...)` 报 `not a function`（proto 方法挂在 ofa 实例上，宿主原生元素不可见）；自动化验证时改用真实交互触发（如 Playwright 对 `input[type=color]` fill 色值、直接 click 按钮），ofa 的 `on:input` / `on:click` 处理器正常响应
@@ -193,6 +213,8 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 30. **ripple 类"监听宿主冒泡事件"的组件必须过滤嵌套组件的事件**——监听在宿主上的 pointerdown/click 会收到从嵌套子组件（子列表项、项内套的 st-button 等）冒泡上来的事件，导致一次点击多层涟漪；正确写法：用 `e.composedPath()` 扫描，路径中在宿主之前出现任何带连字符的自定义元素（tagName 含 "-"）即视为嵌套组件发起，直接跳过（插槽里的普通内容不受影响，仍正常波纹）
 29. **组件内同步 disabled 到内部原生元素用 `nativeEle.disabled = this.disabled !== null`**——原生 disabled 天然阻断 click/键盘/焦点，无需手动 stopPropagation；不要用 `:host([disabled]) .native { display:none }` 隐藏（隐藏后阻断逻辑整个消失，宿主级点击照常冒泡）
 
+48. **皮肤切换是异步的：`setSkin()` 只改 `data-skin`，对应 CSS 还要网络加载**——测试里同步读 `getComputedStyle` 会读到旧皮肤（或 M3 默认值），表现为随机失败。正确写法：断言前 `waitForFunction` 等到某个皮肤特征生效（如圆角 `< 7`、`backdropFilter !== "none"`）；本地开发同理，别在点击后立刻截图。
+
 ## 测试
 
 Playwright 端到端测试（无构建，走真实浏览器）：
@@ -204,5 +226,6 @@ Playwright 端到端测试（无构建，走真实浏览器）：
 
 ## 下一步可能的方向
 
-- 按同样范式扩展组件（dialog、menu 等，参考 st-button 的三件套结构）
-- 将本文档封装为 Agent Skill（`SKILL.md`），供 Claude Code / ZCode 等工具按需加载
+- 把剩余组件迁移到皮肤 token（优先 dialog / menu / card / select，它们已有 part 或可动的材质面）
+- 皮肤矩阵截图回归（`m3/apple/shadcn × 组件 × 深浅色`），把“只换材质不换颜色”变成可自动验证的约束
+- 按同样范式继续扩组件（table、autocomplete、date picker 等），新组件从第一天就消费 token 并暴露 part

@@ -1,0 +1,197 @@
+<!-- st-skin 验收页：同一批组件在 m3 / apple / shadcn 三套皮肤下的材质切换 -->
+<template page>
+  <style>
+    :host {
+      display: block;
+      padding: 40px;
+      max-width: 1080px;
+      box-sizing: border-box;
+    }
+    .lead {
+      margin: 0 0 24px;
+      max-width: 760px;
+      line-height: 1.7;
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 15px;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .current {
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 13px;
+      color: var(--md-sys-color-on-surface-variant);
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--md-sys-color-surface-container);
+    }
+    h3 {
+      margin: 32px 0 12px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    /* 有色彩渐变的舞台：毛玻璃皮肤的 backdrop blur 需要背景内容才看得出来 */
+    .stage {
+      display: grid;
+      gap: 18px;
+      padding: 28px;
+      border-radius: 24px;
+      background:
+        radial-gradient(60% 90% at 12% 15%, color-mix(in srgb, var(--md-sys-color-tertiary-container) 85%, transparent), transparent 62%),
+        radial-gradient(55% 75% at 88% 85%, color-mix(in srgb, var(--md-sys-color-primary-container) 85%, transparent), transparent 62%),
+        var(--md-sys-color-surface-container-low);
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .note {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    .code {
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 13px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: var(--md-sys-color-surface-container);
+    }
+    pre {
+      background: var(--md-sys-color-surface-container);
+      border-radius: 12px;
+      padding: 16px 20px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    pre code {
+      font-family: ui-monospace, Menlo, monospace;
+    }
+    .muted {
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 13px;
+    }
+  </style>
+
+  <p class="lead">
+    同一批组件、同一套 M3 颜色（种子色、error、success 全部保留），只切换“材质”：
+    圆角、密度、边框、阴影、毛玻璃、焦点环、动效与波纹。
+    标签、属性、事件、运行时状态完全不变——换肤不换代码。
+  </p>
+
+  <div class="toolbar">
+    <o-fill :value="skins">
+      <st-button
+        attr:variant="$data.id === $host.skin ? 'filled' : 'outlined'"
+        on:click="$host.pick($data.id)">
+        {{$data.label}}
+      </st-button>
+    </o-fill>
+    <span class="current">data-skin = {{skin}}</span>
+  </div>
+
+  <h3>按钮：variant / 语义色 / 状态</h3>
+  <div class="stage">
+    <div class="row">
+      <st-button>Filled</st-button>
+      <st-button variant="outlined">Outlined</st-button>
+      <st-button variant="text">Text</st-button>
+      <st-button disabled>Disabled</st-button>
+      <st-button loading>Loading</st-button>
+    </div>
+    <div class="row">
+      <st-button color="error">Delete</st-button>
+      <st-button color="success">Save</st-button>
+      <st-button color="error" variant="outlined">Delete</st-button>
+      <st-button color="success" variant="outlined">Save</st-button>
+      <st-button color="tertiary" variant="text">Tertiary</st-button>
+    </div>
+    <p class="note">
+      语义色在所有皮肤下都保持：<span class="code">color="error"</span> 永远是 M3 error，
+      皮肤只决定它被呈现成“实心、半透明还是带描边”。
+    </p>
+  </div>
+
+  <h3>输入框：variant / 状态 / 焦点环</h3>
+  <div class="stage">
+    <div class="row">
+      <st-input id="focus-input" placeholder="Outlined input"></st-input>
+      <st-input variant="filled" placeholder="Filled input"></st-input>
+      <st-input color="error" placeholder="Error 校验态"></st-input>
+      <st-input disabled placeholder="Disabled"></st-input>
+    </div>
+    <div class="row">
+      <st-button variant="outlined" on:click="focusDemo">聚焦输入框（观察焦点环）</st-button>
+      <span class="muted">M3：内嵌 2px 描边；Apple：外侧柔和光圈；shadcn：外扩 2px ring</span>
+    </div>
+  </div>
+
+  <h3>怎么切换</h3>
+  <pre><code>&lt;!-- 方式一：跑起来切换（持久化到 localStorage，同源全站跟随） --&gt;
+&lt;script type="module"&gt;
+  import { setSkin } from "/packages/skin/st-skin.js";
+  setSkin("apple"); // "m3" | "apple" | "shadcn" | 自定义注册的皮肤
+&lt;/script&gt;
+
+&lt;!-- 方式二：静态写死，首帧就是目标皮肤（无闪切） --&gt;
+&lt;html data-skin="apple"&gt;
+&lt;link rel="stylesheet" href="/packages/skin/apple.css"&gt;
+</code></pre>
+  <p class="note">
+    皮肤 CSS 的全部规则都在 <span class="code">[data-skin="名称"]</span> 作用域内，
+    所以多套皮肤可以同时加载、互不污染；切换只改 <span class="code">&lt;html data-skin&gt;</span>。
+    颜色与深浅色主题仍由 color 模块和 st-boot 管理，皮肤不参与配色。
+  </p>
+
+  <script>
+    export default async () => ({
+      data: {
+        skin: "m3",
+        skins: [
+          { id: "m3", label: "M3 材质" },
+          { id: "apple", label: "Apple 毛玻璃" },
+          { id: "shadcn", label: "shadcn 扁平" },
+        ],
+      },
+      ready() {
+        this.syncSkin();
+        // 入口脚本是 module，可能晚于页面 ready 执行：轮询就绪后再同步一次
+        if (!window.__stSkin) {
+          const timer = setInterval(() => {
+            if (window.__stSkin) {
+              this.syncSkin();
+              clearInterval(timer);
+            }
+          }, 50);
+          setTimeout(() => clearInterval(timer), 3000);
+        }
+      },
+      proto: {
+        syncSkin() {
+          this.skin =
+            document.documentElement.dataset.skin ||
+            localStorage.getItem("st-skin") ||
+            "m3";
+        },
+        pick(id) {
+          if (window.__stSkin) window.__stSkin.setSkin(id);
+          this.skin = id;
+        },
+        focusDemo() {
+          if (!this.shadow || !this.shadow.$) return;
+          const input = this.shadow.$("#focus-input");
+          if (input && input.focus) input.focus();
+        },
+      },
+    });
+  </script>
+</template>

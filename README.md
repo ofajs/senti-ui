@@ -25,6 +25,7 @@ Traditional component libraries offer lots of "convenience presets" for humans (
 - **Appearance is customized with plain native CSS properties** — component visuals live entirely on `:host`, so `<st-button style="height:32px; border-radius:8px">` just works
 - **Size defaults use em units** — change `font-size` to scale the whole component proportionally
 - **Colors are never hard-coded** — always consume `--md-sys-color-*` M3 role variables, adapting to light/dark themes automatically
+- **Material is swappable, color is not** — skins change shape/material (radius, density, borders, blur, motion) while all M3 roles stay intact; components never change their tags or attributes
 - **The `color` attribute is a semantic reference**: its value is an M3 role name or a custom variable name defined in the color tool (e.g. `color="brand"` consumes `--brand/--on-brand`), enabling one-click re-theming via the color tool
 - **Documentation written for AI**: self-contained, structured, facts only
 
@@ -110,6 +111,27 @@ For manual control:
 
 ```html
 <script type="module" src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/st-color-init.js"></script>
+```
+
+## Skins (material layer)
+
+The same components can switch **material** without changing colors: `m3` (default), `apple` (glassmorphism), `shadcn` (flat, hairline borders). Skins only affect radius, density, borders, shadows, backdrop blur, focus rings, motion and ripple — every skin consumes the same M3 role variables, so seed color, `error`, `success` and light/dark mode keep working.
+
+```html
+<html data-skin="apple">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/apple.css">
+<st-button color="error">Delete</st-button>
+```
+
+Switch at runtime with `setSkin("shadcn")` from `packages/skin/st-skin.js` (persists and syncs across same-origin windows). Currently `st-button` and `st-input` are skinned; the full token / `part` contract and how to author a custom skin are in [packages/skin/README.md](./packages/skin/README.md).
+
+## Website
+
+A single-page showcase lives in [`site/`](./site/index.html), built with **SCSR** (ofa.js v5 real-path documents): every component on one page, live skin + light/dark switching, and three side-by-side material previews. Each URL is a real HTML document; scsr turns it into an o-app page after load.
+
+```bash
+npm run dev
+# http://localhost:8642/site/
 ```
 
 ## AI Usage

@@ -38,18 +38,23 @@ test("variant 属性生效：filled 有底色，outlined/text 透明底", async 
 
 test("color 属性生效：color=error 的 filled 背景等于 error 角色色", async ({ page }) => {
   const { errorBg, btnBg } = await page.evaluate(() => {
-    const token = getComputedStyle(document.documentElement)
-      .getPropertyValue("--md-sys-color-error")
-      .trim();
-    const btn = getComputedStyle(document.querySelector("#btn-color")).backgroundColor;
-    return { errorBg: token, btnBg: btn };
+    // 组件用 color-mix 组合皮肤透明度，序列化可能是 rgb() 或 color(srgb ...)，
+    // 统一换算成 0-255 通道再比较
+    const parse = (value) => {
+      const n = value.match(/[\d.]+/g).map(Number);
+      return value.startsWith("color(")
+        ? n.slice(0, 3).map((v) => Math.round(v * 255))
+        : n.slice(0, 3);
+    };
+    const probe = document.createElement("span");
+    probe.style.color = "var(--md-sys-color-error)";
+    document.body.appendChild(probe);
+    const errorBg = parse(getComputedStyle(probe).color);
+    probe.remove();
+    const btnBg = parse(getComputedStyle(document.querySelector("#btn-color")).backgroundColor);
+    return { errorBg, btnBg };
   });
-  // token 是十六进制，运行值是 rgb()，比较各通道
-  const hex = errorBg.replace("#", "");
-  const r = parseInt(hex.slice(0, 2), 16);
-  const g = parseInt(hex.slice(2, 4), 16);
-  const b = parseInt(hex.slice(4, 6), 16);
-  expect(btnBg).toBe(`rgb(${r}, ${g}, ${b})`);
+  expect(btnBg).toEqual(errorBg);
 });
 
 test("disabled 属性生效：阻断点击且视觉变淡", async ({ page }) => {

@@ -4,6 +4,17 @@ Senti-UI 全库**唯一颜色来源**：从种子色按 M3（HCT 色彩空间）
 
 CDN 前缀：`https://cdn.jsdelivr.net/gh/ofajs/senti-ui`（下称 `{cdn}`）。
 
+## 皮肤（材质层，不改变颜色）
+
+颜色换的是“配色”，皮肤换的是“材质”。`{cdn}/packages/skin/` 提供 `m3` / `apple`（毛玻璃）/ `shadcn`（扁平）三套皮肤，只改圆角、密度、描边、阴影、毛玻璃、焦点环、动效与波纹，**继续消费同一套 `--md-sys-color-*`**：
+
+```html
+<html data-skin="apple">
+<link rel="stylesheet" href="{cdn}/packages/skin/apple.css">
+```
+
+或运行时 `import { setSkin } from "{cdn}/packages/skin/st-skin.js"; setSkin("apple")`。完整 token 表与自定义皮肤见 [components/skin.md](./components/skin.md)。
+
 ## 颜色体系从哪来
 
 `{cdn}/packages/color/st-color-init.js` 读取 localStorage 中 color 工具保存的配置（key 为 `st-color-config`：`{ seed, overrides, customs }`），无配置时用默认种子色 `#0061A4`。所有 senti-ui 组件加载时自动 import 它，**正常使用无需手动引入**；要消除刷新闪色或独立使用时，在 `<head>` 内尽早引入一行（boot 会自动加载 st-color-init.js）：

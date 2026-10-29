@@ -1,0 +1,55 @@
+/**
+ * shadcn.css — shadcn/ui（扁平 / 细描边 / 小圆角）皮肤
+ *
+ * 只改材质：6px 圆角、1px 细边框、极轻阴影、外扩 focus ring、无波纹。
+ * 颜色仍然全部来自 M3 角色变量（--md-sys-color-*），不写死 zinc/neutral 色值，
+ * 因此种子色（含 error / success）与深浅色主题继续生效。
+ *
+ * 重要：皮肤文件只声明 token，不写 st-* 宿主选择器——组件可能在
+ * o-page / o-app 的 shadow 里，文档树选择器跨不进去，而 CSS 变量可以继承穿透。
+ *
+ * 使用：<html data-skin="shadcn"> + 引入本文件（或 setSkin("shadcn")）。
+ */
+[data-skin="shadcn"] {
+  /* 尺寸：36px 高、6px 圆角，密度比 M3 紧凑 */
+  --st-height: 2.571em;
+  --st-font-size: 14px;
+  --st-control-radius: 0.429em; /* 6px */
+  --st-field-radius: 0.429em;
+  --st-control-padding: 0 0.857em;
+  --st-field-padding: 0 0.857em;
+  --st-border-width: 1px;
+
+  /* 扁平表面：实色 surface + 细描边 */
+  --st-outlined-bg: var(--md-sys-color-surface);
+  --st-outlined-border: var(--md-sys-color-outline-variant);
+  --st-field-bg: var(--md-sys-color-surface);
+  --st-field-filled-bg: var(--md-sys-color-surface-container);
+  --st-field-border: var(--md-sys-color-outline-variant);
+  --st-field-underline: var(--md-sys-color-outline-variant);
+  --st-fill-alpha: 100%;
+
+  /* 极轻的材质 */
+  --st-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --st-field-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --st-backdrop-filter: none;
+  --st-sheen: none;
+
+  /* 焦点：外扩 2px ring（内圈用 surface 隔开），隐藏 M3 内嵌描边 */
+  --st-focus-ring-width: 2px;
+  --st-focus-ring-offset: 2px;
+  --st-focus-ring-color: var(--md-sys-color-on-surface);
+  --st-field-focus-shadow: 0 0 0 2px var(--md-sys-color-surface),
+    0 0 0 4px color-mix(in srgb, var(--md-sys-color-on-surface) 55%, transparent);
+  --st-field-focus-ring-opacity: 0;
+  --st-field-underline-color: transparent;
+
+  /* 状态与动效 */
+  --st-state-hover: 0.04;
+  --st-state-press: 0.08;
+  --st-disabled-opacity: 0.5;
+  --st-ripple-opacity: 0;
+  --st-motion-duration: 120ms;
+
+  --st-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}

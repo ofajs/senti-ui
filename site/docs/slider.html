@@ -7,7 +7,6 @@
   <meta name="description" content="Slider（st-slider）用法：滑块：内部原生 range 承载拖拽与键盘；聚焦 / 拖动时显示数值气泡。" />
   <meta name="theme-color" content="#0061A4" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
-
   <script type="module">
     import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
     import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
@@ -16,19 +15,9 @@
   <link rel="stylesheet" href="../../packages/skin/m3.css" />
   <link rel="stylesheet" href="../../packages/skin/apple.css" />
   <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
-
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: var(--md-sys-color-surface);
-      color: var(--md-sys-color-on-surface);
-    }
-    body {
-      font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
-        system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
+    html, body { margin: 0; padding: 0; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
     .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
     .nojs h1 { margin: 0 0 12px; font-size: 32px; }
     .nojs a { color: var(--md-sys-color-primary, #0061a4); }
@@ -71,49 +60,116 @@
   <o-app src="../app-config.js">
     <template page>
       <link rel="stylesheet" href="../docs.css" />
-      <article class="doc-page">
-        <header class="doc-hero">
-          <p class="doc-kicker">表单 · 9 / 21</p>
-          <h1>Slider <code>st-slider</code></h1>
-          <p class="doc-lead">滑块：内部原生 range 承载拖拽与键盘；聚焦 / 拖动时显示数值气泡。</p>
-          <div class="doc-links">
-            <a href="../index.html">组件目录</a>
-            <a href="https://github.com/ofajs/senti-ui/blob/main/packages/slider/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
-          </div>
-        </header>
 
-        <div class="demo">
-          <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-slider</code></div>
-          <div class="demo-stage">
-            <st-slider default-value="64" style="width:100%;max-width:360px;"></st-slider>
+      <div class="docs-shell">
+<aside class="docs-side">
+  <p class="side-title">Components · 21</p>
+  <p class="side-group">动作</p>
+  <st-list class="side-list">
+    <st-list-item button on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
+    <st-list-item button on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
+  </st-list>
+  <p class="side-group">表单</p>
+  <st-list class="side-list">
+    <st-list-item button on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
+    <st-list-item button on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
+    <st-list-item button on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
+    <st-list-item button on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
+    <st-list-item button on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
+    <st-list-item button on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
+    <st-list-item button class="active" on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
+  </st-list>
+  <p class="side-group">反馈</p>
+  <st-list class="side-list">
+    <st-list-item button on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
+    <st-list-item button on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
+    <st-list-item button on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
+    <st-list-item button on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
+    <st-list-item button on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
+    <st-list-item button on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
+  </st-list>
+  <p class="side-group">内容</p>
+  <st-list class="side-list">
+    <st-list-item button on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
+    <st-list-item button on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
+    <st-list-item button on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
+    <st-list-item button on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
+  </st-list>
+  <p class="side-group">导航</p>
+  <st-list class="side-list">
+    <st-list-item button on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
+    <st-list-item button on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
+  </st-list>
+</aside>
+        <div class="docs-body">
+          <st-select class="docs-picker" placeholder="选择组件" default-value="slider" on:change="onNavigate">
+            <option value="button">Button</option>
+            <option value="ripple">Ripple</option>
+            <option value="input">Input</option>
+            <option value="textarea">Textarea</option>
+            <option value="select">Select</option>
+            <option value="checkbox">Checkbox</option>
+            <option value="switch">Switch</option>
+            <option value="radio">Radio</option>
+            <option value="slider" selected>Slider</option>
+            <option value="dialog">Dialog</option>
+            <option value="menu">Menu</option>
+            <option value="snackbar">Snackbar</option>
+            <option value="tooltip">Tooltip</option>
+            <option value="progress">Progress</option>
+            <option value="tools">Command tools</option>
+            <option value="card">Card</option>
+            <option value="badges">Badges</option>
+            <option value="collapse">Collapse</option>
+            <option value="list">List</option>
+            <option value="tabs">Tabs</option>
+            <option value="navigation">Navigation</option>
+          </st-select>
+          <article class="doc-page">
+            <header class="doc-hero">
+              <p class="doc-kicker">表单 · 9 / 21</p>
+              <h1>Slider <code>st-slider</code></h1>
+              <p class="doc-lead">滑块：内部原生 range 承载拖拽与键盘；聚焦 / 拖动时显示数值气泡。</p>
+              <div class="doc-links">
+                <a href="../index.html">组件目录</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/slider/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
+              </div>
+            </header>
+
+            <div class="demo">
+              <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-slider</code></div>
+              <div class="demo-stage">
+                <st-slider default-value="64" style="width:100%;max-width:360px;"></st-slider>
 <st-slider color="success" default-value="82" style="width:100%;max-width:360px;"></st-slider>
-          </div>
+              </div>
+            </div>
+
+            <div class="doc-cols">
+              <div class="doc-block">
+                <h3>属性</h3>
+                <table class="api">
+                  <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+                  <tbody><tr><td><code>min / max / step</code></td><td>number</td><td>0 / 100 / 1</td><td>取值范围与步进</td></tr><tr><td><code>default-value</code></td><td>string</td><td>无</td><td>初始值</td></tr><tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>激活轨道 / 拇指色</td></tr><tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>阻断交互</td></tr></tbody>
+                </table>
+              </div>
+              <div class="doc-block">
+                <h3>插槽 / 事件 / 注意</h3>
+                <ul class="api-list"><li>运行时状态：<code>el.value</code> 读写；<code>setAttribute("value")</code> 无效。</li><li>事件：<code>input</code>（拖动中）/ <code>change</code>（提交）。</li><li>键盘：Tab 聚焦、←/→ 步进、Home / End 到两端。</li></ul>
+              </div>
+            </div>
+
+            <details class="snippet">
+              <summary>示例代码</summary>
+              <pre><code>&lt;st-slider default-value="64" min="0" max="100" step="1"&gt;&lt;/st-slider&gt;</code></pre>
+            </details>
+
+            <nav class="doc-pager" aria-label="上下篇">
+              <a class="pager-link" olink href="./radio.html"><span>上一页</span>← Radio</a><a class="pager-link pager-next" olink href="./dialog.html"><span>下一页</span>Dialog →</a>
+            </nav>
+          </article>
+
         </div>
-
-        <div class="doc-cols">
-          <div class="doc-block">
-            <h3>属性</h3>
-            <table class="api">
-              <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
-              <tbody><tr><td><code>min / max / step</code></td><td>number</td><td>0 / 100 / 1</td><td>取值范围与步进</td></tr><tr><td><code>default-value</code></td><td>string</td><td>无</td><td>初始值</td></tr><tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>激活轨道 / 拇指色</td></tr><tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>阻断交互</td></tr></tbody>
-            </table>
-          </div>
-          <div class="doc-block">
-            <h3>插槽 / 事件 / 注意</h3>
-            <ul class="api-list"><li>运行时状态：<code>el.value</code> 读写；<code>setAttribute("value")</code> 无效。</li><li>事件：<code>input</code>（拖动中）/ <code>change</code>（提交）。</li><li>键盘：Tab 聚焦、←/→ 步进、Home / End 到两端。</li></ul>
-          </div>
-        </div>
-
-        <details class="snippet">
-          <summary>示例代码</summary>
-          <pre><code>&lt;st-slider default-value="64" min="0" max="100" step="1"&gt;&lt;/st-slider&gt;</code></pre>
-        </details>
-
-        <nav class="doc-pager" aria-label="上下篇">
-          <a class="pager-link" olink href="./radio.html"><span>上一页</span>← Radio</a><a class="pager-link pager-next" olink href="./dialog.html"><span>下一页</span>Dialog →</a>
-        </nav>
-      </article>
-
+      </div>
       <script>
         export const parent = "../layout.html";
 
@@ -134,6 +190,12 @@
             },
             get navLabel() {
               return this.navLabels[this.navTab] || "";
+            },
+            goDoc(id) {
+              this.goto("./" + id + ".html");
+            },
+            onNavigate(e) {
+              if (e.target.value) this.goto("./" + e.target.value + ".html");
             },
             onSelect(e) {
               this.selectValue = e.target.value || "";

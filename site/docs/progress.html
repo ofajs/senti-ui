@@ -7,7 +7,6 @@
   <meta name="description" content="Progress（st-progress）用法：进度：线形 / 环形 × 确定 / 不定。缺省 value 自动视为不定。" />
   <meta name="theme-color" content="#0061A4" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
-
   <script type="module">
     import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
     import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
@@ -16,19 +15,9 @@
   <link rel="stylesheet" href="../../packages/skin/m3.css" />
   <link rel="stylesheet" href="../../packages/skin/apple.css" />
   <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
-
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: var(--md-sys-color-surface);
-      color: var(--md-sys-color-on-surface);
-    }
-    body {
-      font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
-        system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
+    html, body { margin: 0; padding: 0; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
     .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
     .nojs h1 { margin: 0 0 12px; font-size: 32px; }
     .nojs a { color: var(--md-sys-color-primary, #0061a4); }
@@ -71,52 +60,119 @@
   <o-app src="../app-config.js">
     <template page>
       <link rel="stylesheet" href="../docs.css" />
-      <article class="doc-page">
-        <header class="doc-hero">
-          <p class="doc-kicker">反馈 · 14 / 21</p>
-          <h1>Progress <code>st-progress</code></h1>
-          <p class="doc-lead">进度：线形 / 环形 × 确定 / 不定。缺省 value 自动视为不定。</p>
-          <div class="doc-links">
-            <a href="../index.html">组件目录</a>
-            <a href="https://github.com/ofajs/senti-ui/blob/main/packages/progress/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
-          </div>
-        </header>
 
-        <div class="demo">
-          <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-progress</code></div>
-          <div class="demo-stage">
-            <st-progress value="64" style="width:100%;max-width:360px;"></st-progress>
+      <div class="docs-shell">
+<aside class="docs-side">
+  <p class="side-title">Components · 21</p>
+  <p class="side-group">动作</p>
+  <st-list class="side-list">
+    <st-list-item button on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
+    <st-list-item button on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
+  </st-list>
+  <p class="side-group">表单</p>
+  <st-list class="side-list">
+    <st-list-item button on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
+    <st-list-item button on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
+    <st-list-item button on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
+    <st-list-item button on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
+    <st-list-item button on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
+    <st-list-item button on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
+    <st-list-item button on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
+  </st-list>
+  <p class="side-group">反馈</p>
+  <st-list class="side-list">
+    <st-list-item button on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
+    <st-list-item button on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
+    <st-list-item button on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
+    <st-list-item button on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
+    <st-list-item button class="active" on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
+    <st-list-item button on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
+  </st-list>
+  <p class="side-group">内容</p>
+  <st-list class="side-list">
+    <st-list-item button on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
+    <st-list-item button on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
+    <st-list-item button on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
+    <st-list-item button on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
+  </st-list>
+  <p class="side-group">导航</p>
+  <st-list class="side-list">
+    <st-list-item button on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
+    <st-list-item button on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
+  </st-list>
+</aside>
+        <div class="docs-body">
+          <st-select class="docs-picker" placeholder="选择组件" default-value="progress" on:change="onNavigate">
+            <option value="button">Button</option>
+            <option value="ripple">Ripple</option>
+            <option value="input">Input</option>
+            <option value="textarea">Textarea</option>
+            <option value="select">Select</option>
+            <option value="checkbox">Checkbox</option>
+            <option value="switch">Switch</option>
+            <option value="radio">Radio</option>
+            <option value="slider">Slider</option>
+            <option value="dialog">Dialog</option>
+            <option value="menu">Menu</option>
+            <option value="snackbar">Snackbar</option>
+            <option value="tooltip">Tooltip</option>
+            <option value="progress" selected>Progress</option>
+            <option value="tools">Command tools</option>
+            <option value="card">Card</option>
+            <option value="badges">Badges</option>
+            <option value="collapse">Collapse</option>
+            <option value="list">List</option>
+            <option value="tabs">Tabs</option>
+            <option value="navigation">Navigation</option>
+          </st-select>
+          <article class="doc-page">
+            <header class="doc-hero">
+              <p class="doc-kicker">反馈 · 14 / 21</p>
+              <h1>Progress <code>st-progress</code></h1>
+              <p class="doc-lead">进度：线形 / 环形 × 确定 / 不定。缺省 value 自动视为不定。</p>
+              <div class="doc-links">
+                <a href="../index.html">组件目录</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/progress/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
+              </div>
+            </header>
+
+            <div class="demo">
+              <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-progress</code></div>
+              <div class="demo-stage">
+                <st-progress value="64" style="width:100%;max-width:360px;"></st-progress>
 <st-progress indeterminate style="width:100%;max-width:360px;"></st-progress>
 <st-progress circular value="72"></st-progress>
 <st-progress circular indeterminate color="success"></st-progress>
-          </div>
-        </div>
+              </div>
+            </div>
 
-        <div class="doc-cols">
-          <div class="doc-block">
-            <h3>属性</h3>
-            <table class="api">
-              <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
-              <tbody><tr><td><code>value</code></td><td>number（0-100）</td><td>无</td><td>确定进度；缺省视为不定</td></tr><tr><td><code>indeterminate</code></td><td>boolean</td><td>无</td><td>不定动画；设置后忽略 value</td></tr><tr><td><code>circular</code></td><td>boolean</td><td>无</td><td>环形</td></tr><tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>进度色</td></tr></tbody>
-            </table>
-          </div>
-          <div class="doc-block">
-            <h3>插槽 / 事件 / 注意</h3>
-            <ul class="api-list"><li><code>prefers-reduced-motion</code> 下动画趋零。</li><li>线形宽度用 <code>width</code> / 容器控制；改 font-size 整体等比缩放。</li></ul>
-          </div>
-        </div>
+            <div class="doc-cols">
+              <div class="doc-block">
+                <h3>属性</h3>
+                <table class="api">
+                  <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+                  <tbody><tr><td><code>value</code></td><td>number（0-100）</td><td>无</td><td>确定进度；缺省视为不定</td></tr><tr><td><code>indeterminate</code></td><td>boolean</td><td>无</td><td>不定动画；设置后忽略 value</td></tr><tr><td><code>circular</code></td><td>boolean</td><td>无</td><td>环形</td></tr><tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>进度色</td></tr></tbody>
+                </table>
+              </div>
+              <div class="doc-block">
+                <h3>插槽 / 事件 / 注意</h3>
+                <ul class="api-list"><li><code>prefers-reduced-motion</code> 下动画趋零。</li><li>线形宽度用 <code>width</code> / 容器控制；改 font-size 整体等比缩放。</li></ul>
+              </div>
+            </div>
 
-        <details class="snippet">
-          <summary>示例代码</summary>
-          <pre><code>&lt;st-progress value="60"&gt;&lt;/st-progress&gt;
+            <details class="snippet">
+              <summary>示例代码</summary>
+              <pre><code>&lt;st-progress value="60"&gt;&lt;/st-progress&gt;
 &lt;st-progress circular indeterminate&gt;&lt;/st-progress&gt;</code></pre>
-        </details>
+            </details>
 
-        <nav class="doc-pager" aria-label="上下篇">
-          <a class="pager-link" olink href="./tooltip.html"><span>上一页</span>← Tooltip</a><a class="pager-link pager-next" olink href="./tools.html"><span>下一页</span>Command tools →</a>
-        </nav>
-      </article>
+            <nav class="doc-pager" aria-label="上下篇">
+              <a class="pager-link" olink href="./tooltip.html"><span>上一页</span>← Tooltip</a><a class="pager-link pager-next" olink href="./tools.html"><span>下一页</span>Command tools →</a>
+            </nav>
+          </article>
 
+        </div>
+      </div>
       <script>
         export const parent = "../layout.html";
 
@@ -137,6 +193,12 @@
             },
             get navLabel() {
               return this.navLabels[this.navTab] || "";
+            },
+            goDoc(id) {
+              this.goto("./" + id + ".html");
+            },
+            onNavigate(e) {
+              if (e.target.value) this.goto("./" + e.target.value + ".html");
             },
             onSelect(e) {
               this.selectValue = e.target.value || "";

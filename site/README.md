@@ -16,7 +16,7 @@ npm run dev
 
 ```
 site/
-  layout.html      # SCSR 共享父页：header / footer / 文档侧栏 / 材质与主题 + <slot>
+  layout.html      # SCSR 共享父页：header / footer / 材质与主题 + <slot>
   index.html       # 组件目录首页（子页，export const parent = "./layout.html"）
   docs/
     index.html     # 文档概览：21 张组件卡片
@@ -53,8 +53,9 @@ site/
 ```
 
 - `layout.html` 是 SCSR 的**共享父页**：header（品牌 / 组件与文档导航 / 材质菜单 / 主题 / GitHub）、footer、以及主题与材质的全局状态都在这里；子页在 `<slot>` 中渲染，切页时布局不销毁；
-- `index.html` 声明 `export const parent = "./layout.html"`；`docs/` 下每个组件页声明 `export const parent = "../layout.html"`，自身只保留内容；header、footer、文档侧栏、阅读进度都在 layout 中，切页时布局不销毁；
-- 页面切换动画：`app-config.js` 的 `pageAnime` 负责离场淡出 + 位移，layout 的 `::slotted(o-page)` 负责入场淡入 + 位移（`prefers-reduced-motion` 下关闭）；
+- `index.html` 声明 `export const parent = "./layout.html"`；`docs/` 下每个组件页声明 `export const parent = "../layout.html"`；header、footer、阅读进度在 layout 中，切页时布局不销毁；
+- 文档侧栏在每个文档页内（`st-list` + `st-list-item` 生成同样的 21 项），这样首页 ↔ 文档、文档 ↔ 文档切换时页面宽度不变，不会因侧栏出现/消失而重排；
+- 页面切换动画：`app-config.js` 的 `pageAnime` 让离场页淡出，layout 的 `::slotted(o-page)` 让新页以不透明背景轻微上滑入场（0.24s，`prefers-reduced-motion` 下关闭）；新页不透明 + 覆盖，避免两页内容叠在一起闪烁；
 - header 尽量用 senti-ui 组件搭：`st-button-group` + `st-button`（导航）、`st-menu` + `st-menu-item` + `st-button`（材质）、`st-icon-button` + `st-tooltip`（主题 / GitHub）、品牌也是 `st-button`；导航用页面实例的 `goto()` 保持真实路径与共享布局；
 - scsr 接管后，把当前 URL（`/site/`、`/site/index.html`、`/site/docs/button.html` 等）收编为 `<o-page src>`，用同一份 HTML 的 `template[page]` 转译成页面模块，然后移除内联 template；
 - 页面本体随后渲染在 `o-page` 的 shadow 内，`:host` 样式、`this.ele.shadowRoot` 等写法与普通页面模块一致；
@@ -94,13 +95,13 @@ site/
   - 插槽 / 事件 / 注意事项
   - 可折叠的示例代码
   - 指向 GitHub README 的入口
-- 左侧粘性目录在 `layout.html` 中，用 `st-list` + `st-list-item` 搭；当前页由真实路径自动高亮
+- 左侧粘性目录在每个文档页内，用 `st-list` + `st-list-item` 搭；当前页在生成时高亮；移动端变成 `st-select` 组件切换器
 - 页面内用 `st-progress` 做阅读进度条、`st-icon-button` + `st-tooltip` 做回到顶部
 - header 与首页完全共用；主题 / 材质切换在 header 中，只影响按钮 / 输入框
 - 仍然是 SCSR：每个组件页都是可直达、可刷新、可分享的真实文档
-- 页面切换有方向感动画；文档页之间切换时 header / 侧栏 / 滚动进度都保留
+- 页面切换有淡入 + 轻微上滑动画；header / 阅读进度常驻，内容区不因侧栏出现而重排
 
-新增组件文档时：在 `site/docs/` 复制一个页面改内容，在 `layout.html` 侧栏补一项、在 `site/docs/index.html` 补一张卡，并同步首页卡片的 `./docs/{id}.html` 链接。
+新增组件文档时：在 `site/docs/` 复制一个页面改内容，并在**所有现有文档页**的侧栏 / 移动端选择器里补这一项（侧栏在各页内重复，可用脚本批量替换）；在 `site/docs/index.html` 补一张卡，同步首页卡片的 `./docs/{id}.html` 链接。
 
 ## 首屏与无 JS
 
@@ -156,9 +157,9 @@ npm test
 - `/site/` 目录直开：25 张卡片、29 个 `st-*` 全部升级、无页面错误、`template[page]` 已被 scsr 移除、页面内没有 `/docs/` 链接；
 - 皮肤 / 主题 / 对话框交互；
 - 共享 layout：两个 `o-page`（layout + 子页）、header 导航 / 材质菜单 / 主题 / 回到首页；
-- 组件文档：独立页 `/site/docs/input.html`、21 项共享侧栏、侧栏切换到 `slider.html`、上一页 / 下一页、阅读进度、页面切换动画；
+- 组件文档：独立页 `/site/docs/input.html`、每页 21 项侧栏、侧栏切换、上一页 / 下一页、阅读进度、页面切换动画；
 - 文档首页 21 张卡片进入独立页；
-- 卡片右下角进入对应 `docs/{id}.html`，header / 侧栏保持不销毁；
+- 卡片右下角进入对应 `docs/{id}.html`，header 保持共享；
 - 禁用 JavaScript 时 `<noscript>` 兜底可见。
 
 ## 部署

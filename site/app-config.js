@@ -2,25 +2,12 @@
  * site/app-config.js — 官网的 o-app / SCSR 配置
  *
  * 不声明 home：SCSR 约定首页就是当前 URL 的页面。
- * pageAnime：真实路径切换时，子页做方向感淡入 + 轻微位移（布局 header / 侧栏常驻）。
+ * pageAnime：真实路径切换时做交叉淡出（0.24s），布局 header / footer 常驻；
+ * 入场由 layout 的 ::slotted(o-page) 动画负责。这里刻意不用 transform：
+ * 避免给 fixed 弹层/回到顶部创建 containing block，也避免两页内容错位。
  */
-const ease = "cubic-bezier(0.32, 0.72, 0, 1)";
-const motion = `opacity 0.3s ${ease}, transform 0.3s ${ease}`;
-
 export const pageAnime = {
-  current: {
-    opacity: "1",
-    transform: "translateX(0)",
-    transition: motion,
-  },
-  next: {
-    opacity: "0",
-    transform: "translateX(28px)",
-    transition: motion,
-  },
-  previous: {
-    opacity: "0",
-    transform: "translateX(-28px)",
-    transition: motion,
-  },
+  current: { opacity: "1", transition: "opacity 0.24s ease" },
+  next: { opacity: "0", transition: "opacity 0.24s ease" },
+  previous: { opacity: "0", transition: "opacity 0.24s ease" },
 };

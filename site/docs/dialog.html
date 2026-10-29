@@ -7,7 +7,6 @@
   <meta name="description" content="Dialog（st-dialog）用法：模态对话框：headline / 默认 / actions 三插槽，auto-close 支持遮罩与 Escape。" />
   <meta name="theme-color" content="#0061A4" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
-
   <script type="module">
     import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
     import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
@@ -16,19 +15,9 @@
   <link rel="stylesheet" href="../../packages/skin/m3.css" />
   <link rel="stylesheet" href="../../packages/skin/apple.css" />
   <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
-
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: var(--md-sys-color-surface);
-      color: var(--md-sys-color-on-surface);
-    }
-    body {
-      font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
-        system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
+    html, body { margin: 0; padding: 0; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
     .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
     .nojs h1 { margin: 0 0 12px; font-size: 32px; }
     .nojs a { color: var(--md-sys-color-primary, #0061a4); }
@@ -71,41 +60,106 @@
   <o-app src="../app-config.js">
     <template page>
       <link rel="stylesheet" href="../docs.css" />
-      <article class="doc-page">
-        <header class="doc-hero">
-          <p class="doc-kicker">反馈 · 10 / 21</p>
-          <h1>Dialog <code>st-dialog</code></h1>
-          <p class="doc-lead">模态对话框：headline / 默认 / actions 三插槽，auto-close 支持遮罩与 Escape。</p>
-          <div class="doc-links">
-            <a href="../index.html">组件目录</a>
-            <a href="https://github.com/ofajs/senti-ui/blob/main/packages/dialog/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
-          </div>
-        </header>
 
-        <div class="demo">
-          <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-dialog</code></div>
-          <div class="demo-stage">
-            <st-button variant="outlined" on:click="dialogOpen = true">打开对话框</st-button>
-          </div>
-        </div>
+      <div class="docs-shell">
+<aside class="docs-side">
+  <p class="side-title">Components · 21</p>
+  <p class="side-group">动作</p>
+  <st-list class="side-list">
+    <st-list-item button on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
+    <st-list-item button on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
+  </st-list>
+  <p class="side-group">表单</p>
+  <st-list class="side-list">
+    <st-list-item button on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
+    <st-list-item button on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
+    <st-list-item button on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
+    <st-list-item button on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
+    <st-list-item button on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
+    <st-list-item button on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
+    <st-list-item button on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
+  </st-list>
+  <p class="side-group">反馈</p>
+  <st-list class="side-list">
+    <st-list-item button class="active" on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
+    <st-list-item button on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
+    <st-list-item button on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
+    <st-list-item button on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
+    <st-list-item button on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
+    <st-list-item button on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
+  </st-list>
+  <p class="side-group">内容</p>
+  <st-list class="side-list">
+    <st-list-item button on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
+    <st-list-item button on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
+    <st-list-item button on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
+    <st-list-item button on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
+  </st-list>
+  <p class="side-group">导航</p>
+  <st-list class="side-list">
+    <st-list-item button on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
+    <st-list-item button on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
+  </st-list>
+</aside>
+        <div class="docs-body">
+          <st-select class="docs-picker" placeholder="选择组件" default-value="dialog" on:change="onNavigate">
+            <option value="button">Button</option>
+            <option value="ripple">Ripple</option>
+            <option value="input">Input</option>
+            <option value="textarea">Textarea</option>
+            <option value="select">Select</option>
+            <option value="checkbox">Checkbox</option>
+            <option value="switch">Switch</option>
+            <option value="radio">Radio</option>
+            <option value="slider">Slider</option>
+            <option value="dialog" selected>Dialog</option>
+            <option value="menu">Menu</option>
+            <option value="snackbar">Snackbar</option>
+            <option value="tooltip">Tooltip</option>
+            <option value="progress">Progress</option>
+            <option value="tools">Command tools</option>
+            <option value="card">Card</option>
+            <option value="badges">Badges</option>
+            <option value="collapse">Collapse</option>
+            <option value="list">List</option>
+            <option value="tabs">Tabs</option>
+            <option value="navigation">Navigation</option>
+          </st-select>
+          <article class="doc-page">
+            <header class="doc-hero">
+              <p class="doc-kicker">反馈 · 10 / 21</p>
+              <h1>Dialog <code>st-dialog</code></h1>
+              <p class="doc-lead">模态对话框：headline / 默认 / actions 三插槽，auto-close 支持遮罩与 Escape。</p>
+              <div class="doc-links">
+                <a href="../index.html">组件目录</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/dialog/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
+              </div>
+            </header>
 
-        <div class="doc-cols">
-          <div class="doc-block">
-            <h3>属性</h3>
-            <table class="api">
-              <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
-              <tbody><tr><td><code>open</code></td><td>data（运行时状态）</td><td>false</td><td>显示状态；ofa 页面用 sync:open 双向绑定</td></tr><tr><td><code>auto-close</code></td><td>boolean</td><td>无</td><td>允许遮罩点击 / Escape 关闭，并派发 close</td></tr></tbody>
-            </table>
-          </div>
-          <div class="doc-block">
-            <h3>插槽 / 事件 / 注意</h3>
-            <ul class="api-list"><li>插槽：<code>headline</code> / 默认 / <code>actions</code>；空区块自动隐藏。</li><li>事件：<code>close</code>（composed）；打开时焦点移入面板容器。</li><li>面板样式用 <code>::part(panel)</code> 定制；命令式 <code>alert</code> / <code>confirm</code> / <code>prompt</code> 见 Command tools。</li></ul>
-          </div>
-        </div>
+            <div class="demo">
+              <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-dialog</code></div>
+              <div class="demo-stage">
+                <st-button variant="outlined" on:click="dialogOpen = true">打开对话框</st-button>
+              </div>
+            </div>
 
-        <details class="snippet">
-          <summary>示例代码</summary>
-          <pre><code>&lt;st-dialog sync:open="dialogOpen" auto-close&gt;
+            <div class="doc-cols">
+              <div class="doc-block">
+                <h3>属性</h3>
+                <table class="api">
+                  <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+                  <tbody><tr><td><code>open</code></td><td>data（运行时状态）</td><td>false</td><td>显示状态；ofa 页面用 sync:open 双向绑定</td></tr><tr><td><code>auto-close</code></td><td>boolean</td><td>无</td><td>允许遮罩点击 / Escape 关闭，并派发 close</td></tr></tbody>
+                </table>
+              </div>
+              <div class="doc-block">
+                <h3>插槽 / 事件 / 注意</h3>
+                <ul class="api-list"><li>插槽：<code>headline</code> / 默认 / <code>actions</code>；空区块自动隐藏。</li><li>事件：<code>close</code>（composed）；打开时焦点移入面板容器。</li><li>面板样式用 <code>::part(panel)</code> 定制；命令式 <code>alert</code> / <code>confirm</code> / <code>prompt</code> 见 Command tools。</li></ul>
+              </div>
+            </div>
+
+            <details class="snippet">
+              <summary>示例代码</summary>
+              <pre><code>&lt;st-dialog sync:open="dialogOpen" auto-close&gt;
   &lt;h2 slot="headline"&gt;删除项目？&lt;/h2&gt;
   &lt;p&gt;此操作不可撤销。&lt;/p&gt;
   &lt;div slot="actions"&gt;
@@ -113,21 +167,23 @@
     &lt;st-button color="error" on:click="confirmDelete"&gt;删除&lt;/st-button&gt;
   &lt;/div&gt;
 &lt;/st-dialog&gt;</code></pre>
-        </details>
+            </details>
 
-        <nav class="doc-pager" aria-label="上下篇">
-          <a class="pager-link" olink href="./slider.html"><span>上一页</span>← Slider</a><a class="pager-link pager-next" olink href="./menu.html"><span>下一页</span>Menu →</a>
-        </nav>
-      </article>
+            <nav class="doc-pager" aria-label="上下篇">
+              <a class="pager-link" olink href="./slider.html"><span>上一页</span>← Slider</a><a class="pager-link pager-next" olink href="./menu.html"><span>下一页</span>Menu →</a>
+            </nav>
+          </article>
 
-      <st-dialog sync:open="dialogOpen" auto-close on:close="dialogOpen = false">
-        <h2 slot="headline">删除这个项目？</h2>
-        <p>这是文档页里的真实 <code>st-dialog</code>：遮罩、Escape、焦点管理都由组件负责。</p>
-        <div slot="actions">
-          <st-button variant="text" on:click="dialogOpen = false">取消</st-button>
-          <st-button color="error" on:click="dialogOpen = false">删除</st-button>
+        <st-dialog sync:open="dialogOpen" auto-close on:close="dialogOpen = false">
+          <h2 slot="headline">删除这个项目？</h2>
+          <p>这是文档页里的真实 <code>st-dialog</code>：遮罩、Escape、焦点管理都由组件负责。</p>
+          <div slot="actions">
+            <st-button variant="text" on:click="dialogOpen = false">取消</st-button>
+            <st-button color="error" on:click="dialogOpen = false">删除</st-button>
+          </div>
+        </st-dialog>
         </div>
-      </st-dialog>
+      </div>
       <script>
         export const parent = "../layout.html";
 
@@ -148,6 +204,12 @@
             },
             get navLabel() {
               return this.navLabels[this.navTab] || "";
+            },
+            goDoc(id) {
+              this.goto("./" + id + ".html");
+            },
+            onNavigate(e) {
+              if (e.target.value) this.goto("./" + e.target.value + ".html");
             },
             onSelect(e) {
               this.selectValue = e.target.value || "";

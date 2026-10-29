@@ -234,14 +234,15 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
       title: document.title,
       header: !!layout,
       pages: pages.length,
-      sideItems: layout.shadowRoot.querySelectorAll(".docs-side st-list-item").length,
-      active: [...layout.shadowRoot.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
+      sideItems: sr.querySelectorAll(".docs-side st-list-item").length,
+      active: [...sr.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
         x.textContent.replace(/\s+/g, " ").trim()
       ),
       headerNav: [...layout.shadowRoot.querySelectorAll(".layout-nav st-button")].map((b) =>
         b.getAttribute("variant")
       ),
-      sidebar: !!layout.shadowRoot.querySelector(".docs-side"),
+      sidebar: !!sr.querySelector(".docs-side"),
+      picker: !!sr.querySelector(".docs-picker"),
       progress: !!layout.shadowRoot.querySelector(".read-progress st-progress"),
       h1: sr.querySelector("h1").textContent.trim(),
       apiRows: sr.querySelectorAll(".api tbody tr").length,
@@ -263,6 +264,7 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(state.active[0]).toContain("Input");
   expect(state.headerNav).toEqual(["outlined", "filled"]);
   expect(state.sidebar).toBe(true);
+  expect(state.picker).toBe(true);
   expect(state.progress).toBe(true);
   expect(state.h1).toBe("Input st-input");
   expect(state.apiRows).toBeGreaterThan(2);
@@ -273,22 +275,22 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
 
   // 侧栏切换：真实路径 + 布局/侧栏不销毁 + active 更新
   await page.evaluate(() => {
-    const layout = [...document.querySelectorAll("o-page")].find(
-      (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
     );
-    [...layout.shadowRoot.querySelectorAll(".docs-side st-list-item")]
+    [...child.shadowRoot.querySelectorAll(".docs-side st-list-item")]
       .find((x) => x.textContent.includes("Slider"))
       .click();
   });
   await page.waitForURL("**/site/docs/slider.html", { timeout: 30_000 });
   await waitDocPage(page, "Slider");
   const after = await page.evaluate(() => {
-    const layout = [...document.querySelectorAll("o-page")].find(
-      (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
     );
     return {
       pages: [...document.querySelectorAll("o-page")].length,
-      active: [...layout.shadowRoot.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
+      active: [...child.shadowRoot.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
         x.textContent.replace(/\s+/g, " ").trim()
       ),
     };
@@ -340,10 +342,11 @@ test("首页卡片进入对应组件文档，header 保持共享", async ({ page
   const state = await page.evaluate(() => {
     const pages = [...document.querySelectorAll("o-page")];
     const layout = pages.find((op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav"));
+    const child = pages.find((op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page"));
     return {
       pages: pages.length,
       sharedHeader: !!layout,
-      active: [...layout.shadowRoot.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
+      active: [...child.shadowRoot.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
         x.textContent.replace(/\s+/g, " ").trim()
       ),
     };

@@ -99,11 +99,13 @@
           }
           ::slotted(o-page) {
             display: block;
-            animation: st-page-in 0.3s cubic-bezier(0.32, 0.72, 0, 1) both;
+            min-height: calc(100vh - 59px);
+            background: var(--md-sys-color-surface);
+            animation: st-page-in 0.24s ease both;
           }
           @keyframes st-page-in {
-            from { opacity: 0; transform: translateX(16px); }
-            to { opacity: 1; transform: none; }
+            from { transform: translateY(8px); }
+            to { transform: none; }
           }
           @media (prefers-reduced-motion: reduce) {
             ::slotted(o-page) { animation: none; }
@@ -123,57 +125,6 @@
             font-size: 10px;
           }
 
-          .docs-grid { display: block; }
-          .site-main.docs .docs-grid {
-            display: grid;
-            grid-template-columns: 232px minmax(0, 1fr);
-            gap: clamp(24px, 3.5vw, 44px);
-            max-width: var(--site-max);
-            margin: 0 auto;
-            padding: 18px var(--gutter) 64px;
-            align-items: start;
-          }
-          .docs-side { display: none; }
-          .site-main.docs .docs-side {
-            display: block;
-            position: sticky;
-            top: 74px;
-            max-height: calc(100vh - 92px);
-            overflow: auto;
-            padding-right: 6px;
-          }
-          .docs-slot { min-width: 0; overflow-x: clip; }
-          .side-title {
-            padding: 2px 10px 8px;
-            color: var(--md-sys-color-on-surface-variant);
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-          }
-          .side-group {
-            margin: 14px 0 3px;
-            padding: 0 10px;
-            color: var(--md-sys-color-on-surface-variant);
-            font-size: 9.5px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-          }
-          .docs-side st-list { gap: 1px; }
-          .docs-side st-list-item {
-            font-size: 12px;
-            border-radius: 9px;
-          }
-          .docs-side st-list-item.active {
-            background: var(--md-sys-color-secondary-container);
-            color: var(--md-sys-color-on-secondary-container);
-          }
-          .docs-side st-list-item code[slot="suffix"] {
-            color: var(--md-sys-color-on-surface-variant);
-            font-size: 9px;
-            opacity: 0.75;
-            white-space: nowrap;
-          }
           .to-top {
             display: none;
             position: fixed;
@@ -258,92 +209,7 @@
           <st-progress attr:value="readProgress"></st-progress>
         </div>
 
-        <main class="site-main" class:docs="page === 'docs'">
-          <div class="docs-grid">
-            <aside class="docs-side">
-            <p class="side-title">Components · 21</p>
-            <p class="side-group">动作</p>
-            <st-list class="side-list">
-              <st-list-item button class:active="activeDoc === 'button'" on:click="goDoc('button')">
-    <span>Button</span><code slot="suffix">st-button</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'ripple'" on:click="goDoc('ripple')">
-    <span>Ripple</span><code slot="suffix">st-ripple</code>
-  </st-list-item>
-            </st-list>
-            <p class="side-group">表单</p>
-            <st-list class="side-list">
-              <st-list-item button class:active="activeDoc === 'input'" on:click="goDoc('input')">
-    <span>Input</span><code slot="suffix">st-input</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'textarea'" on:click="goDoc('textarea')">
-    <span>Textarea</span><code slot="suffix">st-textarea</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'select'" on:click="goDoc('select')">
-    <span>Select</span><code slot="suffix">st-select</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'checkbox'" on:click="goDoc('checkbox')">
-    <span>Checkbox</span><code slot="suffix">st-checkbox</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'switch'" on:click="goDoc('switch')">
-    <span>Switch</span><code slot="suffix">st-switch</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'radio'" on:click="goDoc('radio')">
-    <span>Radio</span><code slot="suffix">st-radio</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'slider'" on:click="goDoc('slider')">
-    <span>Slider</span><code slot="suffix">st-slider</code>
-  </st-list-item>
-            </st-list>
-            <p class="side-group">反馈</p>
-            <st-list class="side-list">
-              <st-list-item button class:active="activeDoc === 'dialog'" on:click="goDoc('dialog')">
-    <span>Dialog</span><code slot="suffix">st-dialog</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'menu'" on:click="goDoc('menu')">
-    <span>Menu</span><code slot="suffix">st-menu</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'snackbar'" on:click="goDoc('snackbar')">
-    <span>Snackbar</span><code slot="suffix">st-snackbar</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'tooltip'" on:click="goDoc('tooltip')">
-    <span>Tooltip</span><code slot="suffix">st-tooltip</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'progress'" on:click="goDoc('progress')">
-    <span>Progress</span><code slot="suffix">st-progress</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'tools'" on:click="goDoc('tools')">
-    <span>Command tools</span><code slot="suffix">toast</code>
-  </st-list-item>
-            </st-list>
-            <p class="side-group">内容</p>
-            <st-list class="side-list">
-              <st-list-item button class:active="activeDoc === 'card'" on:click="goDoc('card')">
-    <span>Card</span><code slot="suffix">st-card</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'badges'" on:click="goDoc('badges')">
-    <span>Badges</span><code slot="suffix">st-badges</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'collapse'" on:click="goDoc('collapse')">
-    <span>Collapse</span><code slot="suffix">st-collapse</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'list'" on:click="goDoc('list')">
-    <span>List</span><code slot="suffix">st-list</code>
-  </st-list-item>
-            </st-list>
-            <p class="side-group">导航</p>
-            <st-list class="side-list">
-              <st-list-item button class:active="activeDoc === 'tabs'" on:click="goDoc('tabs')">
-    <span>Tabs</span><code slot="suffix">st-tab-bar</code>
-  </st-list-item>
-              <st-list-item button class:active="activeDoc === 'navigation'" on:click="goDoc('navigation')">
-    <span>Navigation</span><code slot="suffix">st-nav-bar</code>
-  </st-list-item>
-            </st-list>
-            </aside>
-            <div class="docs-slot"><slot></slot></div>
-          </div>
-        </main>
+        <main class="site-main"><slot></slot></main>
 
         <st-tooltip content="回到顶部">
           <st-icon-button class="to-top" class:show="page === 'docs'" title="回到顶部" on:click="toTop">↑</st-icon-button>
@@ -364,7 +230,6 @@
           export default async () => ({
             data: {
               page: "home",
-              activeDoc: "",
               readProgress: 0,
               themeMode: "auto",
               skin: "m3",
@@ -408,8 +273,8 @@
                 const path = location.pathname;
                 const inDocs = /\/docs(\/|$)/.test(path);
                 this.page = inDocs ? "docs" : "home";
-                const file = path.split("/").pop().replace(/\.html$/, "");
-                this.activeDoc = inDocs && file !== "" && file !== "docs" && file !== "index" ? file : "";
+                // 文档侧栏在各自的文档页内，不依赖 layout 的 active 状态
+                void 0;
               },
               updateProgress() {
                 if (this.page !== "docs") {
@@ -419,19 +284,12 @@
                 const max = document.documentElement.scrollHeight - window.innerHeight;
                 this.readProgress = max > 0 ? Math.min(100, Math.max(0, Math.round((window.scrollY / max) * 100))) : 0;
               },
-              goDoc(id) {
-                this.page = "docs";
-                this.activeDoc = id;
-                this.goto("./docs/" + id + ".html");
-              },
               toTop() {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               },
               go(path) {
                 const inDocs = path.indexOf("docs/") >= 0;
                 this.page = inDocs ? "docs" : "home";
-                const m = path.match(/docs\/([^/]+)\.html$/);
-                this.activeDoc = m && m[1] !== "index" ? m[1] : "";
                 if (this.goto) this.goto(path);
                 else location.href = path;
               },

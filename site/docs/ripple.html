@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="../../packages/skin/apple.css" />
   <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
   <style>
-    html, body { margin: 0; padding: 0; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
     body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
     .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
     .nojs h1 { margin: 0 0 12px; font-size: 32px; }
@@ -61,178 +61,215 @@
     <template page>
       <link rel="stylesheet" href="../docs.css" />
 
-      <div class="docs-shell">
-<aside class="docs-side">
-  <p class="side-title">Components · 21</p>
-  <p class="side-group">动作</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
-    <st-list-item button class="active" on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
-  </st-list>
-  <p class="side-group">表单</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
-    <st-list-item button on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
-    <st-list-item button on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
-    <st-list-item button on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
-    <st-list-item button on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
-    <st-list-item button on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
-    <st-list-item button on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
-  </st-list>
-  <p class="side-group">反馈</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
-    <st-list-item button on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
-    <st-list-item button on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
-    <st-list-item button on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
-    <st-list-item button on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
-    <st-list-item button on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
-  </st-list>
-  <p class="side-group">内容</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
-    <st-list-item button on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
-    <st-list-item button on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
-    <st-list-item button on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
-  </st-list>
-  <p class="side-group">导航</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
-    <st-list-item button on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
-  </st-list>
-</aside>
-        <div class="docs-body">
-          <st-select class="docs-picker" placeholder="选择组件" default-value="ripple" on:change="onNavigate">
-            <option value="button">Button</option>
-            <option value="ripple" selected>Ripple</option>
-            <option value="input">Input</option>
-            <option value="textarea">Textarea</option>
-            <option value="select">Select</option>
-            <option value="checkbox">Checkbox</option>
-            <option value="switch">Switch</option>
-            <option value="radio">Radio</option>
-            <option value="slider">Slider</option>
-            <option value="dialog">Dialog</option>
-            <option value="menu">Menu</option>
-            <option value="snackbar">Snackbar</option>
-            <option value="tooltip">Tooltip</option>
-            <option value="progress">Progress</option>
-            <option value="tools">Command tools</option>
-            <option value="card">Card</option>
-            <option value="badges">Badges</option>
-            <option value="collapse">Collapse</option>
-            <option value="list">List</option>
-            <option value="tabs">Tabs</option>
-            <option value="navigation">Navigation</option>
-          </st-select>
           <article class="doc-page">
             <header class="doc-hero">
               <p class="doc-kicker">动作 · 2 / 21</p>
               <h1>Ripple <code>st-ripple</code></h1>
-              <p class="doc-lead">点击波纹。放在 position: relative 的父元素里即可；st-button 与 interactive 卡片已内嵌。</p>
+              <p class="doc-lead">点击波纹组件：放进任意 position: relative 的父元素，点击该区域就会从指针处扩散一圈 currentColor。它不拦截交互、不改变布局，按钮与列表项已经内嵌，一般只在自定义容器里单独使用。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
                 <a href="https://github.com/ofajs/senti-ui/blob/main/packages/ripple/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
               </div>
             </header>
 
-            <div class="demo">
-              <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-ripple</code></div>
-              <div class="demo-stage">
-                <div class="ripple-demo">点我试试<st-ripple></st-ripple></div>
+            <section class="doc-section">
+              <h2>基本用法：放进 relative 父元素</h2>
+              <p class="doc-section-lead">唯一要求是父元素 position: relative（或 absolute）。st-ripple 自身绝对定位铺满父元素、pointer-events: none，不会挡住点击；波纹色取父元素文字色 currentColor，自动与任何配色协调。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-ripple</code></div>
+                <div class="demo-stage" style="gap: 12px;">
+                  <div on:click="basicClicks += 1" style="position: relative; width: 260px; height: 104px; display: grid; place-items: center; overflow: hidden; border-radius: 16px; cursor: pointer; background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); font-size: 13px; --st-ripple-opacity: 0.32;">
+                    点我试试
+                    <st-ripple></st-ripple>
+                  </div>
+                  <span class="demo-note">已点击 {{basicClicks}} 次 · 波纹从指针位置扩散，0.35s 后消失</span>
+                </div>
               </div>
-            </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;div style="position: relative; width: 230px; height: 96px;
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);"&gt;
+  点我试试
+  &lt;st-ripple&gt;&lt;/st-ripple&gt;
+&lt;/div&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>在自定义容器里：整行可点</h2>
+              <p class="doc-section-lead">列表行、设置项、卡片都可以直接放 st-ripple。父元素负责圆角与 overflow，波纹会继承 border-radius 并自动裁剪；点击坐标相对父元素计算，行内文字与图标不干扰扩散。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>自定义行</code></div>
+                <div class="demo-stage block">
+                  <div style="width: 100%; max-width: 460px; overflow: hidden; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 16px; background: var(--md-sys-color-surface-container-low); --st-ripple-opacity: 0.28;">
+                    <div on:click="wifiOn = !wifiOn" style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; cursor: pointer;">
+                      <span>Wi-Fi</span>
+                      <span style="color: var(--md-sys-color-on-surface-variant); font-size: 12px;">{{wifiOn ? "已连接 ›" : "未连接 ›"}}</span>
+                      <st-ripple></st-ripple>
+                    </div>
+                  </div>
+                  <span class="demo-note">点击整行切换：{{wifiOn ? "已连接" : "未连接"}} · 波纹从点击位置扩散，父元素负责圆角与裁剪</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（设置行）</summary>
+                <pre><code>&lt;div on:click="openWifi()"
+     style="position: relative; display: flex; justify-content: space-between;
+            padding: 14px 16px; cursor: pointer;"&gt;
+  &lt;span&gt;Wi-Fi&lt;/span&gt;
+  &lt;span&gt;已连接 ›&lt;/span&gt;
+  &lt;st-ripple&gt;&lt;/st-ripple&gt;
+&lt;/div&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>键盘激活：从中心扩散</h2>
+              <p class="doc-section-lead">键盘按 Enter / Space 产生的 click 没有坐标（detail 为 0），组件会改为从父元素中心扩散。用原生 button 或 st-button 承载焦点与键盘语义即可，st-ripple 本身不需要 tabindex。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>Enter / Space</code></div>
+                <div class="demo-stage">
+                  <button type="button" on:click="keyCount += 1" style="position: relative; width: 230px; height: 96px; overflow: hidden; border: 0; border-radius: 16px; cursor: pointer; background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); font: inherit; font-size: 13px; --st-ripple-opacity: 0.32;">
+                    点我，或 Tab 后按 Enter / Space
+                    <st-ripple></st-ripple>
+                  </button>
+                  <st-button style="--st-ripple-opacity: 0.32;" on:click="keyCount += 1">st-button 已内嵌波纹</st-button>
+                  <span class="demo-note">激活 {{keyCount}} 次；按钮组件内的事件由 st-button 自己的 ripple 处理。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（可聚焦容器）</summary>
+                <pre><code>&lt;button type="button" on:click="activate()"
+        style="position: relative; overflow: hidden;"&gt;
+  点我试试
+  &lt;st-ripple&gt;&lt;/st-ripple&gt;
+&lt;/button&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>颜色与透明度</h2>
+              <p class="doc-section-lead">波纹没有 color 属性：颜色永远跟随父元素的 currentColor，组件里换 color 就换波纹色。透明度由皮肤 token --st-ripple-opacity 控制（默认 0.28），设为 0 就完全关闭；Apple 与 shadcn 皮肤默认关闭。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>currentColor / --st-ripple-opacity</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">手动区域 · opacity 0.55</span>
+                    <div on:click="colorPicks += 1" style="position: relative; height: 90px; display: grid; place-items: center; overflow: hidden; border-radius: 14px; cursor: pointer; background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-primary); font-size: 12.5px; --st-ripple-opacity: 0.55;">
+                      强波纹
+                      <st-ripple></st-ripple>
+                    </div>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">颜色跟随 currentColor</span>
+                    <div class="row" style="justify-content: flex-start;">
+                      <st-button color="primary" style="--st-ripple-opacity: 0.32;">Primary</st-button>
+                      <st-button color="error" style="--st-ripple-opacity: 0.32;">Error</st-button>
+                      <st-button color="success" style="--st-ripple-opacity: 0.32;">Success</st-button>
+                    </div>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">关闭 · --st-ripple-opacity: 0</span>
+                    <div class="row" style="justify-content: flex-start;">
+                      <st-button style="--st-ripple-opacity: 0;">无波纹</st-button>
+                      <st-button variant="outlined" style="--st-ripple-opacity: 0;">无波纹</st-button>
+                    </div>
+                  </div>
+                </div>
+                <span class="demo-note" style="display: block; grid-column: 1 / -1;">手动区域点击 {{colorPicks}} 次；三个彩色按钮的波纹色来自各自的 color。关闭示例把变量设为 0，按钮仍在但不再产生波纹。</span>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;div style="position: relative; color: var(--md-sys-color-primary);
+            --st-ripple-opacity: 0.5;"&gt;
+  文字色即波纹色
+  &lt;st-ripple&gt;&lt;/st-ripple&gt;
+&lt;/div&gt;
+
+&lt;!-- 关闭波纹 --&gt;
+&lt;div style="--st-ripple-opacity: 0;"&gt;...&lt;/div&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>嵌套组件：不会叠两层波纹</h2>
+              <p class="doc-section-lead">父容器与内部组件都带波纹时，事件如果源自嵌套的自定义组件（st-button、st-list-item 等），外层的 st-ripple 会自动忽略，只保留内层组件自己的波纹，避免一次点击出现多层涟漪。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>nested ripple</code></div>
+                <div class="demo-stage block">
+                  <div on:click="outerClicks += 1" style="position: relative; width: 100%; max-width: 460px; overflow: hidden; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 18px; background: var(--md-sys-color-surface-container-low); padding: 16px; --st-ripple-opacity: 0.28;">
+                    <p style="margin: 0 0 10px; color: var(--md-sys-color-on-surface-variant); font-size: 12px; line-height: 1.65;">这个外层容器也放了 st-ripple：点空白处出现外层波纹，点内部组件只有组件自己的波纹。</p>
+                    <div class="row" style="justify-content: flex-start; margin-bottom: 12px;">
+                      <st-button on:click="innerClicks += 1">内嵌按钮</st-button>
+                      <st-button variant="outlined" on:click="innerClicks += 1">内嵌按钮</st-button>
+                    </div>
+                    <st-list style="width: 100%; max-width: 100%;">
+                      <st-list-item button on:click="innerClicks += 1">
+                        <span slot="prefix">🔔</span>通知<span slot="suffix">›</span>
+                      </st-list-item>
+                      <st-list-item button on:click="innerClicks += 1">
+                        <span slot="prefix">🔒</span>隐私<span slot="suffix">›</span>
+                      </st-list-item>
+                    </st-list>
+                    <st-ripple></st-ripple>
+                  </div>
+                  <span class="demo-note">内部组件点击 {{innerClicks}} 次 · 外层容器 click {{outerClicks}} 次（事件照常冒泡，但外层不再生成波纹）</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;div style="position: relative;"&gt;
+  &lt;st-button&gt;内嵌按钮&lt;/st-button&gt;
+  &lt;st-ripple&gt;&lt;/st-ripple&gt;
+&lt;/div&gt;
+
+&lt;!-- 点按钮：只有按钮的波纹；点空白：外层波纹 --&gt;</code></pre>
+              </details>
+            </section>
 
             <div class="doc-cols">
               <div class="doc-block">
                 <h3>属性</h3>
                 <table class="api">
                   <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
-                  <tbody><tr><td colspan="4">无语义属性</td></tr></tbody>
+                  <tbody>
+                    <tr><td colspan="4">无语义属性：没有 disabled / color / variant，也没有事件或公开方法。</td></tr>
+                    <tr><td><code>--st-ripple-opacity</code></td><td>number</td><td>0.28</td><td>CSS 变量 / 皮肤 token；0 关闭波纹</td></tr>
+                  </tbody>
                 </table>
               </div>
               <div class="doc-block">
                 <h3>插槽 / 事件 / 注意</h3>
-                <ul class="api-list"><li>无色值属性：波纹色取 <code>currentColor</code>，自动跟随文字色。</li><li>父元素需要 <code>position: relative</code> 和 <code>overflow: hidden</code>（可选，用于裁切）。</li><li>皮肤可设 <code>--st-ripple-opacity: 0</code> 关闭波纹（Apple / shadcn 皮肤默认关闭）。</li></ul>
+                <ul class="api-list">
+                  <li>无插槽、无事件；波纹纯由父元素上的指针 / 键盘事件驱动，spawn 属于内部实现、不要依赖。</li>
+                  <li>父元素必须 <code>position: relative</code>（或 absolute）；组件自身 <code>absolute; inset: 0; pointer-events: none</code>。</li>
+                  <li>波纹色 = <code>currentColor</code>；默认透明度 0.28，可用 <code>--st-ripple-opacity</code> 调整或关闭。</li>
+                  <li>鼠标/触摸从点击坐标扩散，直径覆盖到最远角，动画 0.35s 后移除。</li>
+                  <li>键盘 Enter / Space 触发的 click 无坐标，从父元素中心扩散。</li>
+                  <li>事件源自嵌套自定义组件时自动忽略，避免一次点击多层涟漪。</li>
+                  <li>st-button / st-list-item / st-menu-item / st-tab-item / st-nav-item / st-split-button 已内嵌，通常不需要单独使用。</li>
+                </ul>
               </div>
             </div>
-
-            <details class="snippet">
-              <summary>示例代码</summary>
-              <pre><code>&lt;div style="position: relative; overflow: hidden;"&gt;
-  点我&lt;st-ripple&gt;&lt;/st-ripple&gt;
-&lt;/div&gt;</code></pre>
-            </details>
 
             <nav class="doc-pager" aria-label="上下篇">
               <a class="pager-link" olink href="./button.html"><span>上一页</span>← Button</a><a class="pager-link pager-next" olink href="./input.html"><span>下一页</span>Input →</a>
             </nav>
           </article>
-
-        </div>
-      </div>
       <script>
-        export const parent = "../layout.html";
+        export const parent = "./layout.html";
 
         export default async () => ({
           data: {
-            selectValue: "",
-            dialogOpen: false,
-            collapsed: false,
-            tab: 0,
-            tabLabels: ["概览", "活动", "设置"],
-            navTab: 0,
-            navLabels: ["首页", "发现", "我的"],
-            toolResult: "（未调用）",
+            basicClicks: 0,
+            wifiOn: true,
+            keyCount: 0,
+            colorPicks: 0,
+            innerClicks: 0,
+            outerClicks: 0,
           },
-          proto: {
-            get tabLabel() {
-              return this.tabLabels[this.tab] || "";
-            },
-            get navLabel() {
-              return this.navLabels[this.navTab] || "";
-            },
-            goDoc(id) {
-              this.goto("./" + id + ".html");
-            },
-            onNavigate(e) {
-              if (e.target.value) this.goto("./" + e.target.value + ".html");
-            },
-            onSelect(e) {
-              this.selectValue = e.target.value || "";
-            },
-            runToast() {
-              if (!window.__site) return;
-              this.toolResult = "toast → 已弹出（3s）";
-              window.__site.toast("这是一条 toast。");
-            },
-            async runAlert() {
-              if (!window.__site) return;
-              const ok = await window.__site.alert({ title: "操作成功", message: "这是 alert 命令式对话框。", ok: "知道了" });
-              this.toolResult = "alert → " + ok;
-            },
-            async runConfirm() {
-              if (!window.__site) return;
-              const ok = await window.__site.confirm({ title: "确认删除", message: "确定删除这条记录吗？", yes: "删除", cancel: "取消", color: "error" });
-              this.toolResult = "confirm → " + ok;
-            },
-            async runPrompt() {
-              if (!window.__site) return;
-              const value = await window.__site.prompt({ title: "重命名", message: "输入新的名称", placeholder: "新名称" });
-              this.toolResult = "prompt → " + JSON.stringify(value);
-            },
-            openCtx(e) {
-              e.preventDefault();
-              if (!window.__site) return;
-              const self = this;
-              window.__site.contextMenu(e, [
-                { id: "copy", label: "复制", prefix: "⧉" },
-                { id: "rename", label: "重命名", prefix: "✏" },
-                { separator: true },
-                { id: "delete", label: "删除", prefix: "⌫", disabled: true },
-              ]).then((id) => { self.toolResult = "contextMenu → " + (id || "未选择"); });
-            },
-          },
+          proto: {},
         });
       </script>
     </template>

@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="../../packages/skin/apple.css" />
   <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
   <style>
-    html, body { margin: 0; padding: 0; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
     body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
     .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
     .nojs h1 { margin: 0 0 12px; font-size: 32px; }
@@ -61,175 +61,240 @@
     <template page>
       <link rel="stylesheet" href="../docs.css" />
 
-      <div class="docs-shell">
-<aside class="docs-side">
-  <p class="side-title">Components · 21</p>
-  <p class="side-group">动作</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
-    <st-list-item button on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
-  </st-list>
-  <p class="side-group">表单</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
-    <st-list-item button class="active" on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
-    <st-list-item button on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
-    <st-list-item button on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
-    <st-list-item button on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
-    <st-list-item button on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
-    <st-list-item button on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
-  </st-list>
-  <p class="side-group">反馈</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
-    <st-list-item button on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
-    <st-list-item button on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
-    <st-list-item button on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
-    <st-list-item button on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
-    <st-list-item button on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
-  </st-list>
-  <p class="side-group">内容</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
-    <st-list-item button on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
-    <st-list-item button on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
-    <st-list-item button on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
-  </st-list>
-  <p class="side-group">导航</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
-    <st-list-item button on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
-  </st-list>
-</aside>
-        <div class="docs-body">
-          <st-select class="docs-picker" placeholder="选择组件" default-value="textarea" on:change="onNavigate">
-            <option value="button">Button</option>
-            <option value="ripple">Ripple</option>
-            <option value="input">Input</option>
-            <option value="textarea" selected>Textarea</option>
-            <option value="select">Select</option>
-            <option value="checkbox">Checkbox</option>
-            <option value="switch">Switch</option>
-            <option value="radio">Radio</option>
-            <option value="slider">Slider</option>
-            <option value="dialog">Dialog</option>
-            <option value="menu">Menu</option>
-            <option value="snackbar">Snackbar</option>
-            <option value="tooltip">Tooltip</option>
-            <option value="progress">Progress</option>
-            <option value="tools">Command tools</option>
-            <option value="card">Card</option>
-            <option value="badges">Badges</option>
-            <option value="collapse">Collapse</option>
-            <option value="list">List</option>
-            <option value="tabs">Tabs</option>
-            <option value="navigation">Navigation</option>
-          </st-select>
           <article class="doc-page">
             <header class="doc-hero">
               <p class="doc-kicker">表单 · 4 / 21</p>
               <h1>Textarea <code>st-textarea</code></h1>
-              <p class="doc-lead">多行输入框，与 st-input 同范式；可用 autosize 跟随内容自动撑开。</p>
+              <p class="doc-lead">多行输入框，与 st-input 同一套语义与材质。高度由 rows、autosize 或原生 height 决定；value 是运行时状态，字符统计与受控回显都走页面 data。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
                 <a href="https://github.com/ofajs/senti-ui/blob/main/packages/textarea/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
               </div>
             </header>
 
-            <div class="demo">
-              <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-textarea</code></div>
-              <div class="demo-stage">
-                <st-textarea rows="3" placeholder="写点什么……"></st-textarea>
-<st-textarea autosize default-value="autosize：高度跟随内容自动撑开。"></st-textarea>
+            <section class="doc-section">
+              <h2>两种 variant 与初始值</h2>
+              <p class="doc-section-lead">outlined 与 filled 的区别只在边框和底色。多行内容用 <code>default-value</code> 预填，换行会原样进入内部 textarea；拖拽手柄默认关闭，高度由 rows 控制而不是用户拖拽。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-textarea</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">outlined</span>
+                    <st-textarea rows="3" placeholder="写点什么……"></st-textarea>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">filled + 多行初始值</span>
+                    <st-textarea variant="filled" rows="3" default-value="第一行内容&#10;第二行内容&#10;第三行内容"></st-textarea>
+                  </div>
+                </div>
               </div>
-            </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-textarea rows="3" placeholder="写点什么……"&gt;&lt;/st-textarea&gt;
+&lt;st-textarea variant="filled" rows="3"
+  default-value="第一行&#10;第二行&#10;第三行"&gt;&lt;/st-textarea&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>rows 与固定高度</h2>
+              <p class="doc-section-lead"><code>rows</code> 转发给内部 textarea，行高为 1.7em；它是可见行数，不是最大行数。需要精确高度时直接写 <code>height</code>，宽高都接受任何原生长度单位。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>rows / height</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">rows=2</span>
+                    <st-textarea rows="2" placeholder="两行高度"></st-textarea>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">rows=6</span>
+                    <st-textarea rows="6" placeholder="六行高度"></st-textarea>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">height: 140px</span>
+                    <st-textarea style="height: 140px;" placeholder="固定高度 140px"></st-textarea>
+                  </div>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-textarea rows="2" placeholder="两行高度"&gt;&lt;/st-textarea&gt;
+&lt;st-textarea rows="6" placeholder="六行高度"&gt;&lt;/st-textarea&gt;
+&lt;st-textarea style="height: 140px;" placeholder="固定高度"&gt;&lt;/st-textarea&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>autosize 自适应高度</h2>
+              <p class="doc-section-lead">加上 <code>autosize</code> 后高度跟随内容撑开，此时 <code>rows</code> 变成最小高度。输入、程序改值、外部字号变化都会重新计算；不需要再手写 scrollHeight 逻辑。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>autosize</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">空内容，rows=2 为最小高度</span>
+                    <st-textarea autosize rows="2" placeholder="输入回车换行，高度会自动增长"></st-textarea>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">预置三行，初始即撑开</span>
+                    <st-textarea autosize variant="filled" default-value="autosize 会按内容测高。&#10;第二行。&#10;第三行，输入更多行继续变高。"></st-textarea>
+                  </div>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-textarea autosize rows="2"
+  placeholder="输入回车换行，高度自动增长"&gt;&lt;/st-textarea&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>disabled / readonly / color</h2>
+              <p class="doc-section-lead">disabled 阻断聚焦和输入并降到 0.38 透明度；readonly 仍可聚焦、可复制。错误态与成功态用 <code>color</code> 表达，聚焦时描边 / 底线和 caret 使用对应角色色。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled / readonly / color</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">disabled</span>
+                    <st-textarea default-value="不可编辑的内容" disabled></st-textarea>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">readonly</span>
+                    <st-textarea default-value="只读内容，可以聚焦并复制" readonly></st-textarea>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">color="error"</span>
+                    <st-textarea color="error" default-value="这段内容不合法"></st-textarea>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">color="success"</span>
+                    <st-textarea color="success" default-value="校验通过"></st-textarea>
+                  </div>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-textarea default-value="不可编辑" disabled&gt;&lt;/st-textarea&gt;
+&lt;st-textarea default-value="只读内容" readonly&gt;&lt;/st-textarea&gt;
+&lt;st-textarea color="error" default-value="这段内容不合法"&gt;&lt;/st-textarea&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>受控值与字数统计</h2>
+              <p class="doc-section-lead">用 <code>sync:value</code> 双向绑定 data，再在 <code>on:input</code> 里更新字数，就能做实时统计。程序改值同样走 data：填入模板和清空都不需要直接操作内部 textarea。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>:value / on:input</code></div>
+                <div class="demo-stage block">
+                  <div style="display: grid; gap: 10px; width: 100%; max-width: 460px;">
+                    <st-textarea id="draft-ta" sync:value="draft" on:input="onDraft" rows="4" placeholder="输入内容，字数实时统计"></st-textarea>
+                    <div class="row" style="justify-content: flex-start;">
+                      <st-button variant="outlined" on:click="fillDraft">填入模板</st-button>
+                      <st-button variant="text" on:click="clearDraft">清空</st-button>
+                      <span class="demo-note" style="width: auto; text-align: left;">{{charCount}} 字 · value = {{draft ? draft : '（空）'}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（字数统计）</summary>
+                <pre><code>&lt;st-textarea sync:value="draft" on:input="onDraft"&gt;&lt;/st-textarea&gt;
+&lt;span&gt;字数统计&lt;/span&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { draft: "", charCount: 0 },
+    proto: {
+      onDraft(e) {
+        this.charCount = e.target.value.length;
+      },
+    },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>字号缩放与圆角</h2>
+              <p class="doc-section-lead">与 input 一样，默认尺寸都用 em。只改宿主的 <code>font-size</code>，内边距、行高、圆角会一起缩放；单独覆写 width / border-radius 也可以。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>font-size / width / radius</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">12px</span>
+                    <st-textarea style="font-size: 12px;" rows="2" placeholder="小号 12px"></st-textarea>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">16px</span>
+                    <st-textarea style="font-size: 16px;" rows="2" placeholder="大号 16px"></st-textarea>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">width + 圆角</span>
+                    <st-textarea style="width: 100%; border-radius: 1em;" rows="2" placeholder="border-radius: 1em"></st-textarea>
+                  </div>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-textarea style="font-size: 12px;" rows="2"&gt;&lt;/st-textarea&gt;
+&lt;st-textarea style="font-size: 16px;" rows="2"&gt;&lt;/st-textarea&gt;
+&lt;st-textarea style="border-radius: 1em;"&gt;&lt;/st-textarea&gt;</code></pre>
+              </details>
+            </section>
 
             <div class="doc-cols">
               <div class="doc-block">
                 <h3>属性</h3>
                 <table class="api">
                   <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
-                  <tbody><tr><td><code>variant</code></td><td>"outlined" | "filled"</td><td>"outlined"</td><td>M3 输入框类型</td></tr><tr><td><code>rows</code></td><td>number</td><td>3</td><td>可见行数 / autosize 最小高度</td></tr><tr><td><code>autosize</code></td><td>boolean</td><td>无</td><td>按内容自动撑开高度</td></tr><tr><td><code>default-value</code></td><td>string</td><td>无</td><td>初始值</td></tr><tr><td><code>placeholder</code></td><td>string</td><td>无</td><td>占位文本</td></tr><tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>caret 与 focus 描边色</td></tr></tbody>
+                  <tbody>
+                    <tr><td><code>variant</code></td><td>"outlined" | "filled"</td><td>"outlined"</td><td>M3 两种输入框类型</td></tr>
+                    <tr><td><code>rows</code></td><td>number</td><td>3</td><td>可见行数；autosize 时是最小高度</td></tr>
+                    <tr><td><code>autosize</code></td><td>boolean</td><td>无</td><td>高度随内容自动撑开，隐藏拖拽手柄</td></tr>
+                    <tr><td><code>default-value</code></td><td>string</td><td>无</td><td>初始值；attached 时读取一次</td></tr>
+                    <tr><td><code>placeholder</code></td><td>string</td><td>无</td><td>占位文本</td></tr>
+                    <tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>caret 与 focus 描边 / 底线色</td></tr>
+                    <tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>0.38 透明度，阻断聚焦与输入</td></tr>
+                    <tr><td><code>readonly</code></td><td>boolean</td><td>无</td><td>可聚焦、不可修改</td></tr>
+                  </tbody>
                 </table>
               </div>
               <div class="doc-block">
                 <h3>插槽 / 事件 / 注意</h3>
-                <ul class="api-list"><li>运行时状态：<code>el.value</code> 读写；初始值用 <code>default-value</code>。</li><li>事件：<code>input</code> / <code>change</code>；方法：<code>focus()</code> / <code>blur()</code>。</li></ul>
+                <ul class="api-list">
+                  <li>没有图标插槽；需要前缀信息时在组件外布局。</li>
+                  <li>事件：<code>input</code> / <code>change</code>；change 由组件转发为 composed。</li>
+                  <li>方法：<code>focus()</code> / <code>blur()</code>；焦点在内部原生 textarea 上。</li>
+                  <li><code>value</code> 是运行时 property：ofa 页面用 <code>sync:value</code> 双向绑定，纯 JS 用 <code>el.value</code> 读写；初始值用 <code>default-value</code>。</li>
+                  <li><code>autosize</code> 下 <code>rows</code> 只是最小高度；拖拽手柄默认关闭。</li>
+                </ul>
               </div>
             </div>
-
-            <details class="snippet">
-              <summary>示例代码</summary>
-              <pre><code>&lt;st-textarea rows="3" autosize placeholder="写点什么……"&gt;&lt;/st-textarea&gt;</code></pre>
-            </details>
 
             <nav class="doc-pager" aria-label="上下篇">
               <a class="pager-link" olink href="./input.html"><span>上一页</span>← Input</a><a class="pager-link pager-next" olink href="./select.html"><span>下一页</span>Select →</a>
             </nav>
           </article>
-
-        </div>
-      </div>
       <script>
-        export const parent = "../layout.html";
+        export const parent = "./layout.html";
 
         export default async () => ({
           data: {
-            selectValue: "",
-            dialogOpen: false,
-            collapsed: false,
-            tab: 0,
-            tabLabels: ["概览", "活动", "设置"],
-            navTab: 0,
-            navLabels: ["首页", "发现", "我的"],
-            toolResult: "（未调用）",
+            draft: "Senti-UI 的多行输入框，支持受控值与字数统计。",
+            charCount: 27,
           },
           proto: {
-            get tabLabel() {
-              return this.tabLabels[this.tab] || "";
+            onDraft(e) {
+              this.charCount = e.target.value.length;
             },
-            get navLabel() {
-              return this.navLabels[this.navTab] || "";
+            fillDraft() {
+              this.draft = `第一行：程序写入的受控值
+第二行：textarea 会立即更新
+第三行：字数同步重算`;
+              this.charCount = this.draft.length;
             },
-            goDoc(id) {
-              this.goto("./" + id + ".html");
-            },
-            onNavigate(e) {
-              if (e.target.value) this.goto("./" + e.target.value + ".html");
-            },
-            onSelect(e) {
-              this.selectValue = e.target.value || "";
-            },
-            runToast() {
-              if (!window.__site) return;
-              this.toolResult = "toast → 已弹出（3s）";
-              window.__site.toast("这是一条 toast。");
-            },
-            async runAlert() {
-              if (!window.__site) return;
-              const ok = await window.__site.alert({ title: "操作成功", message: "这是 alert 命令式对话框。", ok: "知道了" });
-              this.toolResult = "alert → " + ok;
-            },
-            async runConfirm() {
-              if (!window.__site) return;
-              const ok = await window.__site.confirm({ title: "确认删除", message: "确定删除这条记录吗？", yes: "删除", cancel: "取消", color: "error" });
-              this.toolResult = "confirm → " + ok;
-            },
-            async runPrompt() {
-              if (!window.__site) return;
-              const value = await window.__site.prompt({ title: "重命名", message: "输入新的名称", placeholder: "新名称" });
-              this.toolResult = "prompt → " + JSON.stringify(value);
-            },
-            openCtx(e) {
-              e.preventDefault();
-              if (!window.__site) return;
-              const self = this;
-              window.__site.contextMenu(e, [
-                { id: "copy", label: "复制", prefix: "⧉" },
-                { id: "rename", label: "重命名", prefix: "✏" },
-                { separator: true },
-                { id: "delete", label: "删除", prefix: "⌫", disabled: true },
-              ]).then((id) => { self.toolResult = "contextMenu → " + (id || "未选择"); });
+            clearDraft() {
+              this.draft = "";
+              this.charCount = 0;
             },
           },
         });

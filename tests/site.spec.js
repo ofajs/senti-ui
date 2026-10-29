@@ -227,29 +227,34 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   const state = await page.evaluate(() => {
     const pages = [...document.querySelectorAll("o-page")];
     const layout = pages.find((op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav"));
+    const docs = pages.find((op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side"));
     const child = pages.find((op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page"));
     const sr = child.shadowRoot;
+    const dsr = docs.shadowRoot;
     return {
       path: location.pathname,
       title: document.title,
       header: !!layout,
       pages: pages.length,
-      sideItems: sr.querySelectorAll(".docs-side st-list-item").length,
-      active: [...sr.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
+      sideItems: dsr.querySelectorAll(".docs-side st-list-item").length,
+      active: [...dsr.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
         x.textContent.replace(/\s+/g, " ").trim()
       ),
       headerNav: [...layout.shadowRoot.querySelectorAll(".layout-nav st-button")].map((b) =>
         b.getAttribute("variant")
       ),
-      sidebar: !!sr.querySelector(".docs-side"),
-      picker: !!sr.querySelector(".docs-picker"),
+      sidebar: !!dsr.querySelector(".docs-side"),
+      picker: !!dsr.querySelector(".docs-picker"),
+      pickerValue: dsr.querySelector(".docs-picker").value,
       progress: !!layout.shadowRoot.querySelector(".read-progress st-progress"),
       h1: sr.querySelector("h1").textContent.trim(),
       apiRows: sr.querySelectorAll(".api tbody tr").length,
-      demo: !!sr.querySelector(".demo"),
+      sections: sr.querySelectorAll(".doc-section").length,
+      demos: sr.querySelectorAll(".demo").length,
       pager: !!sr.querySelector(".doc-pager .pager-next"),
       animation: getComputedStyle(child).animationName,
-      legacyDocsLinks: [...sr.querySelectorAll("a[href]")].filter((a) => {
+      slotContainer: getComputedStyle(dsr.querySelector(".docs-body")).position,
+      legacyDocsLinks: [sr, dsr].flatMap((root) => [...root.querySelectorAll("a[href]")]).filter((a) => {
         const href = a.getAttribute("href") || "";
         return href.includes("../docs") || href.includes("/docs/index.html#/docs/");
       }).length,
@@ -259,50 +264,59 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(state.path).toBe("/site/docs/input.html");
   expect(state.title).toContain("Input — 组件文档");
   expect(state.header).toBe(true);
-  expect(state.pages).toBe(2);
-  expect(state.sideItems).toBe(21);
+  expect(state.pages).toBe(3);
+  expect(state.sideItems).toBe(22);
   expect(state.active[0]).toContain("Input");
   expect(state.headerNav).toEqual(["outlined", "filled"]);
   expect(state.sidebar).toBe(true);
   expect(state.picker).toBe(true);
+  expect(state.pickerValue).toBe("input");
   expect(state.progress).toBe(true);
   expect(state.h1).toBe("Input st-input");
   expect(state.apiRows).toBeGreaterThan(2);
-  expect(state.demo).toBe(true);
+  expect(state.sections).toBeGreaterThanOrEqual(4);
+  expect(state.demos).toBeGreaterThanOrEqual(4);
   expect(state.pager).toBe(true);
-  expect(state.animation).toContain("st-page-in");
+  expect(state.animation).toContain("doc-page-in");
+  expect(state.slotContainer).toBe("relative");
   expect(state.legacyDocsLinks).toBe(0);
 
   // 侧栏切换：真实路径 + 布局/侧栏不销毁 + active 更新
   await page.evaluate(() => {
-    const child = [...document.querySelectorAll("o-page")].find(
-      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    const docs = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side")
     );
-    [...child.shadowRoot.querySelectorAll(".docs-side st-list-item")]
+    [...docs.shadowRoot.querySelectorAll(".docs-side st-list-item")]
       .find((x) => x.textContent.includes("Slider"))
       .click();
   });
   await page.waitForURL("**/site/docs/slider.html", { timeout: 30_000 });
   await waitDocPage(page, "Slider");
   const after = await page.evaluate(() => {
-    const child = [...document.querySelectorAll("o-page")].find(
-      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    const docs = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side")
     );
     return {
       pages: [...document.querySelectorAll("o-page")].length,
-      active: [...child.shadowRoot.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
+      sidebars: [...document.querySelectorAll("o-page")].filter(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side")
+      ).length,
+      active: [...docs.shadowRoot.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
         x.textContent.replace(/\s+/g, " ").trim()
       ),
+      pickerValue: docs.shadowRoot.querySelector(".docs-picker").value,
     };
   });
-  expect(after.pages).toBe(2);
+  expect(after.pages).toBe(3);
+  expect(after.sidebars).toBe(1);
   expect(after.active[0]).toContain("Slider");
+  expect(after.pickerValue).toBe("slider");
 
   // 上一篇 / 下一篇（olink）：保持 SCSR 布局
   await page.locator(".pager-next").click();
   await page.waitForURL("**/site/docs/dialog.html", { timeout: 30_000 });
   await waitDocPage(page, "Dialog");
-  expect(await page.evaluate(() => [...document.querySelectorAll("o-page")].length)).toBe(2);
+  expect(await page.evaluate(() => [...document.querySelectorAll("o-page")].length)).toBe(3);
   expect(errors).toEqual([]);
 });
 
@@ -314,13 +328,24 @@ test("组件文档首页：21 张卡片可进入独立页", async ({ page }) => 
     );
     return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 21);
   });
-  const cards = await page.evaluate(() => {
+  const overview = await page.evaluate(() => {
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
     );
-    return child.shadowRoot.querySelectorAll(".docs-card").length;
+    const sr = child.shadowRoot;
+    return {
+      cards: sr.querySelectorAll(".docs-card").length,
+      groups: [...sr.querySelectorAll(".docs-group")].map((g) => ({
+        title: g.querySelector("h2").textContent.replace(/\s+/g, " ").trim(),
+        cards: g.querySelectorAll(".docs-card").length,
+      })),
+    };
   });
-  expect(cards).toBe(21);
+  expect(overview.cards).toBe(21);
+  expect(overview.groups).toEqual([
+    { title: "基础组件 18", cards: 18 },
+    { title: "辅助组件 3", cards: 3 },
+  ]);
   await page.evaluate(() => {
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
@@ -343,15 +368,148 @@ test("首页卡片进入对应组件文档，header 保持共享", async ({ page
     const pages = [...document.querySelectorAll("o-page")];
     const layout = pages.find((op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav"));
     const child = pages.find((op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page"));
+    const docs = pages.find((op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side"));
     return {
       pages: pages.length,
       sharedHeader: !!layout,
-      active: [...child.shadowRoot.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
+      active: [...docs.shadowRoot.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
         x.textContent.replace(/\s+/g, " ").trim()
       ),
     };
   });
-  expect(state.pages).toBe(2);
+  expect(state.pages).toBe(3);
   expect(state.sharedHeader).toBe(true);
   expect(state.active[0]).toContain("Button");
+});
+
+test("Ripple 文档：并列示例只触发被点的波纹（o-page 内绑定最近父元素）", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/site/docs/ripple.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await waitDocPage(page, "Ripple");
+
+  const box = await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    const stage = child.shadowRoot.querySelector(".doc-section .demo-stage");
+    const target = stage.querySelector("div[style*='position: relative']");
+    const r = target.getBoundingClientRect();
+    return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+  });
+  await page.mouse.click(box.x, box.y);
+  await page.waitForTimeout(150);
+
+  const counts = await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    return [...child.shadowRoot.querySelectorAll("st-ripple")].map(
+      (r) => r.shadowRoot.querySelectorAll(".ripple").length
+    );
+  });
+  expect(counts.filter((n) => n > 0)).toHaveLength(1);
+  expect(counts.reduce((a, b) => a + b, 0)).toBe(1);
+  expect(errors).toEqual([]);
+});
+
+test("滚动：body overflow hidden，整站滚动发生在内部容器，header/侧栏不跟随页面滚走", async ({ page }) => {
+  await page.goto("/site/docs/input.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await waitDocPage(page, "Input");
+
+  const initial = await page.evaluate(() => {
+    const layout = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
+    );
+    const scroller = layout.shadowRoot.querySelector(".site-scroll");
+    return {
+      bodyOverflow: getComputedStyle(document.body).overflow,
+      overscroll: getComputedStyle(scroller).overscrollBehaviorY,
+      docScroll: document.documentElement.scrollHeight,
+      viewport: innerHeight,
+      scrollable: scroller.scrollHeight > scroller.clientHeight + 10,
+    };
+  });
+  expect(initial.bodyOverflow).toBe("hidden");
+  expect(initial.overscroll).toBe("none");
+  expect(initial.docScroll).toBe(initial.viewport);
+  expect(initial.scrollable).toBe(true);
+
+  await page.evaluate(() => {
+    const layout = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
+    );
+    layout.shadowRoot.querySelector(".site-scroll").scrollTop = 900;
+  });
+  await page.waitForTimeout(250);
+
+  const after = await page.evaluate(() => {
+    const layout = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
+    );
+    const docs = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side")
+    );
+    const scroller = layout.shadowRoot.querySelector(".site-scroll");
+    return {
+      windowY: window.scrollY,
+      generatedScrollTop: scroller.scrollTop,
+      headerTop: layout.shadowRoot.querySelector(".top").getBoundingClientRect().top,
+      progress: Number(
+        layout.shadowRoot.querySelector(".read-progress st-progress").getAttribute("value")
+      ),
+      sideTop: docs.shadowRoot.querySelector(".docs-side").getBoundingClientRect().top,
+      toTop: getComputedStyle(layout.shadowRoot.querySelector(".to-top")).display,
+    };
+  });
+  expect(after.windowY).toBe(0);
+  expect(after.generatedScrollTop).toBe(900);
+  expect(after.headerTop).toBe(0);
+  expect(after.progress).toBeGreaterThan(0);
+  expect(after.sideTop).toBeGreaterThan(60);
+  expect(after.sideTop).toBeLessThan(90);
+  expect(after.toTop).toBe("grid");
+});
+
+
+test("固定定位弹层：页面动画结束后不残留 transform，对话框覆盖整个视口", async ({ page }) => {
+  await page.goto("/site/", { waitUntil: "networkidle", timeout: 60_000 });
+  await waitHome(page);
+  await page.waitForTimeout(350);
+  await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp")
+    );
+    [...child.shadowRoot.querySelectorAll("st-button")]
+      .find((el) => el.textContent.includes("打开对话框"))
+      .click();
+  });
+  await page.waitForFunction(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp")
+    );
+    return !!child && child.shadowRoot.querySelector("st-dialog")?.hasAttribute("open");
+  });
+
+  const box = await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp")
+    );
+    const dlg = child.shadowRoot.querySelector("st-dialog[open]");
+    const r = dlg.getBoundingClientRect();
+    return {
+      transform: getComputedStyle(child).transform,
+      width: r.width,
+      height: r.height,
+      x: r.x,
+      y: r.y,
+      viewportWidth: innerWidth,
+      viewportHeight: innerHeight,
+    };
+  });
+  expect(box.transform).toBe("none");
+  expect(box.x).toBe(0);
+  expect(box.y).toBe(0);
+  expect(box.width).toBe(box.viewportWidth);
+  expect(box.height).toBe(box.viewportHeight);
 });

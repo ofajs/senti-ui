@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>组件文档 — Senti-UI</title>
+    <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); }
+  </style>
+</head>
+  <body>
+    <!-- SCSR 二级父页：文档侧栏 / 移动端组件选择器只在这里维护一次。
+         每个组件页 export const parent = "./layout.html"，正文通过 <slot> 进入。 -->
+    <o-app src="../app-config.js">
+      <template page>
+        <link rel="stylesheet" href="../docs.css" />
+
+        <div class="docs-shell">
+          <aside class="docs-side" aria-label="组件文档目录">
+            <p class="side-title">Components · 21</p>
+
+            <st-list class="side-list">
+              <st-list-item button class:active="current === 'index'" on:click="goDoc('index')">
+                <span>概览</span><code slot="suffix">all</code>
+              </st-list-item>
+            </st-list>
+
+            <p class="side-group">动作</p>
+            <st-list class="side-list">
+              <st-list-item button class:active="current === 'button'" on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
+              <st-list-item button class:active="current === 'ripple'" on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
+            </st-list>
+
+            <p class="side-group">表单</p>
+            <st-list class="side-list">
+              <st-list-item button class:active="current === 'input'" on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
+              <st-list-item button class:active="current === 'textarea'" on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
+              <st-list-item button class:active="current === 'select'" on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
+              <st-list-item button class:active="current === 'checkbox'" on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
+              <st-list-item button class:active="current === 'switch'" on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
+              <st-list-item button class:active="current === 'radio'" on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
+              <st-list-item button class:active="current === 'slider'" on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
+            </st-list>
+
+            <p class="side-group">反馈</p>
+            <st-list class="side-list">
+              <st-list-item button class:active="current === 'dialog'" on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
+              <st-list-item button class:active="current === 'menu'" on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
+              <st-list-item button class:active="current === 'snackbar'" on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
+              <st-list-item button class:active="current === 'tooltip'" on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
+              <st-list-item button class:active="current === 'progress'" on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
+              <st-list-item button class:active="current === 'tools'" on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
+            </st-list>
+
+            <p class="side-group">内容</p>
+            <st-list class="side-list">
+              <st-list-item button class:active="current === 'card'" on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
+              <st-list-item button class:active="current === 'badges'" on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
+              <st-list-item button class:active="current === 'collapse'" on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
+              <st-list-item button class:active="current === 'list'" on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
+            </st-list>
+
+            <p class="side-group">导航</p>
+            <st-list class="side-list">
+              <st-list-item button class:active="current === 'tabs'" on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
+              <st-list-item button class:active="current === 'navigation'" on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
+            </st-list>
+          </aside>
+
+          <div class="docs-body">
+            <st-select class="docs-picker" placeholder="选择组件" on:change="onNavigate">
+              <option value="index">概览</option>
+              <option value="button">Button</option>
+              <option value="ripple">Ripple</option>
+              <option value="input">Input</option>
+              <option value="textarea">Textarea</option>
+              <option value="select">Select</option>
+              <option value="checkbox">Checkbox</option>
+              <option value="switch">Switch</option>
+              <option value="radio">Radio</option>
+              <option value="slider">Slider</option>
+              <option value="dialog">Dialog</option>
+              <option value="menu">Menu</option>
+              <option value="snackbar">Snackbar</option>
+              <option value="tooltip">Tooltip</option>
+              <option value="progress">Progress</option>
+              <option value="tools">Command tools</option>
+              <option value="card">Card</option>
+              <option value="badges">Badges</option>
+              <option value="collapse">Collapse</option>
+              <option value="list">List</option>
+              <option value="tabs">Tabs</option>
+              <option value="navigation">Navigation</option>
+            </st-select>
+
+            <slot></slot>
+          </div>
+        </div>
+
+        <script>
+          export const parent = "../layout.html";
+
+          export default async () => ({
+            data: {
+              current: "index",
+            },
+            ready() {
+              this.syncActive();
+              this.syncPicker();
+              // 移动端 picker 可能比父页晚升级，升级后再同步一次当前项
+              customElements.whenDefined("st-select").then(() => this.syncPicker());
+              this._pickerTimer = setTimeout(() => this.syncPicker(), 160);
+            },
+            routerChange({ current } = {}) {
+              this.syncActive(current);
+              this.syncPicker();
+              clearTimeout(this._pickerTimer);
+              this._pickerTimer = setTimeout(() => this.syncPicker(), 80);
+            },
+            detached() {
+              clearTimeout(this._pickerTimer);
+            },
+            proto: {
+              syncActive(current) {
+                const raw =
+                  (current && current.src) || location.pathname.split("?")[0];
+                const file = raw.split("?")[0].split("/").pop().replace(/\.html$/, "");
+                this.current = !file || file === "index" || file === "layout" ? "index" : file;
+              },
+              syncPicker() {
+                const picker = this.ele.shadowRoot?.querySelector(".docs-picker");
+                if (!picker) return;
+                if (picker.value !== this.current) picker.value = this.current;
+              },
+              onNavigate(e) {
+                const id = e.target.value;
+                if (id) this.goDoc(id);
+              },
+              goDoc(id) {
+                this.goto(id === "index" ? "./index.html" : "./" + id + ".html");
+              },
+            },
+          });
+        </script>
+      </template>
+    </o-app>
+
+    <script type="module">
+      import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+      import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+    </script>
+  </body>
+</html>

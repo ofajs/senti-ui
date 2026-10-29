@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="../../packages/skin/apple.css" />
   <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
   <style>
-    html, body { margin: 0; padding: 0; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
     body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
     .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
     .nojs h1 { margin: 0 0 12px; font-size: 32px; }
@@ -61,178 +61,312 @@
     <template page>
       <link rel="stylesheet" href="../docs.css" />
 
-      <div class="docs-shell">
-<aside class="docs-side">
-  <p class="side-title">Components · 21</p>
-  <p class="side-group">动作</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
-    <st-list-item button on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
-  </st-list>
-  <p class="side-group">表单</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
-    <st-list-item button on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
-    <st-list-item button on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
-    <st-list-item button on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
-    <st-list-item button on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
-    <st-list-item button on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
-    <st-list-item button on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
-  </st-list>
-  <p class="side-group">反馈</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
-    <st-list-item button on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
-    <st-list-item button on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
-    <st-list-item button on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
-    <st-list-item button class="active" on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
-    <st-list-item button on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
-  </st-list>
-  <p class="side-group">内容</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
-    <st-list-item button on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
-    <st-list-item button on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
-    <st-list-item button on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
-  </st-list>
-  <p class="side-group">导航</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
-    <st-list-item button on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
-  </st-list>
-</aside>
-        <div class="docs-body">
-          <st-select class="docs-picker" placeholder="选择组件" default-value="progress" on:change="onNavigate">
-            <option value="button">Button</option>
-            <option value="ripple">Ripple</option>
-            <option value="input">Input</option>
-            <option value="textarea">Textarea</option>
-            <option value="select">Select</option>
-            <option value="checkbox">Checkbox</option>
-            <option value="switch">Switch</option>
-            <option value="radio">Radio</option>
-            <option value="slider">Slider</option>
-            <option value="dialog">Dialog</option>
-            <option value="menu">Menu</option>
-            <option value="snackbar">Snackbar</option>
-            <option value="tooltip">Tooltip</option>
-            <option value="progress" selected>Progress</option>
-            <option value="tools">Command tools</option>
-            <option value="card">Card</option>
-            <option value="badges">Badges</option>
-            <option value="collapse">Collapse</option>
-            <option value="list">List</option>
-            <option value="tabs">Tabs</option>
-            <option value="navigation">Navigation</option>
-          </st-select>
           <article class="doc-page">
             <header class="doc-hero">
               <p class="doc-kicker">反馈 · 14 / 21</p>
               <h1>Progress <code>st-progress</code></h1>
-              <p class="doc-lead">进度：线形 / 环形 × 确定 / 不定。缺省 value 自动视为不定。</p>
+              <p class="doc-lead">线形与环形两种形态，确定值与不定进度两种模式。value 是普通属性，配合 attr:value 即可随数据实时变化；缺省 value 会自动进入不定状态。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
                 <a href="https://github.com/ofajs/senti-ui/blob/main/packages/progress/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
               </div>
             </header>
 
-            <div class="demo">
-              <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-progress</code></div>
-              <div class="demo-stage">
-                <st-progress value="64" style="width:100%;max-width:360px;"></st-progress>
-<st-progress indeterminate style="width:100%;max-width:360px;"></st-progress>
-<st-progress circular value="72"></st-progress>
-<st-progress circular indeterminate color="success"></st-progress>
+            <section class="doc-section">
+              <h2>确定进度：线形与环形</h2>
+              <p class="doc-section-lead">value 取值 0–100，超出范围会被夹到边界。线形默认占满可用宽度，环形固定 40px 直径；两者都能放在网格或卡片里单独使用。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>value + circular</code></div>
+                <div class="demo-stage grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                  <div class="demo-cell">
+                    <span class="demo-label">线形 · 36%</span>
+                    <st-progress value="36" style="width: 100%;"></st-progress>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">环形 · 36%</span>
+                    <st-progress circular value="36"></st-progress>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">线形 · 100%</span>
+                    <st-progress value="100" style="width: 100%;"></st-progress>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">环形 · 100%</span>
+                    <st-progress circular value="100"></st-progress>
+                  </div>
+                </div>
               </div>
-            </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-progress value="36"&gt;&lt;/st-progress&gt;
+
+&lt;!-- 环形：40px 直径，stroke 随 font-size 缩放 --&gt;
+&lt;st-progress circular value="36"&gt;&lt;/st-progress&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>运行时更新 value</h2>
+              <p class="doc-section-lead">value 是标签属性，页面里用 attr:value 绑定 data 数字。值变化时确定态有 0.3s 平滑过渡，线形和环形会同步变化。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>attr:value</code></div>
+                <div class="demo-stage block">
+                  <st-progress attr:value="progress" style="width: 100%; max-width: 460px;"></st-progress>
+                  <div class="row">
+                    <st-progress circular attr:value="progress"></st-progress>
+                    <st-button variant="outlined" on:click="step(-10)">−10</st-button>
+                    <st-button variant="outlined" on:click="step(10)">+10</st-button>
+                    <st-button variant="text" on:click="reset">重置</st-button>
+                    <st-button variant="text" on:click="simulate">模拟上传</st-button>
+                  </div>
+                  <span class="demo-note">progress = {{progress}}% · 模拟上传会从 0 递增到 100</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（attr:value 绑定）</summary>
+                <pre><code>&lt;st-progress attr:value="progress"&gt;&lt;/st-progress&gt;
+&lt;st-progress circular attr:value="progress"&gt;&lt;/st-progress&gt;
+&lt;st-button on:click="step(10)"&gt;+10&lt;/st-button&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { progress: 36 },
+    proto: {
+      step(delta) {
+        this.progress = Math.max(0, Math.min(100, this.progress + delta));
+      },
+    },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>不定进度</h2>
+              <p class="doc-section-lead">设置 indeterminate 后忽略 value，线形显示循环滑块，环形显示旋转弧线。不写 value 也会自动视为不定，适合还不知道总进度的场景。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>indeterminate</code></div>
+                <div class="demo-stage block">
+                  <st-progress indeterminate style="width: 100%; max-width: 420px;"></st-progress>
+                  <st-progress style="width: 100%; max-width: 420px;"></st-progress>
+                  <div class="row">
+                    <st-progress circular indeterminate></st-progress>
+                    <st-progress circular indeterminate color="success"></st-progress>
+                    <st-progress circular indeterminate color="error" style="font-size: 20px;"></st-progress>
+                  </div>
+                  <span class="demo-note">上面两条线形分别是「indeterminate」与「省略 value」；环形同样支持 color。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-progress indeterminate&gt;&lt;/st-progress&gt;
+&lt;st-progress&gt;&lt;/st-progress&gt; &lt;!-- 没有 value 同样视为不定 --&gt;
+&lt;st-progress circular indeterminate color="success"&gt;&lt;/st-progress&gt;
+
+&lt;!-- 系统开启“减少动态效果”时，动画时长会自动趋零 --&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>尺寸与高度</h2>
+              <p class="doc-section-lead">线形轨道高 0.286em，环形直径 2.857em；改 font-size 就能整体等比缩放，线形宽度仍由 width 或父容器决定。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>font-size / width</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">线形 · 10 像素</span>
+                    <st-progress value="55" style="font-size: 10px; width: 100%;"></st-progress>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">线形 · 20 像素</span>
+                    <st-progress value="55" style="font-size: 20px; width: 100%;"></st-progress>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">窄容器 160 像素</span>
+                    <st-progress value="55" style="width: 160px; max-width: 100%;"></st-progress>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">环形 · 10 像素</span>
+                    <st-progress circular value="55" style="font-size: 10px;"></st-progress>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">环形 · 14 像素</span>
+                    <st-progress circular value="55"></st-progress>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">环形 · 24 像素</span>
+                    <st-progress circular value="55" style="font-size: 24px;"></st-progress>
+                  </div>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-progress value="55" style="font-size: 20px; width: 100%;"&gt;&lt;/st-progress&gt;
+&lt;st-progress circular value="55" style="font-size: 24px;"&gt;&lt;/st-progress&gt;
+
+&lt;!-- 线形宽度用原生 width 控制 --&gt;
+&lt;st-progress value="55" style="width: 160px;"&gt;&lt;/st-progress&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>color 语义换色</h2>
+              <p class="doc-section-lead">color 接受 M3 角色名（primary / secondary / tertiary / error / success）或 color 工具里的自定义变量名。默认使用 primary，切换种子色时整站进度条一起变化。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>color</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">primary（默认）</span>
+                    <st-progress value="70" style="width: 100%;"></st-progress>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">success</span>
+                    <st-progress value="70" color="success" style="width: 100%;"></st-progress>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">error</span>
+                    <st-progress value="70" color="error" style="width: 100%;"></st-progress>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">tertiary</span>
+                    <st-progress value="70" color="tertiary" style="width: 100%;"></st-progress>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">环形 · error</span>
+                    <st-progress circular value="70" color="error"></st-progress>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">环形 · success</span>
+                    <st-progress circular value="70" color="success"></st-progress>
+                  </div>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-progress value="70" color="success"&gt;&lt;/st-progress&gt;
+&lt;st-progress value="70" color="error"&gt;&lt;/st-progress&gt;
+&lt;st-progress circular value="70" color="tertiary"&gt;&lt;/st-progress&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>场景：同步队列</h2>
+              <p class="doc-section-lead">多个进度条共享一组 data，每个任务用 attr:value 绑定自己的数值，颜色表达任务状态。按钮推进后可以观察平滑过渡。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>任务列表</code></div>
+                <div class="demo-stage block">
+                  <div style="display: grid; gap: 14px; width: 100%; max-width: 540px;">
+                    <div style="display: grid; gap: 6px;">
+                      <div style="display: flex; justify-content: space-between; gap: 10px; align-items: baseline;">
+                        <span class="demo-label">照片同步</span>
+                        <span style="font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; color: var(--md-sys-color-on-surface-variant);">{{photo}}%</span>
+                      </div>
+                      <st-progress attr:value="photo" style="width: 100%;"></st-progress>
+                    </div>
+                    <div style="display: grid; gap: 6px;">
+                      <div style="display: flex; justify-content: space-between; gap: 10px; align-items: baseline;">
+                        <span class="demo-label">云盘备份</span>
+                        <span style="font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; color: var(--md-sys-color-on-surface-variant);">{{backup}}%</span>
+                      </div>
+                      <st-progress attr:value="backup" color="success" style="width: 100%;"></st-progress>
+                    </div>
+                    <div style="display: grid; gap: 6px;">
+                      <div style="display: flex; justify-content: space-between; gap: 10px; align-items: baseline;">
+                        <span class="demo-label">病毒扫描</span>
+                        <span style="font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; color: var(--md-sys-color-on-surface-variant);">{{scan}}%</span>
+                      </div>
+                      <st-progress attr:value="scan" color="tertiary" style="width: 100%;"></st-progress>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <st-button variant="outlined" on:click="advance">推进任务</st-button>
+                    <st-button variant="text" on:click="clearTasks">清零</st-button>
+                  </div>
+                  <span class="demo-note">三个进度分别绑定 photo / backup / scan；推进任务每次各加一截，到 100 停止。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（多任务）</summary>
+                <pre><code>&lt;st-progress attr:value="photo"&gt;&lt;/st-progress&gt;
+&lt;st-progress attr:value="backup" color="success"&gt;&lt;/st-progress&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { photo: 45, backup: 80 },
+    proto: {
+      advance() {
+        this.photo = Math.min(this.photo + 12, 100);
+        this.backup = Math.min(this.backup + 8, 100);
+      },
+    },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
 
             <div class="doc-cols">
               <div class="doc-block">
                 <h3>属性</h3>
                 <table class="api">
                   <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
-                  <tbody><tr><td><code>value</code></td><td>number（0-100）</td><td>无</td><td>确定进度；缺省视为不定</td></tr><tr><td><code>indeterminate</code></td><td>boolean</td><td>无</td><td>不定动画；设置后忽略 value</td></tr><tr><td><code>circular</code></td><td>boolean</td><td>无</td><td>环形</td></tr><tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>进度色</td></tr></tbody>
+                  <tbody>
+                    <tr><td><code>value</code></td><td>number（0–100）</td><td>无</td><td>确定进度；缺省或非数字视为不定</td></tr>
+                    <tr><td><code>indeterminate</code></td><td>boolean</td><td>无</td><td>不定动画；设置后忽略 value</td></tr>
+                    <tr><td><code>circular</code></td><td>boolean</td><td>无</td><td>环形，默认线形</td></tr>
+                    <tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>primary</td><td>进度色</td></tr>
+                  </tbody>
                 </table>
               </div>
               <div class="doc-block">
                 <h3>插槽 / 事件 / 注意</h3>
-                <ul class="api-list"><li><code>prefers-reduced-motion</code> 下动画趋零。</li><li>线形宽度用 <code>width</code> / 容器控制；改 font-size 整体等比缩放。</li></ul>
+                <ul class="api-list">
+                  <li>无插槽、无事件，纯展示组件。</li>
+                  <li>线形宽度由 <code>width</code> 或父容器控制；线形高度 = <code>0.286em</code>。</li>
+                  <li>环形直径 <code>2.857em</code>、stroke <code>0.286em</code>，随 font-size 缩放。</li>
+                  <li>确定态数值变化有 0.3s 平滑过渡；不定态循环播放。</li>
+                  <li><code>prefers-reduced-motion</code> 下动画时长会趋零。</li>
+                </ul>
               </div>
             </div>
-
-            <details class="snippet">
-              <summary>示例代码</summary>
-              <pre><code>&lt;st-progress value="60"&gt;&lt;/st-progress&gt;
-&lt;st-progress circular indeterminate&gt;&lt;/st-progress&gt;</code></pre>
-            </details>
 
             <nav class="doc-pager" aria-label="上下篇">
               <a class="pager-link" olink href="./tooltip.html"><span>上一页</span>← Tooltip</a><a class="pager-link pager-next" olink href="./tools.html"><span>下一页</span>Command tools →</a>
             </nav>
           </article>
-
-        </div>
-      </div>
       <script>
-        export const parent = "../layout.html";
+        export const parent = "./layout.html";
 
         export default async () => ({
           data: {
-            selectValue: "",
-            dialogOpen: false,
-            collapsed: false,
-            tab: 0,
-            tabLabels: ["概览", "活动", "设置"],
-            navTab: 0,
-            navLabels: ["首页", "发现", "我的"],
-            toolResult: "（未调用）",
+            progress: 36,
+            photo: 45,
+            backup: 80,
+            scan: 20,
           },
           proto: {
-            get tabLabel() {
-              return this.tabLabels[this.tab] || "";
+            step(delta) {
+              this.progress = Math.max(0, Math.min(100, this.progress + delta));
             },
-            get navLabel() {
-              return this.navLabels[this.navTab] || "";
+            reset() {
+              this.progress = 0;
             },
-            goDoc(id) {
-              this.goto("./" + id + ".html");
+            simulate() {
+              clearInterval(this._timer);
+              this.progress = 0;
+              this._timer = setInterval(() => {
+                this.progress = Math.min(this.progress + 5, 100);
+                if (this.progress >= 100) clearInterval(this._timer);
+              }, 120);
             },
-            onNavigate(e) {
-              if (e.target.value) this.goto("./" + e.target.value + ".html");
+            advance() {
+              this.photo = Math.min(this.photo + 12, 100);
+              this.backup = Math.min(this.backup + 8, 100);
+              this.scan = Math.min(this.scan + 15, 100);
             },
-            onSelect(e) {
-              this.selectValue = e.target.value || "";
-            },
-            runToast() {
-              if (!window.__site) return;
-              this.toolResult = "toast → 已弹出（3s）";
-              window.__site.toast("这是一条 toast。");
-            },
-            async runAlert() {
-              if (!window.__site) return;
-              const ok = await window.__site.alert({ title: "操作成功", message: "这是 alert 命令式对话框。", ok: "知道了" });
-              this.toolResult = "alert → " + ok;
-            },
-            async runConfirm() {
-              if (!window.__site) return;
-              const ok = await window.__site.confirm({ title: "确认删除", message: "确定删除这条记录吗？", yes: "删除", cancel: "取消", color: "error" });
-              this.toolResult = "confirm → " + ok;
-            },
-            async runPrompt() {
-              if (!window.__site) return;
-              const value = await window.__site.prompt({ title: "重命名", message: "输入新的名称", placeholder: "新名称" });
-              this.toolResult = "prompt → " + JSON.stringify(value);
-            },
-            openCtx(e) {
-              e.preventDefault();
-              if (!window.__site) return;
-              const self = this;
-              window.__site.contextMenu(e, [
-                { id: "copy", label: "复制", prefix: "⧉" },
-                { id: "rename", label: "重命名", prefix: "✏" },
-                { separator: true },
-                { id: "delete", label: "删除", prefix: "⌫", disabled: true },
-              ]).then((id) => { self.toolResult = "contextMenu → " + (id || "未选择"); });
+            clearTasks() {
+              this.photo = 0;
+              this.backup = 0;
+              this.scan = 0;
             },
           },
         });

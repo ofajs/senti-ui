@@ -1,6 +1,6 @@
 # Senti-UI 官网首页（site/）
 
-单页聚合型官网：把 20 个组件模块（29 个 `st-*` 标签）全部摆在一页里，按「动作 / 输入 / 反馈 / 内容 / 导航」分区展示，同时演示皮肤切换、深浅色主题、命令式工具与响应式布局。
+官网首页把 20 个组件模块（29 个 `st-*` 标签）全部摆在一页里，按「动作 / 输入 / 反馈 / 内容 / 导航」分区展示；组件文档则是每个组件一个独立 SCSR 页，按场景拆分多组可交互示例。两处共用同一套 header / footer 与皮肤、深浅色主题。
 
 采用 **ofa.js v5 + scsr**（Symphony Client-Server Rendering）：每个 URL 都是可直接访问的真实文档，站内跳转走 o-app 路由（真实路径，非 hash），而不是 hash 路由。
 
@@ -16,11 +16,12 @@ npm run dev
 
 ```
 site/
-  layout.html      # SCSR 共享父页：header / footer / 材质与主题 + <slot>
-  index.html       # 组件目录首页（子页，export const parent = "./layout.html"）
+  layout.html      # 一级父页：header / footer / 材质与主题 + <slot>
+  index.html       # 组件目录首页（export const parent = "./layout.html"）
   docs/
-    index.html     # 文档概览：21 张组件卡片
-    button.html    # 每个组件一页（共 21 页，均 export const parent = "../layout.html"）
+    layout.html    # 二级父页：左侧组件目录 / 移动端 picker + <slot>（parent 指向上级 layout）
+    index.html     # 文档概览：21 张组件卡片（parent = "./layout.html"）
+    button.html    # 每个组件一页（共 21 页，均 parent = "./layout.html"）
     input.html
     ...
   docs.css         # 文档页共用的 shadow 样式表
@@ -53,9 +54,12 @@ site/
 ```
 
 - `layout.html` 是 SCSR 的**共享父页**：header（品牌 / 组件与文档导航 / 材质菜单 / 主题 / GitHub）、footer、以及主题与材质的全局状态都在这里；子页在 `<slot>` 中渲染，切页时布局不销毁；
-- `index.html` 声明 `export const parent = "./layout.html"`；`docs/` 下每个组件页声明 `export const parent = "../layout.html"`；header、footer、阅读进度在 layout 中，切页时布局不销毁；
-- 文档侧栏在每个文档页内（`st-list` + `st-list-item` 生成同样的 21 项），这样首页 ↔ 文档、文档 ↔ 文档切换时页面宽度不变，不会因侧栏出现/消失而重排；
-- 页面切换动画：`app-config.js` 的 `pageAnime` 让离场页淡出，layout 的 `::slotted(o-page)` 让新页以不透明背景轻微上滑入场（0.24s，`prefers-reduced-motion` 下关闭）；新页不透明 + 覆盖，避免两页内容叠在一起闪烁；
+- `index.html` 声明 `export const parent = "./layout.html"`；`docs/layout.html` 再声明 `export const parent = "../layout.html"`，形成**多级嵌套布局**；`docs/` 下每个组件页声明 `export const parent = "./layout.html"`；
+- 文档左侧组件目录（`st-list` + `st-list-item`）和移动端 `st-select` 只存在于 `docs/layout.html` 一处；同父页的组件互相切换时侧栏不销毁、不重排，只替换 `<slot>` 里的正文；
+- 页面切换动画：`app-config.js` 的 `pageAnime` 让离场页淡出，两级 layout 的 `::slotted(o-page)` 让新页以不透明背景轻微上滑入场（0.24s，`prefers-reduced-motion` 下关闭）；新页不透明 + 覆盖，避免两页内容叠在一起闪烁；
+- **slot 外层必须是相对容器**（`.docs-body { position: relative }`）：离场页会被 scsr 设为 `position: absolute`，没有相对容器时会相对视口定位，切换瞬间露出旧内容造成“闪一下”；
+- **滚动容器固定为 `.site-scroll`**：文档 head 里 `html, body { height: 100%; overflow: hidden }`，layout 内部用 `.shell { height: 100dvh; overflow: hidden }` + `.site-scroll { overflow-y: auto; overscroll-behavior-y: none }`。这样整页不会在底部继续触发根节点的弹性回弹，header / 阅读进度 / 回到顶部始终固定在视口；滚动进度、`toTop()`、路由切换后的复位都基于 `.site-scroll` 而不是 `window`；
+- 页面入场动画不要用 `animation-fill-mode: both` 保留 `transform`：identity transform 也会成为 `position: fixed` 的包含块，对话框/菜单会相对页面而不是视口定位（内部滚动后尤其明显）。动画结束后必须回到 `transform: none`；
 - header 尽量用 senti-ui 组件搭：`st-button-group` + `st-button`（导航）、`st-menu` + `st-menu-item` + `st-button`（材质）、`st-icon-button` + `st-tooltip`（主题 / GitHub）、品牌也是 `st-button`；导航用页面实例的 `goto()` 保持真实路径与共享布局；
 - scsr 接管后，把当前 URL（`/site/`、`/site/index.html`、`/site/docs/button.html` 等）收编为 `<o-page src>`，用同一份 HTML 的 `template[page]` 转译成页面模块，然后移除内联 template；
 - 页面本体随后渲染在 `o-page` 的 shadow 内，`:host` 样式、`this.ele.shadowRoot` 等写法与普通页面模块一致；
@@ -95,13 +99,13 @@ site/
   - 插槽 / 事件 / 注意事项
   - 可折叠的示例代码
   - 指向 GitHub README 的入口
-- 左侧粘性目录在每个文档页内，用 `st-list` + `st-list-item` 搭；当前页在生成时高亮；移动端变成 `st-select` 组件切换器
+- 左侧粘性目录只在 `docs/layout.html` 维护一次，用 `st-list` + `st-list-item` 搭；父页在 `routerChange` 里按当前 URL 高亮，移动端自动显示 `st-select` 组件切换器
 - 页面内用 `st-progress` 做阅读进度条、`st-icon-button` + `st-tooltip` 做回到顶部
 - header 与首页完全共用；主题 / 材质切换在 header 中，只影响按钮 / 输入框
 - 仍然是 SCSR：每个组件页都是可直达、可刷新、可分享的真实文档
 - 页面切换有淡入 + 轻微上滑动画；header / 阅读进度常驻，内容区不因侧栏出现而重排
 
-新增组件文档时：在 `site/docs/` 复制一个页面改内容，并在**所有现有文档页**的侧栏 / 移动端选择器里补这一项（侧栏在各页内重复，可用脚本批量替换）；在 `site/docs/index.html` 补一张卡，同步首页卡片的 `./docs/{id}.html` 链接。
+新增组件文档时：在 `site/docs/` 复制一个页面改内容；只改 `site/docs/layout.html` 一处，补上侧栏项与移动端 `<option>`；再在 `site/docs/index.html` 补一张卡，并同步首页卡片的 `./docs/{id}.html` 链接。组件页本身不再包含侧栏。
 
 ## 首屏与无 JS
 
@@ -156,8 +160,10 @@ npm test
 
 - `/site/` 目录直开：25 张卡片、29 个 `st-*` 全部升级、无页面错误、`template[page]` 已被 scsr 移除、页面内没有 `/docs/` 链接；
 - 皮肤 / 主题 / 对话框交互；
-- 共享 layout：两个 `o-page`（layout + 子页）、header 导航 / 材质菜单 / 主题 / 回到首页；
-- 组件文档：独立页 `/site/docs/input.html`、每页 21 项侧栏、侧栏切换、上一页 / 下一页、阅读进度、页面切换动画；
+- 共享 layout：首页两个 `o-page`（layout + 子页）、header 导航 / 材质菜单 / 主题 / 回到首页；
+- 组件文档：三层 `o-page`（site layout + docs layout + 组件页）、侧栏只有一份、每页 4 组以上示例、侧栏切换、移动端 picker 跟随当前页、上一页 / 下一页、阅读进度、页面切换动画；
+- 滚动外壳：`body` 不滚动、内部 `.site-scroll` 滚动、`overscroll-behavior-y: none`，header / 侧栏固定，阅读进度随内部滚动更新，路由切换复位；
+- 固定弹层：页面动画结束后 `transform` 必须回到 `none`，对话框遮罩覆盖整个视口；
 - 文档首页 21 张卡片进入独立页；
 - 卡片右下角进入对应 `docs/{id}.html`，header 保持共享；
 - 禁用 JavaScript 时 `<noscript>` 兜底可见。
@@ -168,4 +174,4 @@ npm test
 
 ## 新增真实页面
 
-复制 `index.html` 为 `site/about.html`，保留 `<o-app src="./app-config.js">` 与 `template[page]`，内容换掉，并保留 `export const parent = "./layout.html"`；在 header / 首页用 `this.goto("./about.html")` 或 `<a olink href="./about.html">` 跳转即可。文档页放在 `site/docs/` 下，`parent` 写 `../layout.html`。不要给 `app-config.js` 加 `home`。
+复制 `index.html` 为 `site/about.html`，保留 `<o-app src="./app-config.js">` 与 `template[page]`，内容换掉，并保留 `export const parent = "./layout.html"`；在 header / 首页用 `this.goto("./about.html")` 或 `<a olink href="./about.html">` 跳转即可。文档页放在 `site/docs/` 下，`parent` 写 `./layout.html`。不要给 `app-config.js` 加 `home`。

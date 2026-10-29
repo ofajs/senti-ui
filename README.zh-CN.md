@@ -127,7 +127,7 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 
 ## 官网首页
 
-单页聚合官网在 [`site/`](./site/index.html)：全部组件摆在一页，支持实时换肤、深浅色切换与三种材质并排对比。采用 **ofa.js v5 + scsr**（真实路径文档；加载后由 scsr 收编为 o-app 页面）。组件使用说明在 [`site/docs/`](./site/docs/index.html)：每个组件一个独立 SCSR 页，包含可交互示例、属性表、插槽 / 事件。
+单页聚合官网在 [`site/`](./site/index.html)：全部组件摆在一页，支持实时换肤、深浅色切换与三种材质并排对比。采用 **ofa.js v5 + scsr**（真实路径文档；加载后由 scsr 收编为 o-app 页面）。组件使用说明在 [`site/docs/`](./site/docs/index.html)：每个组件一个独立 SCSR 页，按场景拆成 4–7 组可交互示例，并附属性表、插槽 / 事件；左侧目录由二级 SCSR 父页共享，组件间切换不销毁。
 
 ```bash
 npm run dev
@@ -180,7 +180,7 @@ npm test       # Playwright 端到端测试（须先 npx playwright install chro
 ```
 
 - 新增/修改组件请先阅读 [AGENTS.md](./AGENTS.md)（开发规则）与 [CONTEXT.md](./CONTEXT.md)（项目全景 + 组件索引 + ofa.js 已知坑）
-- 组件官网：`docs/` 目录，本地 `http://localhost:8642/docs/`
+- 组件官网：`site/docs/` 二级 SCSR 布局，本地 `http://localhost:8642/site/docs/`
 
 ## License
 

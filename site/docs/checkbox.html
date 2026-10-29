@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="../../packages/skin/apple.css" />
   <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
   <style>
-    html, body { margin: 0; padding: 0; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
     body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
     .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
     .nojs h1 { margin: 0 0 12px; font-size: 32px; }
@@ -61,179 +61,225 @@
     <template page>
       <link rel="stylesheet" href="../docs.css" />
 
-      <div class="docs-shell">
-<aside class="docs-side">
-  <p class="side-title">Components · 21</p>
-  <p class="side-group">动作</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
-    <st-list-item button on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
-  </st-list>
-  <p class="side-group">表单</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
-    <st-list-item button on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
-    <st-list-item button on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
-    <st-list-item button class="active" on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
-    <st-list-item button on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
-    <st-list-item button on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
-    <st-list-item button on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
-  </st-list>
-  <p class="side-group">反馈</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
-    <st-list-item button on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
-    <st-list-item button on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
-    <st-list-item button on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
-    <st-list-item button on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
-    <st-list-item button on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
-  </st-list>
-  <p class="side-group">内容</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
-    <st-list-item button on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
-    <st-list-item button on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
-    <st-list-item button on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
-  </st-list>
-  <p class="side-group">导航</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
-    <st-list-item button on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
-  </st-list>
-</aside>
-        <div class="docs-body">
-          <st-select class="docs-picker" placeholder="选择组件" default-value="checkbox" on:change="onNavigate">
-            <option value="button">Button</option>
-            <option value="ripple">Ripple</option>
-            <option value="input">Input</option>
-            <option value="textarea">Textarea</option>
-            <option value="select">Select</option>
-            <option value="checkbox" selected>Checkbox</option>
-            <option value="switch">Switch</option>
-            <option value="radio">Radio</option>
-            <option value="slider">Slider</option>
-            <option value="dialog">Dialog</option>
-            <option value="menu">Menu</option>
-            <option value="snackbar">Snackbar</option>
-            <option value="tooltip">Tooltip</option>
-            <option value="progress">Progress</option>
-            <option value="tools">Command tools</option>
-            <option value="card">Card</option>
-            <option value="badges">Badges</option>
-            <option value="collapse">Collapse</option>
-            <option value="list">List</option>
-            <option value="tabs">Tabs</option>
-            <option value="navigation">Navigation</option>
-          </st-select>
           <article class="doc-page">
             <header class="doc-hero">
               <p class="doc-kicker">表单 · 6 / 21</p>
               <h1>Checkbox <code>st-checkbox</code></h1>
-              <p class="doc-lead">复选框：选中 / 不确定 / 禁用 / 语义色。内部透明原生 checkbox 承载键盘。</p>
+              <p class="doc-lead">复选框：选中 / 不确定 / 禁用 / 语义色。checked 与 indeterminate 都是标签属性，ofa 页面用 attr: 绑定；点击文字也能切换，Space 键盘可用。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
                 <a href="https://github.com/ofajs/senti-ui/blob/main/packages/checkbox/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
               </div>
             </header>
 
-            <div class="demo">
-              <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-checkbox</code></div>
-              <div class="demo-stage">
-                <st-checkbox checked>已选中</st-checkbox>
-<st-checkbox indeterminate>不确定态</st-checkbox>
-<st-checkbox color="error" checked>错误色</st-checkbox>
-<st-checkbox disabled>禁用</st-checkbox>
+            <section class="doc-section">
+              <h2>基础状态</h2>
+              <p class="doc-section-lead">无属性为未选中，<code>checked</code> 为选中，<code>indeterminate</code> 显示横线表示部分选中。indeterminate 只是视觉与语义状态，用户点击后会退出并变成选中；没有标签内容时文字区自动隐藏。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-checkbox</code></div>
+                <div class="demo-stage">
+                  <st-checkbox>未选中</st-checkbox>
+                  <st-checkbox checked>已选中</st-checkbox>
+                  <st-checkbox indeterminate>不确定态</st-checkbox>
+                  <st-checkbox></st-checkbox>
+                </div>
               </div>
-            </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-checkbox&gt;未选中&lt;/st-checkbox&gt;
+&lt;st-checkbox checked&gt;已选中&lt;/st-checkbox&gt;
+&lt;st-checkbox indeterminate&gt;不确定态&lt;/st-checkbox&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>color 语义色</h2>
+              <p class="doc-section-lead"><code>color</code> 同时作用于选中态底色、描边和对勾色，适合表达错误、成功等业务状态。它只影响选中态；未选中时边框恒为 on-surface-variant。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>color</code></div>
+                <div class="demo-stage">
+                  <st-checkbox color="error" checked>错误色</st-checkbox>
+                  <st-checkbox color="success" checked>成功色</st-checkbox>
+                  <st-checkbox color="tertiary" checked>三级色</st-checkbox>
+                  <st-checkbox color="error" indeterminate>错误 + 不确定</st-checkbox>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-checkbox color="error" checked&gt;错误色&lt;/st-checkbox&gt;
+&lt;st-checkbox color="success" checked&gt;成功色&lt;/st-checkbox&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>disabled 组合</h2>
+              <p class="doc-section-lead">disabled 阻断点击与键盘，并降低到 0.38 透明度。它可与 checked、indeterminate 任意组合，用来展示不可修改的已选结果或半选结果。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled</code></div>
+                <div class="demo-stage">
+                  <st-checkbox disabled>禁用未选</st-checkbox>
+                  <st-checkbox disabled checked>禁用已选</st-checkbox>
+                  <st-checkbox disabled indeterminate>禁用半选</st-checkbox>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-checkbox disabled&gt;禁用未选&lt;/st-checkbox&gt;
+&lt;st-checkbox disabled checked&gt;禁用已选&lt;/st-checkbox&gt;
+&lt;st-checkbox disabled indeterminate&gt;禁用半选&lt;/st-checkbox&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>分组多选与受控绑定</h2>
+              <p class="doc-section-lead">每个选项的 checked 绑定到独立 data 字段，change 时把 <code>hasAttribute("checked")</code> 写回即可。标签文字属于点击热区，不需要再包 label；汇总文本由 getter 计算，不必额外维护一份状态。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>attr:checked / on:change</code></div>
+                <div class="demo-stage block">
+                  <div class="row">
+                    <st-checkbox attr:checked="apple" on:change="onApple">苹果</st-checkbox>
+                    <st-checkbox attr:checked="banana" on:change="onBanana">香蕉</st-checkbox>
+                    <st-checkbox attr:checked="grape" on:change="onGrape">葡萄</st-checkbox>
+                  </div>
+                  <span class="demo-note">已选：{{fruitSummary}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-checkbox attr:checked="apple" on:change="apple = $event.target.hasAttribute('checked')"&gt;
+  苹果
+&lt;/st-checkbox&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>全选与 indeterminate</h2>
+              <p class="doc-section-lead">父级复选框同时绑定 checked 与 indeterminate：全选时 checked，部分选中时 indeterminate，全不选时两者都为 false。子项变化后重算父级，父级点击则统一写入三个子项。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>全选 / 半选</code></div>
+                <div class="demo-stage block">
+                  <div class="row">
+                    <st-checkbox attr:checked="allChecked" attr:indeterminate="allIndeterminate" on:change="toggleAll">全选</st-checkbox>
+                  </div>
+                  <div class="row">
+                    <st-checkbox attr:checked="a" on:change="onA">选项 A</st-checkbox>
+                    <st-checkbox attr:checked="b" on:change="onB">选项 B</st-checkbox>
+                    <st-checkbox attr:checked="c" on:change="onC">选项 C</st-checkbox>
+                  </div>
+                  <span class="demo-note">状态：{{allChecked ? '已全选' : (allIndeterminate ? '部分选中' : '未选择')}} · 已选 {{checkedCount}} / 3</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（父级同步）</summary>
+                <pre><code>&lt;st-checkbox attr:checked="allChecked" attr:indeterminate="allIndeterminate"
+  on:change="toggleAll"&gt;全选&lt;/st-checkbox&gt;
+
+&lt;!-- 子项 change 后重算：全选 → checked；部分 → indeterminate --&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>尺寸与 change 事件</h2>
+              <p class="doc-section-lead">默认尺寸基于 em，改宿主 <code>font-size</code> 会同时缩放方框、对勾和文字间距。change 只在用户切换时派发，事件里读取属性即可得到最新状态。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>font-size / change</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">12px</span>
+                    <st-checkbox style="font-size: 12px;" checked>小号</st-checkbox>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">14px（默认）</span>
+                    <st-checkbox checked>默认</st-checkbox>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">20px</span>
+                    <st-checkbox style="font-size: 20px;" checked>大号</st-checkbox>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">change 计数</span>
+                    <st-checkbox on:change="count += 1">点我</st-checkbox>
+                  </div>
+                </div>
+                <span class="demo-note" style="grid-column: 1 / -1;">change 已触发 {{count}} 次</span>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-checkbox style="font-size: 20px;" checked&gt;大号&lt;/st-checkbox&gt;
+&lt;st-checkbox on:change="count += 1"&gt;点我&lt;/st-checkbox&gt;</code></pre>
+              </details>
+            </section>
 
             <div class="doc-cols">
               <div class="doc-block">
                 <h3>属性</h3>
                 <table class="api">
                   <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
-                  <tbody><tr><td><code>checked</code></td><td>boolean</td><td>无</td><td>选中态</td></tr><tr><td><code>indeterminate</code></td><td>boolean</td><td>无</td><td>不确定态；用户点击后退化为选中</td></tr><tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>阻断交互</td></tr><tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>选中态底色 / 对勾色</td></tr></tbody>
+                  <tbody>
+                    <tr><td><code>checked</code></td><td>boolean</td><td>无</td><td>选中态；点击自动同步</td></tr>
+                    <tr><td><code>indeterminate</code></td><td>boolean</td><td>无</td><td>不确定态；用户点击后退出并变为选中</td></tr>
+                    <tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>0.38 透明度，阻断交互</td></tr>
+                    <tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>选中态底色 / 对勾色</td></tr>
+                  </tbody>
                 </table>
               </div>
               <div class="doc-block">
                 <h3>插槽 / 事件 / 注意</h3>
-                <ul class="api-list"><li>默认插槽：标签文字；无内容时自动隐藏文字区。</li><li>事件：<code>change</code>（composed），切换后 <code>checked</code> 属性已同步。</li><li>布尔属性用 <code>attr:checked="expr"</code> 绑定；Space 可切换。</li></ul>
+                <ul class="api-list">
+                  <li>插槽：默认插槽是标签文字；内容为空时文字区自动隐藏。</li>
+                  <li>事件：<code>change</code>（bubbles + composed），触发时宿主属性已同步。</li>
+                  <li>布尔属性用 <code>attr:checked="expr"</code> / <code>attr:indeterminate="expr"</code>；不要用 <code>:checked</code>。</li>
+                  <li><code>color</code> 只影响选中态；未选中边框恒为 on-surface-variant。</li>
+                  <li>交互由内部透明原生 checkbox 承载：点文字可切换，Space 可切换。</li>
+                </ul>
               </div>
             </div>
-
-            <details class="snippet">
-              <summary>示例代码</summary>
-              <pre><code>&lt;st-checkbox attr:checked="agree" on:change="agree = !agree"&gt;
-  我同意服务条款
-&lt;/st-checkbox&gt;</code></pre>
-            </details>
 
             <nav class="doc-pager" aria-label="上下篇">
               <a class="pager-link" olink href="./select.html"><span>上一页</span>← Select</a><a class="pager-link pager-next" olink href="./switch.html"><span>下一页</span>Switch →</a>
             </nav>
           </article>
-
-        </div>
-      </div>
       <script>
-        export const parent = "../layout.html";
+        export const parent = "./layout.html";
 
         export default async () => ({
           data: {
-            selectValue: "",
-            dialogOpen: false,
-            collapsed: false,
-            tab: 0,
-            tabLabels: ["概览", "活动", "设置"],
-            navTab: 0,
-            navLabels: ["首页", "发现", "我的"],
-            toolResult: "（未调用）",
+            apple: true,
+            banana: false,
+            grape: false,
+            a: false,
+            b: true,
+            c: false,
+            allChecked: false,
+            allIndeterminate: true,
+            count: 0,
           },
           proto: {
-            get tabLabel() {
-              return this.tabLabels[this.tab] || "";
+            get fruitSummary() {
+              const picked = [this.apple && "苹果", this.banana && "香蕉", this.grape && "葡萄"].filter(Boolean);
+              return picked.length ? picked.join("、") : "（未选择）";
             },
-            get navLabel() {
-              return this.navLabels[this.navTab] || "";
+            get checkedCount() {
+              return [this.a, this.b, this.c].filter(Boolean).length;
             },
-            goDoc(id) {
-              this.goto("./" + id + ".html");
+            onApple(e) { this.apple = e.target.hasAttribute("checked"); },
+            onBanana(e) { this.banana = e.target.hasAttribute("checked"); },
+            onGrape(e) { this.grape = e.target.hasAttribute("checked"); },
+            onA(e) { this.a = e.target.hasAttribute("checked"); this.syncAll(); },
+            onB(e) { this.b = e.target.hasAttribute("checked"); this.syncAll(); },
+            onC(e) { this.c = e.target.hasAttribute("checked"); this.syncAll(); },
+            syncAll() {
+              const n = this.checkedCount;
+              this.allChecked = n === 3;
+              this.allIndeterminate = n > 0 && n < 3;
             },
-            onNavigate(e) {
-              if (e.target.value) this.goto("./" + e.target.value + ".html");
-            },
-            onSelect(e) {
-              this.selectValue = e.target.value || "";
-            },
-            runToast() {
-              if (!window.__site) return;
-              this.toolResult = "toast → 已弹出（3s）";
-              window.__site.toast("这是一条 toast。");
-            },
-            async runAlert() {
-              if (!window.__site) return;
-              const ok = await window.__site.alert({ title: "操作成功", message: "这是 alert 命令式对话框。", ok: "知道了" });
-              this.toolResult = "alert → " + ok;
-            },
-            async runConfirm() {
-              if (!window.__site) return;
-              const ok = await window.__site.confirm({ title: "确认删除", message: "确定删除这条记录吗？", yes: "删除", cancel: "取消", color: "error" });
-              this.toolResult = "confirm → " + ok;
-            },
-            async runPrompt() {
-              if (!window.__site) return;
-              const value = await window.__site.prompt({ title: "重命名", message: "输入新的名称", placeholder: "新名称" });
-              this.toolResult = "prompt → " + JSON.stringify(value);
-            },
-            openCtx(e) {
-              e.preventDefault();
-              if (!window.__site) return;
-              const self = this;
-              window.__site.contextMenu(e, [
-                { id: "copy", label: "复制", prefix: "⧉" },
-                { id: "rename", label: "重命名", prefix: "✏" },
-                { separator: true },
-                { id: "delete", label: "删除", prefix: "⌫", disabled: true },
-              ]).then((id) => { self.toolResult = "contextMenu → " + (id || "未选择"); });
+            toggleAll(e) {
+              const on = e.target.hasAttribute("checked");
+              this.a = on;
+              this.b = on;
+              this.c = on;
+              this.allChecked = on;
+              this.allIndeterminate = false;
             },
           },
         });

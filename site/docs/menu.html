@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="../../packages/skin/apple.css" />
   <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
   <style>
-    html, body { margin: 0; padding: 0; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
     body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
     .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
     .nojs h1 { margin: 0 0 12px; font-size: 32px; }
@@ -61,184 +61,298 @@
     <template page>
       <link rel="stylesheet" href="../docs.css" />
 
-      <div class="docs-shell">
-<aside class="docs-side">
-  <p class="side-title">Components · 21</p>
-  <p class="side-group">动作</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
-    <st-list-item button on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
-  </st-list>
-  <p class="side-group">表单</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
-    <st-list-item button on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
-    <st-list-item button on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
-    <st-list-item button on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
-    <st-list-item button on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
-    <st-list-item button on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
-    <st-list-item button on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
-  </st-list>
-  <p class="side-group">反馈</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
-    <st-list-item button class="active" on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
-    <st-list-item button on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
-    <st-list-item button on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
-    <st-list-item button on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
-    <st-list-item button on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
-  </st-list>
-  <p class="side-group">内容</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
-    <st-list-item button on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
-    <st-list-item button on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
-    <st-list-item button on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
-  </st-list>
-  <p class="side-group">导航</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
-    <st-list-item button on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
-  </st-list>
-</aside>
-        <div class="docs-body">
-          <st-select class="docs-picker" placeholder="选择组件" default-value="menu" on:change="onNavigate">
-            <option value="button">Button</option>
-            <option value="ripple">Ripple</option>
-            <option value="input">Input</option>
-            <option value="textarea">Textarea</option>
-            <option value="select">Select</option>
-            <option value="checkbox">Checkbox</option>
-            <option value="switch">Switch</option>
-            <option value="radio">Radio</option>
-            <option value="slider">Slider</option>
-            <option value="dialog">Dialog</option>
-            <option value="menu" selected>Menu</option>
-            <option value="snackbar">Snackbar</option>
-            <option value="tooltip">Tooltip</option>
-            <option value="progress">Progress</option>
-            <option value="tools">Command tools</option>
-            <option value="card">Card</option>
-            <option value="badges">Badges</option>
-            <option value="collapse">Collapse</option>
-            <option value="list">List</option>
-            <option value="tabs">Tabs</option>
-            <option value="navigation">Navigation</option>
-          </st-select>
           <article class="doc-page">
             <header class="doc-hero">
               <p class="doc-kicker">反馈 · 11 / 21</p>
               <h1>Menu <code>st-menu</code></h1>
-              <p class="doc-lead">下拉菜单：trigger 插槽 + light DOM 菜单项；自动翻转、点外部 / Escape 关闭，支持多级子菜单。</p>
+              <p class="doc-lead">下拉菜单：trigger 插槽放触发器，菜单项写在 light DOM 的 st-menu-item 里。面板 fixed 定位自动翻转，点外部 / Escape / 选中后关闭；支持分隔线、禁用项、prefix / suffix、多级子菜单、右键 openAt 与命令式 contextMenu。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
                 <a href="https://github.com/ofajs/senti-ui/blob/main/packages/menu/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
               </div>
             </header>
 
-            <div class="demo">
-              <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-menu</code></div>
-              <div class="demo-stage">
-                <st-menu>
-  <st-button slot="trigger" variant="outlined">打开菜单 ▾</st-button>
-  <st-menu-item><span slot="prefix">✏</span>编辑</st-menu-item>
-  <st-menu-item><span slot="prefix">⧉</span>复制</st-menu-item>
-  <hr />
-  <st-menu-item disabled><span slot="prefix">⌫</span>删除（禁用）</st-menu-item>
-</st-menu>
+            <section class="doc-section">
+              <h2>基础：trigger 与菜单项</h2>
+              <p class="doc-section-lead">触发器必须带 slot="trigger"；st-menu-item 直接写在 st-menu 内。菜单项之间放原生 hr 就是分隔线，disabled 项降到 0.38 透明度并阻断点击。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-menu / st-menu-item</code></div>
+                <div class="demo-stage">
+                  <st-menu>
+                    <st-button slot="trigger" variant="outlined">操作菜单 ▾</st-button>
+                    <st-menu-item on:click="pick('编辑')"><span slot="prefix">✏️</span>编辑<span slot="suffix">⌘E</span></st-menu-item>
+                    <st-menu-item on:click="pick('复制')"><span slot="prefix">📋</span>复制<span slot="suffix">⌘C</span></st-menu-item>
+                    <hr />
+                    <st-menu-item disabled><span slot="prefix">🗑</span>删除（禁用）</st-menu-item>
+                    <st-menu-item on:click="pick('关于')">关于</st-menu-item>
+                  </st-menu>
+                  <span class="demo-note">最近选择：{{lastPick}}</span>
+                </div>
               </div>
-            </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-menu&gt;
+  &lt;st-button slot="trigger" variant="outlined"&gt;操作菜单 ▾&lt;/st-button&gt;
+  &lt;st-menu-item on:click="pick('编辑')"&gt;
+    &lt;span slot="prefix"&gt;✏️&lt;/span&gt;编辑&lt;span slot="suffix"&gt;⌘E&lt;/span&gt;
+  &lt;/st-menu-item&gt;
+  &lt;st-menu-item disabled&gt;删除（禁用）&lt;/st-menu-item&gt;
+  &lt;hr /&gt;
+  &lt;st-menu-item&gt;关于&lt;/st-menu-item&gt;
+&lt;/st-menu&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>align 与 sync:open</h2>
+              <p class="doc-section-lead">align 控制面板与触发器的水平对齐，默认 right、可设 left。open 是运行时状态：用 sync:open 绑定后，选中菜单项、点击外部或 Escape 导致的关闭都会回写到页面数据。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>align / sync:open</code></div>
+                <div class="demo-stage">
+                  <st-menu sync:open="menuOpen" on:open="onMenuOpen" on:close="onMenuClose">
+                    <st-button slot="trigger" variant="outlined">右对齐菜单 ▾</st-button>
+                    <st-menu-item on:click="pick('选项一')">选项一</st-menu-item>
+                    <st-menu-item on:click="pick('选项二')">选项二</st-menu-item>
+                  </st-menu>
+                  <st-menu align="left" on:open="onMenuOpen" on:close="onMenuClose">
+                    <st-button slot="trigger" variant="text">左对齐菜单 ▾</st-button>
+                    <st-menu-item on:click="pick('左 A')">选项 A</st-menu-item>
+                    <st-menu-item on:click="pick('左 B')">选项 B</st-menu-item>
+                  </st-menu>
+                  <span class="demo-note">menuOpen = {{menuOpen}} · 当前打开中的菜单 {{openCount}} 个</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（开合状态双向绑定）</summary>
+                <pre><code>&lt;st-menu sync:open="menuOpen"&gt;
+  &lt;st-button slot="trigger"&gt;右对齐菜单 ▾&lt;/st-button&gt;
+  &lt;st-menu-item&gt;选项一&lt;/st-menu-item&gt;
+&lt;/st-menu&gt;
+
+&lt;st-menu align="left"&gt;
+  &lt;st-button slot="trigger"&gt;左对齐菜单 ▾&lt;/st-button&gt;
+  &lt;st-menu-item&gt;选项 A&lt;/st-menu-item&gt;
+&lt;/st-menu&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>prefix、suffix 与多级子菜单</h2>
+              <p class="doc-section-lead">子菜单写在某个 st-menu-item 的 sub-menu 插槽里：该 item 仍是普通一项，自动显示 ▸ 箭头，hover 展开（触屏点击开合）。选中任意层级后整条链关闭，Escape 只关最内层。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>sub-menu</code></div>
+                <div class="demo-stage">
+                  <st-menu>
+                    <st-button slot="trigger" variant="outlined">导出菜单 ▾</st-button>
+                    <st-menu-item on:click="pick('新建文档')"><span slot="prefix">📄</span>新建文档</st-menu-item>
+                    <st-menu-item>
+                      <span slot="prefix">🗂</span>导出为
+                      <st-menu slot="sub-menu">
+                        <st-menu-item on:click="pick('导出 PDF')">PDF</st-menu-item>
+                        <st-menu-item on:click="pick('导出 Markdown')">Markdown</st-menu-item>
+                        <st-menu-item on:click="pick('导出 PNG')">PNG 图片</st-menu-item>
+                      </st-menu>
+                    </st-menu-item>
+                    <hr />
+                    <st-menu-item disabled><span slot="prefix">🗑</span>删除（禁用）</st-menu-item>
+                  </st-menu>
+                  <span class="demo-note">最近选择：{{lastPick}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（子菜单）</summary>
+                <pre><code>&lt;st-menu&gt;
+  &lt;st-button slot="trigger"&gt;导出菜单 ▾&lt;/st-button&gt;
+  &lt;st-menu-item&gt;
+    导出为
+    &lt;st-menu slot="sub-menu"&gt;
+      &lt;st-menu-item&gt;PDF&lt;/st-menu-item&gt;
+      &lt;st-menu-item&gt;Markdown&lt;/st-menu-item&gt;
+      &lt;st-menu-item&gt;PNG 图片&lt;/st-menu-item&gt;
+    &lt;/st-menu&gt;
+  &lt;/st-menu-item&gt;
+&lt;/st-menu&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>右键定位：openAt(x, y)</h2>
+              <p class="doc-section-lead">不需要 trigger：在 contextmenu 事件里阻止浏览器默认菜单，再调用 openAt(clientX, clientY)。面板左上角对齐光标，右侧 / 下方空间不足时自动翻转到左 / 上，并夹紧在视口内。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>openAt</code></div>
+                <div class="demo-stage">
+                  <div class="ctx-mini" on:contextmenu="onCtx">在这个区域点击右键（靠边时会自动翻转）</div>
+                  <st-menu id="doc-ctx-menu">
+                    <st-menu-item on:click="pick('剪切')"><span slot="prefix">✂️</span>剪切</st-menu-item>
+                    <st-menu-item on:click="pick('复制')"><span slot="prefix">📋</span>复制</st-menu-item>
+                    <st-menu-item on:click="pick('粘贴')"><span slot="prefix">📌</span>粘贴</st-menu-item>
+                    <hr />
+                    <st-menu-item on:click="pick('刷新')"><span slot="prefix">🔄</span>刷新</st-menu-item>
+                  </st-menu>
+                  <span class="demo-note">最近选择：{{lastPick}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;div on:contextmenu="onCtx"&gt;右键区域&lt;/div&gt;
+&lt;st-menu id="ctxMenu"&gt;
+  &lt;st-menu-item&gt;剪切&lt;/st-menu-item&gt;
+  &lt;st-menu-item&gt;复制&lt;/st-menu-item&gt;
+&lt;/st-menu&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    proto: {
+      onCtx(e) {
+        e.preventDefault();
+        this.shadow.$("#ctxMenu").openAt(e.clientX, e.clientY);
+      },
+    },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>命令式右键菜单 contextMenu</h2>
+              <p class="doc-section-lead">动态菜单用命令式工具更省事：传事件（自动取坐标）或 {x, y}，items 数组支持 separator 与 children 子菜单，await 得到点击的叶子项 id；点空白或 Escape 返回 null。工具自动挂 body，用完即毁。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>window.__site.contextMenu</code></div>
+                <div class="demo-stage">
+                  <div class="ctx-mini" on:contextmenu="onCmdCtx">右键这个区域：菜单由 JS 数组生成，含分隔线与子菜单</div>
+                  <span class="demo-note">返回值：{{cmdPick}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>import contextMenu from "/packages/menu/context-menu.js";
+
+const id = await contextMenu(e, [
+  { id: "cut", label: "剪切", prefix: "✂️" },
+  { id: "copy", label: "复制", suffix: "⌘C" },
+  { separator: true },
+  {
+    id: "sort",
+    label: "排序",
+    children: [
+      { id: "sort-name", label: "按名称" },
+      { id: "sort-size", label: "按大小" },
+    ],
+  },
+  { id: "del", label: "删除", disabled: true },
+]);
+// id → "cut" / "sort-name"；取消 → null</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>键盘、外部点击与对话框内使用</h2>
+              <p class="doc-section-lead">触发器是原生按钮：Tab 聚焦、Enter / Space 打开；面板内菜单项可 Tab 到达并用 Enter / Space 激活。点击面板外部或按 Escape 关闭。菜单面板会换算 transform 祖先的定位原点，所以放进 st-dialog 也不会漂移。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>menu inside dialog</code></div>
+                <div class="demo-stage">
+                  <st-button variant="outlined" on:click="dlgMenu = true">在对话框里打开菜单</st-button>
+                  <span class="demo-note">最近选择：{{lastPick}} · Escape 先关菜单，再关对话框（需 auto-close）</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（对话框内的菜单）</summary>
+                <pre><code>&lt;st-dialog sync:open="dlgMenu" auto-close&gt;
+  &lt;h2 slot="headline"&gt;选择操作&lt;/h2&gt;
+  &lt;st-menu&gt;
+    &lt;st-button slot="trigger"&gt;操作 ▾&lt;/st-button&gt;
+    &lt;st-menu-item on:click="pick('重命名')"&gt;重命名&lt;/st-menu-item&gt;
+    &lt;st-menu-item on:click="pick('移动')"&gt;移动&lt;/st-menu-item&gt;
+  &lt;/st-menu&gt;
+&lt;/st-dialog&gt;</code></pre>
+              </details>
+            </section>
 
             <div class="doc-cols">
               <div class="doc-block">
                 <h3>属性</h3>
                 <table class="api">
                   <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
-                  <tbody><tr><td><code>align</code></td><td>"left" | "right"</td><td>"right"</td><td>面板与触发器的水平对齐</td></tr><tr><td><code>open</code></td><td>data（运行时状态）</td><td>false</td><td>开合状态；可 sync:open</td></tr></tbody>
+                  <tbody>
+                    <tr><td><code>align</code></td><td>"left" | "right"</td><td>"right"</td><td>面板与触发器的水平对齐</td></tr>
+                    <tr><td><code>open</code></td><td>运行时状态（ofa data）</td><td>false</td><td>开合状态；页面里用 <code>sync:open="key"</code> 绑定</td></tr>
+                    <tr><td><code>disabled</code></td><td>boolean（st-menu-item）</td><td>无</td><td>禁用菜单项：0.38 透明度、阻断点击</td></tr>
+                  </tbody>
                 </table>
               </div>
               <div class="doc-block">
                 <h3>插槽 / 事件 / 注意</h3>
-                <ul class="api-list"><li>插槽：<code>trigger</code>；菜单项 <code>st-menu-item</code> 支持 <code>prefix</code> / <code>suffix</code> / <code>disabled</code> 与 <code>sub-menu</code>。</li><li>事件：<code>open</code> / <code>close</code>（composed）；选中 / 点外部 / Escape 自动关闭。</li><li>右键菜单：<code>contextMenu(event, items)</code> 命令式工具，见 Command tools。</li></ul>
+                <ul class="api-list">
+                  <li>插槽：<code>trigger</code> 放触发器；st-menu-item 支持 <code>prefix</code> / 默认文字 / <code>suffix</code> / <code>sub-menu</code>；分隔线用原生 <code>&lt;hr&gt;</code>。</li>
+                  <li>事件：<code>open</code> / <code>close</code>（bubbles + composed）；菜单项 click 正常冒泡，面板随后自动关闭。</li>
+                  <li>关闭：选中任意层级、点击面板外部、Escape；多级菜单的 Escape 从最内层逐次向外。</li>
+                  <li>命令式：<code>contextMenu(e, items)</code> 返回叶子项 id；<code>contextMenu.longPress(el, items, onSelect)</code> 支持触屏长按。</li>
+                  <li>面板默认 <code>min-width: 6em</code>、padding / 圆角 <code>0.286em / 0.857em</code>、<code>max-height: 80vh</code>（内部滚动），宽度由内容决定。</li>
+                </ul>
               </div>
             </div>
-
-            <details class="snippet">
-              <summary>示例代码</summary>
-              <pre><code>&lt;st-menu align="left"&gt;
-  &lt;st-button slot="trigger" variant="outlined"&gt;打开菜单 ▾&lt;/st-button&gt;
-  &lt;st-menu-item on:click="edit"&gt;编辑&lt;/st-menu-item&gt;
-  &lt;st-menu-item disabled&gt;删除&lt;/st-menu-item&gt;
-&lt;/st-menu&gt;</code></pre>
-            </details>
 
             <nav class="doc-pager" aria-label="上下篇">
               <a class="pager-link" olink href="./dialog.html"><span>上一页</span>← Dialog</a><a class="pager-link pager-next" olink href="./snackbar.html"><span>下一页</span>Snackbar →</a>
             </nav>
           </article>
 
-        </div>
-      </div>
+          <st-dialog sync:open="dlgMenu" auto-close>
+            <h2 slot="headline">选择操作</h2>
+            <p style="margin: 0 0 12px;">菜单面板 fixed 定位，会按对话框面板的 transform 换算原点，不会偏移。</p>
+            <st-menu>
+              <st-button slot="trigger" variant="outlined">操作 ▾</st-button>
+              <st-menu-item on:click="pick('重命名')"><span slot="prefix">✏️</span>重命名</st-menu-item>
+              <st-menu-item on:click="pick('移动到…')"><span slot="prefix">📁</span>移动到…</st-menu-item>
+              <hr />
+              <st-menu-item on:click="pick('删除')"><span slot="prefix">🗑</span>删除</st-menu-item>
+            </st-menu>
+          </st-dialog>
       <script>
-        export const parent = "../layout.html";
+        export const parent = "./layout.html";
 
         export default async () => ({
           data: {
-            selectValue: "",
-            dialogOpen: false,
-            collapsed: false,
-            tab: 0,
-            tabLabels: ["概览", "活动", "设置"],
-            navTab: 0,
-            navLabels: ["首页", "发现", "我的"],
-            toolResult: "（未调用）",
+            lastPick: "（无）",
+            menuOpen: false,
+            openCount: 0,
+            cmdPick: "（未调用）",
+            dlgMenu: false,
           },
           proto: {
-            get tabLabel() {
-              return this.tabLabels[this.tab] || "";
+            pick(label) {
+              this.lastPick = label;
             },
-            get navLabel() {
-              return this.navLabels[this.navTab] || "";
+            onMenuOpen() {
+              this.openCount += 1;
             },
-            goDoc(id) {
-              this.goto("./" + id + ".html");
+            onMenuClose() {
+              this.openCount -= 1;
             },
-            onNavigate(e) {
-              if (e.target.value) this.goto("./" + e.target.value + ".html");
+            onCtx(e) {
+              e.preventDefault();
+              this.shadow.$("#doc-ctx-menu").openAt(e.clientX, e.clientY);
             },
-            onSelect(e) {
-              this.selectValue = e.target.value || "";
-            },
-            runToast() {
-              if (!window.__site) return;
-              this.toolResult = "toast → 已弹出（3s）";
-              window.__site.toast("这是一条 toast。");
-            },
-            async runAlert() {
-              if (!window.__site) return;
-              const ok = await window.__site.alert({ title: "操作成功", message: "这是 alert 命令式对话框。", ok: "知道了" });
-              this.toolResult = "alert → " + ok;
-            },
-            async runConfirm() {
-              if (!window.__site) return;
-              const ok = await window.__site.confirm({ title: "确认删除", message: "确定删除这条记录吗？", yes: "删除", cancel: "取消", color: "error" });
-              this.toolResult = "confirm → " + ok;
-            },
-            async runPrompt() {
-              if (!window.__site) return;
-              const value = await window.__site.prompt({ title: "重命名", message: "输入新的名称", placeholder: "新名称" });
-              this.toolResult = "prompt → " + JSON.stringify(value);
-            },
-            openCtx(e) {
+            async onCmdCtx(e) {
               e.preventDefault();
               if (!window.__site) return;
-              const self = this;
-              window.__site.contextMenu(e, [
-                { id: "copy", label: "复制", prefix: "⧉" },
-                { id: "rename", label: "重命名", prefix: "✏" },
+              const id = await window.__site.contextMenu(e, [
+                { id: "cut", label: "剪切", prefix: "✂️" },
+                { id: "copy", label: "复制", prefix: "📋", suffix: "⌘C" },
+                { id: "paste", label: "粘贴", prefix: "📌" },
                 { separator: true },
-                { id: "delete", label: "删除", prefix: "⌫", disabled: true },
-              ]).then((id) => { self.toolResult = "contextMenu → " + (id || "未选择"); });
+                {
+                  id: "sort",
+                  label: "排序",
+                  children: [
+                    { id: "sort-name", label: "按名称" },
+                    { id: "sort-size", label: "按大小" },
+                  ],
+                },
+                { separator: true },
+                { id: "del", label: "删除", prefix: "🗑", disabled: true },
+              ]);
+              this.cmdPick = id === null ? "null（点空白取消）" : JSON.stringify(id);
             },
           },
         });

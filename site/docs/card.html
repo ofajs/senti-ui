@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="../../packages/skin/apple.css" />
   <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
   <style>
-    html, body { margin: 0; padding: 0; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
     body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
     .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
     .nojs h1 { margin: 0 0 12px; font-size: 32px; }
@@ -61,182 +61,293 @@
     <template page>
       <link rel="stylesheet" href="../docs.css" />
 
-      <div class="docs-shell">
-<aside class="docs-side">
-  <p class="side-title">Components · 21</p>
-  <p class="side-group">动作</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
-    <st-list-item button on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
-  </st-list>
-  <p class="side-group">表单</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
-    <st-list-item button on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
-    <st-list-item button on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
-    <st-list-item button on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
-    <st-list-item button on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
-    <st-list-item button on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
-    <st-list-item button on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
-  </st-list>
-  <p class="side-group">反馈</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
-    <st-list-item button on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
-    <st-list-item button on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
-    <st-list-item button on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
-    <st-list-item button on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
-    <st-list-item button on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
-  </st-list>
-  <p class="side-group">内容</p>
-  <st-list class="side-list">
-    <st-list-item button class="active" on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
-    <st-list-item button on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
-    <st-list-item button on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
-    <st-list-item button on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
-  </st-list>
-  <p class="side-group">导航</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
-    <st-list-item button on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
-  </st-list>
-</aside>
-        <div class="docs-body">
-          <st-select class="docs-picker" placeholder="选择组件" default-value="card" on:change="onNavigate">
-            <option value="button">Button</option>
-            <option value="ripple">Ripple</option>
-            <option value="input">Input</option>
-            <option value="textarea">Textarea</option>
-            <option value="select">Select</option>
-            <option value="checkbox">Checkbox</option>
-            <option value="switch">Switch</option>
-            <option value="radio">Radio</option>
-            <option value="slider">Slider</option>
-            <option value="dialog">Dialog</option>
-            <option value="menu">Menu</option>
-            <option value="snackbar">Snackbar</option>
-            <option value="tooltip">Tooltip</option>
-            <option value="progress">Progress</option>
-            <option value="tools">Command tools</option>
-            <option value="card" selected>Card</option>
-            <option value="badges">Badges</option>
-            <option value="collapse">Collapse</option>
-            <option value="list">List</option>
-            <option value="tabs">Tabs</option>
-            <option value="navigation">Navigation</option>
-          </st-select>
           <article class="doc-page">
             <header class="doc-hero">
               <p class="doc-kicker">内容 · 16 / 21</p>
               <h1>Card <code>st-card</code></h1>
-              <p class="doc-lead">卡片容器：elevated / filled / outlined 三类型；interactive 时整卡可点并带波纹。</p>
+              <p class="doc-lead">卡片容器：elevated / filled / outlined 三种类型，内容用默认插槽自由组合。interactive 让整卡可点并带波纹、hover 抬升与键盘焦点环。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
                 <a href="https://github.com/ofajs/senti-ui/blob/main/packages/card/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
               </div>
             </header>
 
-            <div class="demo">
-              <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-card</code></div>
-              <div class="demo-stage">
-                <st-card variant="filled" style="width:100%;max-width:300px;">
-  <strong>Filled card</strong>
-  <p style="margin:6px 0 0;font-size:12px;color:var(--md-sys-color-on-surface-variant);">
-    内容自由组合：标题、正文、图片、按钮。
-  </p>
-</st-card>
+            <section class="doc-section">
+              <h2>三种 variant</h2>
+              <p class="doc-section-lead">elevated 用 level 1 阴影，filled 用更深的容器底色，outlined 用描边与透明底。三者共享同一套 em 尺寸，只改变材质。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>variant</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">elevated（默认）</span>
+                    <st-card style="width: 100%;">
+                      <strong style="font-size: 14px;">Elevated</strong>
+                      <p style="margin: 6px 0 0; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);">level 1 阴影 + surface-container-low 底色，适合页面主内容块。</p>
+                    </st-card>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">filled</span>
+                    <st-card variant="filled" style="width: 100%;">
+                      <strong style="font-size: 14px;">Filled</strong>
+                      <p style="margin: 6px 0 0; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);">surface-container-highest 底色、无阴影，适合并列的信息卡。</p>
+                    </st-card>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">outlined</span>
+                    <st-card variant="outlined" style="width: 100%;">
+                      <strong style="font-size: 14px;">Outlined</strong>
+                      <p style="margin: 6px 0 0; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);">outline-variant 描边、透明底，最轻量，适合密集列表。</p>
+                    </st-card>
+                  </div>
+                </div>
               </div>
-            </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-card&gt;
+  &lt;strong&gt;Elevated&lt;/strong&gt;
+  &lt;p&gt;默认类型，level 1 阴影。&lt;/p&gt;
+&lt;/st-card&gt;
+
+&lt;st-card variant="filled"&gt;...&lt;/st-card&gt;
+&lt;st-card variant="outlined"&gt;...&lt;/st-card&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>interactive：整卡可点</h2>
+              <p class="doc-section-lead">加 interactive 后整张卡成为按钮：hover 抬升、按下有波纹，Tab 可聚焦、Enter / Space 可激活。选择类场景用一张卡表达一个选项。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>interactive + click</code></div>
+                <div class="demo-stage grid">
+                  <st-card interactive on:click="pick('基础版')" style="width: 100%;">
+                    <strong style="font-size: 14px;">基础版</strong>
+                    <p style="margin: 6px 0 10px; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);">个人项目与原型验证，包含 1 个工作区。</p>
+                    <span style="font-size: 11px; color: var(--md-sys-color-primary);">{{picked === '基础版' ? '✓ 已选择' : '点击选择'}}</span>
+                  </st-card>
+                  <st-card interactive on:click="pick('团队版')" style="width: 100%;">
+                    <strong style="font-size: 14px;">团队版</strong>
+                    <p style="margin: 6px 0 10px; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);">多人协作与权限管理，包含 10 个工作区。</p>
+                    <span style="font-size: 11px; color: var(--md-sys-color-primary);">{{picked === '团队版' ? '✓ 已选择' : '点击选择'}}</span>
+                  </st-card>
+                  <st-card interactive on:click="pick('企业版')" style="width: 100%;">
+                    <strong style="font-size: 14px;">企业版</strong>
+                    <p style="margin: 6px 0 10px; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);">单点登录、审计与专属支持，工作区不限。</p>
+                    <span style="font-size: 11px; color: var(--md-sys-color-primary);">{{picked === '企业版' ? '✓ 已选择' : '点击选择'}}</span>
+                  </st-card>
+                </div>
+              </div>
+              <p class="doc-section-lead" style="margin-top: 8px;">已选择：{{picked}} · 累计点击 {{picks}} 次。卡内不要放按钮等交互元素，否则点击内部按钮也会冒泡成整卡点击。</p>
+              <details class="snippet">
+                <summary>示例代码（选择卡）</summary>
+                <pre><code>&lt;st-card interactive on:click="pick('团队版')"&gt;
+  &lt;strong&gt;团队版&lt;/strong&gt;
+  &lt;p&gt;多人协作与权限管理。&lt;/p&gt;
+&lt;/st-card&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { picked: "（未选择）" },
+    proto: {
+      pick(name) {
+        this.picked = name;
+      },
+    },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>标题、正文与操作区</h2>
+              <p class="doc-section-lead">卡片没有固定的 header / footer 插槽，用普通元素组合即可。操作按钮放在内容末尾，非 interactive 卡片里的按钮点击不会触发整卡行为。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>内容自由组合</code></div>
+                <div class="demo-stage grid">
+                  <st-card style="width: 100%;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                      <strong style="font-size: 14px;">团队邀请</strong>
+                      <span style="padding: 2px 8px; border-radius: 999px; background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); font-size: 11px;">3 待处理</span>
+                    </div>
+                    <p style="margin: 8px 0 0; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);">有 3 位成员等待加入「设计系统」团队，邀请将在 7 天后过期。</p>
+                    <div style="display: flex; justify-content: flex-end; gap: 6px; margin-top: 14px;">
+                      <st-button variant="text">稍后</st-button>
+                      <st-button on:click="picks += 1">查看邀请</st-button>
+                    </div>
+                  </st-card>
+                  <st-card variant="filled" style="width: 100%;">
+                    <strong style="font-size: 14px;">存储空间</strong>
+                    <p style="margin: 8px 0 4px; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);">已使用 6.4 GB，共 10 GB。</p>
+                    <st-progress value="64" style="width: 100%; margin: 4px 0 12px;"></st-progress>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                      <span style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">64% 已使用</span>
+                      <st-button variant="text">升级空间</st-button>
+                    </div>
+                  </st-card>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-card style="width: 100%;"&gt;
+  &lt;div style="display: flex; justify-content: space-between;"&gt;
+    &lt;strong&gt;团队邀请&lt;/strong&gt;
+    &lt;st-badges value="3" color="primary"&gt;待处理&lt;/st-badges&gt;
+  &lt;/div&gt;
+  &lt;p&gt;有 3 位成员等待加入。&lt;/p&gt;
+  &lt;div style="display: flex; justify-content: flex-end; gap: 6px;"&gt;
+    &lt;st-button variant="text"&gt;稍后&lt;/st-button&gt;
+    &lt;st-button&gt;查看邀请&lt;/st-button&gt;
+  &lt;/div&gt;
+&lt;/st-card&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>媒体区与底部操作</h2>
+              <p class="doc-section-lead">媒体区用负 margin 铺满卡片宽度：<code>margin: -1em -1em 12px</code> 配合 <code>width: calc(100% + 2em)</code>，顶部圆角与卡片保持一致。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>media + footer</code></div>
+                <div class="demo-stage grid">
+                  <st-card variant="outlined" style="width: 100%;">
+                    <div style="height: 110px; margin: -1em -1em 12px; border-radius: 0.75em 0.75em 0 0; background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-tertiary-container));"></div>
+                    <span class="demo-label">设计 · 12 篇文章</span>
+                    <strong style="display: block; margin-top: 4px; font-size: 14px;">界面设计系统</strong>
+                    <p style="margin: 6px 0 0; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);">从颜色、字号到组件间距的统一规范，附可复用 token 表。</p>
+                  </st-card>
+                  <st-card variant="filled" style="width: 100%;">
+                    <div style="height: 110px; margin: -1em -1em 12px; border-radius: 0.75em 0.75em 0 0; background: linear-gradient(135deg, var(--md-sys-color-secondary-container), var(--md-sys-color-surface-container-highest));"></div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                      <div>
+                        <strong style="display: block; font-size: 14px;">秋季摄影</strong>
+                        <span style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">24 张照片 · 更新于昨天</span>
+                      </div>
+                      <st-icon-button variant="tonal" title="收藏">⭐</st-icon-button>
+                    </div>
+                    <p style="margin: 10px 0 0; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);">把媒体区换成 <code>&lt;img&gt;</code> 时，记得同时设置 <code>display: block</code> 与相同的负 margin。</p>
+                  </st-card>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（媒体铺满）</summary>
+                <pre><code>&lt;st-card variant="outlined"&gt;
+  &lt;img
+    src="/cover.jpg"
+    alt="封面"
+    style="display: block; width: calc(100% + 2em); height: 110px;
+           margin: -1em -1em 12px; object-fit: cover;
+           border-radius: 0.75em 0.75em 0 0;"
+  /&gt;
+  &lt;strong&gt;界面设计系统&lt;/strong&gt;
+  &lt;p&gt;从颜色、字号到组件间距的统一规范。&lt;/p&gt;
+&lt;/st-card&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>卡片网格</h2>
+              <p class="doc-section-lead">用原生 grid 排卡片，配合 interactive 做成入口矩阵。网格宽度由父容器决定，卡片本身写 <code>width: 100%</code> 即可。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>grid + interactive</code></div>
+                <div class="demo-stage grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+                  <st-card interactive on:click="pick('数据看板')" style="width: 100%;">
+                    <div style="font-size: 20px;">📊</div>
+                    <strong style="display: block; margin-top: 6px; font-size: 13px;">数据看板</strong>
+                    <span style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">实时指标与趋势</span>
+                  </st-card>
+                  <st-card interactive on:click="pick('成员管理')" style="width: 100%;">
+                    <div style="font-size: 20px;">👥</div>
+                    <strong style="display: block; margin-top: 6px; font-size: 13px;">成员管理</strong>
+                    <span style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">角色与权限</span>
+                  </st-card>
+                  <st-card interactive on:click="pick('自动化')" style="width: 100%;">
+                    <div style="font-size: 20px;">⚙️</div>
+                    <strong style="display: block; margin-top: 6px; font-size: 13px;">自动化</strong>
+                    <span style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">定时任务与触发器</span>
+                  </st-card>
+                  <st-card interactive on:click="pick('账单')" style="width: 100%;">
+                    <div style="font-size: 20px;">🧾</div>
+                    <strong style="display: block; margin-top: 6px; font-size: 13px;">账单</strong>
+                    <span style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">发票与用量</span>
+                  </st-card>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（网格）</summary>
+                <pre><code>&lt;div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;"&gt;
+  &lt;st-card interactive on:click="pick('数据看板')"&gt;...&lt;/st-card&gt;
+  &lt;st-card interactive on:click="pick('成员管理')"&gt;...&lt;/st-card&gt;
+&lt;/div&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>原生 CSS 定制</h2>
+              <p class="doc-section-lead">宽高、圆角、内边距、底色和阴影都直接写原生 CSS。内边距与圆角用 em，只改 font-size 就能整体缩放卡片内部的间距。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>style + font-size</code></div>
+                <div class="demo-stage grid">
+                  <st-card style="width: 100%; font-size: 12px;">
+                    <strong>12px 字号</strong>
+                    <p style="margin: 4px 0 0; color: var(--md-sys-color-on-surface-variant);">padding 与圆角随 em 缩小。</p>
+                  </st-card>
+                  <st-card variant="filled" style="width: 100%; font-size: 16px;">
+                    <strong>16px 字号</strong>
+                    <p style="margin: 4px 0 0; color: var(--md-sys-color-on-surface-variant);">内边距与圆角同步放大。</p>
+                  </st-card>
+                  <st-card variant="outlined" style="width: 100%; border-radius: 1.429em; padding: 1.43em; background: var(--md-sys-color-surface-container-low);">
+                    <strong>自定义圆角与底色</strong>
+                    <p style="margin: 4px 0 0; color: var(--md-sys-color-on-surface-variant);">直接覆盖 border-radius、padding 与 background。</p>
+                  </st-card>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-card style="font-size: 12px;"&gt;...&lt;/st-card&gt;
+&lt;st-card style="border-radius: 1.429em; padding: 1.43em;"&gt;...&lt;/st-card&gt;
+&lt;st-card variant="outlined" style="background: var(--md-sys-color-surface-container-low);"&gt;
+  ...
+&lt;/st-card&gt;</code></pre>
+              </details>
+            </section>
 
             <div class="doc-cols">
               <div class="doc-block">
                 <h3>属性</h3>
                 <table class="api">
                   <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
-                  <tbody><tr><td><code>variant</code></td><td>"elevated" | "filled" | "outlined"</td><td>"elevated"</td><td>M3 三类型</td></tr><tr><td><code>interactive</code></td><td>boolean</td><td>无</td><td>整卡可点：hover 抬升 + 波纹 + click</td></tr></tbody>
+                  <tbody>
+                    <tr><td><code>variant</code></td><td>"elevated" | "filled" | "outlined"</td><td>"elevated"</td><td>M3 三类型：阴影 / 容器底色 / 描边</td></tr>
+                    <tr><td><code>interactive</code></td><td>boolean</td><td>无</td><td>整卡可点：hover 抬升 + 波纹 + 键盘焦点环</td></tr>
+                  </tbody>
                 </table>
               </div>
               <div class="doc-block">
                 <h3>插槽 / 事件 / 注意</h3>
-                <ul class="api-list"><li>默认插槽：任意内容；interactive 时由内部原生 button 承载键盘与焦点。</li><li>事件：<code>click</code>（interactive 时）。</li></ul>
+                <ul class="api-list">
+                  <li>插槽：默认插槽，可放标题、正文、图片、按钮等任意内容。</li>
+                  <li>事件：<code>click</code>，interactive 时由内部原生按钮冒泡到宿主。</li>
+                  <li>interactive 卡片 Tab 可聚焦，Enter / Space 可激活。</li>
+                  <li>卡内放按钮时不要再加 interactive，避免点击内部按钮同时触发整卡点击。</li>
+                  <li>媒体区用负 margin 铺满；字号类默认值用 em，改 <code>font-size</code> 等比缩放。</li>
+                </ul>
               </div>
             </div>
-
-            <details class="snippet">
-              <summary>示例代码</summary>
-              <pre><code>&lt;st-card variant="outlined" interactive on:click="openItem"&gt;
-  &lt;h3&gt;可点击的卡片&lt;/h3&gt;
-  &lt;p&gt;整卡可点，Enter / Space 同样可用。&lt;/p&gt;
-&lt;/st-card&gt;</code></pre>
-            </details>
 
             <nav class="doc-pager" aria-label="上下篇">
               <a class="pager-link" olink href="./tools.html"><span>上一页</span>← Command tools</a><a class="pager-link pager-next" olink href="./badges.html"><span>下一页</span>Badges →</a>
             </nav>
           </article>
-
-        </div>
-      </div>
       <script>
-        export const parent = "../layout.html";
+        export const parent = "./layout.html";
 
         export default async () => ({
           data: {
-            selectValue: "",
-            dialogOpen: false,
-            collapsed: false,
-            tab: 0,
-            tabLabels: ["概览", "活动", "设置"],
-            navTab: 0,
-            navLabels: ["首页", "发现", "我的"],
-            toolResult: "（未调用）",
+            picked: "（未选择）",
+            picks: 0,
           },
           proto: {
-            get tabLabel() {
-              return this.tabLabels[this.tab] || "";
-            },
-            get navLabel() {
-              return this.navLabels[this.navTab] || "";
-            },
-            goDoc(id) {
-              this.goto("./" + id + ".html");
-            },
-            onNavigate(e) {
-              if (e.target.value) this.goto("./" + e.target.value + ".html");
-            },
-            onSelect(e) {
-              this.selectValue = e.target.value || "";
-            },
-            runToast() {
-              if (!window.__site) return;
-              this.toolResult = "toast → 已弹出（3s）";
-              window.__site.toast("这是一条 toast。");
-            },
-            async runAlert() {
-              if (!window.__site) return;
-              const ok = await window.__site.alert({ title: "操作成功", message: "这是 alert 命令式对话框。", ok: "知道了" });
-              this.toolResult = "alert → " + ok;
-            },
-            async runConfirm() {
-              if (!window.__site) return;
-              const ok = await window.__site.confirm({ title: "确认删除", message: "确定删除这条记录吗？", yes: "删除", cancel: "取消", color: "error" });
-              this.toolResult = "confirm → " + ok;
-            },
-            async runPrompt() {
-              if (!window.__site) return;
-              const value = await window.__site.prompt({ title: "重命名", message: "输入新的名称", placeholder: "新名称" });
-              this.toolResult = "prompt → " + JSON.stringify(value);
-            },
-            openCtx(e) {
-              e.preventDefault();
-              if (!window.__site) return;
-              const self = this;
-              window.__site.contextMenu(e, [
-                { id: "copy", label: "复制", prefix: "⧉" },
-                { id: "rename", label: "重命名", prefix: "✏" },
-                { separator: true },
-                { id: "delete", label: "删除", prefix: "⌫", disabled: true },
-              ]).then((id) => { self.toolResult = "contextMenu → " + (id || "未选择"); });
+            pick(name) {
+              this.picked = name;
+              this.picks += 1;
             },
           },
         });

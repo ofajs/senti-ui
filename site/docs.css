@@ -345,7 +345,7 @@ code { font-family: ui-monospace, Menlo, monospace; }
   .pager-next { text-align: left; }
 }
 
-/* docs shell：侧栏与正文在同一个页面里，切页时随页面一起动画，不引发 layout 重排 */
+/* docs shell：位于二级父页 docs/layout.html；侧栏只渲染一次，切组件时只替换 slot 里的正文 */
 .docs-shell {
   display: grid;
   grid-template-columns: 232px minmax(0, 1fr);
@@ -357,8 +357,8 @@ code { font-family: ui-monospace, Menlo, monospace; }
 }
 .docs-side {
   position: sticky;
-  top: 74px;
-  max-height: calc(100vh - 92px);
+  top: 16px;
+  max-height: calc(100dvh - 110px);
   overflow: auto;
   padding-right: 6px;
 }
@@ -407,4 +407,168 @@ code { font-family: ui-monospace, Menlo, monospace; }
   }
   .docs-side { display: none; }
   .docs-picker { display: block; }
+}
+
+/* 二级父页（docs/layout.html）：slot 外层必须是相对容器，
+   否则离场页的 absolute 会相对视口定位，切换瞬间露出旧内容造成闪烁。 */
+.docs-body {
+  position: relative;
+  min-width: 0;
+}
+::slotted(o-page) {
+  display: block;
+  min-height: 70vh;
+  background: var(--md-sys-color-surface);
+  animation: doc-page-in 0.24s ease;
+}
+@keyframes doc-page-in {
+  from { transform: translateY(7px); }
+  to { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::slotted(o-page) { animation: none; }
+}
+
+/* 组件页内的用法分区 */
+.doc-section {
+  margin-top: 38px;
+}
+.doc-section:first-of-type {
+  margin-top: 30px;
+}
+.doc-section > h2 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 19px;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+.doc-section > h2::before {
+  content: "";
+  width: 4px;
+  height: 17px;
+  border-radius: 999px;
+  background: var(--md-sys-color-primary);
+}
+.doc-section-lead {
+  margin-top: 7px;
+  max-width: 720px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 12.5px;
+  line-height: 1.75;
+}
+.doc-section .demo {
+  margin-top: 14px;
+}
+.demo-stage.block {
+  align-items: stretch;
+  justify-content: flex-start;
+}
+.demo-stage.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  align-items: start;
+  justify-content: stretch;
+}
+.demo-stage.grid > * {
+  min-width: 0;
+}
+.demo-stage .demo-cell {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+.demo-label {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.demo-note {
+  width: 100%;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 11px;
+  line-height: 1.65;
+  text-align: center;
+}
+.demo-content {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+  padding: 26px 24px;
+  background-color: var(--md-sys-color-surface);
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    color-mix(in srgb, var(--md-sys-color-outline-variant) 68%, transparent) 1px,
+    transparent 0
+  );
+  background-size: 16px 16px;
+}
+.demo-content > * { max-width: 100%; }
+.demo-content .row { justify-content: flex-start; }
+.doc-section .snippet { margin-top: 10px; border-top: 0; }
+.doc-section .snippet summary { padding-top: 2px; }
+
+/* 概览页的组件层级分组 */
+.docs-group {
+  margin-top: 34px;
+}
+.docs-group + .docs-group {
+  margin-top: 46px;
+  padding-top: 34px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+.docs-group-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+}
+.docs-group-kicker {
+  color: var(--md-sys-color-primary);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+.docs-group-head h2 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 5px;
+  font-size: clamp(23px, 2.4vw, 29px);
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+}
+.docs-group-head h2 span {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.docs-group-desc {
+  max-width: 440px;
+  padding-bottom: 3px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 12px;
+  line-height: 1.7;
+  text-align: right;
+}
+.docs-group .docs-cards {
+  margin-top: 18px;
+}
+@media (max-width: 700px) {
+  .docs-group-head {
+    display: grid;
+    gap: 9px;
+  }
+  .docs-group-desc {
+    max-width: none;
+    text-align: left;
+  }
 }

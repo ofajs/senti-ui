@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="../../packages/skin/apple.css" />
   <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
   <style>
-    html, body { margin: 0; padding: 0; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
     body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
     .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
     .nojs h1 { margin: 0 0 12px; font-size: 32px; }
@@ -61,182 +61,301 @@
     <template page>
       <link rel="stylesheet" href="../docs.css" />
 
-      <div class="docs-shell">
-<aside class="docs-side">
-  <p class="side-title">Components · 21</p>
-  <p class="side-group">动作</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
-    <st-list-item button on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
-  </st-list>
-  <p class="side-group">表单</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
-    <st-list-item button on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
-    <st-list-item button on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
-    <st-list-item button on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
-    <st-list-item button on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
-    <st-list-item button on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
-    <st-list-item button on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
-  </st-list>
-  <p class="side-group">反馈</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
-    <st-list-item button on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
-    <st-list-item button on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
-    <st-list-item button on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
-    <st-list-item button on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
-    <st-list-item button on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
-  </st-list>
-  <p class="side-group">内容</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
-    <st-list-item button on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
-    <st-list-item button on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
-    <st-list-item button on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
-  </st-list>
-  <p class="side-group">导航</p>
-  <st-list class="side-list">
-    <st-list-item button class="active" on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
-    <st-list-item button on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
-  </st-list>
-</aside>
-        <div class="docs-body">
-          <st-select class="docs-picker" placeholder="选择组件" default-value="tabs" on:change="onNavigate">
-            <option value="button">Button</option>
-            <option value="ripple">Ripple</option>
-            <option value="input">Input</option>
-            <option value="textarea">Textarea</option>
-            <option value="select">Select</option>
-            <option value="checkbox">Checkbox</option>
-            <option value="switch">Switch</option>
-            <option value="radio">Radio</option>
-            <option value="slider">Slider</option>
-            <option value="dialog">Dialog</option>
-            <option value="menu">Menu</option>
-            <option value="snackbar">Snackbar</option>
-            <option value="tooltip">Tooltip</option>
-            <option value="progress">Progress</option>
-            <option value="tools">Command tools</option>
-            <option value="card">Card</option>
-            <option value="badges">Badges</option>
-            <option value="collapse">Collapse</option>
-            <option value="list">List</option>
-            <option value="tabs" selected>Tabs</option>
-            <option value="navigation">Navigation</option>
-          </st-select>
           <article class="doc-page">
             <header class="doc-hero">
               <p class="doc-kicker">导航 · 20 / 21</p>
               <h1>Tabs <code>st-tab-bar</code></h1>
-              <p class="doc-lead">标签栏：指示条跟随 active 项平滑移动；active 切换由外部逻辑处理。</p>
+              <p class="doc-lead">标签栏只负责外观与指示条动画：active 由外部逻辑切换，切换后内容面板由你自己的 data 决定。st-tab-item 支持 icon 插槽与 disabled，宽度与字号直接用原生 CSS 调整。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
                 <a href="https://github.com/ofajs/senti-ui/blob/main/packages/tabs/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
               </div>
             </header>
 
-            <div class="demo">
-              <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-tab-bar</code></div>
-              <div class="demo-stage">
-                <st-tab-bar style="width:100%;">
-  <st-tab-item attr:active="tab === 0" on:click="tab = 0"><span slot="icon">◐</span>概览</st-tab-item>
-  <st-tab-item attr:active="tab === 1" on:click="tab = 1"><span slot="icon">◫</span>活动</st-tab-item>
-  <st-tab-item attr:active="tab === 2" on:click="tab = 2"><span slot="icon">⚙</span>设置</st-tab-item>
-</st-tab-bar>
-<span class="demo-result">当前页：{{tabLabel}}</span>
+            <section class="doc-section">
+              <h2>基础切换：active 与内容面板</h2>
+              <p class="doc-section-lead">st-tab-bar 自身不保存选中状态。用 attr:active 把每个 item 的 active 绑定到同一个索引，on:click 改索引；指示条会自动滑到新的 active 项，面板再用同一份 data 控制显隐。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-tab-bar + st-tab-item</code></div>
+                <div class="demo-stage block" style="gap: 12px;">
+                  <st-tab-bar style="width: 100%;">
+                    <st-tab-item attr:active="tab === 0" on:click="select(0)"><span slot="icon">📧</span>邮件</st-tab-item>
+                    <st-tab-item attr:active="tab === 1" on:click="select(1)"><span slot="icon">📞</span>通话</st-tab-item>
+                    <st-tab-item attr:active="tab === 2" on:click="select(2)"><span slot="icon">⭐</span>收藏</st-tab-item>
+                  </st-tab-bar>
+                  <div style="width: 100%;">
+                    <div class="demo-copy" attr:hidden="tab !== 0" style="margin-top: 10px;">邮件 · 3 封未读。指示条会跟随 active 项移动，面板内容完全由页面 data 决定。</div>
+                    <div class="demo-copy" attr:hidden="tab !== 1" style="margin-top: 10px;">通话 · 今天 2 次，共 12 分钟。st-tab-bar 不自动切换 active，点击只负责把索引交回给你。</div>
+                    <div class="demo-copy" attr:hidden="tab !== 2" style="margin-top: 10px;">收藏 · 8 条已保存。多组标签互不影响，每组维护自己的索引即可。</div>
+                  </div>
+                  <span class="demo-note" style="display: block;">当前：{{tabName}} · 已切换 {{switchCount}} 次</span>
+                </div>
               </div>
-            </div>
+              <details class="snippet">
+                <summary>示例代码（active + 面板）</summary>
+                <pre><code>&lt;st-tab-bar style="width: 100%;"&gt;
+  &lt;st-tab-item attr:active="tab === 0" on:click="select(0)"&gt;邮件&lt;/st-tab-item&gt;
+  &lt;st-tab-item attr:active="tab === 1" on:click="select(1)"&gt;通话&lt;/st-tab-item&gt;
+&lt;/st-tab-bar&gt;
+
+&lt;div attr:hidden="tab !== 0"&gt;邮件面板&lt;/div&gt;
+&lt;div attr:hidden="tab !== 1"&gt;通话面板&lt;/div&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>图标插槽与纯文字</h2>
+              <p class="doc-section-lead">图标放 slot="icon"，标签文字走默认插槽。没有图标时就只显示文字，水平居中；图标尺寸随 font-size 缩放，24px 是默认值。两组标签各自维护 active，互不干扰。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>slot="icon"</code></div>
+                <div class="demo-stage block" style="gap: 20px;">
+                  <div style="width: 100%;">
+                    <span class="demo-label">带图标 · 4 项</span>
+                    <st-tab-bar style="width: 100%; margin-top: 6px;">
+                      <st-tab-item attr:active="iconTab === 0" on:click="iconTab = 0"><span slot="icon">🏠</span>首页</st-tab-item>
+                      <st-tab-item attr:active="iconTab === 1" on:click="iconTab = 1"><span slot="icon">🔍</span>发现</st-tab-item>
+                      <st-tab-item attr:active="iconTab === 2" on:click="iconTab = 2"><span slot="icon">🔔</span>通知</st-tab-item>
+                      <st-tab-item attr:active="iconTab === 3" on:click="iconTab = 3"><span slot="icon">👤</span>我的</st-tab-item>
+                    </st-tab-bar>
+                    <span class="demo-note" style="display: block;">当前图标标签：{{iconName}}</span>
+                  </div>
+                  <div style="width: 100%;">
+                    <span class="demo-label">纯文字 · font-size: 12px</span>
+                    <st-tab-bar style="width: 100%; font-size: 12px; margin-top: 6px;">
+                      <st-tab-item attr:active="textTab === 0" on:click="textTab = 0">概览</st-tab-item>
+                      <st-tab-item attr:active="textTab === 1" on:click="textTab = 1">活动</st-tab-item>
+                      <st-tab-item attr:active="textTab === 2" on:click="textTab = 2">设置</st-tab-item>
+                    </st-tab-bar>
+                    <span class="demo-note" style="display: block;">当前文字标签：{{textName}}</span>
+                  </div>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-tab-item active&gt;&lt;span slot="icon"&gt;📧&lt;/span&gt;邮件&lt;/st-tab-item&gt;
+&lt;st-tab-item&gt;纯文字标签&lt;/st-tab-item&gt;
+
+&lt;st-tab-bar style="font-size: 12px;"&gt;...&lt;/st-tab-bar&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>禁用项 disabled</h2>
+              <p class="doc-section-lead">disabled 项透明度降到 0.38，内部原生 button 被禁用：点击、键盘与事件冒泡全部被阻断，不会误切换。适合“尚未上线但需要被看到”的标签。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled</code></div>
+                <div class="demo-stage">
+                  <st-tab-bar style="width: 100%;">
+                    <st-tab-item attr:active="guardTab === 0" on:click="guardSelect(0)"><span slot="icon">📥</span>收件箱</st-tab-item>
+                    <st-tab-item attr:active="guardTab === 1" on:click="guardSelect(1)"><span slot="icon">📤</span>已发送</st-tab-item>
+                    <st-tab-item disabled><span slot="icon">💬</span>聊天</st-tab-item>
+                    <st-tab-item disabled><span slot="icon">⚙️</span>设置</st-tab-item>
+                  </st-tab-bar>
+                  <span class="demo-note" style="display: block;">当前：{{guardName}} · 可用项点击 {{guardClicks}} 次（点禁用项不增加）</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-tab-item disabled&gt;
+  &lt;span slot="icon"&gt;💬&lt;/span&gt;聊天
+&lt;/st-tab-item&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>等分、字号与宽度</h2>
+              <p class="doc-section-lead">st-tab-bar 是 flex 容器，item 默认按内容宽度排布，不会自动等分。需要等分就给 item 写 flex: 1；尺寸类默认值用 em，改 bar 的 font-size 就能整体缩放，也可以直接覆写高度或边框。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>flex / font-size</code></div>
+                <div class="demo-stage block" style="gap: 20px;">
+                  <div style="width: 100%;">
+                    <span class="demo-label">flex: 1 等分 · 3 项</span>
+                    <st-tab-bar style="width: 100%; margin-top: 6px;">
+                      <st-tab-item style="flex: 1;" attr:active="eqTab === 0" on:click="eqTab = 0">日</st-tab-item>
+                      <st-tab-item style="flex: 1;" attr:active="eqTab === 1" on:click="eqTab = 1">周</st-tab-item>
+                      <st-tab-item style="flex: 1;" attr:active="eqTab === 2" on:click="eqTab = 2">月</st-tab-item>
+                    </st-tab-bar>
+                    <span class="demo-note" style="display: block;">当前周期：{{eqName}}</span>
+                  </div>
+                  <div style="width: 100%;">
+                    <span class="demo-label">font-size: 12px · 4 项按内容宽</span>
+                    <st-tab-bar style="width: 100%; font-size: 12px; margin-top: 6px;">
+                      <st-tab-item attr:active="smallTab === 0" on:click="smallTab = 0">概览</st-tab-item>
+                      <st-tab-item attr:active="smallTab === 1" on:click="smallTab = 1">成员</st-tab-item>
+                      <st-tab-item attr:active="smallTab === 2" on:click="smallTab = 2">账单</st-tab-item>
+                      <st-tab-item attr:active="smallTab === 3" on:click="smallTab = 3">设置</st-tab-item>
+                    </st-tab-bar>
+                    <span class="demo-note" style="display: block;">当前：{{smallName}}</span>
+                  </div>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（等分 / 缩放）</summary>
+                <pre><code>&lt;st-tab-bar&gt;
+  &lt;st-tab-item style="flex: 1;" active&gt;日&lt;/st-tab-item&gt;
+  &lt;st-tab-item style="flex: 1;"&gt;周&lt;/st-tab-item&gt;
+  &lt;st-tab-item style="flex: 1;"&gt;月&lt;/st-tab-item&gt;
+&lt;/st-tab-bar&gt;
+
+&lt;st-tab-bar style="font-size: 12px;"&gt;...&lt;/st-tab-bar&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>程序化切换</h2>
+              <p class="doc-section-lead">组件没有 next / prev API，切换就是改数据。外部按钮与标签点击可以共用同一个 select 方法：上/下项按索引用余数循环，跳到某一项直接赋值，指示条与面板都会同步。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>外部按钮控制</code></div>
+                <div class="demo-stage block" style="gap: 12px;">
+                  <st-tab-bar style="width: 100%;">
+                    <st-tab-item attr:active="progTab === 0" on:click="progSelect(0)"><span slot="icon">◐</span>概览</st-tab-item>
+                    <st-tab-item attr:active="progTab === 1" on:click="progSelect(1)"><span slot="icon">◫</span>活动</st-tab-item>
+                    <st-tab-item attr:active="progTab === 2" on:click="progSelect(2)"><span slot="icon">⚙</span>设置</st-tab-item>
+                  </st-tab-bar>
+                  <div class="row">
+                    <st-button variant="outlined" on:click="prevTab">上一项</st-button>
+                    <st-button variant="outlined" on:click="nextTab">下一项</st-button>
+                    <st-button variant="text" on:click="progSelect(2)">跳到设置</st-button>
+                  </div>
+                  <span class="demo-note" style="display: block;">当前：{{progName}} · 最近操作：{{lastAction}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（外部按钮）</summary>
+                <pre><code>&lt;st-button on:click="prevTab"&gt;上一项&lt;/st-button&gt;
+&lt;st-button on:click="nextTab"&gt;下一项&lt;/st-button&gt;
+
+prevTab() {
+  this.tab = (this.tab + 2) % 3;
+}
+nextTab() {
+  this.tab = (this.tab + 1) % 3;
+}</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>同页多组标签</h2>
+              <p class="doc-section-lead">每组标签是一个独立的 st-tab-bar，各自维护索引即可并存。同一页面里不要把两组 item 混进同一个 bar——指示条只认第一个 active 项。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>多组独立状态</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">工作区</span>
+                    <st-tab-bar style="width: 100%;">
+                      <st-tab-item attr:active="tabA === 0" on:click="tabA = 0">概览</st-tab-item>
+                      <st-tab-item attr:active="tabA === 1" on:click="tabA = 1">成员</st-tab-item>
+                      <st-tab-item attr:active="tabA === 2" on:click="tabA = 2">设置</st-tab-item>
+                    </st-tab-bar>
+                    <span class="demo-note" style="display: block;">当前：{{tabAName}}</span>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">报表周期</span>
+                    <st-tab-bar style="width: 100%;">
+                      <st-tab-item attr:active="tabB === 0" on:click="tabB = 0">日</st-tab-item>
+                      <st-tab-item attr:active="tabB === 1" on:click="tabB = 1">周</st-tab-item>
+                      <st-tab-item attr:active="tabB === 2" on:click="tabB = 2">月</st-tab-item>
+                    </st-tab-bar>
+                    <span class="demo-note" style="display: block;">当前：{{tabBName}}</span>
+                  </div>
+                </div>
+              </div>
+            </section>
 
             <div class="doc-cols">
               <div class="doc-block">
-                <h3>属性</h3>
+                <h3>属性（st-tab-item）</h3>
                 <table class="api">
                   <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
-                  <tbody><tr><td><code>active</code></td><td>boolean</td><td>无</td><td>当前项（st-tab-item）</td></tr><tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>禁用项：跳过交互</td></tr></tbody>
+                  <tbody>
+                    <tr><td><code>active</code></td><td>boolean</td><td>无</td><td>当前项：文字 primary 色，指示条跟随</td></tr>
+                    <tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>0.38 透明度，阻断点击 / 键盘 / 事件</td></tr>
+                    <tr><td><code>style</code></td><td>原生 CSS</td><td>无</td><td>可写 <code>flex</code> 等分；st-tab-bar 上可写 font-size</td></tr>
+                  </tbody>
                 </table>
               </div>
               <div class="doc-block">
                 <h3>插槽 / 事件 / 注意</h3>
-                <ul class="api-list"><li>插槽：<code>icon</code> / 默认文字。</li><li>事件：item 的 <code>click</code> 冒泡（composed），外部统一分发。</li><li>指示条位置用 offset 布局坐标计算，不受祖先 transform / 隐藏影响。</li></ul>
+                <ul class="api-list">
+                  <li>st-tab-bar 无语义属性；item 插槽：<code>icon</code> / 默认文字。</li>
+                  <li>事件：item 的 click 原生冒泡（composed）；disabled 项不派发。</li>
+                  <li>active 由外部逻辑切换，组件不自动管理；切换后指示条 0.3s 跟随。</li>
+                  <li>键盘：Tab 聚焦、Enter / Space 激活，focus-visible 有焦点环。</li>
+                  <li>默认高度 48px、文字 13px；改 font-size 等比缩放。</li>
+                  <li>bar 是 flex 容器，不会自动等分或滚动；等分写 <code>flex: 1</code>，项多时自行控制宽度。</li>
+                </ul>
               </div>
             </div>
-
-            <details class="snippet">
-              <summary>示例代码</summary>
-              <pre><code>&lt;st-tab-bar&gt;
-  &lt;st-tab-item attr:active="tab === 0" on:click="tab = 0"&gt;概览&lt;/st-tab-item&gt;
-  &lt;st-tab-item attr:active="tab === 1" on:click="tab = 1"&gt;活动&lt;/st-tab-item&gt;
-&lt;/st-tab-bar&gt;</code></pre>
-            </details>
 
             <nav class="doc-pager" aria-label="上下篇">
               <a class="pager-link" olink href="./list.html"><span>上一页</span>← List</a><a class="pager-link pager-next" olink href="./navigation.html"><span>下一页</span>Navigation →</a>
             </nav>
           </article>
-
-        </div>
-      </div>
       <script>
-        export const parent = "../layout.html";
+        export const parent = "./layout.html";
 
         export default async () => ({
           data: {
-            selectValue: "",
-            dialogOpen: false,
-            collapsed: false,
             tab: 0,
-            tabLabels: ["概览", "活动", "设置"],
-            navTab: 0,
-            navLabels: ["首页", "发现", "我的"],
-            toolResult: "（未调用）",
+            switchCount: 0,
+            iconTab: 0,
+            textTab: 0,
+            guardTab: 0,
+            guardClicks: 0,
+            eqTab: 0,
+            smallTab: 0,
+            progTab: 0,
+            lastAction: "（无）",
+            tabA: 0,
+            tabB: 0,
           },
           proto: {
-            get tabLabel() {
-              return this.tabLabels[this.tab] || "";
+            get tabName() {
+              return ["邮件", "通话", "收藏"][this.tab] || "";
             },
-            get navLabel() {
-              return this.navLabels[this.navTab] || "";
+            get iconName() {
+              return ["首页", "发现", "通知", "我的"][this.iconTab] || "";
             },
-            goDoc(id) {
-              this.goto("./" + id + ".html");
+            get textName() {
+              return ["概览", "活动", "设置"][this.textTab] || "";
             },
-            onNavigate(e) {
-              if (e.target.value) this.goto("./" + e.target.value + ".html");
+            get guardName() {
+              return ["收件箱", "已发送", "（禁用）", "（禁用）"][this.guardTab] || "";
             },
-            onSelect(e) {
-              this.selectValue = e.target.value || "";
+            get eqName() {
+              return ["日", "周", "月"][this.eqTab] || "";
             },
-            runToast() {
-              if (!window.__site) return;
-              this.toolResult = "toast → 已弹出（3s）";
-              window.__site.toast("这是一条 toast。");
+            get smallName() {
+              return ["概览", "成员", "账单", "设置"][this.smallTab] || "";
             },
-            async runAlert() {
-              if (!window.__site) return;
-              const ok = await window.__site.alert({ title: "操作成功", message: "这是 alert 命令式对话框。", ok: "知道了" });
-              this.toolResult = "alert → " + ok;
+            get progName() {
+              return ["概览", "活动", "设置"][this.progTab] || "";
             },
-            async runConfirm() {
-              if (!window.__site) return;
-              const ok = await window.__site.confirm({ title: "确认删除", message: "确定删除这条记录吗？", yes: "删除", cancel: "取消", color: "error" });
-              this.toolResult = "confirm → " + ok;
+            get tabAName() {
+              return ["概览", "成员", "设置"][this.tabA] || "";
             },
-            async runPrompt() {
-              if (!window.__site) return;
-              const value = await window.__site.prompt({ title: "重命名", message: "输入新的名称", placeholder: "新名称" });
-              this.toolResult = "prompt → " + JSON.stringify(value);
+            get tabBName() {
+              return ["日", "周", "月"][this.tabB] || "";
             },
-            openCtx(e) {
-              e.preventDefault();
-              if (!window.__site) return;
-              const self = this;
-              window.__site.contextMenu(e, [
-                { id: "copy", label: "复制", prefix: "⧉" },
-                { id: "rename", label: "重命名", prefix: "✏" },
-                { separator: true },
-                { id: "delete", label: "删除", prefix: "⌫", disabled: true },
-              ]).then((id) => { self.toolResult = "contextMenu → " + (id || "未选择"); });
+            select(i) {
+              this.tab = i;
+              this.switchCount += 1;
+            },
+            guardSelect(i) {
+              this.guardTab = i;
+              this.guardClicks += 1;
+            },
+            progSelect(i) {
+              this.progTab = i;
+              this.lastAction = "跳到第 " + (i + 1) + " 项";
+            },
+            prevTab() {
+              this.progTab = (this.progTab + 2) % 3;
+              this.lastAction = "上一项";
+            },
+            nextTab() {
+              this.progTab = (this.progTab + 1) % 3;
+              this.lastAction = "下一项";
             },
           },
         });

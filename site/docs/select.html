@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="../../packages/skin/apple.css" />
   <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
   <style>
-    html, body { margin: 0; padding: 0; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
     body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
     .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
     .nojs h1 { margin: 0 0 12px; font-size: 32px; }
@@ -61,182 +61,319 @@
     <template page>
       <link rel="stylesheet" href="../docs.css" />
 
-      <div class="docs-shell">
-<aside class="docs-side">
-  <p class="side-title">Components · 21</p>
-  <p class="side-group">动作</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
-    <st-list-item button on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
-  </st-list>
-  <p class="side-group">表单</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
-    <st-list-item button on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
-    <st-list-item button class="active" on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
-    <st-list-item button on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
-    <st-list-item button on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
-    <st-list-item button on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
-    <st-list-item button on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
-  </st-list>
-  <p class="side-group">反馈</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
-    <st-list-item button on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
-    <st-list-item button on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
-    <st-list-item button on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
-    <st-list-item button on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
-    <st-list-item button on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
-  </st-list>
-  <p class="side-group">内容</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
-    <st-list-item button on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
-    <st-list-item button on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
-    <st-list-item button on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
-  </st-list>
-  <p class="side-group">导航</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
-    <st-list-item button on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
-  </st-list>
-</aside>
-        <div class="docs-body">
-          <st-select class="docs-picker" placeholder="选择组件" default-value="select" on:change="onNavigate">
-            <option value="button">Button</option>
-            <option value="ripple">Ripple</option>
-            <option value="input">Input</option>
-            <option value="textarea">Textarea</option>
-            <option value="select" selected>Select</option>
-            <option value="checkbox">Checkbox</option>
-            <option value="switch">Switch</option>
-            <option value="radio">Radio</option>
-            <option value="slider">Slider</option>
-            <option value="dialog">Dialog</option>
-            <option value="menu">Menu</option>
-            <option value="snackbar">Snackbar</option>
-            <option value="tooltip">Tooltip</option>
-            <option value="progress">Progress</option>
-            <option value="tools">Command tools</option>
-            <option value="card">Card</option>
-            <option value="badges">Badges</option>
-            <option value="collapse">Collapse</option>
-            <option value="list">List</option>
-            <option value="tabs">Tabs</option>
-            <option value="navigation">Navigation</option>
-          </st-select>
           <article class="doc-page">
             <header class="doc-hero">
               <p class="doc-kicker">表单 · 5 / 21</p>
               <h1>Select <code>st-select</code></h1>
-              <p class="doc-lead">单选下拉框。选项写在 light DOM：原生 option 或 st-option 富内容；键盘全支持。</p>
+              <p class="doc-lead">单选下拉框。选项写在 light DOM：原生 option 或 st-option 富内容；也支持 :options 动态数组。键盘、弹层翻转和 change 回显都已内建。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
                 <a href="https://github.com/ofajs/senti-ui/blob/main/packages/select/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
               </div>
             </header>
 
-            <div class="demo">
-              <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-select</code></div>
-              <div class="demo-stage">
-                <st-select placeholder="请选择水果" on:change="onSelect">
-  <option value="apple">苹果</option>
-  <option value="banana">香蕉</option>
-  <st-option value="mango" label="芒果">🥭 芒果（富内容）</st-option>
-</st-select>
-<span class="demo-result">当前值：{{selectValue || "（未选择）"}}</span>
+            <section class="doc-section">
+              <h2>基础用法与两种 variant</h2>
+              <p class="doc-section-lead">选项直接写在组件内部，组件只把它们当数据源，读取后自绘下拉列表。placeholder 只在未选中时显示；初始选中用 <code>default-value</code>，不要给 option 写 selected。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-select / option</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">outlined</span>
+                    <st-select placeholder="请选择水果" on:change="onFruit">
+                      <option value="apple">苹果</option>
+                      <option value="banana">香蕉</option>
+                      <option value="cherry">樱桃</option>
+                    </st-select>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">filled + 初始选中</span>
+                    <st-select variant="filled" default-value="banana" on:change="onFruit">
+                      <option value="apple">苹果</option>
+                      <option value="banana">香蕉</option>
+                      <option value="cherry">樱桃</option>
+                    </st-select>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">无 value 的 option</span>
+                    <st-select placeholder="城市" on:change="onFruit">
+                      <option>北京</option>
+                      <option>上海</option>
+                      <option>广州</option>
+                    </st-select>
+                  </div>
+                </div>
+                <span class="demo-note" style="grid-column: 1 / -1;">最近选中：{{fruit}}</span>
               </div>
-            </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-select placeholder="请选择水果" on:change="onFruit"&gt;
+  &lt;option value="apple"&gt;苹果&lt;/option&gt;
+  &lt;option value="banana"&gt;香蕉&lt;/option&gt;
+&lt;/st-select&gt;
+
+&lt;st-select variant="filled" default-value="banana"&gt;...&lt;/st-select&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>disabled 与校验色</h2>
+              <p class="doc-section-lead">disabled 会降到 0.38 透明度并关闭弹层，点击与键盘都不再响应。<code>color</code> 控制 focus 描边 / 底线色，用来表达 error、success 等校验结果；未设置时回退 primary。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled / color</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">disabled</span>
+                    <st-select placeholder="禁用状态" disabled>
+                      <option value="a">选项 A</option>
+                    </st-select>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">disabled + filled</span>
+                    <st-select variant="filled" default-value="a" disabled>
+                      <option value="a">已选中但不可改</option>
+                    </st-select>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">color="error"</span>
+                    <st-select color="error" placeholder="必选项，尚未选择">
+                      <option value="a">选项 A</option>
+                      <option value="b">选项 B</option>
+                    </st-select>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">color="success"</span>
+                    <st-select color="success" default-value="ok">
+                      <option value="ok">校验通过</option>
+                    </st-select>
+                  </div>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-select placeholder="禁用状态" disabled&gt;...&lt;/st-select&gt;
+&lt;st-select color="error" placeholder="必选项"&gt;...&lt;/st-select&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>长列表与键盘</h2>
+              <p class="doc-section-lead">列表最高 15em，超出内部滚动。打开后 ↑↓ 循环移动激活项并自动滚到可见，Home / End 跳首尾，Enter / Space 选中，Escape / Tab 关闭；下方空间不足时弹层会自动向上翻转。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>键盘 / 滚动</code></div>
+                <div class="demo-stage block">
+                  <st-select placeholder="长列表：试试 ↑ ↓ / Home / End" style="width: 100%; max-width: 360px;" on:change="onPick">
+                    <option value="1">选项 01</option>
+                    <option value="2">选项 02</option>
+                    <option value="3">选项 03</option>
+                    <option value="4">选项 04</option>
+                    <option value="5">选项 05</option>
+                    <option value="6">选项 06</option>
+                    <option value="7">选项 07</option>
+                    <option value="8">选项 08</option>
+                    <option value="9">选项 09</option>
+                    <option value="10">选项 10</option>
+                    <option value="11">选项 11</option>
+                    <option value="12">选项 12</option>
+                  </st-select>
+                  <span class="demo-note">最近选中：{{lastPick}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-select placeholder="长列表"&gt;
+  &lt;option value="1"&gt;选项 01&lt;/option&gt;
+  &lt;option value="2"&gt;选项 02&lt;/option&gt;
+  &lt;option value="3"&gt;选项 03&lt;/option&gt;
+&lt;/st-select&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>富内容选项与 st-option</h2>
+              <p class="doc-section-lead">原生 option 内可嵌 span / b，子元素会被克隆到下拉项；但闭合状态显示的是纯文本，复杂或双语内容推荐 <code>st-option</code>：插槽负责下拉项，<code>label</code> 属性单独决定闭合态文字。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-option / label</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">原生 option 富内容</span>
+                    <st-select placeholder="选择水果">
+                      <option value="apple"><span style="margin-right: 8px;">🍎</span><b>苹果</b> Apple</option>
+                      <option value="banana"><span style="margin-right: 8px;">🍌</span><b>香蕉</b> Banana</option>
+                      <option value="cherry"><span style="margin-right: 8px;">🍒</span><b>樱桃</b> Cherry</option>
+                    </st-select>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">st-option + label</span>
+                    <st-select default-value="relay" placeholder="选择部署方式">
+                      <st-option value="direct" label="直连"><span style="margin-right: 8px;">⚡</span><b>直连</b> Direct</st-option>
+                      <st-option value="relay" label="邀请码"><span style="margin-right: 8px;">🔑</span><b>邀请码</b> <span style="opacity: 0.62;">Invite code</span></st-option>
+                      <st-option label="无 value（取 label）">缺省 value 演示</st-option>
+                    </st-select>
+                  </div>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-select default-value="relay"&gt;
+  &lt;st-option value="direct" label="直连"&gt;⚡ 直连 Direct&lt;/st-option&gt;
+  &lt;st-option value="relay" label="邀请码"&gt;🔑 邀请码 Invite code&lt;/st-option&gt;
+&lt;/st-select&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>:options 动态选项</h2>
+              <p class="doc-section-lead">数据驱动时优先用 <code>:options</code> 绑定数组（<code>[{ value, label }]</code>），组件会重建列表并保留当前选中值。数组内容变化时给 data 赋新数组即可；纯 JS 场景也可以用 <code>el.options = [...]</code>。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>:options</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">cities</span>
+                    <st-select :options="cities" placeholder=":options 数据绑定" on:change="onCity"></st-select>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">extendedCities</span>
+                    <st-select :options="extendedCities" placeholder="另一组城市数据" on:change="onCity"></st-select>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">修改数据源</span>
+                    <st-button variant="outlined" on:click="swapCities">换一组城市</st-button>
+                  </div>
+                </div>
+                <span class="demo-note" style="grid-column: 1 / -1;">选中城市：{{city}}</span>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-select :options="cities" placeholder="请选择城市"&gt;&lt;/st-select&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: {
+      cities: [
+        { value: "bj", label: "北京" },
+        { value: "sh", label: "上海" },
+      ],
+    },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>宽度、字号与 change 回显</h2>
+              <p class="doc-section-lead">尺寸默认值都以 em 计，改 <code>font-size</code> 等比缩放；宽度、高度、圆角直接用原生 CSS。<code>change</code> 只在用户选中时派发，回调里 <code>e.target.value</code> 已是新值。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>style / change</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">font-size: 12px</span>
+                    <st-select style="font-size: 12px;" placeholder="小号 12px" on:change="onPick">
+                      <option value="high">高优先级</option>
+                      <option value="mid">中优先级</option>
+                      <option value="low">低优先级</option>
+                    </st-select>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">width: 280px</span>
+                    <st-select style="width: 280px;" placeholder="固定宽度 280px" on:change="onPick">
+                      <option value="high">高优先级</option>
+                      <option value="mid">中优先级</option>
+                      <option value="low">低优先级</option>
+                    </st-select>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">height + 圆角</span>
+                    <st-select variant="filled" style="height: 48px; border-radius: 12px;" default-value="mid" on:change="onPick">
+                      <option value="high">高优先级</option>
+                      <option value="mid">中优先级</option>
+                      <option value="low">低优先级</option>
+                    </st-select>
+                  </div>
+                </div>
+                <span class="demo-note" style="grid-column: 1 / -1;">最近选中：{{lastPick}}</span>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-select style="font-size: 12px;" placeholder="小号"&gt;...&lt;/st-select&gt;
+&lt;st-select style="width: 280px;" placeholder="固定宽度"&gt;...&lt;/st-select&gt;
+&lt;st-select style="height: 48px; border-radius: 12px;"&gt;...&lt;/st-select&gt;</code></pre>
+              </details>
+            </section>
 
             <div class="doc-cols">
               <div class="doc-block">
                 <h3>属性</h3>
                 <table class="api">
                   <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
-                  <tbody><tr><td><code>variant</code></td><td>"outlined" | "filled"</td><td>"outlined"</td><td>M3 输入框类型</td></tr><tr><td><code>placeholder</code></td><td>string</td><td>无</td><td>未选择时的占位文本</td></tr><tr><td><code>default-value</code></td><td>string</td><td>无</td><td>初始选中 value</td></tr><tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>focus 描边 / 底线色</td></tr><tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>禁用并关闭弹层</td></tr></tbody>
+                  <tbody>
+                    <tr><td><code>variant</code></td><td>"outlined" | "filled"</td><td>"outlined"</td><td>M3 两种输入框类型</td></tr>
+                    <tr><td><code>default-value</code></td><td>string</td><td>无</td><td>初始选中项的 value</td></tr>
+                    <tr><td><code>placeholder</code></td><td>string</td><td>无</td><td>未选中时的占位文本</td></tr>
+                    <tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>focus 描边 / 底线色</td></tr>
+                    <tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>0.38 透明度，阻断交互并关闭弹层</td></tr>
+                    <tr><td><code>options</code></td><td>Array&lt;{ value, label }&gt;</td><td>无</td><td>动态选项入口：<code>:options</code> 或 <code>el.options = []</code></td></tr>
+                  </tbody>
                 </table>
               </div>
               <div class="doc-block">
                 <h3>插槽 / 事件 / 注意</h3>
-                <ul class="api-list"><li>运行时状态：<code>el.value</code> 读写；事件：<code>change</code>（composed）。</li><li>选项：<code>&lt;option value="a"&gt;A&lt;/option&gt;</code> 或 <code>st-option</code>（<code>value</code> / <code>label</code> + 默认插槽富内容）。</li><li>键盘：↑↓ / Enter / Escape / Home / End；弹层自动上下翻转，但会被 overflow 祖先裁剪。</li></ul>
+                <ul class="api-list">
+                  <li>选项：<code>&lt;option&gt;</code> 或 <code>&lt;st-option&gt;</code>（<code>value</code> / <code>label</code> + 富内容插槽）。</li>
+                  <li>事件：<code>change</code>（用户选中时派发，composed）；程序改 <code>el.value</code> 不派发。</li>
+                  <li>方法：<code>focus()</code> / <code>blur()</code>；键盘 ↑↓ / Enter / Space / Home / End / Escape / Tab。</li>
+                  <li><code>value</code> 是运行时 property；初始选中用 <code>default-value</code>，不要写 selected。</li>
+                  <li>弹层渲染在 shadow 内，<code>overflow: hidden</code> 祖先会裁剪它；组件只负责上下翻转。</li>
+                </ul>
               </div>
             </div>
-
-            <details class="snippet">
-              <summary>示例代码</summary>
-              <pre><code>&lt;st-select placeholder="请选择水果"&gt;
-  &lt;option value="apple"&gt;苹果&lt;/option&gt;
-  &lt;st-option value="mango" label="芒果"&gt;🥭 芒果&lt;/st-option&gt;
-&lt;/st-select&gt;</code></pre>
-            </details>
 
             <nav class="doc-pager" aria-label="上下篇">
               <a class="pager-link" olink href="./textarea.html"><span>上一页</span>← Textarea</a><a class="pager-link pager-next" olink href="./checkbox.html"><span>下一页</span>Checkbox →</a>
             </nav>
           </article>
-
-        </div>
-      </div>
       <script>
-        export const parent = "../layout.html";
+        export const parent = "./layout.html";
 
         export default async () => ({
           data: {
-            selectValue: "",
-            dialogOpen: false,
-            collapsed: false,
-            tab: 0,
-            tabLabels: ["概览", "活动", "设置"],
-            navTab: 0,
-            navLabels: ["首页", "发现", "我的"],
-            toolResult: "（未调用）",
+            fruit: "（未选择）",
+            city: "（未选择）",
+            lastPick: "（未选择）",
+            cities: [
+              { value: "bj", label: "北京" },
+              { value: "sh", label: "上海" },
+              { value: "gz", label: "广州" },
+            ],
+            extendedCities: [
+              { value: "hz", label: "杭州" },
+              { value: "cd", label: "成都" },
+              { value: "wh", label: "武汉" },
+              { value: "xa", label: "西安" },
+              { value: "sz", label: "深圳" },
+            ],
+            altCities: [
+              { value: "nj", label: "南京" },
+              { value: "cs", label: "长沙" },
+              { value: "xm", label: "厦门" },
+            ],
           },
           proto: {
-            get tabLabel() {
-              return this.tabLabels[this.tab] || "";
+            onFruit(e) {
+              this.fruit = e.target.value;
             },
-            get navLabel() {
-              return this.navLabels[this.navTab] || "";
+            onCity(e) {
+              this.city = e.target.value;
             },
-            goDoc(id) {
-              this.goto("./" + id + ".html");
+            onPick(e) {
+              this.lastPick = e.target.value;
             },
-            onNavigate(e) {
-              if (e.target.value) this.goto("./" + e.target.value + ".html");
-            },
-            onSelect(e) {
-              this.selectValue = e.target.value || "";
-            },
-            runToast() {
-              if (!window.__site) return;
-              this.toolResult = "toast → 已弹出（3s）";
-              window.__site.toast("这是一条 toast。");
-            },
-            async runAlert() {
-              if (!window.__site) return;
-              const ok = await window.__site.alert({ title: "操作成功", message: "这是 alert 命令式对话框。", ok: "知道了" });
-              this.toolResult = "alert → " + ok;
-            },
-            async runConfirm() {
-              if (!window.__site) return;
-              const ok = await window.__site.confirm({ title: "确认删除", message: "确定删除这条记录吗？", yes: "删除", cancel: "取消", color: "error" });
-              this.toolResult = "confirm → " + ok;
-            },
-            async runPrompt() {
-              if (!window.__site) return;
-              const value = await window.__site.prompt({ title: "重命名", message: "输入新的名称", placeholder: "新名称" });
-              this.toolResult = "prompt → " + JSON.stringify(value);
-            },
-            openCtx(e) {
-              e.preventDefault();
-              if (!window.__site) return;
-              const self = this;
-              window.__site.contextMenu(e, [
-                { id: "copy", label: "复制", prefix: "⧉" },
-                { id: "rename", label: "重命名", prefix: "✏" },
-                { separator: true },
-                { id: "delete", label: "删除", prefix: "⌫", disabled: true },
-              ]).then((id) => { self.toolResult = "contextMenu → " + (id || "未选择"); });
+            swapCities() {
+              this.cities = this.cities[0].value === "bj" ? this.altCities : [
+                { value: "bj", label: "北京" },
+                { value: "sh", label: "上海" },
+                { value: "gz", label: "广州" },
+              ];
             },
           },
         });

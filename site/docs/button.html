@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="../../packages/skin/apple.css" />
   <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
   <style>
-    html, body { margin: 0; padding: 0; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
     body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
     .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
     .nojs h1 { margin: 0 0 12px; font-size: 32px; }
@@ -61,180 +61,282 @@
     <template page>
       <link rel="stylesheet" href="../docs.css" />
 
-      <div class="docs-shell">
-<aside class="docs-side">
-  <p class="side-title">Components · 21</p>
-  <p class="side-group">动作</p>
-  <st-list class="side-list">
-    <st-list-item button class="active" on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
-    <st-list-item button on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
-  </st-list>
-  <p class="side-group">表单</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
-    <st-list-item button on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
-    <st-list-item button on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
-    <st-list-item button on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
-    <st-list-item button on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
-    <st-list-item button on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
-    <st-list-item button on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
-  </st-list>
-  <p class="side-group">反馈</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
-    <st-list-item button on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
-    <st-list-item button on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
-    <st-list-item button on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
-    <st-list-item button on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
-    <st-list-item button on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
-  </st-list>
-  <p class="side-group">内容</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
-    <st-list-item button on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
-    <st-list-item button on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
-    <st-list-item button on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
-  </st-list>
-  <p class="side-group">导航</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
-    <st-list-item button on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
-  </st-list>
-</aside>
-        <div class="docs-body">
-          <st-select class="docs-picker" placeholder="选择组件" default-value="button" on:change="onNavigate">
-            <option value="button" selected>Button</option>
-            <option value="ripple">Ripple</option>
-            <option value="input">Input</option>
-            <option value="textarea">Textarea</option>
-            <option value="select">Select</option>
-            <option value="checkbox">Checkbox</option>
-            <option value="switch">Switch</option>
-            <option value="radio">Radio</option>
-            <option value="slider">Slider</option>
-            <option value="dialog">Dialog</option>
-            <option value="menu">Menu</option>
-            <option value="snackbar">Snackbar</option>
-            <option value="tooltip">Tooltip</option>
-            <option value="progress">Progress</option>
-            <option value="tools">Command tools</option>
-            <option value="card">Card</option>
-            <option value="badges">Badges</option>
-            <option value="collapse">Collapse</option>
-            <option value="list">List</option>
-            <option value="tabs">Tabs</option>
-            <option value="navigation">Navigation</option>
-          </st-select>
           <article class="doc-page">
             <header class="doc-hero">
               <p class="doc-kicker">动作 · 1 / 21</p>
               <h1>Button <code>st-button</code></h1>
-              <p class="doc-lead">三种 M3 variant、语义色、loading 与图标插槽。按钮组、分裂按钮、图标按钮同属一个包。</p>
+              <p class="doc-lead">四种按钮形态同属一个包：普通按钮、按钮组、分裂按钮、图标按钮。语义只由 variant / color / disabled / loading 表达，尺寸与材质直接写原生 CSS。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
                 <a href="https://github.com/ofajs/senti-ui/blob/main/packages/button/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
               </div>
             </header>
 
-            <div class="demo">
-              <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-button</code></div>
-              <div class="demo-stage">
-                <st-button>Filled</st-button>
-<st-button variant="outlined">Outlined</st-button>
-<st-button variant="text">Text</st-button>
-<st-button color="error">Delete</st-button>
-<st-button loading>Loading</st-button>
-<st-button variant="outlined" disabled>Disabled</st-button>
+            <section class="doc-section">
+              <h2>三种 variant</h2>
+              <p class="doc-section-lead">M3 的 filled / outlined / text 是语义类型，不是外观预设。它们共享同一套高度、内边距与圆角，只改变填充和描边。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-button</code></div>
+                <div class="demo-stage">
+                  <st-button>Filled</st-button>
+                  <st-button variant="outlined">Outlined</st-button>
+                  <st-button variant="text">Text</st-button>
+                </div>
               </div>
-            </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-button&gt;Filled&lt;/st-button&gt;
+&lt;st-button variant="outlined"&gt;Outlined&lt;/st-button&gt;
+&lt;st-button variant="text"&gt;Text&lt;/st-button&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>状态：disabled 与 loading</h2>
+              <p class="doc-section-lead">loading 会自动禁用点击并显示随字号缩放的 spinner；异步任务只需把 loading 绑到 data，不需要手动叠 disabled。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled / loading</code></div>
+                <div class="demo-stage">
+                  <st-button disabled>Disabled</st-button>
+                  <st-button loading>Loading</st-button>
+                  <st-button attr:loading="busy" on:click="startTask">{{busy ? '提交中…' : '提交表单'}}</st-button>
+                  <span class="demo-note">点击计数：{{clicks}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（异步提交）</summary>
+                <pre><code>&lt;st-button attr:loading="busy" on:click="submit"&gt;
+  {{busy ? '提交中…' : '提交表单'}}
+&lt;/st-button&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { busy: false },
+    proto: {
+      async submit() {
+        this.busy = true;
+        await fetch('/api/save', { method: 'POST' });
+        this.busy = false;
+      },
+    },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>color 语义换色</h2>
+              <p class="doc-section-lead">color 接受 M3 角色名或 color 工具里的自定义变量名，并与三种 variant 自由组合。切换种子色 / error / success 时全站按钮一起变化，不需要改组件样式。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>color + variant</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">primary</span>
+                    <div class="row">
+                      <st-button color="primary">Primary</st-button>
+                      <st-button color="primary" variant="outlined">Primary</st-button>
+                    </div>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">error</span>
+                    <div class="row">
+                      <st-button color="error">Delete</st-button>
+                      <st-button color="error" variant="outlined">Delete</st-button>
+                      <st-button color="error" variant="text">Delete</st-button>
+                    </div>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">success</span>
+                    <div class="row">
+                      <st-button color="success">保存</st-button>
+                      <st-button color="success" variant="outlined">已保存</st-button>
+                    </div>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">secondary / tertiary</span>
+                    <div class="row">
+                      <st-button color="secondary">Secondary</st-button>
+                      <st-button color="tertiary" variant="outlined">Tertiary</st-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-button color="error"&gt;Delete&lt;/st-button&gt;
+&lt;st-button color="error" variant="outlined"&gt;Delete&lt;/st-button&gt;
+&lt;st-button color="success"&gt;保存&lt;/st-button&gt;
+&lt;!-- 自定义变量需先在 color 工具中定义 --&gt;
+&lt;st-button color="brand"&gt;Brand&lt;/st-button&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>图标插槽与尺寸</h2>
+              <p class="doc-section-lead">prefix / suffix 放图标；尺寸类默认值全部用 em，只改 font-size 就能整体等比缩放，也可以用原生 CSS 单独覆写高度、圆角或背景。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>slot / font-size</code></div>
+                <div class="demo-stage">
+                  <st-button><span slot="prefix">🔍</span>Search</st-button>
+                  <st-button variant="outlined">Settings<span slot="suffix">⚙️</span></st-button>
+                  <st-button style="font-size: 12px;">12px</st-button>
+                  <st-button>Default 14px</st-button>
+                  <st-button style="font-size: 18px;">18px</st-button>
+                  <st-button style="height: 32px; border-radius: 8px; font-size: 12px;">Compact 覆写</st-button>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-button&gt;&lt;span slot="prefix"&gt;🔍&lt;/span&gt;Search&lt;/st-button&gt;
+&lt;st-button variant="outlined"&gt;Settings&lt;span slot="suffix"&gt;⚙️&lt;/span&gt;&lt;/st-button&gt;
+
+&lt;st-button style="font-size: 12px;"&gt;12px&lt;/st-button&gt;
+&lt;st-button style="height: 32px; border-radius: 8px; font-size: 12px;"&gt;Compact&lt;/st-button&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>按钮组</h2>
+              <p class="doc-section-lead">st-button-group 负责首尾圆角与间距。connected 连体，full-width 等分整行；也可以直接用 attr:variant 把按钮组当分段选择器。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-button-group</code></div>
+                <div class="demo-stage block">
+                  <st-button-group>
+                    <st-button variant="outlined">左</st-button>
+                    <st-button variant="outlined">中</st-button>
+                    <st-button variant="outlined">右</st-button>
+                  </st-button-group>
+                  <st-button-group connected>
+                    <st-button>新建</st-button>
+                    <st-button variant="outlined">编辑</st-button>
+                    <st-button color="error" variant="outlined">删除</st-button>
+                  </st-button-group>
+                  <st-button-group full-width style="max-width: 420px;">
+                    <st-button variant="text">取消</st-button>
+                    <st-button>确定</st-button>
+                  </st-button-group>
+                  <st-button-group connected>
+                    <st-button attr:variant="range === 'day' ? 'filled' : 'outlined'" on:click="range = 'day'">日</st-button>
+                    <st-button attr:variant="range === 'week' ? 'filled' : 'outlined'" on:click="range = 'week'">周</st-button>
+                    <st-button attr:variant="range === 'month' ? 'filled' : 'outlined'" on:click="range = 'month'">月</st-button>
+                  </st-button-group>
+                  <span class="demo-note">range = {{range}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（连体按钮组）</summary>
+                <pre><code>&lt;st-button-group connected&gt;
+  &lt;st-button&gt;新建&lt;/st-button&gt;
+  &lt;st-button variant="outlined"&gt;编辑&lt;/st-button&gt;
+  &lt;st-button color="error" variant="outlined"&gt;删除&lt;/st-button&gt;
+&lt;/st-button-group&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>分裂按钮</h2>
+              <p class="doc-section-lead">主操作区与菜单箭头分开：点主区触发 click，点箭头展开 menu 插槽。open 是运行时状态，ofa 页面里用 sync:open 双向绑定。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-split-button</code></div>
+                <div class="demo-stage">
+                  <st-split-button on:click="splitCount += 1">
+                    发送
+                    <span slot="prefix">📤</span>
+                    <st-menu-item slot="menu" on:click="lastPick = '发送到邮箱'">发送到邮箱</st-menu-item>
+                    <st-menu-item slot="menu" on:click="lastPick = '发送到云盘'">发送到云盘</st-menu-item>
+                    <hr slot="menu">
+                    <st-menu-item slot="menu" disabled>定时发送（禁用）</st-menu-item>
+                  </st-split-button>
+                  <st-split-button variant="outlined" color="error" menu-align="left">
+                    删除
+                    <st-menu-item slot="menu" on:click="lastPick = '移到回收站'">移到回收站</st-menu-item>
+                    <st-menu-item slot="menu" on:click="lastPick = '彻底删除'">彻底删除</st-menu-item>
+                  </st-split-button>
+                  <span class="demo-note">主操作 {{splitCount}} 次 · 最近选择：{{lastPick}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-split-button on:click="send"&gt;
+  发送
+  &lt;st-menu-item slot="menu" on:click="sendTo('email')"&gt;发送到邮箱&lt;/st-menu-item&gt;
+  &lt;st-menu-item slot="menu" on:click="sendTo('cloud')"&gt;发送到云盘&lt;/st-menu-item&gt;
+&lt;/st-split-button&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>图标按钮</h2>
+              <p class="doc-section-lead">standard / filled / tonal / outlined 四种类型，同样支持 color 与 disabled。没有文字，务必用 title 或 aria-label 提供无障碍名称。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-icon-button</code></div>
+                <div class="demo-stage">
+                  <st-icon-button title="收藏" on:click="iconCount += 1">⭐</st-icon-button>
+                  <st-icon-button variant="filled" title="确认" on:click="iconCount += 1">✅</st-icon-button>
+                  <st-icon-button variant="tonal" title="删除" on:click="iconCount += 1">🗑</st-icon-button>
+                  <st-icon-button variant="outlined" title="设置" on:click="iconCount += 1">⚙️</st-icon-button>
+                  <st-icon-button variant="filled" color="error" title="错误操作" on:click="iconCount += 1">🚫</st-icon-button>
+                  <st-icon-button variant="tonal" color="success" title="保存" on:click="iconCount += 1">💾</st-icon-button>
+                  <st-icon-button variant="outlined" disabled title="禁用">🔒</st-icon-button>
+                  <span class="demo-note">点击 {{iconCount}} 次</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-icon-button title="收藏"&gt;⭐&lt;/st-icon-button&gt;
+&lt;st-icon-button variant="filled" title="确认"&gt;✅&lt;/st-icon-button&gt;
+&lt;st-icon-button variant="tonal" color="error" title="删除"&gt;🗑&lt;/st-icon-button&gt;</code></pre>
+              </details>
+            </section>
 
             <div class="doc-cols">
               <div class="doc-block">
                 <h3>属性</h3>
                 <table class="api">
                   <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
-                  <tbody><tr><td><code>variant</code></td><td>"filled" | "outlined" | "text"</td><td>"filled"</td><td>M3 三种按钮类型</td></tr><tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>语义换色，与 variant 自由组合</td></tr><tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>阻断点击，0.38 透明度</td></tr><tr><td><code>loading</code></td><td>boolean</td><td>无</td><td>显示 spinner 并自动禁用</td></tr><tr><td><code>type</code></td><td>"button" | "submit" | "reset"</td><td>"button"</td><td>转发给内部原生 button</td></tr></tbody>
+                  <tbody>
+                    <tr><td><code>variant</code></td><td>"filled" | "outlined" | "text"</td><td>"filled"</td><td>普通按钮三种类型</td></tr>
+                    <tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>与 variant 自由组合的语义换色</td></tr>
+                    <tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>0.38 透明度并阻断点击</td></tr>
+                    <tr><td><code>loading</code></td><td>boolean</td><td>无</td><td>显示 spinner，自动阻断点击</td></tr>
+                    <tr><td><code>type</code></td><td>"button" | "submit" | "reset"</td><td>"button"</td><td>转发给内部原生 button</td></tr>
+                  </tbody>
                 </table>
               </div>
               <div class="doc-block">
-                <h3>插槽 / 事件 / 注意</h3>
-                <ul class="api-list"><li>插槽：默认文字；<code>prefix</code> / <code>suffix</code> 放图标。</li><li>事件：<code>click</code> 直接在宿主监听；Tab 聚焦、Enter / Space 激活由内部原生 button 提供。</li><li>同包：<code>st-button-group</code>（connected / full-width）、<code>st-split-button</code>（主区 + 菜单）、<code>st-icon-button</code>（standard / filled / tonal / outlined）。</li></ul>
+                <h3>插槽 / 事件 / 同包组件</h3>
+                <ul class="api-list">
+                  <li>插槽：默认文字；<code>prefix</code> / <code>suffix</code> 放图标。</li>
+                  <li>事件：<code>click</code> 直接在宿主监听；Tab 聚焦、Enter / Space 激活由内部原生 button 提供。</li>
+                  <li><code>st-button-group</code>：<code>connected</code> 连体、<code>full-width</code> 等分。</li>
+                  <li><code>st-split-button</code>：主区 click + menu 插槽，<code>open</code> 是运行时状态。</li>
+                  <li><code>st-icon-button</code>：standard / filled / tonal / outlined。</li>
+                </ul>
               </div>
             </div>
-
-            <details class="snippet">
-              <summary>示例代码</summary>
-              <pre><code>&lt;st-button color="error" variant="outlined"&gt;Delete&lt;/st-button&gt;
-&lt;st-icon-button variant="tonal" color="error" title="删除"&gt;⌫&lt;/st-icon-button&gt;</code></pre>
-            </details>
 
             <nav class="doc-pager" aria-label="上下篇">
               <div class="pager-empty"></div><a class="pager-link pager-next" olink href="./ripple.html"><span>下一页</span>Ripple →</a>
             </nav>
           </article>
-
-        </div>
-      </div>
       <script>
-        export const parent = "../layout.html";
+        export const parent = "./layout.html";
 
         export default async () => ({
           data: {
-            selectValue: "",
-            dialogOpen: false,
-            collapsed: false,
-            tab: 0,
-            tabLabels: ["概览", "活动", "设置"],
-            navTab: 0,
-            navLabels: ["首页", "发现", "我的"],
-            toolResult: "（未调用）",
+            clicks: 0,
+            busy: false,
+            range: "day",
+            splitCount: 0,
+            lastPick: "（无）",
+            iconCount: 0,
           },
           proto: {
-            get tabLabel() {
-              return this.tabLabels[this.tab] || "";
-            },
-            get navLabel() {
-              return this.navLabels[this.navTab] || "";
-            },
-            goDoc(id) {
-              this.goto("./" + id + ".html");
-            },
-            onNavigate(e) {
-              if (e.target.value) this.goto("./" + e.target.value + ".html");
-            },
-            onSelect(e) {
-              this.selectValue = e.target.value || "";
-            },
-            runToast() {
-              if (!window.__site) return;
-              this.toolResult = "toast → 已弹出（3s）";
-              window.__site.toast("这是一条 toast。");
-            },
-            async runAlert() {
-              if (!window.__site) return;
-              const ok = await window.__site.alert({ title: "操作成功", message: "这是 alert 命令式对话框。", ok: "知道了" });
-              this.toolResult = "alert → " + ok;
-            },
-            async runConfirm() {
-              if (!window.__site) return;
-              const ok = await window.__site.confirm({ title: "确认删除", message: "确定删除这条记录吗？", yes: "删除", cancel: "取消", color: "error" });
-              this.toolResult = "confirm → " + ok;
-            },
-            async runPrompt() {
-              if (!window.__site) return;
-              const value = await window.__site.prompt({ title: "重命名", message: "输入新的名称", placeholder: "新名称" });
-              this.toolResult = "prompt → " + JSON.stringify(value);
-            },
-            openCtx(e) {
-              e.preventDefault();
-              if (!window.__site) return;
-              const self = this;
-              window.__site.contextMenu(e, [
-                { id: "copy", label: "复制", prefix: "⧉" },
-                { id: "rename", label: "重命名", prefix: "✏" },
-                { separator: true },
-                { id: "delete", label: "删除", prefix: "⌫", disabled: true },
-              ]).then((id) => { self.toolResult = "contextMenu → " + (id || "未选择"); });
+            startTask() {
+              if (this.busy) return;
+              this.clicks += 1;
+              this.busy = true;
+              setTimeout(() => { this.busy = false; }, 1200);
             },
           },
         });

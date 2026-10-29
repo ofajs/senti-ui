@@ -34,9 +34,14 @@
     export default async () => ({
       tag: "st-ripple",
       ready() {
-        // 监听目标：优先取 shadow 宿主（组件被嵌入其他组件 shadow 时），否则取父元素
+        // 监听目标：
+        // - 在组件 shadow 内（st-button / st-list-item 等）→ 监听组件宿主；
+        // - 在 o-page / o-app 的 shadow 内 → 监听最近的父元素。
+        //   页面只是渲染容器，直接监听 o-page 会让页面上所有并列 ripple 一起响应。
         const root = this.ele.getRootNode();
-        const target = root.host || this.ele.parentElement;
+        const host = root.host;
+        const pageHost = host && (host.tagName === "O-PAGE" || host.tagName === "O-APP");
+        const target = pageHost ? this.ele.parentElement || host : host || this.ele.parentElement;
         if (!target) return;
 
         // 事件若源自嵌套的自定义组件（如子列表项、项内套的 st-button），

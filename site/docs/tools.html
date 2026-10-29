@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="../../packages/skin/apple.css" />
   <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
   <style>
-    html, body { margin: 0; padding: 0; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
     body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
     .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
     .nojs h1 { margin: 0 0 12px; font-size: 32px; }
@@ -61,186 +61,395 @@
     <template page>
       <link rel="stylesheet" href="../docs.css" />
 
-      <div class="docs-shell">
-<aside class="docs-side">
-  <p class="side-title">Components · 21</p>
-  <p class="side-group">动作</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
-    <st-list-item button on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
-  </st-list>
-  <p class="side-group">表单</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
-    <st-list-item button on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
-    <st-list-item button on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
-    <st-list-item button on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
-    <st-list-item button on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
-    <st-list-item button on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
-    <st-list-item button on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
-  </st-list>
-  <p class="side-group">反馈</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
-    <st-list-item button on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
-    <st-list-item button on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
-    <st-list-item button on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
-    <st-list-item button on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
-    <st-list-item button class="active" on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
-  </st-list>
-  <p class="side-group">内容</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
-    <st-list-item button on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
-    <st-list-item button on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
-    <st-list-item button on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
-  </st-list>
-  <p class="side-group">导航</p>
-  <st-list class="side-list">
-    <st-list-item button on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
-    <st-list-item button on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
-  </st-list>
-</aside>
-        <div class="docs-body">
-          <st-select class="docs-picker" placeholder="选择组件" default-value="tools" on:change="onNavigate">
-            <option value="button">Button</option>
-            <option value="ripple">Ripple</option>
-            <option value="input">Input</option>
-            <option value="textarea">Textarea</option>
-            <option value="select">Select</option>
-            <option value="checkbox">Checkbox</option>
-            <option value="switch">Switch</option>
-            <option value="radio">Radio</option>
-            <option value="slider">Slider</option>
-            <option value="dialog">Dialog</option>
-            <option value="menu">Menu</option>
-            <option value="snackbar">Snackbar</option>
-            <option value="tooltip">Tooltip</option>
-            <option value="progress">Progress</option>
-            <option value="tools" selected>Command tools</option>
-            <option value="card">Card</option>
-            <option value="badges">Badges</option>
-            <option value="collapse">Collapse</option>
-            <option value="list">List</option>
-            <option value="tabs">Tabs</option>
-            <option value="navigation">Navigation</option>
-          </st-select>
           <article class="doc-page">
             <header class="doc-hero">
               <p class="doc-kicker">反馈 · 15 / 21</p>
               <h1>Command tools <code>toast · alert · confirm · prompt</code></h1>
-              <p class="doc-lead">命令式工具：Promise 化、用完即毁。基于 st-snackbar / st-dialog，可在任意 JS 中调用。</p>
+              <p class="doc-lead">五个命令式工具：toast、alert、confirm、prompt、contextMenu。直接在 JS 里 import 调用，Promise 拿返回值，用完即销毁，不需要在模板里预置组件。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
-                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/dialog/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/dialog/README.md" target="_blank" rel="noreferrer">Dialog README ↗</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/snackbar/README.md" target="_blank" rel="noreferrer">Snackbar README ↗</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/menu/README.md" target="_blank" rel="noreferrer">Menu README ↗</a>
               </div>
             </header>
 
-            <div class="demo">
-              <div class="demo-top"><span class="live"><i></i>LIVE</span><code>toast · alert · confirm · prompt</code></div>
-              <div class="demo-stage">
-                <div class="tool-row">
-  <st-button variant="outlined" on:click="runToast">toast</st-button>
-  <st-button variant="outlined" on:click="runAlert">alert</st-button>
-  <st-button variant="outlined" on:click="runConfirm">confirm</st-button>
-  <st-button variant="outlined" on:click="runPrompt">prompt</st-button>
-</div>
-<div class="ctx-mini" on:contextmenu="openCtx">右键：contextMenu</div>
-<span class="demo-result">{{toolResult}}</span>
+            <section class="doc-section">
+              <h2>toast：即用消息</h2>
+              <p class="doc-section-lead">默认 3s 自动消失，固定在视口左下角并向下堆叠。传对象可以换颜色、改时长；duration: 0 表示不自动关闭，只能点 ✕ 或调用返回的 close()。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>toast(message | options)</code></div>
+                <div class="demo-stage">
+                  <st-button variant="outlined" on:click="toastBasic">默认 toast</st-button>
+                  <st-button variant="outlined" on:click="toastSuccess">成功色 · 4s</st-button>
+                  <st-button variant="outlined" on:click="toastSticky">不自动关闭</st-button>
+                  <st-button variant="text" on:click="closeToast">close() 关闭</st-button>
+                  <span class="demo-note">结果：{{toastResult}}</span>
+                </div>
               </div>
-            </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>import toast from "/packages/snackbar/toast.js";
+
+toast("已保存到草稿");                       // 默认 3s
+toast({ message: "同步完成", color: "success", duration: 4000 });
+
+const t = await toast({ message: "点 ✕ 关闭", duration: 0 });
+t.close();                                    // 手动关闭，幂等
+// 返回 { close, el }</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>alert：只有一个确认键</h2>
+              <p class="doc-section-lead">确认返回 true；点遮罩或按 Escape 返回 null。参数支持字符串简写，也可以用对象补标题与按钮文案。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>await alert()</code></div>
+                <div class="demo-stage">
+                  <st-button on:click="alertString">alert("操作成功")</st-button>
+                  <st-button variant="outlined" on:click="alertObject">alert({ title, message })</st-button>
+                  <span class="demo-note">结果：{{alertResult}} · 关闭方式不同，返回值是 true 或 null</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>import alert from "/packages/dialog/alert.js";
+
+const ok = await alert("操作成功");          // true
+await alert({
+  title: "提示",
+  message: "密码已重置，请用新密码登录。",
+  ok: "知道了",
+});
+// 点遮罩 / Escape → null</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>confirm：确认、取消与危险操作</h2>
+              <p class="doc-section-lead">确认返回 true，取消返回 false，点遮罩或按 Escape 返回 null。危险操作把 color 设为 error，主按钮会使用错误色。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>await confirm()</code></div>
+                <div class="demo-stage">
+                  <st-button color="error" on:click="confirmDanger">删除（危险色）</st-button>
+                  <st-button variant="outlined" on:click="confirmPlain">退出编辑（字符串简写）</st-button>
+                  <st-button variant="text" on:click="confirmPublish">发布文章</st-button>
+                  <span class="demo-note">结果：{{confirmResult}} · 注意 false 与 null 是两种不同结果</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（错误色）</summary>
+                <pre><code>import confirm from "/packages/dialog/confirm.js";
+
+const ok = await confirm({
+  title: "确认删除",
+  message: "删除后不可恢复。",
+  yes: "删除",
+  cancel: "取消",
+  color: "error",
+});
+
+if (ok === true) {
+  // 执行删除
+} else if (ok === false) {
+  // 用户点了取消
+} else {
+  // 点遮罩 / Escape
+}</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>prompt：输入并返回结果</h2>
+              <p class="doc-section-lead">确认返回输入值（字符串，可能为空串），取消、遮罩或 Escape 返回 null。输入框会自动聚焦并全选默认值，Enter 提交。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>await prompt()</code></div>
+                <div class="demo-stage">
+                  <st-button on:click="promptBasic">重命名</st-button>
+                  <st-button variant="outlined" on:click="promptPrefill">带默认值</st-button>
+                  <st-button variant="text" on:click="promptString">字符串简写</st-button>
+                  <span class="demo-note">结果：{{promptResult}} · 空输入会返回空串，不是 null</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>import prompt from "/packages/dialog/prompt.js";
+
+const name = await prompt({
+  title: "重命名",
+  message: "输入新的项目名称",
+  placeholder: "项目名称",
+  value: "官网改版",          // 预填并全选
+});
+
+if (name !== null) {
+  // name 是字符串
+}</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>contextMenu：右键菜单</h2>
+              <p class="doc-section-lead">传事件或坐标与 items 数组，菜单挂在 body 上定位并自动翻转避让视口。选中的叶子项 id 即返回值；点空白或按 Escape 返回 null，禁用项不可选。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>await contextMenu(e, items)</code></div>
+                <div class="demo-stage">
+                  <div class="ctx-mini" on:contextmenu="openCtx">在这里点右键：基础菜单</div>
+                  <div class="ctx-mini" on:contextmenu="openCtxNested">在这里点右键：子菜单 + 分隔线</div>
+                  <span class="demo-note">结果：{{ctxResult}} · 取消返回 null</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（含子菜单）</summary>
+                <pre><code>import contextMenu from "/packages/menu/context-menu.js";
+
+const id = await contextMenu(event, [
+  { id: "copy", label: "复制", prefix: "⧉", suffix: "⌘C" },
+  { id: "rename", label: "重命名", prefix: "✏" },
+  { separator: true },
+  {
+    id: "export",
+    label: "导出为",
+    children: [
+      { id: "pdf", label: "PDF" },
+      { id: "md", label: "Markdown" },
+    ],
+  },
+  { id: "delete", label: "删除", disabled: true },
+]);
+// id → "copy" / "pdf" 等；取消 → null</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>组合成完整流程</h2>
+              <p class="doc-section-lead">命令式工具可以直接串起来：先 confirm 拿决定，再按结果 toast；或 prompt 拿到名称后写回数据。这样不需要在模板里维护对话框的 open 状态。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>confirm → toast</code></div>
+                <div class="demo-stage">
+                  <st-button color="error" on:click="flowDelete">删除项目</st-button>
+                  <st-button variant="outlined" on:click="flowRename">重命名项目</st-button>
+                  <span class="demo-note">流程结果：{{flowResult}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（confirm → toast）</summary>
+                <pre><code>import confirm from "/packages/dialog/confirm.js";
+import toast from "/packages/snackbar/toast.js";
+
+const ok = await confirm({
+  title: "删除项目",
+  message: "“官网改版”会被移入回收站。",
+  yes: "删除",
+  color: "error",
+});
+
+if (ok === true) {
+  toast({ message: "已删除项目", color: "success" });
+} else {
+  toast("已取消");
+}</code></pre>
+              </details>
+            </section>
 
             <div class="doc-cols">
               <div class="doc-block">
-                <h3>属性</h3>
+                <h3>调用签名</h3>
                 <table class="api">
-                  <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
-                  <tbody><tr><td colspan="4">无语义属性</td></tr></tbody>
+                  <thead><tr><th>工具</th><th>参数</th><th>返回</th><th>说明</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>toast</code></td><td>string / { message, duration, color }</td><td><code>{ close, el }</code></td><td>duration 毫秒，0 = 不自动关闭</td></tr>
+                    <tr><td><code>alert</code></td><td>string / { title, message, ok, color }</td><td><code>true</code> / <code>null</code></td><td>只有确认键</td></tr>
+                    <tr><td><code>confirm</code></td><td>string / { title, message, yes, cancel, color }</td><td><code>true</code> / <code>false</code> / <code>null</code></td><td>危险操作用 color="error"</td></tr>
+                    <tr><td><code>prompt</code></td><td>string / { title, message, placeholder, value, yes, cancel }</td><td>string / <code>null</code></td><td>确认返回输入值</td></tr>
+                    <tr><td><code>contextMenu</code></td><td>(event | { x, y }, items)</td><td>item id / <code>null</code></td><td>items 支持 separator / children / disabled</td></tr>
+                  </tbody>
                 </table>
               </div>
               <div class="doc-block">
                 <h3>插槽 / 事件 / 注意</h3>
-                <ul class="api-list"><li><code>alert({ title, message, ok })</code> → <code>true</code> / <code>null</code>。</li><li><code>confirm({ title, message, yes, cancel, color })</code> → <code>true</code> / <code>false</code> / <code>null</code>。</li><li><code>prompt({ title, message, placeholder })</code> → 输入值 / <code>null</code>。</li><li><code>toast(message | { message, color, duration })</code> → <code>{ close, el }</code>；<code>contextMenu(event, items)</code> → 选中 id / <code>null</code>。</li></ul>
+                <ul class="api-list">
+                  <li>工具内部按需注入 <code>&lt;l-m&gt;</code>，无需预引入组件；但 ofa.js 必须已加载。</li>
+                  <li>所有对话框自动挂到 <code>document.body</code>，关闭动画结束后自动移除，不要跨会话复用实例。</li>
+                  <li>文本都经过转义；需要富文本请直接用 <code>st-dialog</code> 标签。</li>
+                  <li><code>toast</code> 多条堆叠在左下角，容器不挡页面交互。</li>
+                  <li><code>contextMenu</code> 的 <code>source</code> 传事件时自动 <code>preventDefault</code>；也可传 <code>{ x, y }</code> 坐标。</li>
+                </ul>
               </div>
             </div>
-
-            <details class="snippet">
-              <summary>示例代码</summary>
-              <pre><code>import alert from "/packages/dialog/alert.js";
-import toast from "/packages/snackbar/toast.js";
-
-if (await confirm("确定删除？")) {
-  toast("已删除", { duration: 3000 });
-}</code></pre>
-            </details>
 
             <nav class="doc-pager" aria-label="上下篇">
               <a class="pager-link" olink href="./progress.html"><span>上一页</span>← Progress</a><a class="pager-link pager-next" olink href="./card.html"><span>下一页</span>Card →</a>
             </nav>
           </article>
-
-        </div>
-      </div>
       <script>
-        export const parent = "../layout.html";
+        export const parent = "./layout.html";
 
         export default async () => ({
           data: {
-            selectValue: "",
-            dialogOpen: false,
-            collapsed: false,
-            tab: 0,
-            tabLabels: ["概览", "活动", "设置"],
-            navTab: 0,
-            navLabels: ["首页", "发现", "我的"],
-            toolResult: "（未调用）",
+            toastResult: "（未调用）",
+            alertResult: "（未调用）",
+            confirmResult: "（未调用）",
+            promptResult: "（未调用）",
+            ctxResult: "（未调用）",
+            flowResult: "（未调用）",
           },
           proto: {
-            get tabLabel() {
-              return this.tabLabels[this.tab] || "";
-            },
-            get navLabel() {
-              return this.navLabels[this.navTab] || "";
-            },
-            goDoc(id) {
-              this.goto("./" + id + ".html");
-            },
-            onNavigate(e) {
-              if (e.target.value) this.goto("./" + e.target.value + ".html");
-            },
-            onSelect(e) {
-              this.selectValue = e.target.value || "";
-            },
-            runToast() {
+            async toastBasic() {
               if (!window.__site) return;
-              this.toolResult = "toast → 已弹出（3s）";
-              window.__site.toast("这是一条 toast。");
+              await window.__site.toast("已保存到草稿");
+              this.toastResult = "toast → 默认 3s 后自动关闭";
             },
-            async runAlert() {
+            async toastSuccess() {
               if (!window.__site) return;
-              const ok = await window.__site.alert({ title: "操作成功", message: "这是 alert 命令式对话框。", ok: "知道了" });
-              this.toolResult = "alert → " + ok;
+              await window.__site.toast({ message: "同步完成", color: "success", duration: 4000 });
+              this.toastResult = "toast → success 角色，4s 关闭";
             },
-            async runConfirm() {
+            async toastSticky() {
               if (!window.__site) return;
-              const ok = await window.__site.confirm({ title: "确认删除", message: "确定删除这条记录吗？", yes: "删除", cancel: "取消", color: "error" });
-              this.toolResult = "confirm → " + ok;
+              this._toast = await window.__site.toast({ message: "点 ✕ 关闭这条消息", duration: 0 });
+              this.toastResult = "toast → duration: 0，不会自动消失";
             },
-            async runPrompt() {
+            closeToast() {
+              if (!this._toast) return;
+              this._toast.close();
+              this.toastResult = "toast.close() → 已关闭";
+            },
+            async alertString() {
               if (!window.__site) return;
-              const value = await window.__site.prompt({ title: "重命名", message: "输入新的名称", placeholder: "新名称" });
-              this.toolResult = "prompt → " + JSON.stringify(value);
+              const ok = await window.__site.alert("操作成功");
+              this.alertResult = "alert → " + JSON.stringify(ok);
+            },
+            async alertObject() {
+              if (!window.__site) return;
+              const ok = await window.__site.alert({
+                title: "提示",
+                message: "密码已重置，请用新密码登录。",
+                ok: "知道了",
+              });
+              this.alertResult = "alert → " + JSON.stringify(ok);
+            },
+            async confirmDanger() {
+              if (!window.__site) return;
+              const ok = await window.__site.confirm({
+                title: "确认删除",
+                message: "删除后不可恢复。",
+                yes: "删除",
+                cancel: "取消",
+                color: "error",
+              });
+              this.confirmResult = "confirm → " + JSON.stringify(ok);
+            },
+            async confirmPlain() {
+              if (!window.__site) return;
+              const ok = await window.__site.confirm("确定要退出编辑吗？未保存的更改会丢失。");
+              this.confirmResult = "confirm → " + JSON.stringify(ok);
+            },
+            async confirmPublish() {
+              if (!window.__site) return;
+              const ok = await window.__site.confirm({
+                title: "发布文章",
+                message: "发布后所有访客可见。",
+                yes: "发布",
+                cancel: "再想想",
+              });
+              this.confirmResult = "confirm → " + JSON.stringify(ok);
+            },
+            async promptBasic() {
+              if (!window.__site) return;
+              const value = await window.__site.prompt({
+                title: "重命名",
+                message: "输入新的项目名称",
+                placeholder: "项目名称",
+              });
+              this.promptResult = "prompt → " + JSON.stringify(value);
+            },
+            async promptPrefill() {
+              if (!window.__site) return;
+              const value = await window.__site.prompt({
+                title: "重置密码",
+                message: "至少 4 位",
+                placeholder: "新密码",
+                value: "senti-ui",
+              });
+              this.promptResult = "prompt → " + JSON.stringify(value);
+            },
+            async promptString() {
+              if (!window.__site) return;
+              const value = await window.__site.prompt("请输入邀请码");
+              this.promptResult = "prompt → " + JSON.stringify(value);
             },
             openCtx(e) {
               e.preventDefault();
               if (!window.__site) return;
-              const self = this;
-              window.__site.contextMenu(e, [
-                { id: "copy", label: "复制", prefix: "⧉" },
-                { id: "rename", label: "重命名", prefix: "✏" },
-                { separator: true },
-                { id: "delete", label: "删除", prefix: "⌫", disabled: true },
-              ]).then((id) => { self.toolResult = "contextMenu → " + (id || "未选择"); });
+              window.__site
+                .contextMenu(e, [
+                  { id: "copy", label: "复制", prefix: "⧉", suffix: "⌘C" },
+                  { id: "rename", label: "重命名", prefix: "✏" },
+                  { separator: true },
+                  { id: "archive", label: "归档", prefix: "📦", disabled: true },
+                ])
+                .then((id) => {
+                  this.ctxResult = "contextMenu → " + JSON.stringify(id);
+                });
+            },
+            openCtxNested(e) {
+              e.preventDefault();
+              if (!window.__site) return;
+              window.__site
+                .contextMenu(e, [
+                  { id: "open", label: "打开", prefix: "↗" },
+                  {
+                    id: "export",
+                    label: "导出为",
+                    children: [
+                      { id: "pdf", label: "PDF", suffix: ".pdf" },
+                      { id: "md", label: "Markdown", suffix: ".md" },
+                      {
+                        id: "image",
+                        label: "图片",
+                        children: [
+                          { id: "png", label: "PNG" },
+                          { id: "svg", label: "SVG" },
+                        ],
+                      },
+                    ],
+                  },
+                  { separator: true },
+                  { id: "delete", label: "删除", prefix: "⌫", disabled: true },
+                ])
+                .then((id) => {
+                  this.ctxResult = "contextMenu → " + JSON.stringify(id);
+                });
+            },
+            async flowDelete() {
+              if (!window.__site) return;
+              const ok = await window.__site.confirm({
+                title: "删除项目",
+                message: "「官网改版」会被移入回收站。",
+                yes: "删除",
+                color: "error",
+              });
+              if (ok === true) {
+                window.__site.toast({ message: "已删除项目", color: "success" });
+                this.flowResult = "confirm → true，已弹出成功 toast";
+              } else {
+                this.flowResult = "confirm → " + JSON.stringify(ok) + "，未执行删除";
+              }
+            },
+            async flowRename() {
+              if (!window.__site) return;
+              const name = await window.__site.prompt({
+                title: "重命名项目",
+                message: "当前名称：官网改版",
+                value: "官网改版",
+              });
+              if (name) {
+                window.__site.toast("名称已更新为「" + name + "」");
+                this.flowResult = "prompt → " + JSON.stringify(name) + "，已弹 toast";
+              } else {
+                this.flowResult = "prompt → null，未修改";
+              }
             },
           },
         });

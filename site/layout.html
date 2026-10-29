@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Senti-UI</title>
-  </head>
+    <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); }
+  </style>
+</head>
   <body>
     <!-- SCSR 共享布局父页：子页 export const parent = "./layout.html"。
          本文件只作为页面模块被引用；header / footer / 主题与材质控制都收在这里。 -->
@@ -15,6 +18,7 @@
             --site-max: 1240px;
             --gutter: clamp(20px, 4vw, 40px);
             display: block;
+            overflow: hidden;
             background: var(--md-sys-color-surface);
             color: var(--md-sys-color-on-surface);
             font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -27,9 +31,18 @@
           button { font: inherit; }
           a { color: inherit; }
 
+          /* o-page 的宿主尺寸由 scsr 的 ::slotted(*) 控制，不能只靠 :host 撑满；
+             用内部 shell 固定 100dvh，滚动只发生在 .site-scroll。 */
+          .shell {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+          }
           .top {
-            position: sticky;
-            top: 0;
+            position: relative;
+            flex: none;
             z-index: 60;
             background: var(--md-sys-color-surface);
             border-bottom: 1px solid var(--md-sys-color-outline-variant);
@@ -92,6 +105,17 @@
           }
           .skin-menu { display: inline-flex; }
 
+          /* body overflow:hidden 后，整站唯一的滚动容器在这里；
+             overscroll-behavior 阻断滚动链，避免到底部再触发根节点弹性。 */
+          .site-scroll {
+            flex: 1 1 auto;
+            min-height: 0;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: clip;
+            overscroll-behavior-y: none;
+            -webkit-overflow-scrolling: touch;
+          }
           .site-main {
             display: block;
             min-height: calc(100vh - 190px);
@@ -101,7 +125,7 @@
             display: block;
             min-height: calc(100vh - 59px);
             background: var(--md-sys-color-surface);
-            animation: st-page-in 0.24s ease both;
+            animation: st-page-in 0.24s ease;
           }
           @keyframes st-page-in {
             from { transform: translateY(8px); }
@@ -113,8 +137,8 @@
 
           .read-progress {
             display: none;
-            position: sticky;
-            top: 59px;
+            position: relative;
+            flex: none;
             z-index: 30;
             height: 3px;
           }
@@ -174,6 +198,7 @@
           }
         </style>
 
+        <div class="shell">
         <header class="top">
           <div class="top-inner">
             <st-button class="brand-btn" variant="text" on:click="go('./index.html')">
@@ -209,22 +234,25 @@
           <st-progress attr:value="readProgress"></st-progress>
         </div>
 
-        <main class="site-main"><slot></slot></main>
+        <div class="site-scroll" id="site-scroll">
+          <main class="site-main"><slot></slot></main>
+
+          <footer class="footer">
+            <span>Senti-UI · 语义组件，任意材质。</span>
+            <nav class="footer-links" aria-label="页脚导航">
+              <a href="./index.html">组件目录</a>
+              <a href="./docs/index.html">组件文档</a>
+              <a href="./index.html#start">快速开始</a>
+              <a href="https://github.com/ofajs/senti-ui" target="_blank" rel="noreferrer">GitHub</a>
+            </nav>
+            <span>ofa.js v5 · Material Design 3 · SCSR</span>
+          </footer>
+        </div>
 
         <st-tooltip content="回到顶部">
           <st-icon-button class="to-top" class:show="page === 'docs'" title="回到顶部" on:click="toTop">↑</st-icon-button>
         </st-tooltip>
-
-        <footer class="footer">
-          <span>Senti-UI · 语义组件，任意材质。</span>
-          <nav class="footer-links" aria-label="页脚导航">
-            <a href="./index.html">组件目录</a>
-            <a href="./docs/index.html">组件文档</a>
-            <a href="./index.html#start">快速开始</a>
-            <a href="https://github.com/ofajs/senti-ui" target="_blank" rel="noreferrer">GitHub</a>
-          </nav>
-          <span>ofa.js v5 · Material Design 3 · SCSR</span>
-        </footer>
+        </div>
 
         <script>
           export default async () => ({
@@ -239,8 +267,9 @@
               this.syncChrome();
               this._onPop = () => this.detectPage();
               this._onScroll = () => this.updateProgress();
+              this._scrollHost = this.ele.shadowRoot?.querySelector(".site-scroll");
+              this._scrollHost?.addEventListener("scroll", this._onScroll, { passive: true });
               window.addEventListener("popstate", this._onPop);
-              window.addEventListener("scroll", this._onScroll, { passive: true });
               this.updateProgress();
               if (!window.__site) {
                 this._poll = setInterval(() => {
@@ -254,12 +283,13 @@
             },
             detached() {
               window.removeEventListener("popstate", this._onPop);
-              window.removeEventListener("scroll", this._onScroll);
+              this._scrollHost?.removeEventListener("scroll", this._onScroll);
               clearInterval(this._poll);
             },
             routerChange() {
               this.detectPage();
               this.syncChrome();
+              if (this._scrollHost) this._scrollHost.scrollTop = 0;
               this.updateProgress();
             },
             proto: {
@@ -281,11 +311,16 @@
                   this.readProgress = 0;
                   return;
                 }
-                const max = document.documentElement.scrollHeight - window.innerHeight;
-                this.readProgress = max > 0 ? Math.min(100, Math.max(0, Math.round((window.scrollY / max) * 100))) : 0;
+                const scroller = this._scrollHost;
+                if (!scroller) {
+                  this.readProgress = 0;
+                  return;
+                }
+                const max = scroller.scrollHeight - scroller.clientHeight;
+                this.readProgress = max > 0 ? Math.min(100, Math.max(0, Math.round((scroller.scrollTop / max) * 100))) : 0;
               },
               toTop() {
-                window.scrollTo({ top: 0, behavior: "smooth" });
+                this._scrollHost?.scrollTo({ top: 0, behavior: "smooth" });
               },
               go(path) {
                 const inDocs = path.indexOf("docs/") >= 0;

@@ -58,7 +58,7 @@
               radial-gradient(75% 85% at 50% 108%, color-mix(in srgb, var(--md-sys-color-secondary) 28%, transparent), transparent 66%),
               radial-gradient(70% 70% at 50% 72%, color-mix(in srgb, var(--md-sys-color-primary) 26%, transparent), transparent 68%);
           }
-          .ambient.ambient-strong { opacity: 0.95; }
+          .ambient.ambient-strong { opacity: 1; }
           .orb {
             position: absolute;
             width: 46vmax;
@@ -66,7 +66,7 @@
             border-radius: 50%;
             filter: blur(72px);
             will-change: transform;
-            animation: st-ambient-drift 22s ease-in-out infinite alternate;
+            animation: st-ambient-drift var(--orb-duration, 22s) ease-in-out infinite alternate;
           }
           .orb-a {
             left: -12vmax;
@@ -78,14 +78,35 @@
             top: 8vmax;
             background: color-mix(in srgb, var(--md-sys-color-tertiary) 34%, transparent);
             animation-delay: -7s;
-            animation-duration: 26s;
+            --orb-duration: 26s;
           }
           .orb-c {
             left: 16vmax;
             bottom: -24vmax;
             background: color-mix(in srgb, var(--md-sys-color-secondary) 34%, transparent);
             animation-delay: -14s;
-            animation-duration: 30s;
+            --orb-duration: 30s;
+          }
+          /* Apple 毛玻璃：颜色更深、漂移更快，玻璃后面才有可读的色彩层次；
+             M3 / shadcn 表面不透明，保持原来的低对比氛围。 */
+          .ambient-strong .orb-a {
+            background: color-mix(in srgb, var(--md-sys-color-primary) 58%, transparent);
+            --orb-duration: 13s;
+          }
+          .ambient-strong .orb-b {
+            background: color-mix(in srgb, var(--md-sys-color-tertiary) 52%, transparent);
+            --orb-duration: 15s;
+          }
+          .ambient-strong .orb-c {
+            background: color-mix(in srgb, var(--md-sys-color-secondary) 50%, transparent);
+            --orb-duration: 17s;
+          }
+          .ambient-strong {
+            background:
+              radial-gradient(60% 80% at 15% -10%, color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent), transparent 62%),
+              radial-gradient(55% 75% at 88% 18%, color-mix(in srgb, var(--md-sys-color-tertiary) 34%, transparent), transparent 62%),
+              radial-gradient(75% 85% at 50% 108%, color-mix(in srgb, var(--md-sys-color-secondary) 38%, transparent), transparent 66%),
+              radial-gradient(70% 70% at 50% 72%, color-mix(in srgb, var(--md-sys-color-primary) 34%, transparent), transparent 68%);
           }
           @keyframes st-ambient-drift {
             0% { transform: translate3d(0, 0, 0) scale(1); }

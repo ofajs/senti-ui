@@ -586,6 +586,7 @@ test("官网环境光：Apple 毛玻璃下增强，M3/shadcn 保持低调", asyn
       strong: el.classList.contains("ambient-strong"),
       opacity: getComputedStyle(el).opacity,
       animation: getComputedStyle(el.querySelector(".orb-a")).animationName,
+      duration: parseFloat(getComputedStyle(el.querySelector(".orb-a")).animationDuration),
     };
   });
 
@@ -605,7 +606,11 @@ test("官网环境光：Apple 毛玻璃下增强，M3/shadcn 保持低调", asyn
   await expect
     .poll(async () => parseFloat((await ambient()).opacity), { timeout: 5_000 })
     .toBeGreaterThan(0.6);
-  expect((await ambient()).animation).toBe("st-ambient-drift");
+  const strongAmbient = await ambient();
+  expect(strongAmbient.animation).toBe("st-ambient-drift");
+  expect(parseFloat(strongAmbient.opacity)).toBeGreaterThan(0.95);
+  // 玻璃下颜色更深、漂移更快，才能看出材质后面的色彩层次
+  expect(strongAmbient.duration).toBeLessThan(20);
   const glass = await page.evaluate(() => {
     const page = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp-grid")

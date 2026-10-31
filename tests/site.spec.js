@@ -545,3 +545,54 @@ test("共享 header：皮肤菜单切换全站材质并持久化", async ({ page
     .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
     .toBe("m3");
 });
+
+test("官网环境光：Apple 毛玻璃下增强，M3/shadcn 保持低调", async ({ page }) => {
+  await page.goto("/site/index.html");
+  await page.waitForTimeout(1500);
+  const ambient = () => page.evaluate(() => {
+    const layout = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
+    );
+    const el = layout.shadowRoot.querySelector(".ambient");
+    return {
+      exists: !!el,
+      strong: el.classList.contains("ambient-strong"),
+      opacity: getComputedStyle(el).opacity,
+      animation: getComputedStyle(el.querySelector(".orb-a")).animationName,
+    };
+  });
+
+  expect(await ambient()).toMatchObject({ exists: true, strong: false, opacity: "0.22" });
+  expect(
+    await page.evaluate(() => {
+      const page = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp-grid")
+      );
+      return page.shadowRoot.querySelector(".comp-grid").classList.contains("glass");
+    })
+  ).toBe(false);
+
+  await page.locator("#skin-menu st-icon-button").click();
+  await page.locator("#skin-menu st-menu-item").filter({ hasText: "Apple 毛玻璃" }).click();
+  await expect.poll(async () => (await ambient()).strong, { timeout: 5_000 }).toBe(true);
+  await expect
+    .poll(async () => parseFloat((await ambient()).opacity), { timeout: 5_000 })
+    .toBeGreaterThan(0.6);
+  expect((await ambient()).animation).toBe("st-ambient-drift");
+  const glass = await page.evaluate(() => {
+    const page = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp-grid")
+    );
+    const grid = page.shadowRoot.querySelector(".comp-grid");
+    const card = grid.querySelector(".comp");
+    return {
+      glass: grid.classList.contains("glass"),
+      blur: getComputedStyle(card).backdropFilter,
+    };
+  });
+  expect(glass.glass).toBe(true);
+  expect(glass.blur).toContain("blur(18px)");
+
+  await page.locator("#skin-menu st-icon-button").click();
+  await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();
+});

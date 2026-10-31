@@ -115,7 +115,7 @@
             --gutter: clamp(20px, 4vw, 40px);
 
             display: block;
-            background: var(--md-sys-color-surface);
+            background: transparent;
             color: var(--md-sys-color-on-surface);
             font-size: 15px;
             line-height: 1.55;
@@ -1077,10 +1077,28 @@
       display: flex;
       flex-direction: column;
       min-width: 0;
-      border: 1px solid var(--md-sys-color-outline-variant);
+      border: var(--st-border-width, 1px) solid var(--md-sys-color-outline-variant);
       border-radius: 16px;
       background: var(--md-sys-color-surface-container-lowest);
-      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.2s ease;
+    }
+    /* Apple 皮肤：组件目录卡片也换成玻璃，让环境光能透进来 */
+    .comp-grid.glass .comp {
+      border-radius: var(--st-card-radius, 16px);
+      background: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 14%, transparent);
+      -webkit-backdrop-filter: var(--st-backdrop-filter, blur(18px) saturate(180%));
+      backdrop-filter: var(--st-backdrop-filter, blur(18px) saturate(180%));
+      border-color: color-mix(in srgb, var(--md-sys-color-outline) 30%, transparent);
+      box-shadow: var(--st-shadow-1);
+    }
+    .comp-grid.glass .comp-preview {
+      background-color: transparent;
+      border-radius: calc(var(--st-card-radius, 16px) - 1px) calc(var(--st-card-radius, 16px) - 1px) 0 0;
+    }
+    .comp-grid.glass .comp-foot {
+      border-radius: 0 0 calc(var(--st-card-radius, 16px) - 1px) calc(var(--st-card-radius, 16px) - 1px);
+      background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 22%, transparent);
+      border-top-color: color-mix(in srgb, var(--md-sys-color-outline) 24%, transparent);
     }
     .comp:hover {
       border-color: color-mix(in srgb, var(--md-sys-color-primary) 42%, var(--md-sys-color-outline-variant));
@@ -1427,7 +1445,7 @@
         <p class="catalog-meta">动作 · 输入 · 反馈 · 内容 · 导航</p>
       </div>
 
-      <div class="comp-grid">
+      <div class="comp-grid" class:glass="glass">
         <!-- ===== 动作 ===== -->
         <article class="comp">
           <div class="comp-preview">
@@ -1891,11 +1909,26 @@
               lastTool: "（未调用）",
               ctxResult: "（未选择）",
               copied: false,
+              glass: false,
               installCode:
                 '\x3Cscript src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs" type="module">\x3C/script>\n' +
                 '\x3Cscript src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/boot/st-boot.js">\x3C/script>\n' +
                 '\x3Cl-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/button.html">\x3C/l-m>\n\n' +
                 '\x3Cst-button color="error">Delete\x3C/st-button>',
+            },
+            ready() {
+              const syncGlass = () => {
+                this.glass = document.documentElement.dataset.skin === "apple";
+              };
+              syncGlass();
+              this._skinObserver = new MutationObserver(syncGlass);
+              this._skinObserver.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ["data-skin"],
+              });
+            },
+            detached() {
+              this._skinObserver?.disconnect();
             },
             proto: {
               get tabLabel() {

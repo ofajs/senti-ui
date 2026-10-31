@@ -418,7 +418,7 @@ code { font-family: ui-monospace, Menlo, monospace; }
 ::slotted(o-page) {
   display: block;
   min-height: 70vh;
-  background: var(--md-sys-color-surface);
+  background: transparent;
   animation: doc-page-in 0.24s ease;
 }
 @keyframes doc-page-in {

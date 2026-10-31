@@ -39,12 +39,69 @@
             height: 100vh;
             height: 100dvh;
             overflow: hidden;
+            position: relative;
+          }
+
+          /* 环境光背景：给半透明材质（Apple 毛玻璃）提供可见的层次。
+             M3 / shadcn 表面不透明，只会从页面留白处透出一点氛围色。 */
+          .ambient {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0.22;
+            transition: opacity 0.35s ease;
+            background:
+              radial-gradient(60% 80% at 15% -10%, color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent), transparent 62%),
+              radial-gradient(55% 75% at 88% 18%, color-mix(in srgb, var(--md-sys-color-tertiary) 26%, transparent), transparent 62%),
+              radial-gradient(75% 85% at 50% 108%, color-mix(in srgb, var(--md-sys-color-secondary) 28%, transparent), transparent 66%),
+              radial-gradient(70% 70% at 50% 72%, color-mix(in srgb, var(--md-sys-color-primary) 26%, transparent), transparent 68%);
+          }
+          .ambient.ambient-strong { opacity: 0.95; }
+          .orb {
+            position: absolute;
+            width: 46vmax;
+            height: 46vmax;
+            border-radius: 50%;
+            filter: blur(72px);
+            will-change: transform;
+            animation: st-ambient-drift 22s ease-in-out infinite alternate;
+          }
+          .orb-a {
+            left: -12vmax;
+            top: -14vmax;
+            background: color-mix(in srgb, var(--md-sys-color-primary) 38%, transparent);
+          }
+          .orb-b {
+            right: -16vmax;
+            top: 8vmax;
+            background: color-mix(in srgb, var(--md-sys-color-tertiary) 34%, transparent);
+            animation-delay: -7s;
+            animation-duration: 26s;
+          }
+          .orb-c {
+            left: 16vmax;
+            bottom: -24vmax;
+            background: color-mix(in srgb, var(--md-sys-color-secondary) 34%, transparent);
+            animation-delay: -14s;
+            animation-duration: 30s;
+          }
+          @keyframes st-ambient-drift {
+            0% { transform: translate3d(0, 0, 0) scale(1); }
+            50% { transform: translate3d(6vmax, 3vmax, 0) scale(1.08); }
+            100% { transform: translate3d(-4vmax, 7vmax, 0) scale(0.96); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .orb { animation: none; }
           }
           .top {
             position: relative;
             flex: none;
             z-index: 60;
-            background: var(--md-sys-color-surface);
+            background: color-mix(in srgb, var(--md-sys-color-surface) 84%, transparent);
+            -webkit-backdrop-filter: var(--st-backdrop-filter, none);
+            backdrop-filter: var(--st-backdrop-filter, none);
             border-bottom: 1px solid var(--md-sys-color-outline-variant);
           }
           .top-inner {
@@ -113,6 +170,7 @@
             flex: 1 1 auto;
             min-height: 0;
             position: relative;
+            z-index: 1;
             overflow-y: auto;
             overflow-x: clip;
             overscroll-behavior-y: none;
@@ -126,7 +184,8 @@
           ::slotted(o-page) {
             display: block;
             min-height: calc(100vh - 59px);
-            background: var(--md-sys-color-surface);
+            /* 页面本身透明，环境光才能从卡片/面板后面透出来 */
+            background: transparent;
             animation: st-page-in 0.24s ease;
           }
           @keyframes st-page-in {
@@ -200,6 +259,11 @@
         </style>
 
         <div class="shell">
+        <div class="ambient" class:ambient-strong="skin === 'apple'" aria-hidden="true">
+          <span class="orb orb-a"></span>
+          <span class="orb orb-b"></span>
+          <span class="orb orb-c"></span>
+        </div>
         <header class="top">
           <div class="top-inner">
             <st-button class="brand-btn" variant="text" on:click="go('./index.html')">
@@ -286,6 +350,14 @@
                 if (e.key === "st-skin") this.syncChrome();
               };
               window.addEventListener("storage", this._onSkinStorage);
+              // setSkin() 只改 <html data-skin>，不一定走 storage；观察它同步 header / 环境光
+              this._skinAttrObserver = new MutationObserver(() => {
+                this.skin = document.documentElement.dataset.skin || "m3";
+              });
+              this._skinAttrObserver.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ["data-skin"],
+              });
               this._scrollHost = this.ele.shadowRoot?.querySelector(".site-scroll");
               this._scrollHost?.addEventListener("scroll", this._onScroll, { passive: true });
               window.addEventListener("popstate", this._onPop);
@@ -303,6 +375,7 @@
             detached() {
               window.removeEventListener("popstate", this._onPop);
               window.removeEventListener("storage", this._onSkinStorage);
+              this._skinAttrObserver?.disconnect();
               this._scrollHost?.removeEventListener("scroll", this._onScroll);
               clearInterval(this._poll);
             },

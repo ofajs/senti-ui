@@ -53,11 +53,12 @@ site/
 </body>
 ```
 
-- `layout.html` 是 SCSR 的**共享父页**：header（favicon 同款标记 + SentiUI 字标 / 组件与文档文字导航 / 主题 / GitHub）、footer、以及主题状态都在这里；子页在 `<slot>` 中渲染，切页时布局不销毁；材质切换改用 `data-skin` / `setSkin()`，header 不再放材质菜单；
+- `layout.html` 是 SCSR 的**共享父页**：header（favicon 同款标记 + SentiUI 字标 / 组件与文档文字导航 / 材质菜单 / 主题 / GitHub）、footer、以及主题与皮肤状态都在这里；子页在 `<slot>` 中渲染，切页时布局不销毁；材质切换走 `data-skin` / `setSkin()`；
 - `index.html` 声明 `export const parent = "./layout.html"`；`docs/layout.html` 再声明 `export const parent = "../layout.html"`，形成**多级嵌套布局**；`docs/` 下每个组件页声明 `export const parent = "./layout.html"`；
 - 文档左侧组件目录（`st-list` + `st-list-item`）和移动端 `st-select` 只存在于 `docs/layout.html` 一处；同父页的组件互相切换时侧栏不销毁、不重排，只替换 `<slot>` 里的正文；
-- 页面切换动画：`app-config.js` 的 `pageAnime` 让离场页淡出，两级 layout 的 `::slotted(o-page)` 让新页以不透明背景轻微上滑入场（0.24s，`prefers-reduced-motion` 下关闭）；新页不透明 + 覆盖，避免两页内容叠在一起闪烁；
+- 页面切换动画：`app-config.js` 的 `pageAnime` 让离场页淡出，两级 layout 的 `::slotted(o-page)` 让新页轻微上滑入场（0.24s，`prefers-reduced-motion` 下关闭）；页面背景透明，由 layout 的固定环境光层提供底色；
 - **slot 外层必须是相对容器**（`.docs-body { position: relative }`）：离场页会被 scsr 设为 `position: absolute`，没有相对容器时会相对视口定位，切换瞬间露出旧内容造成“闪一下”；
+- **环境光背景**：layout 内固定 `.ambient` 层（三个模糊色球缓慢漂移）位于页面后面；M3 / shadcn 下透明度较低，Apple 下通过 `ambient-strong` 提升到 0.8，半透明卡片、菜单、对话框的毛玻璃才有可见内容。页面 `::slotted(o-page)` 与首页 `:host` 背景透明，否则会盖住环境光；`prefers-reduced-motion` 下停止漂移；
 - **滚动容器固定为 `.site-scroll`**：文档 head 里 `html, body { height: 100%; overflow: hidden }`，layout 内部用 `.shell { height: 100dvh; overflow: hidden }` + `.site-scroll { overflow-y: auto; overscroll-behavior-y: none }`。这样整页不会在底部继续触发根节点的弹性回弹，header / 阅读进度 / 回到顶部始终固定在视口；滚动进度、`toTop()`、路由切换后的复位都基于 `.site-scroll` 而不是 `window`；
 - 页面入场动画不要用 `animation-fill-mode: both` 保留 `transform`：identity transform 也会成为 `position: fixed` 的包含块，对话框/菜单会相对页面而不是视口定位（内部滚动后尤其明显）。动画结束后必须回到 `transform: none`；
 - header 用 senti-ui 组件搭：两个 `variant="text"` 的 `st-button` 做「组件 / 文档」导航（当前项用 `class:active` 换成 primary 色，不使用 button-group）、`st-icon-button` + `st-tooltip`（主题 / GitHub）、品牌也是 `st-button`：favicon 同款圆角方块 + 白点标记 + SentiUI 字标；导航用页面实例的 `goto()` 保持真实路径与共享布局；

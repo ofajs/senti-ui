@@ -333,12 +333,16 @@ test("context-menu：子菜单开合不会误关根菜单", async ({ page }) => 
     ]);
   });
   await page.waitForSelector("body > st-menu[data-st-util]", { state: "attached" });
+  await page.waitForFunction(() => {
+    const menu = document.querySelector("body > st-menu[data-st-util]");
+    return menu && getComputedStyle(menu.shadowRoot.querySelector(".panel")).display === "block";
+  });
   const root = page.locator("body > st-menu[data-st-util]").first();
 
   await page.locator("st-menu-item", { hasText: "菜单B" }).first().hover();
-  await page.waitForTimeout(300);
+  await page.waitForTimeout(450);
   await page.locator("st-menu-item", { hasText: "菜单A" }).first().hover();
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(700);
 
   expect(await root.count()).toBe(1);
   expect(await page.evaluate(() => !!document.querySelector("body > st-menu[data-st-util]"))).toBe(true);

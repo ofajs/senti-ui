@@ -596,3 +596,32 @@ test("官网环境光：Apple 毛玻璃下增强，M3/shadcn 保持低调", asyn
   await page.locator("#skin-menu st-icon-button").click();
   await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();
 });
+
+test("文档示例容器在 Apple 下透出环境光", async ({ page }) => {
+  await page.goto("/site/docs/input.html");
+  await page.waitForTimeout(1600);
+  await page.locator("#skin-menu st-icon-button").click();
+  await page.locator("#skin-menu st-menu-item").filter({ hasText: "Apple 毛玻璃" }).click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("apple");
+
+  const state = await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    const demo = child.shadowRoot.querySelector(".demo");
+    const stage = child.shadowRoot.querySelector(".demo-stage");
+    return {
+      demoBg: getComputedStyle(demo).backgroundColor,
+      demoBlur: getComputedStyle(demo).backdropFilter,
+      stageBg: getComputedStyle(stage).backgroundColor,
+    };
+  });
+  expect(state.demoBg).not.toBe("rgb(253, 252, 255)");
+  expect(state.demoBlur).toContain("blur(18px)");
+  expect(state.stageBg).toBe("rgba(0, 0, 0, 0)");
+
+  await page.locator("#skin-menu st-icon-button").click();
+  await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();
+});

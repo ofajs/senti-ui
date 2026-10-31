@@ -267,3 +267,7 @@ $("st-button").on("click", () => {});
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/`）。
 
 - 无障碍：插槽文字 / `aria-label` 会同步到内部原生 button；`st-icon-button` 的 `title` / `aria-label` 会转发；split-button 新增 `menu-label`（箭头区可访问名称，默认“打开菜单”）
+
+## 表单
+
+`type="submit"` / `type="reset"` 会代理到最近的 `<form>`（内部原生 button 在 shadow 内，无法直接关联表单）：submit 调 `requestSubmit()`，reset 调 `form.reset()`。

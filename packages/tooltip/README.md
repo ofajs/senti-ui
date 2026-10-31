@@ -25,7 +25,7 @@
 - 悬停（pointerenter/leave）或聚焦（focusin/out，触发器需可聚焦，如 st-button）显示/隐藏
 - `Escape` 只关闭 tooltip（不会连带关闭外层 dialog）；气泡 `pointer-events: none` 不挡交互
 - 定位：触发器上方居中，上方放不下自动翻到下方；水平方向夹在视口内；打开期间滚动/缩放会跟随触发器
-- 气泡 `role="tooltip"`，`aria-hidden` 随开合切换
+- 气泡 `role="tooltip"`，`aria-hidden` 随开合切换；提示文本以 `aria-description` 挂到触发元素（组件触发器则挂内部原生控件）
 
 ## 默认值（直接覆盖即可）
 

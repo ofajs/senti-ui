@@ -103,9 +103,27 @@
         const ele = this.ele;
         const sr = ele.shadowRoot;
         this.applyContent = () => {
-          sr.querySelector(".bubble").textContent = this.content || "";
+          const text = this.content || "";
+          sr.querySelector(".bubble").textContent = text;
+          // 跨 shadow 的 aria-describedby 不可靠：用 aria-description 把提示文本
+          // 挂到触发元素（组件触发器则挂到内部原生控件）上
+          sr.querySelector('slot:not([name])')
+            .assignedElements()
+            .forEach((el) => {
+              const target = el.shadowRoot?.querySelector("button, input, textarea, a[href]") || el;
+              if (text) target.setAttribute("aria-description", text);
+              else target.removeAttribute("aria-description");
+            });
         };
         this.applyContent();
+        this.ele.shadowRoot
+          .querySelector('slot:not([name])')
+          .addEventListener("slotchange", this.applyContent);
+        // 触发元素可能晚于 tooltip 升级：下一帧与短定时器再同步 aria-description
+        requestAnimationFrame(() => this.applyContent());
+        this._descTimers = [50, 150, 300, 600].map((delay) =>
+          setTimeout(() => this.applyContent(), delay)
+        );
 
         // 属性 → data 兼容路径（README 承诺 setAttribute("open") 有效）
         if (ele.hasAttribute("open")) this.open = true;
@@ -150,6 +168,7 @@
         this.unbindReposition();
         this._attrObserver?.disconnect();
         clearTimeout(this._showTimer);
+        this._descTimers?.forEach(clearTimeout);
       },
       proto: {
         // 气泡定位：触发器上方居中，视口上方放不下翻到下方（横向夹在视口内）

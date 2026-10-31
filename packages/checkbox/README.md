@@ -19,8 +19,15 @@
 | `indeterminate` | boolean | 无 | 不确定态（横线），用户点击后自动退出 |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互 |
 | `color` | M3 角色名 / 自定义变量名 | 无 | 选中态底色/描边/对勾色（如 `color="error"`） |
+| `name` | string | 无 | 表单字段名 |
+| `value` | string | `"on"` | 提交到表单的值 |
+| `required` | boolean | 无 | 必填；未选中时阻断表单提交 |
 
 JS 修改状态用 attribute 方式：`el.setAttribute("checked", "")` / `el.removeAttribute("checked")`。
+
+## 表单（原生 form）
+
+支持 `name` / `value` / `required`，可放进原生 `<form>`：提交时按 `checked` 写入 `value`（未选中不提交），`reset` 回到初始选中态。校验失败派发 `invalid`。
 
 ## 插槽
 

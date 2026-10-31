@@ -24,7 +24,7 @@
 | `color` | M3 角色名 / 自定义变量名 | 无 | 语义配色，见下文 |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断点击、无 hover 态 |
 | `loading` | boolean | 无 | 显示旋转 spinner 并自动禁用点击 |
-| `type` | `"button" \| "submit" \| "reset"` | `"button"` | 转发给内部原生 button |
+| `type` | `"button" \| "submit" \| "reset"` | `"button"` | 转发给内部原生 button；`submit` / `reset` 会代理到最近的 `<form>`（内部 button 在 shadow 内，原生表单关联不到） |
 
 设置/取消布尔属性示例：`<st-button loading>...</st-button>`；JS 中请用 attribute 方式（直接改 property 不触发更新）：
 

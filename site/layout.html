@@ -218,6 +218,22 @@
             </nav>
 
             <div class="top-actions">
+              <st-menu id="skin-menu" align="right">
+                <st-icon-button slot="trigger" title="切换材质">◈</st-icon-button>
+                <st-menu-item on:click="pickSkin('m3')">
+                  M3 材质
+                  <span slot="suffix">{{skin === 'm3' ? '✓' : ''}}</span>
+                </st-menu-item>
+                <st-menu-item on:click="pickSkin('apple')">
+                  Apple 毛玻璃
+                  <span slot="suffix">{{skin === 'apple' ? '✓' : ''}}</span>
+                </st-menu-item>
+                <st-menu-item on:click="pickSkin('shadcn')">
+                  shadcn 扁平
+                  <span slot="suffix">{{skin === 'shadcn' ? '✓' : ''}}</span>
+                </st-menu-item>
+              </st-menu>
+
               <st-tooltip content="切换深浅色主题">
                 <st-icon-button title="切换主题" on:click="cycleTheme">◐</st-icon-button>
               </st-tooltip>
@@ -259,12 +275,17 @@
               page: "home",
               readProgress: 0,
               themeMode: "auto",
+              skin: "m3",
             },
             ready() {
               this.detectPage();
               this.syncChrome();
               this._onPop = () => this.detectPage();
               this._onScroll = () => this.updateProgress();
+              this._onSkinStorage = (e) => {
+                if (e.key === "st-skin") this.syncChrome();
+              };
+              window.addEventListener("storage", this._onSkinStorage);
               this._scrollHost = this.ele.shadowRoot?.querySelector(".site-scroll");
               this._scrollHost?.addEventListener("scroll", this._onScroll, { passive: true });
               window.addEventListener("popstate", this._onPop);
@@ -281,6 +302,7 @@
             },
             detached() {
               window.removeEventListener("popstate", this._onPop);
+              window.removeEventListener("storage", this._onSkinStorage);
               this._scrollHost?.removeEventListener("scroll", this._onScroll);
               clearInterval(this._poll);
             },
@@ -324,14 +346,30 @@
                 else location.href = path;
               },
               syncChrome() {
-                if (window.__site) this.themeMode = window.__site.getThemeMode();
-                else {
+                if (window.__site) {
+                  this.themeMode = window.__site.getThemeMode();
+                  this.skin = window.__site.getSkin
+                    ? window.__site.getSkin()
+                    : localStorage.getItem("st-skin") || "m3";
+                } else {
                   try {
                     this.themeMode = localStorage.getItem("st-theme-mode") || "auto";
+                    this.skin = localStorage.getItem("st-skin") || "m3";
                   } catch {
                     this.themeMode = "auto";
+                    this.skin = "m3";
                   }
                 }
+              },
+              pickSkin(id) {
+                if (window.__site) window.__site.setSkin(id);
+                else {
+                  try {
+                    localStorage.setItem("st-skin", id);
+                  } catch {}
+                  document.documentElement.dataset.skin = id;
+                }
+                this.skin = id;
               },
               cycleTheme() {
                 const order = ["auto", "light", "dark"];

@@ -23,6 +23,12 @@
 | `placeholder` | string | 无 | 未选中时显示的占位文本 |
 | `color` | M3 角色名 / 自定义变量名 | 无 | 语义色：控制 focus 描边/底线色（如 `color="error"` 用于校验错误态） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互、关闭弹层 |
+| `name` | string | 无 | 表单字段名；设置后参与原生 `<form>` 提交 |
+| `required` | boolean | 无 | 必填；未选中时阻断提交并派发 `invalid` |
+
+## 表单（原生 form）
+
+支持 `name` / `required`，可放进原生 `<form>` 提交；`value` 为空时 `required` 会阻断提交，组件派发 `invalid`。`reset` 会回到 `default-value`。原生校验气泡不会锚定到组件上，建议监听 `invalid` 自行提示。
 
 选项写法（`value` 缺省时取 `label` 属性，再取文本）：
 
@@ -157,7 +163,7 @@ document.querySelector("st-select").addEventListener("change", (e) => {
 - **开合动画**（同 st-menu）：缩放淡入 0.2s（M3 emphasized），关闭先播 150ms 退出过渡再隐藏
 - 弹层：`surface-container` 底色 + 阴影 + 圆角，选中项 `secondary-container` 底色 + 对勾，键盘激活项 `surface-container-high` 高亮；最高 `15em` 内滚动
 - disabled：0.38 透明度、`not-allowed` 光标、移出 Tab 顺序（`tabindex="-1"` + `aria-disabled`）、阻断展开
-- 无障碍：宿主 `role="combobox"` + `aria-expanded` / `aria-controls` / `aria-activedescendant`；弹层 `role="listbox"`、选项 `role="option"` + `aria-selected`；名称取宿主 `aria-label` / `aria-labelledby` / `title`
+- 无障碍：焦点落在 shadow 内真正的 combobox（`role="combobox"` + `aria-expanded` / `aria-controls` / `aria-activedescendant`，与 listbox 同一棵树）；弹层 `role="listbox"`、选项 `role="option"` + `aria-selected`；名称取宿主 `aria-label` / `aria-labelledby` / `title`，当前值通过 `aria-describedby` 暴露
 
 **注意**：下拉弹层渲染在组件 shadow 内（绝对定位于宿主下方），若组件被 `overflow: hidden` 的祖先裁剪，弹层会被截断——该场景请确保祖先可溢出或调整布局。
 

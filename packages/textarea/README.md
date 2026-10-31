@@ -26,6 +26,9 @@
 | `color` | M3 角色名 / 自定义变量名 | 无 | 语义色：控制 caret 颜色与 focus 描边/底线色（如 `color="error"` 用于校验错误态） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互、无 focus 态 |
 | `readonly` | boolean | 无 | 只读：可聚焦、不可修改 |
+| `name` | string | 无 | 表单字段名；设置后参与原生 `<form>` 提交 |
+| `required` | boolean | 无 | 必填；无效时阻断提交并派发 `invalid` |
+| `maxlength` / `minlength` | number | 无 | 长度约束，同步到内部 textarea 与表单代理 |
 
 设置/取消布尔属性示例：`<st-textarea disabled>`；JS 中请用 attribute 方式（直接改 property 不触发更新）：
 
@@ -33,6 +36,10 @@
 ta.setAttribute("disabled", "");
 ta.removeAttribute("disabled");
 ```
+
+## 表单（原生 form）
+
+与 `st-input` 相同：支持 `name` / `required` / `maxlength` / `minlength`，可放进原生 `<form>` 提交；`reset` 会回到 `default-value`。无效时派发 `invalid` 并给内部 textarea 加 `aria-invalid`；浏览器校验气泡不会锚定到组件，建议监听 `invalid` 自行展示错误。
 
 ## 事件
 

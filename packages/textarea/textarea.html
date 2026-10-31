@@ -117,12 +117,15 @@
   <textarea class="native"
     attr:rows="rows"
     attr:placeholder="placeholder"
+    attr:maxlength="maxlength"
+    attr:minlength="minlength"
     :value="value === null ? '' : value"
     :disabled="disabled !== null"></textarea>
 
   <script>
     import "../color/st-color-init.js";
     import { syncAccessibleName } from "../a11y/a11y.js";
+    import { createFormProxy, syncFormProxy, bindFormReset } from "../form/form-proxy.js";
     export default async () => ({
       tag: "st-textarea",
       attrs: {
@@ -133,6 +136,11 @@
         color: null,
         disabled: null,
         readonly: null,
+        name: null,
+        form: null,
+        required: null,
+        maxlength: null,
+        minlength: null,
       },
       data: {
         value: null, // 运行时输入值，attached 时由 default-value 属性初始化
@@ -152,11 +160,19 @@
             ta.value = this.value;
             if (this.autosize !== null) this.adjustHeight();
           }
+          this.syncForm?.();
         },
         // ofa 属性绑定写不对 camelCase 的 readOnly，改在 JS 里同步
         readonly() {
           this.ele.shadowRoot.querySelector(".native").readOnly = this.readonly !== null;
+          this.syncForm?.();
         },
+        disabled() { this.syncForm?.(); },
+        name() { this.syncForm?.(); },
+        form() { this.syncForm?.(); },
+        required() { this.syncForm?.(); },
+        maxlength() { this.syncForm?.(); },
+        minlength() { this.syncForm?.(); },
       },
       ready() {
         this.applyColor();
@@ -174,8 +190,31 @@
           set: (v) => { ta.value = v == null ? "" : v; this.value = ta.value; },
         });
         // 输入时同步 ofa data 并按内容撑高（:value 单向绑定只管 data → textarea，反向靠这里）
+        const proxy = createFormProxy(ele, "textarea");
+        this.syncForm = () => {
+          syncFormProxy(proxy, {
+            name: this.name,
+            form: ele.getAttribute("form"),
+            value: ta.value,
+            disabled: this.disabled !== null,
+            readOnly: this.readonly !== null,
+            required: this.required !== null,
+            maxlength: this.maxlength,
+            minlength: this.minlength,
+          });
+          if (this.required !== null) ta.setAttribute("aria-required", "true");
+          else ta.removeAttribute("aria-required");
+        };
+        this.syncForm();
+        proxy.addEventListener("invalid", (e) => {
+          e.preventDefault();
+          ta.setAttribute("aria-invalid", "true");
+          ele.dispatchEvent(new Event("invalid", { bubbles: true, composed: true }));
+        });
         ta.addEventListener("input", () => {
           this.value = ta.value;
+          ta.removeAttribute("aria-invalid");
+          this.syncForm?.();
           if (this.autosize !== null) this.adjustHeight();
         });
         // 原生 change 不是 composed，穿不出 shadow，需转发到宿主（bubbles + composed）
@@ -191,10 +230,20 @@
         this._resizeObserver.observe(ta);
         // 宿主 aria-label / aria-labelledby / title → 内部 textarea 的可访问名称
         this._a11yCleanup = syncAccessibleName(ele, ta);
+        this.syncForm();
+        this._resetCleanup = bindFormReset(ele, () => {
+          const dv = ele.getAttribute("default-value");
+          ta.value = dv === null ? "" : dv;
+          this.value = ta.value;
+          ta.removeAttribute("aria-invalid");
+          this.syncForm();
+          if (this.autosize !== null) this.adjustHeight();
+        });
       },
       detached() {
         this._resizeObserver?.disconnect();
         this._a11yCleanup?.();
+        this._resetCleanup?.();
       },
       proto: {
         // autosize 模式下按内容撑开高度（rows 为最小高度）

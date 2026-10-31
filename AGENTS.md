@@ -16,6 +16,7 @@
    - 例外一：M3 规范内明确定义的类型（如按钮的 filled/outlined/text）可作为属性
    - 例外二：**`color` 属性**——值是 M3 角色名或 color 模块的自定义变量名（语义引用，不是样式预设），组件配对消费 `--md-sys-color-{name}/on-{name}` 或 `--{name}/--on-{name}`，实现与 color 工具的一键换色联动
    - **尺寸类默认值用 em**（height / padding / border-radius / gap 等）——AI 只改 `font-size` 即可整体等比缩放，需要精确值时也可单独覆写任一属性
+   - **表单语义**：交互控件需要参与原生 `<form>` 时，用 `packages/form/form-proxy.js` 的 light DOM 代理控件承载 `name` / value / required / 校验；ofa 生成的类没有 formAssociated，不要假设内部 shadow 控件能提交表单。代理会破坏 `:host(:empty)`，标签显隐改用 `has-label` 属性
    - **无障碍是交付的一部分**：内部 `.native` 原生控件与 slot 文本是兄弟节点，必须用 `packages/a11y/a11y.js` 的 `syncAccessibleName(host, control, { fromSlot })` 同步可访问名称，并把宿主 `aria-label` / `title` 转发给内部控件；自绘弹层补 `role` 与展开/选中状态（select 的 combobox/listbox、menu 的 menu/menuitem），模态层补焦点陷阱/焦点归还/滚动锁。可点击容器的点击语义放宿主，不要用覆盖全卡的绝对定位 button（会挡住卡内按钮/链接）
 
 2. **颜色只走 M3 角色**

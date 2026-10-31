@@ -26,6 +26,9 @@
 | `color` | M3 角色名 / 自定义变量名 | 无 | 语义色：控制 caret 颜色与 focus 描边/底线色（如 `color="error"` 用于校验错误态） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互、无 focus 态 |
 | `readonly` | boolean | 无 | 只读：可聚焦、不可修改 |
+| `name` | string | 无 | 表单字段名 |
+| `required` | boolean | 无 | 必填，参与原生表单校验 |
+| `maxlength` / `minlength` | number | 无 | 长度约束 |
 
 设置/取消布尔属性示例：`<st-textarea disabled>`；JS 中请用 attribute 方式（直接改 property 不触发更新）：
 
@@ -108,3 +111,7 @@ $("st-textarea").on("input", (e) => {
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/textarea/`）。
 
 - 无障碍：宿主 `aria-label` / `aria-labelledby` / `title` 会同步到内部 textarea；`color` 同时作用于 caret / focus 描边 / 底线
+
+## 表单
+
+支持 `name` / `required` / `maxlength` / `minlength`，可放进原生 `<form>` 提交；无效时派发 `invalid` 并设置 `aria-invalid`，`reset` 回到 `default-value`。

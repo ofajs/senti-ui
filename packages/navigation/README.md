@@ -106,7 +106,7 @@
 - `st-nav-layout` 会按断点自动修正两者（bar 的 `vertical` + 各 item 的 `parallel`）；手动使用时无需 layout
 - `st-nav-layout` 的高度依赖外部给定（`height: 100vh` / flex 子项等），`height: 100%` 不生效时空高
 - `st-nav-layout` 断点看的是**布局容器自身宽度**（container query），不是视口宽度——放在窄面板里即使窗口很宽也走底部形态
-- 无障碍：bar 为 `role="navigation"`，item 内部 button 在 active 时带 `aria-current="page"`
+- 无障碍：bar 为 `role="navigation"`，item 内部 button 在 active 时带 `aria-current="page"`；←/↑/→/↓/Home/End 在可用项间移动焦点并点击
 ## 验证页面
 
 `index.html`（直接访问 `/packages/navigation/`）。

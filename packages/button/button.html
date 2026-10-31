@@ -130,6 +130,7 @@
   <script>
     import "../color/st-color-init.js";
     import { syncAccessibleName } from "../a11y/a11y.js";
+    import { formFor } from "../form/form-proxy.js";
     export default async () => ({
       tag: "st-button",
       attrs: {
@@ -145,6 +146,7 @@
         loading() { this.syncBusy?.(); },
       },
       ready() {
+        const ele = this.ele;
         const native = this.ele.shadowRoot.querySelector(".native");
         // 内部 button 与 slot 文字是兄弟节点，必须把文字/aria-label 同步成可访问名称
         this._a11yCleanup = syncAccessibleName(this.ele, native, { fromSlot: true });
@@ -152,6 +154,15 @@
           native.setAttribute("aria-busy", this.loading !== null ? "true" : "false");
         };
         this.syncBusy();
+        // 内部 button 在 shadow 内，不会自动关联外层 form：
+        // type=submit/reset 时手动代理到最近的 form（含 form="" 引用）
+        native.addEventListener("click", () => {
+          if (this.disabled !== null || this.loading !== null) return;
+          const form = formFor(ele);
+          if (!form) return;
+          if (this.type === "submit") form.requestSubmit();
+          else if (this.type === "reset") form.reset();
+        });
         this.applyColor();
       },
       detached() {

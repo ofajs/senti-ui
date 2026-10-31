@@ -4,8 +4,8 @@ async function ready(page, selector) {
   await page.waitForFunction(
     (sel) => {
       const el = document.querySelector(sel);
-      // select 在 ready 里设置 ele.tabIndex = 0（宿主可聚焦），以此作为升级完成标志
-      return el && el.shadowRoot && el.tabIndex === 0;
+      // 内部 combobox 可聚焦，以此作为升级完成标志
+      return el && el.shadowRoot && el.shadowRoot.querySelector("#st-control")?.tabIndex === 0;
     },
     selector,
     { timeout: 15_000 }
@@ -45,7 +45,7 @@ test("点击打开弹层并选择：value 更新、change 事件触发", async (
 });
 
 test("键盘交互：Enter 打开、↓ 移动、Enter 选中", async ({ page }) => {
-  await page.locator("#sel-basic").focus();
+  await page.locator("#sel-basic #st-control").focus();
   await page.keyboard.press("Enter"); // 打开列表，键盘激活项初始在第一项（apple）
   await page.keyboard.press("ArrowDown"); // 移动到第二项（banana）
   await page.keyboard.press("Enter"); // 选中

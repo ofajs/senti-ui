@@ -25,6 +25,12 @@
 | `color` | M3 角色名 / 自定义变量名 | 无 | 语义色：控制 caret 颜色与 focus 边框色（如 `color="error"` 用于校验错误态） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互、无 focus 态 |
 | `readonly` | boolean | 无 | 只读：可聚焦、不可修改 |
+| `name` | string | 无 | 表单字段名；设置后参与原生 `<form>` 提交 |
+| `required` | boolean | 无 | 必填；无效时阻断提交并派发 `invalid` |
+| `maxlength` / `minlength` | number | 无 | 长度约束，同步到内部 input 与表单代理 |
+| `pattern` | string | 无 | 原生正则校验（提交时生效） |
+| `autocomplete` / `inputmode` | string | 无 | 转发内部 input |
+| `min` / `max` / `step` | number | 无 | number/range 类型的取值约束 |
 
 设置/取消布尔属性示例：`<st-input disabled>`；JS 中请用 attribute 方式（直接改 property 不触发更新）。改值用 `el.value = "..."`：
 
@@ -33,6 +39,23 @@ input.setAttribute("disabled", "");
 input.removeAttribute("disabled");
 input.value = "新的值"; // 运行时读写值
 ```
+
+## 表单（原生 form）
+
+组件会在 light DOM 放一个不可见的原生代理控件，因此可以直接放进 `<form>`：
+
+```html
+<form>
+  <st-input name="username" required placeholder="用户名"></st-input>
+  <st-button type="submit">提交</st-button>
+</form>
+```
+
+- 提交时 `FormData` 会包含 `name` / 当前 `value`；`reset` 会回到 `default-value`
+- `required` / `pattern` / `min` / `max` / `step` / `maxlength` 等由代理控件参与原生约束校验
+- 校验失败会阻止提交，组件派发 `invalid` 事件，并给内部 input 加 `aria-invalid="true"`
+- 因为代理控件不可见，浏览器原生校验气泡不会锚定到组件上；需要展示错误请监听 `invalid` 并配合 `color="error"`
+- 原生 `<label for>` 不适用于自定义元素；请用 `aria-label` / `aria-labelledby`
 
 ## 插槽
 

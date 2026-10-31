@@ -91,9 +91,10 @@
     }
 
     .label {
+      display: none;
       margin-left: 0.857em;
     }
-    :host(:empty) .label { display: none; }
+    :host([has-label]) .label { display: inline; }
 
     /* 内部透明原生 checkbox：承载点击/键盘/焦点语义，覆盖整个组件 */
     .native {
@@ -123,36 +124,85 @@
   <script>
     import "../color/st-color-init.js";
     import { syncAccessibleName } from "../a11y/a11y.js";
+    import { createFormProxy, syncFormProxy, bindFormReset } from "../form/form-proxy.js";
     export default async () => ({
       tag: "st-switch",
       attrs: {
         checked: null,
         disabled: null,
         color: null,
+        name: null,
+        value: "on",
+        form: null,
+        required: null,
       },
       watch: {
         checked() { this.applyState(); },
         disabled() { this.applyState(); },
         color() { this.applyState(); },
+        name() { this.syncForm?.(); },
+        form() { this.syncForm?.(); },
+        value() { this.syncForm?.(); },
+        required() { this.syncForm?.(); },
       },
       ready() {
         const ele = this.ele;
-        const input = ele.shadowRoot.querySelector(".native");
+        const sr = ele.shadowRoot;
+        const input = sr.querySelector(".native");
 
         // 交互：原生 input 承载点击与键盘（Space），变更后反射回宿主属性并派发 change
         input.addEventListener("change", () => {
           if (input.checked) ele.setAttribute("checked", "");
           else ele.removeAttribute("checked");
+          if (this._proxy) this._proxy.checked = input.checked;
+          input.removeAttribute("aria-invalid");
           ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
         });
 
         // 标签文字是 slot 内容、与原生 input 是兄弟节点，必须同步为可访问名称
         this._a11yCleanup = syncAccessibleName(ele, input, { fromSlot: true });
 
+        // 表单代理是 light DOM 子节点，会破坏 :host(:empty)；用 has-label 显式判断
+        const labelSlot = sr.querySelector(".label slot");
+        const syncLabel = () => {
+          const has = labelSlot
+            .assignedNodes()
+            .some((node) => node.nodeType === 1 || (node.nodeType === 3 && node.textContent.trim()));
+          ele.toggleAttribute("has-label", has);
+        };
+        labelSlot.addEventListener("slotchange", syncLabel);
+        syncLabel();
+
+        const proxy = createFormProxy(ele, "checkbox");
+        this._proxy = proxy;
+        this.syncForm = () => {
+          syncFormProxy(proxy, {
+            name: this.name,
+            form: ele.getAttribute("form"),
+            value: this.value ?? "on",
+            checked: this.checked !== null,
+            disabled: this.disabled !== null,
+            required: this.required !== null,
+          });
+        };
+        this.syncForm();
+        proxy.addEventListener("invalid", (e) => {
+          e.preventDefault();
+          input.setAttribute("aria-invalid", "true");
+          ele.dispatchEvent(new Event("invalid", { bubbles: true, composed: true }));
+        });
+        const initialChecked = this.checked !== null;
+        this._resetCleanup = bindFormReset(ele, () => {
+          if (initialChecked) ele.setAttribute("checked", "");
+          else ele.removeAttribute("checked");
+          this.applyState();
+        });
+
         this.applyState();
       },
       detached() {
         this._a11yCleanup?.();
+        this._resetCleanup?.();
       },
       proto: {
         // watch 初始化也会触发一次（坑 #27），applyState 无副作用，天然安全。
@@ -165,6 +215,7 @@
 
           input.checked = on;
           input.disabled = this.disabled !== null;
+          this.syncForm?.();
 
           const name = this.color;
           const main = name

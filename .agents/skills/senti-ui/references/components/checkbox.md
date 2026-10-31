@@ -19,6 +19,7 @@
 | `indeterminate` | boolean | 无 | 不确定态（横线），用户点击后自动退出 |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互 |
 | `color` | M3 角色名 / 自定义变量名 | 无 | 选中态底色/描边/对勾色（如 `color="error"`） |
+| `name` / `value` / `required` | string / string / boolean | 无 / `"on"` / 无 | 原生表单字段 |
 
 纯 JS 修改状态用 ofa API：`$("st-checkbox").attr("checked", "")` / `$("st-checkbox").attr("checked", null)`（设置裸属性传 `""`，移除传 `null`，设值直接传值）。
 
@@ -58,3 +59,7 @@ $("st-checkbox").on("change", (e) => {
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/checkbox/`）。
 
 - 无障碍：默认插槽文字会成为内部 checkbox 的可访问名称，也可用宿主 `aria-label` 覆盖
+
+## 表单
+
+支持 `name` / `value`（默认 `"on"`）/ `required`；提交时按 `checked` 写入 `value`，`reset` 回到初始状态。

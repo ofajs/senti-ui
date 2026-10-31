@@ -64,3 +64,5 @@ $("st-tab-bar").on("click", (e) => {
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tabs/`）。
 
 - 无障碍：bar `role="tablist"`，item 内部 button `role="tab"` + `aria-selected`
+
+- 键盘：←/→/Home/End 在可用标签间移动焦点并触发点击（active 仍由页面逻辑维护）。

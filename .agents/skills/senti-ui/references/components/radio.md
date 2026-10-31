@@ -15,10 +15,11 @@
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `name` | string | 无 | 分组键：选中时取消同容器内同 name 的其他 st-radio |
+| `name` | string | 无 | 分组键（同一树作用域内互斥），同时作为表单字段名 |
 | `checked` | boolean | 无 | 选中（圆点放大入场，`color` 属性时为对应角色色） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互 |
 | `color` | M3 角色名 / 自定义变量名 | 无 | 选中态描边/圆点色 |
+| `value` / `required` | string / boolean | `"on"` / 无 | 表单提交值 / 同组必选 |
 
 ## 插槽
 
@@ -55,3 +56,7 @@
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/radio/`）。
 
 - 无障碍：默认插槽文字会成为内部 radio 的可访问名称，也可用宿主 `aria-label` 覆盖
+
+## 表单
+
+支持 `name` / `value`（默认 `"on"`）/ `required`；同组代理 radio 按 `name` 提交选中项的 `value`。

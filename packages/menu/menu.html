@@ -111,10 +111,7 @@
           }
           const panel = this.ele.shadowRoot.querySelector(".panel");
           // 触发器（slot 内容）暴露菜单展开状态
-          this.ele.shadowRoot
-            .querySelector('slot[name="trigger"]')
-            .assignedElements()
-            .forEach((el) => el.setAttribute("aria-expanded", val ? "true" : "false"));
+          this._syncTriggerAria?.(val);
           if (val) {
             // 子菜单检测兜底：ofa 升级 light DOM 的时序下 ready 时 parentElement
             // 可能尚未就绪（命令式动态构建时踩到），首次打开时再校验一次
@@ -163,12 +160,16 @@
 
         // 触发器（slot 内容）的菜单语义。触发器由使用者提供，状态挂在它身上而不是宿主
         const triggerSlot = sr.querySelector('slot[name="trigger"]');
-        const syncTrigger = () => {
+        this._syncTriggerAria = (expanded) => {
           triggerSlot.assignedElements().forEach((el) => {
-            el.setAttribute("aria-haspopup", "menu");
-            el.setAttribute("aria-expanded", this.open === true ? "true" : "false");
+            const target = el.shadowRoot?.querySelector("button") || el;
+            for (const node of new Set([el, target])) {
+              node.setAttribute("aria-haspopup", "menu");
+              node.setAttribute("aria-expanded", expanded ? "true" : "false");
+            }
           });
         };
+        const syncTrigger = () => this._syncTriggerAria(this.open === true);
         triggerSlot.addEventListener("slotchange", syncTrigger);
         syncTrigger();
 

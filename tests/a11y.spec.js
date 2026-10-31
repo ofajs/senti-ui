@@ -98,15 +98,17 @@ test.describe("无障碍基础", () => {
     expect(
       await page.evaluate(() => {
         const el = document.querySelector("st-select");
+        const control = el.shadowRoot.querySelector("#st-control");
         const opt = el.shadowRoot.querySelector(".opt");
         return {
-          expanded: el.getAttribute("aria-expanded"),
-          active: el.getAttribute("aria-activedescendant"),
-          role: opt.getAttribute("role"),
+          role: control.getAttribute("role"),
+          expanded: control.getAttribute("aria-expanded"),
+          active: control.getAttribute("aria-activedescendant"),
+          optionRole: opt.getAttribute("role"),
           selected: opt.getAttribute("aria-selected"),
         };
       })
-    ).toMatchObject({ expanded: "true", role: "option", selected: "false" });
+    ).toMatchObject({ role: "combobox", expanded: "true", optionRole: "option", selected: "false" });
   });
 
   test("menu：panel role=menu，触发器 aria-haspopup / aria-expanded", async ({ page }) => {
@@ -121,9 +123,10 @@ test.describe("无障碍基础", () => {
           panel: menu.shadowRoot.querySelector(".panel").getAttribute("role"),
           haspopup: trigger.getAttribute("aria-haspopup"),
           expanded: trigger.getAttribute("aria-expanded"),
+          innerHaspopup: (trigger.shadowRoot?.querySelector("button") || trigger).getAttribute("aria-haspopup"),
         };
       })
-    ).toEqual({ panel: "menu", haspopup: "menu", expanded: "false" });
+    ).toEqual({ panel: "menu", haspopup: "menu", expanded: "false", innerHaspopup: "menu" });
 
     await page.locator("#menu [slot=trigger]").click();
     await page.waitForTimeout(200);
@@ -256,6 +259,11 @@ test.describe("已确认行为回归", () => {
     expect(state.centered).toBe(true);
     expect(state.hidden).toBe("false");
     expect(state.above).toBe(true);
+    expect(await page.evaluate(() => {
+      const tip = document.querySelector("#tip-basic");
+      const trigger = tip.querySelector("st-button");
+      return trigger.shadowRoot.querySelector("button").getAttribute("aria-description");
+    })).toBe("提示内容");
   });
 
   test("slider：隐藏后显示会重新计算，min/max 变更即时生效", async ({ page }) => {
@@ -392,4 +400,55 @@ test("menu：方向键在菜单项之间移动焦点", async ({ page }) => {
   });
   expect(first).not.toBe(second);
   expect(second).toBeTruthy();
+});
+
+test("tabs / nav：方向键移动焦点并激活相邻项", async ({ page }) => {
+  await page.goto("/tests/fixtures/collection.html");
+  await waitForShadow(page, "#tabs");
+
+  await page.locator("#tab-a").locator(".native").focus();
+  await page.keyboard.press("ArrowRight");
+  await page.waitForTimeout(100);
+  expect(await page.evaluate(() => window.events)).toContain("tab-b");
+  expect(
+    await page.evaluate(() => {
+      let a = document.activeElement;
+      while (a?.shadowRoot?.activeElement) a = a.shadowRoot.activeElement;
+      const item = a.closest?.("st-tab-item") || a.getRootNode()?.host;
+      return item?.id;
+    })
+  ).toBe("tab-b");
+
+  await page.locator("#nav-a").locator(".native").focus();
+  await page.keyboard.press("ArrowRight");
+  await page.waitForTimeout(100);
+  expect(await page.evaluate(() => window.events)).toContain("nav-b");
+});
+
+test("tabs：指示条在 transform 祖先内仍与 active 项对齐", async ({ page }) => {
+  await page.goto("/tests/fixtures/collection.html");
+  await waitForShadow(page, "#tabs");
+
+  await page.evaluate(() => {
+    const wrap = document.createElement("div");
+    wrap.style.cssText =
+      "position: fixed; left: 80px; top: 120px; transform: translate(40px, 30px);";
+    document.body.appendChild(wrap);
+    wrap.appendChild(document.querySelector("#tabs"));
+  });
+  await page.waitForTimeout(400);
+
+  const state = await page.evaluate(() => {
+    const bar = document.querySelector("#tabs");
+    const active = bar.querySelector("st-tab-item[active]");
+    const indicator = bar.shadowRoot.querySelector(".indicator");
+    return {
+      left: parseFloat(indicator.style.left),
+      expected: active.offsetLeft,
+      width: parseFloat(indicator.style.width),
+      activeWidth: active.offsetWidth,
+    };
+  });
+  expect(state.left).toBeCloseTo(state.expected, 0);
+  expect(state.width).toBeCloseTo(state.activeWidth, 0);
 });

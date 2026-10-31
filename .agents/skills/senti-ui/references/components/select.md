@@ -23,6 +23,8 @@
 | `placeholder` | string | 无 | 未选中时显示的占位文本 |
 | `color` | M3 角色名 / 自定义变量名 | 无 | 语义色：控制 focus 描边/底线色（如 `color="error"` 用于校验错误态） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互、关闭弹层 |
+| `name` | string | 无 | 表单字段名 |
+| `required` | boolean | 无 | 必填，未选中时阻断提交 |
 
 选项写法（`value` 缺省时取 `label` 属性，再取文本）：
 
@@ -179,4 +181,10 @@ $("st-select").on("change", (e) => {
 
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/select/`）。
 
-- 无障碍：宿主 `role="combobox"` + `aria-expanded` / `aria-controls` / `aria-activedescendant`；弹层 `role="listbox"`、选项 `role="option"` + `aria-selected`；disabled 时移出 Tab 顺序
+- 无障碍：shadow 内 combobox 的 `role="combobox"` + `aria-expanded` / `aria-controls` / `aria-activedescendant`；弹层 `role="listbox"`、选项 `role="option"` + `aria-selected`；disabled 时移出 Tab 顺序
+
+## 表单
+
+支持 `name` / `required`，可放进原生 `<form>` 提交；无选中值时 `required` 阻断提交并派发 `invalid`，`reset` 回到 `default-value`。
+
+- 焦点在 shadow 内真正的 combobox 上，`aria-controls` / `aria-activedescendant` 与 listbox 同一棵树；当前值用 `aria-describedby` 暴露。

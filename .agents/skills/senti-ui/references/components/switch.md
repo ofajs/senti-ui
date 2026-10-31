@@ -16,6 +16,7 @@
 | `checked` | boolean | 无 | 开启（轨道变 primary、拇指滑到右侧并缩小） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互 |
 | `color` | M3 角色名 / 自定义变量名 | 无 | 开启态轨道色（拇指自动用 on-角色色） |
+| `name` / `value` / `required` | string / string / boolean | 无 / `"on"` / 无 | 原生表单字段 |
 
 纯 JS 修改状态用 ofa API：`$("st-switch").attr("checked", "")` / `$("st-switch").attr("checked", null)`（设置裸属性传 `""`，移除传 `null`，设值直接传值）。
 
@@ -49,3 +50,7 @@
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/switch/`）。
 
 - 无障碍：默认插槽文字会成为内部 checkbox 的可访问名称，也可用宿主 `aria-label` 覆盖
+
+## 表单
+
+支持 `name` / `value`（默认 `"on"`）/ `required`；开启时提交 `value`，`reset` 回到初始状态。

@@ -16,8 +16,15 @@
 | `checked` | boolean | 无 | 开启（轨道变 primary、拇指滑到右侧并缩小） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互 |
 | `color` | M3 角色名 / 自定义变量名 | 无 | 开启态轨道色（拇指自动用 on-角色色） |
+| `name` | string | 无 | 表单字段名 |
+| `value` | string | `"on"` | 提交到表单的值 |
+| `required` | boolean | 无 | 必填；未开启时阻断表单提交 |
 
 JS 修改状态用 attribute 方式：`el.setAttribute("checked", "")` / `el.removeAttribute("checked")`。
+
+## 表单（原生 form）
+
+支持 `name` / `value` / `required`，可放进原生 `<form>`：开启时提交 `value`，`reset` 回到初始状态。校验失败派发 `invalid`。
 
 ## 插槽
 

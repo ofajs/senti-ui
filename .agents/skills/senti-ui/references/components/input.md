@@ -25,6 +25,12 @@
 | `color` | M3 角色名 / 自定义变量名 | 无 | 语义色：控制 caret 颜色与 focus 边框色（如 `color="error"` 用于校验错误态） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互、无 focus 态 |
 | `readonly` | boolean | 无 | 只读：可聚焦、不可修改 |
+| `name` | string | 无 | 表单字段名 |
+| `required` | boolean | 无 | 必填，参与原生表单校验 |
+| `maxlength` / `minlength` | number | 无 | 长度约束 |
+| `pattern` | string | 无 | 原生正则校验 |
+| `autocomplete` / `inputmode` | string | 无 | 转发内部 input |
+| `min` / `max` / `step` | number | 无 | number/range 约束 |
 
 在 ofa 页面中优先用绑定语法（**布尔属性必须用 `attr:`**，`:disabled` 会把 false 序列化成字符串属性导致永远禁用）；JS 读写值用 `el.value`：
 
@@ -147,3 +153,7 @@ $("st-input").on("input", (e) => {
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/input/`）。
 
 - 无障碍：宿主 `aria-label` / `aria-labelledby` / `title` 会同步到内部 input
+
+## 表单
+
+支持 `name` / `required` / `maxlength` / `minlength` / `pattern` / `autocomplete` / `inputmode` / `min` / `max` / `step`。组件在 light DOM 用不可见原生代理控件参与 `<form>` 提交与约束校验；无效时阻止提交、派发 `invalid` 并给内部 input 加 `aria-invalid`，`reset` 回到 `default-value`。原生 `<label for>` 不适用，请用 `aria-label` / `aria-labelledby`。

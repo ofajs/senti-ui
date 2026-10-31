@@ -120,7 +120,7 @@ test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
     return {
       brand: sr.querySelector(".brand-btn").textContent.trim(),
       logoMark: !!sr.querySelector(".brand-mark"),
-      skinMenu: !!sr.querySelector(".skin-menu"),
+      skinMenu: !!sr.querySelector("#skin-menu"),
       nav: [...sr.querySelectorAll(".layout-nav st-button")].map((b) => ({
         text: b.textContent.trim(),
         variant: b.getAttribute("variant"),
@@ -131,7 +131,7 @@ test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
   });
   expect(chrome.brand).toBe("SentiUI");
   expect(chrome.logoMark).toBe(true);
-  expect(chrome.skinMenu).toBe(false);
+  expect(chrome.skinMenu).toBe(true);
   expect(chrome.nav.map((x) => [x.text, x.variant, x.active])).toEqual([
     ["组件", "text", true],
     ["文档", "text", false],
@@ -144,7 +144,7 @@ test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
       const layout = [...document.querySelectorAll("o-page")].find(
         (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
       );
-      layout.shadowRoot.querySelectorAll(".top-actions st-icon-button")[0].click();
+      layout.shadowRoot.querySelector('.top-actions st-icon-button[title="切换主题"]').click();
     });
     await page.waitForTimeout(180);
   }
@@ -516,4 +516,32 @@ test("固定定位弹层：页面动画结束后不残留 transform，对话框�
   expect(box.y).toBe(0);
   expect(box.width).toBe(box.viewportWidth);
   expect(box.height).toBe(box.viewportHeight);
+});
+
+test("共享 header：皮肤菜单切换全站材质并持久化", async ({ page }) => {
+  await page.goto("/site/index.html");
+  await page.evaluate(() => localStorage.removeItem("st-skin"));
+  await page.reload();
+  await page.locator("#skin-menu st-icon-button").waitFor({ state: "visible" });
+
+  await page.locator("#skin-menu st-icon-button").click();
+  await page.locator("#skin-menu st-menu-item").filter({ hasText: "Apple 毛玻璃" }).click();
+
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("apple");
+  expect(await page.evaluate(() => localStorage.getItem("st-skin"))).toBe("apple");
+
+  // header 内的按钮本身也跟随皮肤（Apple 的毛玻璃）
+  const blur = await page
+    .locator("#skin-menu st-icon-button")
+    .evaluate((el) => getComputedStyle(el).backdropFilter);
+  expect(blur).toContain("blur(18px)");
+
+  // 再切回 m3，避免影响同页后续交互
+  await page.locator("#skin-menu st-icon-button").click();
+  await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("m3");
 });

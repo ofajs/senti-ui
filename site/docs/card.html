@@ -357,13 +357,13 @@
 
   <script type="module">
     import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
-    import { setSkin } from "../../packages/skin/st-skin.js";
+    import { setSkin, getSkin } from "../../packages/skin/st-skin.js";
     import alert from "../../packages/dialog/alert.js";
     import confirm from "../../packages/dialog/confirm.js";
     import prompt from "../../packages/dialog/prompt.js";
     import toast from "../../packages/snackbar/toast.js";
     import contextMenu from "../../packages/menu/context-menu.js";
-    window.__site = { setThemeMode, getThemeMode, setSkin, alert, confirm, prompt, toast, contextMenu };
+    window.__site = { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu };
     window.__siteReady = true;
   </script>
 </body>

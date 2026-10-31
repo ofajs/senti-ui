@@ -103,6 +103,30 @@
     }
     .label.placeholder { color: var(--md-sys-color-on-surface-variant); }
 
+    /* 真正的 combobox：把焦点与 ARIA 关系放进 shadow，
+       让 aria-controls / aria-activedescendant 与 listbox 处于同一棵树 */
+    .control {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      border-radius: inherit;
+      outline: none;
+      cursor: inherit;
+    }
+    .control:focus-visible { outline: none; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     /* 下拉箭头（CSS chevron），展开时旋转 180° */
     .arrow {
       width: 0.571em;
@@ -212,6 +236,10 @@
   <span class="line-clip"><span class="bottom-line"></span></span>
   <span class="label" id="st-label"></span>
   <span class="arrow"></span>
+  <span class="control" id="st-control" role="combobox" tabindex="0"
+    aria-haspopup="listbox" aria-controls="st-listbox"
+    aria-describedby="st-value" aria-expanded="false"></span>
+  <span class="sr-only" id="st-value"></span>
   <div class="listbox" id="st-listbox" role="listbox"></div>
   <l-m src="./option.html"></l-m>
   <slot id="st-slot"></slot>
@@ -219,6 +247,7 @@
   <script>
     import "../color/st-color-init.js";
     import { syncAccessibleName } from "../a11y/a11y.js";
+    import { createFormProxy, syncFormProxy, bindFormReset } from "../form/form-proxy.js";
     export default async () => ({
       tag: "st-select",
       attrs: {
@@ -226,6 +255,9 @@
         placeholder: null,
         color: null,
         disabled: null,
+        name: null,
+        form: null,
+        required: null,
         options: null, // 动态选项数组入口：:options="[{value,label}]" 绑定或 el.options = [...]，
         // 经宿主 property setter 存入内部 _opts（不走 ofa attr data，避免数组被序列化成字符串）
       },
@@ -247,7 +279,10 @@
           this.buildList();
           this.syncSelected(false);
         },
-        disabled() { this.close(); this.syncDisabled?.(); },
+        disabled() { this.close(); this.syncDisabled?.(); this.syncForm?.(); },
+        name() { this.syncForm?.(); },
+        form() { this.syncForm?.(); },
+        required() { this.syncForm?.(); },
       },
       ready() {
         this.applyColor();
@@ -255,6 +290,7 @@
         const sr = ele.shadowRoot;
         this.labelEl = sr.querySelector("#st-label");
         this.listEl = sr.querySelector("#st-listbox");
+        this.controlEl = sr.querySelector("#st-control");
         this.slotEl = sr.querySelector("#st-slot");
         this.activeIndex = -1;
 
@@ -262,22 +298,41 @@
         // 宿主属性延后到构造结束再写，避免命令式 createElement 时抛
         // "The result must not have attributes"
         this.listEl.setAttribute("role", "listbox");
+        const proxy = createFormProxy(ele, "text");
+        this.syncForm = () => {
+          syncFormProxy(proxy, {
+            name: this.name,
+            form: ele.getAttribute("form"),
+            value: this.value == null ? "" : this.value,
+            disabled: this.disabled !== null,
+            required: this.required !== null,
+          });
+        };
+        this.syncForm();
+        proxy.addEventListener("invalid", (e) => {
+          e.preventDefault();
+          this.controlEl.setAttribute("aria-invalid", "true");
+          ele.dispatchEvent(new Event("invalid", { bubbles: true, composed: true }));
+        });
+        this._resetCleanup = bindFormReset(ele, () => {
+          const dv = ele.getAttribute("default-value");
+          this.value = dv;
+          this.syncSelected(false);
+          this.close();
+        });
         this._a11yReady = false;
         this.syncDisabled = () => {
           if (!this._a11yReady) return;
           const disabled = this.disabled !== null;
-          ele.tabIndex = disabled ? -1 : 0;
-          if (disabled) ele.setAttribute("aria-disabled", "true");
-          else ele.removeAttribute("aria-disabled");
+          this.controlEl.tabIndex = disabled ? -1 : 0;
+          if (disabled) this.controlEl.setAttribute("aria-disabled", "true");
+          else this.controlEl.removeAttribute("aria-disabled");
         };
         queueMicrotask(() => {
-          ele.setAttribute("role", "combobox");
-          ele.setAttribute("aria-haspopup", "listbox");
-          ele.setAttribute("aria-controls", "st-listbox");
-          ele.setAttribute("aria-expanded", "false");
-          this._a11yCleanup = syncAccessibleName(ele, ele);
+          this._a11yCleanup = syncAccessibleName(ele, this.controlEl);
           this._a11yReady = true;
           this.syncDisabled();
+          this.syncForm();
         });
 
         // 宿主 value 用 getter/setter 反射到 data（ofa 的 data 不在原生属性上）
@@ -379,6 +434,7 @@
         document.removeEventListener("pointerdown", this._onDocDown);
         clearTimeout(this._closeTimer);
         this._a11yCleanup?.();
+        this._resetCleanup?.();
       },
       proto: {
         isOpen() { return this.ele.hasAttribute("open"); },
@@ -389,7 +445,7 @@
           ele.removeAttribute("closing"); // 重新打开时取消退出过渡、重启进入动画
           ele.removeAttribute("drop-up");
           ele.setAttribute("open", "");
-          ele.setAttribute("aria-expanded", "true");
+          this.controlEl.setAttribute("aria-expanded", "true");
           // 按视口剩余空间翻转：下方放不下且上方更宽裕时向上弹
           const rect = ele.getBoundingClientRect();
           const below = window.innerHeight - rect.bottom - 8;
@@ -405,8 +461,8 @@
           const ele = this.ele;
           if (!this.isOpen() && !ele.hasAttribute("closing")) return;
           ele.removeAttribute("open");
-          ele.setAttribute("aria-expanded", "false");
-          ele.removeAttribute("aria-activedescendant");
+          this.controlEl.setAttribute("aria-expanded", "false");
+          this.controlEl.removeAttribute("aria-activedescendant");
           clearTimeout(this._closeTimer);
           ele.setAttribute("closing", ""); // 播 150ms 退出动画后再隐藏
           this._closeTimer = setTimeout(() => ele.removeAttribute("closing"), 180);
@@ -439,6 +495,11 @@
           const opt = this._opts?.find((o) => o.value === this.value);
           this.labelEl.textContent = opt ? opt.label : (this.placeholder || "");
           this.labelEl.classList.toggle("placeholder", !opt);
+          const valueEl = this.ele.shadowRoot?.querySelector("#st-value");
+          if (valueEl) {
+            valueEl.textContent = opt ? opt.label : (this.placeholder || "");
+          }
+          this.syncForm?.();
           [...this.listEl.children].forEach((item, i) => {
             const selected = this._opts[i].value === this.value;
             item.toggleAttribute("data-selected", selected);
@@ -449,6 +510,7 @@
           const opt = this._opts[i];
           if (!opt || opt.value === this.value) { this.close(); return; }
           this.value = opt.value; // ofa data → 触发 watch → syncSelected
+          this.controlEl.removeAttribute("aria-invalid");
           this.close();
           this.ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
         },
@@ -458,7 +520,7 @@
             item.toggleAttribute("data-active", j === i);
           });
           if (i >= 0 && this.listEl.children[i]) {
-            this.ele.setAttribute("aria-activedescendant", this.listEl.children[i].id);
+            this.controlEl.setAttribute("aria-activedescendant", this.listEl.children[i].id);
           }
           if (scroll && i >= 0) this.listEl.children[i].scrollIntoView({ block: "nearest" });
         },
@@ -510,8 +572,8 @@
           sr.querySelector(".outline-ring").style.borderColor = active; // 空串 = 回退 CSS 默认 primary
           sr.querySelector(".bottom-line").style.backgroundColor = active;
         },
-        focus() { this.ele.focus(); },
-        blur() { this.ele.blur(); },
+        focus() { if (this.disabled === null) this.controlEl.focus(); },
+        blur() { this.controlEl.blur(); },
       },
     });
   </script>

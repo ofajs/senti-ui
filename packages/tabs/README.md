@@ -61,7 +61,7 @@ tabBar.addEventListener("click", (e) => {
 - 指示条动画自动跟随 active 项（M3 emphasized 0.3s）；容器尺寸变化时瞬时重定位
 - disabled 项原生阻断点击、无事件冒泡；icon 用 `slot="icon"`
 - 计算属性（如当前标签文字）放 proto 上的 `get`，不要放模块顶层（会加载失败且报错被吞）
-- 无障碍：bar 为 `role="tablist"`，item 内部 button 为 `role="tab"` + `aria-selected`
+- 无障碍：bar 为 `role="tablist"`，item 内部 button 为 `role="tab"` + `aria-selected`；←/→/Home/End 在可用标签间移动焦点并激活
 ## 验证页面
 
 `index.html`（直接访问 `/packages/tabs/`）。

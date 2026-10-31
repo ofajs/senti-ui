@@ -111,10 +111,12 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 |------|------|------|
 | 皮肤系统 | 材质层换肤：`m3` / `apple`（毛玻璃）/ `shadcn`（扁平）；只改圆角、密度、描边、阴影、毛玻璃、焦点环、动效、波纹，颜色仍走 M3；`st-skin.js` 提供 `setSkin/getSkin/applySkin/registerSkin`，皮肤 CSS 只声明 `[data-skin="名称"]` 作用域下的 token；已接入全部交互/表面组件（button/input/textarea/select/card/dialog/menu/list/checkbox/switch/radio/slider/progress/tabs/nav/tooltip/snackbar/badges）；完整 token/part 表见 [packages/skin/README.md](./packages/skin/README.md) | [packages/skin/index.html](./packages/skin/index.html)（JS：`st-skin.js`） |
 | M3 颜色体系生成器 | 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），可即时预览、复制 CSS；含 `st-color-init.js` 项目初始化模块（各页面引入，动态注入颜色体系并跟随 localStorage 配置）；核心模块 `m3-theme.js` 提供 `generateM3Theme` / `themeToCss` / `applyTheme` / `expandCustoms` 四个 API；内置扩展角色 success（默认绿 `#006E1C`，不随种子色变化）；支持核心四角色 + success 手动覆盖与自定义变量（自动按 M3 tone 规则展开 on/container 配对 token），配置存 localStorage；完整 token 清单与配对规则见 [packages/color/README.md](./packages/color/README.md) | [packages/color/index.html](./packages/color/index.html)（JS：`packages/color/m3-theme.js`） |
-| 官网（SCSR 真实路径 + 共享布局） | `site/` 目录：ofa.js **v5 分支 + scsr**。`layout.html` 是共享父页（header / footer / 主题控制；header 用两个 `variant="text"` 的 `st-button` 做文字导航，`st-icon-button` / `st-tooltip` 做主题与 GitHub，品牌为 favicon 同款圆角方块 + 圆点标记 + SentiUI 字标；不再有材质菜单；`<slot>` 渲染子页，切页不销毁）；`index.html`（25 张组件卡片目录）与 `docs/` 下 21 个独立组件页共享 layout；`docs/layout.html` 是**二级父页**（左侧组件目录 `st-list` / 移动端 `st-select` / 阅读正文 slot），组件页 `parent = "./layout.html"`，文档布局再 `parent = "../layout.html"`，组件间切换时侧栏不销毁、不重排；每个组件页 4–7 个 `.doc-section`（按 variant / 状态 / 语义色 / 插槽 / 受控用法拆场景，每节独立 LIVE 示例）；页面切换由 `app-config.js` 的 `pageAnime`（离场淡出）+ 两级 layout `::slotted(o-page)`（新页不透明、轻微上滑入场）完成；slot 外层容器需 `position: relative`（离场页 absolute 相对内容区，否则闪到视口）。`index/docs` 是完整文档：内容内联在 `<o-app><template page>`，scsr 把当前 URL 收编为子 o-page 后移除内联 template；`app-config.js` 不声明 home。支持目录直开、真实路径、后续多 HTML 页扩展。首页为 shadcn 式组件目录：25 张卡片（每张 = 真实组件预览 + 名称 + 标签 + 站内文档 ↗；预览可交互，卡片不是链接）、紧凑 intro、三张局部 `data-skin` 材质卡与快速开始；**站内文档 `site/docs/`** 取代旧 `docs/`：21 个独立 SCSR 页（每组件一页：属性表 / 插槽事件 / 可折叠代码 / 可交互示例 / 上下一页）、`docs/index.html` 卡片概览（按「基础组件 18 / 辅助组件 3」分组：波纹、折叠、提示归为辅助）、`docs/layout.html` 内唯一的 `st-list` 侧栏（移动端 `st-select`）、layout 的 `st-progress` 阅读进度与 `st-icon-button` 回到顶部；官网不再引用 `docs/`；命令式工具/皮肤 API 挂 `window.__site`；页面 shadow 内额外 `<link>` 皮肤 CSS 才能同页对比。无 JS 时 template 惰性，用 `<noscript>` 兜底（坑 #50） | [site/index.html](./site/index.html) · [docs/index.html](./site/docs/index.html) |
+| 官网（SCSR 真实路径 + 共享布局） | `site/` 目录：ofa.js **v5 分支 + scsr**。`layout.html` 是共享父页（header / footer / 主题控制；header 用两个 `variant="text"` 的 `st-button` 做文字导航，右侧 `st-menu` 做材质（m3/apple/shadcn）切换，`st-icon-button` / `st-tooltip` 做主题与 GitHub，品牌为 favicon 同款圆角方块 + 圆点标记 + SentiUI 字标；`<slot>` 渲染子页，切页不销毁）；`index.html`（25 张组件卡片目录）与 `docs/` 下 21 个独立组件页共享 layout；`docs/layout.html` 是**二级父页**（左侧组件目录 `st-list` / 移动端 `st-select` / 阅读正文 slot），组件页 `parent = "./layout.html"`，文档布局再 `parent = "../layout.html"`，组件间切换时侧栏不销毁、不重排；每个组件页 4–7 个 `.doc-section`（按 variant / 状态 / 语义色 / 插槽 / 受控用法拆场景，每节独立 LIVE 示例）；页面切换由 `app-config.js` 的 `pageAnime`（离场淡出）+ 两级 layout `::slotted(o-page)`（新页不透明、轻微上滑入场）完成；slot 外层容器需 `position: relative`（离场页 absolute 相对内容区，否则闪到视口）。`index/docs` 是完整文档：内容内联在 `<o-app><template page>`，scsr 把当前 URL 收编为子 o-page 后移除内联 template；`app-config.js` 不声明 home。支持目录直开、真实路径、后续多 HTML 页扩展。首页为 shadcn 式组件目录：25 张卡片（每张 = 真实组件预览 + 名称 + 标签 + 站内文档 ↗；预览可交互，卡片不是链接）、紧凑 intro、三张局部 `data-skin` 材质卡与快速开始；**站内文档 `site/docs/`** 取代旧 `docs/`：21 个独立 SCSR 页（每组件一页：属性表 / 插槽事件 / 可折叠代码 / 可交互示例 / 上下一页）、`docs/index.html` 卡片概览（按「基础组件 18 / 辅助组件 3」分组：波纹、折叠、提示归为辅助）、`docs/layout.html` 内唯一的 `st-list` 侧栏（移动端 `st-select`）、layout 的 `st-progress` 阅读进度与 `st-icon-button` 回到顶部；官网不再引用 `docs/`；命令式工具/皮肤 API 挂 `window.__site`；页面 shadow 内额外 `<link>` 皮肤 CSS 才能同页对比。无 JS 时 template 惰性，用 `<noscript>` 兜底（坑 #50） | [site/index.html](./site/index.html) · [docs/index.html](./site/docs/index.html) |
 | 组件官网 | `docs/` 目录，o-router + o-app 微应用（入口 `docs/index.html`）：`layout.html` 侧边栏布局（parent/slot 嵌套）+ `pages/home.html` 首页 + 每组件一页薄包装（预载 l-m 后 `<o-page>` 内嵌对应验收页 `packages/{name}/page.html`）；dialog/snackbar 的命令式工具在入口 index.html 预加载挂 window（坑 #6）；新增组件时在 `docs/layout.html` 的 components 数组登记并建 `docs/pages/{name}.html` | [docs/index.html](./docs/index.html) |
 
 2026-10-29 无障碍基础层（`packages/a11y/a11y.js`）落地：交互控件可访问名称同步、dialog `role=dialog`/`aria-modal`/焦点陷阱/焦点归还/滚动锁/叠加 Escape 只关最上层、select combobox/listbox、menu role + 方向键、tabs/nav 角色、progress `progressbar`、collapse `inert`、snackbar `role=status`。回归用例在 `tests/a11y.spec.js`。
+
+2026-10-31 表单能力与 a11y 收尾：输入/多行/下拉/复选/开关/单选补 `name` / `required` / 原生约束校验与 `<form>` 提交（`packages/form/form-proxy.js` 的不可见 light DOM 代理控件），`st-button type=submit/reset` 代理到最近表单；select 的 combobox 移入 shadow 与 listbox 同树，tabs/nav 支持方向键，menu 触发器内部 button 也带展开状态，tooltip 用 `aria-description` 关联触发元素，tabs 指示条改用 offset 布局坐标。
 
 ## 当前状态（2026-10-29）
 
@@ -143,6 +145,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 | 文件 | 作用 |
 |------|------|
 | `packages/a11y/a11y.js` | 组件共用无障碍基础设施：可访问名称同步、滚动锁、焦点陷阱 |
+| `packages/form/form-proxy.js` | 组件共用的原生表单代理：name/value/required/校验/reset 与提交 |
 | `AGENTS.md` | 开发规则：设计原则、目录约定、新增组件流程 |
 | `CONTEXT.md` | 本文档，项目全景 + 组件总索引 + ofa.js 已知坑 |
 
@@ -204,6 +207,9 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 54. **自定义元素构造/ready 期间不能 setAttribute 宿主属性**——组件 factory 里的 `ready` 在 `document.createElement("st-xxx")` 时也可能执行；此时给宿主 `setAttribute`（role/aria/label 等）会抛 `NotSupportedError: The result must not have attributes`，命令式工具（alert 的 `createElement("st-dialog")`）直接挂掉。正确写法：宿主属性放到 `queueMicrotask` 里写，或移到 `attached`；内部 shadow 元素不受此限制。需要初始状态的组件（progress）用 `_a11yReady` 标志跳过构造期的属性写入，微任务里再统一应用。
 55. **内部原生控件的可访问名称不会自动来自 slot 文本**——`.native` 与 label 是兄弟节点，`aria-label` 必须显式同步；宿主上的 `aria-label`/`title` 也要转发给内部控件，否则无障碍树里是空名 button/checkbox。统一用 `packages/a11y/a11y.js` 的 `syncAccessibleName(host, control, { fromSlot })`，并在 detached 里清理 observer。
 
+56. **ofa.js 组件不能直接注册成 form-associated custom element**——生成的类没有 `formAssociated` / `ElementInternals` 钩子，`static formAssociated = true` 加不进去。表单能力用 light DOM 里的原生“代理控件”实现（`packages/form/form-proxy.js`）：`slot="form-proxy"`（没有对应 slot，不会渲染）但仍是 form 后代，承担 name/value/required/pattern/checked。代价：代理会让 `:host(:empty)` 失效，checkbox/switch/radio 必须改用 `has-label` 属性判断标签是否为空；代理不可见，浏览器原生校验气泡不会锚定到组件，组件改为派发 `invalid` 并设置 `aria-invalid`。
+57. **shadow 内 button 的 `type=submit/reset` 不会提交外层 form**——原生 button 在 shadow 内没有 `form` 关联，`button.form === null`。正确写法：组件监听内部 button 的 click，用 `closest("form")`（或 `form=""` 引用）找到表单后手动 `requestSubmit()` / `reset()`；同理 form 控件要自己同步 reset 回填。
+
 ## 测试/验证类坑（非 ofa.js）
 
 24. **外部脚本无法直接调用 o-page 页面模块的 proto 方法**——`document.querySelector('o-page').setRole(...)` 报 `not a function`（proto 方法挂在 ofa 实例上，宿主原生元素不可见）；自动化验证时改用真实交互触发（如 Playwright 对 `input[type=color]` fill 色值、直接 click 按钮），ofa 的 `on:input` / `on:click` 处理器正常响应
@@ -240,4 +246,5 @@ Playwright 端到端测试（无构建，走真实浏览器）：
 
 - 皮肤矩阵截图回归（`m3/apple/shadcn × 组件 × 深浅色`），把“只换材质不换颜色”变成可自动验证的约束
 - 皮肤 token 目前是“通用 + 组件”两层，后续可补 `--st-density-*` 统一密度（列表/菜单项/对话框内边距）
+- 表单代理目前不支持原生 `<label for>`；如需完整 labelable 语义，需要给 ofa.js 增加 form-associated 支持或在代理上做 id 映射
 - 按同样范式继续扩组件（table、autocomplete、date picker 等），新组件从第一天就消费 token 并暴露 part

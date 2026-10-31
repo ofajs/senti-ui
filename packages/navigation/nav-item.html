@@ -22,9 +22,9 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      padding: 0.857em 1em;
+      padding: var(--st-nav-item-padding, 0.857em 1em);
       color: var(--md-sys-color-on-surface-variant);
-      transition: color 0.2s ease;
+      transition: color var(--st-motion-duration-base, 0.2s) ease;
     }
     :host([active]) .container {
       color: var(--md-sys-color-on-secondary-container);
@@ -38,7 +38,7 @@
       justify-content: center;
       width: 4em; /* 56px */
       height: 2.286em; /* 32px */
-      border-radius: 2em;
+      border-radius: var(--st-nav-pill-radius, 2em);
     }
 
     .icon {
@@ -75,18 +75,18 @@
     .layer {
       position: absolute;
       inset: 0;
-      border-radius: 2em;
+      border-radius: var(--st-nav-pill-radius, 2em);
       background: currentColor;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.15s ease;
+      transition: opacity var(--st-motion-duration, 0.15s) ease;
     }
-    :host(:hover) .layer { opacity: 0.08; }
-    :host(:active) .layer { opacity: 0.12; }
+    :host(:hover) .layer { opacity: var(--st-state-hover, 0.08); }
+    :host(:active) .layer { opacity: var(--st-state-press, 0.12); }
 
     :host([disabled]) {
       cursor: not-allowed;
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
     }
 
     /* 内部透明原生 button：承载点击/键盘/焦点语义，覆盖整个组件 */
@@ -98,8 +98,9 @@
       cursor: pointer;
     }
     .native:focus-visible ~ .container .pill {
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: 2px;
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
     }
 
     l-m { display: none; }

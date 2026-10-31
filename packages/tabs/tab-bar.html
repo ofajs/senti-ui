@@ -9,20 +9,22 @@
       position: relative;
       display: flex;
       align-items: center;
-      font-size: 14px;
-      font-family: inherit;
-      border-bottom: 1px solid var(--md-sys-color-outline-variant);
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
+      border-bottom: var(--st-border-width, 1px) solid
+        var(--st-tabs-border, var(--md-sys-color-outline-variant));
     }
 
     .indicator {
       position: absolute;
       bottom: 0;
-      height: 0.143em; /* 2px */
+      height: var(--st-tabs-indicator-height, 0.143em);
+      border-radius: var(--st-tabs-indicator-radius, 0);
       width: 0;
-      background: var(--md-sys-color-primary);
+      background: var(--st-accent, var(--md-sys-color-primary));
       transition:
-        left 0.3s cubic-bezier(0.2, 0, 0, 1),
-        width 0.3s cubic-bezier(0.2, 0, 0, 1);
+        left var(--st-motion-duration-slow, 0.3s) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1)),
+        width var(--st-motion-duration-slow, 0.3s) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
     .indicator.not-animate { transition: none !important; }
 

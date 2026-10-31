@@ -8,7 +8,7 @@
 
 - `m3`（默认）/ `apple`（毛玻璃）/ `shadcn`（扁平）；只改材质，颜色仍走 M3
 - 切换：`import { setSkin } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js"; setSkin("apple")`；静态：`<html data-skin="apple">` + `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/apple.css">`
-- 已接入 `st-button` / `st-input`；token / part 表与自定义皮肤见 [components/skin.md](./components/skin.md)
+- 已接入全部交互与表面组件；token / part 表与自定义皮肤见 [components/skin.md](./components/skin.md)
 
 ## st-button 按钮
 

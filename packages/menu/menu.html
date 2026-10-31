@@ -44,14 +44,17 @@
       min-width: 6em; /* 84px */
       max-height: 80vh;
       overflow-y: auto;
-      padding: 0.286em;
-      border-radius: 0.857em; /* 12px */
-      background: var(--md-sys-color-surface-container);
+      padding: var(--st-menu-padding, 0.286em);
+      border-radius: var(--st-menu-radius, var(--st-radius-md, 0.857em));
+      background: var(--st-menu-bg, var(--md-sys-color-surface-container));
       color: var(--md-sys-color-on-surface);
-      box-shadow: 0 0.071em 0.143em rgba(0, 0, 0, 0.3), 0 0.143em 0.429em 0.143em rgba(0, 0, 0, 0.15);
+      box-shadow: 0 0 0 var(--st-border-width, 1px) var(--st-menu-border, transparent),
+        var(--st-menu-shadow, var(--st-shadow-3, 0 0.071em 0.143em rgba(0, 0, 0, 0.3), 0 0.143em 0.429em 0.143em rgba(0, 0, 0, 0.15)));
+      backdrop-filter: var(--st-menu-backdrop-filter, none);
+      -webkit-backdrop-filter: var(--st-menu-backdrop-filter, none);
       z-index: 1000;
       transform-origin: 50% 0;
-      animation: st-menu-in 0.2s cubic-bezier(0.2, 0, 0, 1);
+      animation: st-menu-in var(--st-overlay-enter-duration, 0.2s) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
 
     /* 关闭过渡 */
@@ -59,7 +62,8 @@
       pointer-events: none;
       opacity: 0;
       transform: translateY(-0.429em) scale(0.98);
-      transition: opacity 0.15s ease, transform 0.15s ease;
+      transition: opacity var(--st-overlay-exit-duration, 0.15s) ease,
+        transform var(--st-overlay-exit-duration, 0.15s) ease;
     }
 
     @keyframes st-menu-in {

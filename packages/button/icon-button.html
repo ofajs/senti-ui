@@ -12,16 +12,21 @@
       justify-content: center;
       box-sizing: border-box;
       position: relative;
-      width: 2.857em; /* 40px，与 st-button 高度一致 */
-      height: 2.857em;
+      width: var(--st-height, 2.857em); /* 40px，与 st-button 高度一致 */
+      height: var(--st-height, 2.857em);
       padding: 0;
-      border: 1px solid transparent;
-      border-radius: 50%; /* M3 图标按钮为圆形 */
-      font-size: 14px;
-      font-family: inherit;
+      border: var(--st-border-width, 1px) solid transparent;
+      border-radius: var(--st-icon-radius, 50%); /* M3 图标按钮为圆形 */
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
       background-color: var(--st-icon-bg, transparent);
       color: var(--st-icon-fg, var(--md-sys-color-on-surface-variant));
       border-color: var(--st-icon-border, transparent);
+      box-shadow: var(--st-shadow, none);
+      background-image: var(--st-sheen, none);
+      -webkit-backdrop-filter: var(--st-backdrop-filter, none);
+      backdrop-filter: var(--st-backdrop-filter, none);
+      transition: box-shadow var(--st-motion-duration, 150ms) ease;
       cursor: pointer;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
@@ -49,12 +54,12 @@
       opacity: 0;
       pointer-events: none;
     }
-    :host(:hover) .layer { opacity: 0.08; }
-    :host(:active) .layer { opacity: 0.12; }
+    :host(:hover) .layer { opacity: var(--st-state-hover, 0.08); }
+    :host(:active) .layer { opacity: var(--st-state-press, 0.12); }
 
     :host([disabled]) {
       cursor: not-allowed;
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
     }
     :host([disabled]) .layer { opacity: 0; }
 
@@ -77,8 +82,9 @@
     }
     .native:focus-visible {
       /* 不用 currentColor：filled 白字按钮的白圈画在浅色页面上不可见（坑 #11） */
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: 2px;
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
     }
   </style>
 

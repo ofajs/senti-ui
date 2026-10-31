@@ -123,7 +123,7 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 <st-button color="error">删除</st-button>
 ```
 
-运行时用 `packages/skin/st-skin.js` 的 `setSkin("shadcn")` 切换（持久化并跨同源窗口同步）。当前已接入 `st-button` 与 `st-input`；完整 token / `part` 契约与自定义皮肤写法见 [packages/skin/README.md](./packages/skin/README.md)。
+运行时用 `packages/skin/st-skin.js` 的 `setSkin("shadcn")` 切换（持久化并跨同源窗口同步）。全部交互与表面组件都已接入；完整 token / `part` 契约与自定义皮肤写法见 [packages/skin/README.md](./packages/skin/README.md)。
 
 ## 官网首页
 

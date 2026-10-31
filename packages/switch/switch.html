@@ -10,7 +10,8 @@
       display: inline-flex;
       align-items: center;
       position: relative;
-      font-size: 14px;
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
       vertical-align: middle;
       cursor: pointer;
       user-select: none;
@@ -19,7 +20,7 @@
 
     :host([disabled]) {
       cursor: not-allowed;
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
     }
 
     .track {
@@ -28,7 +29,7 @@
       width: 3.714em; /* 52px */
       height: 2.286em; /* 32px */
       flex-shrink: 0;
-      border-radius: 2.286em;
+      border-radius: var(--st-switch-radius, 2.286em);
       background: var(--md-sys-color-surface-container-highest); /* 未选中底色，恒定 */
     }
 
@@ -40,9 +41,10 @@
       inset: 0;
       box-sizing: border-box;
       border-radius: inherit;
-      border: 0.143em solid var(--md-sys-color-outline);
+      border: var(--st-switch-border-width, 0.143em) solid var(--md-sys-color-outline);
       background: transparent;
-      transition: border-color 0.3s ease, background-color 0.3s ease;
+      transition: border-color var(--st-motion-duration-slow, 0.3s) ease,
+        background-color var(--st-motion-duration-slow, 0.3s) ease;
     }
 
     /* 拇指：未选中 outline 灰 + scale(0.6) 收缩，选中复原并滑到右侧 */
@@ -55,8 +57,9 @@
       border-radius: 50%;
       transform: translateY(-50%) scale(0.6);
       background: var(--md-sys-color-outline);
-      box-shadow: 0 0.071em 0.214em rgba(0, 0, 0, 0.25);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+      box-shadow: var(--st-switch-thumb-shadow, var(--st-shadow-thumb, 0 0.071em 0.214em rgba(0, 0, 0, 0.25)));
+      transition: transform var(--st-motion-duration-slow, 0.3s) var(--st-motion-easing, cubic-bezier(0.4, 0, 0.2, 1)),
+        background-color var(--st-motion-duration-slow, 0.3s) ease;
       display: grid;
       place-items: center;
       color: inherit;
@@ -71,7 +74,7 @@
       width: 1.143em;
       height: 1.143em;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity var(--st-motion-duration-slow, 0.3s) ease;
     }
     :host([checked]) .mark { opacity: 1; }
     .mark path {
@@ -79,7 +82,7 @@
       stroke-dashoffset: 26;
     }
     :host([checked]) .mark path {
-      animation: st-sw-draw 0.16s ease-out forwards;
+      animation: st-sw-draw var(--st-motion-duration-base, 0.16s) ease-out forwards;
       animation-delay: 0.16s;
     }
     @keyframes st-sw-draw { to { stroke-dashoffset: 0; } }
@@ -101,8 +104,9 @@
       z-index: 2; /* 盖住 position 的兄弟元素，保证点击/键盘都落在语义元素上 */
     }
     .native:focus-visible ~ .track {
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: 2px;
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
     }
 
     l-m { display: none; }

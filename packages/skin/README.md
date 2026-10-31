@@ -7,7 +7,7 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 种子色、error、success、深浅色主题永远保持一致。皮肤改的是“同样颜色被呈现成什么材质”，
 不是“换成另一套配色”。
 
-已接入皮肤：`st-button`、`st-input`。其余组件暂未 token 化，皮肤下保持 M3 外观。
+已接入皮肤：全部交互与表面组件——`st-button` / `st-button-group` / `st-split-button` / `st-icon-button` / `st-input` / `st-textarea` / `st-select` / `st-card` / `st-dialog` / `st-menu` / `st-list` / `st-checkbox` / `st-switch` / `st-radio` / `st-slider` / `st-progress` / `st-tabs` / `st-navigation` / `st-tooltip` / `st-snackbar` / `st-badges`。未加载皮肤时每个 token 都回退到组件原有默认值。
 
 ## 依赖引入
 
@@ -79,6 +79,45 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 | `--st-field-padding` | `0 1em` | 输入类内边距 |
 | `--st-border-width` | `1px` | 描边宽度 |
 
+### 通用形状
+
+| Token | M3 默认 | 说明 |
+|-------|---------|------|
+| `--st-radius-xs` | `0.286em` | 小圆角（徽标 / 选项 / 提示气泡） |
+| `--st-radius-sm` | `0.5em` | 中圆角（列表项 / 字段） |
+| `--st-radius-md` | `0.857em` | 表面圆角（卡片 / 菜单） |
+| `--st-radius-lg` | `1.143em` | 大表面圆角 |
+| `--st-radius-xl` | `1.714em` | 对话框圆角 |
+| `--st-radius-pill` | `999px` | 胶囊 |
+
+### 浮层与表面
+
+| Token | M3 默认 | 说明 |
+|-------|---------|------|
+| `--st-dialog-bg` / `--st-dialog-border` | `surface-container-high` / `transparent` | 对话框面板 |
+| `--st-dialog-shadow` | `var(--st-shadow-4)` | 对话框阴影 |
+| `--st-dialog-backdrop-filter` / `--st-dialog-scrim` | `blur(2px)` / `rgb(0 0 0 / .28)` | 面板毛玻璃 / 遮罩 |
+| `--st-menu-bg` / `--st-menu-border` | `surface-container` / `transparent` | 菜单与 split-button 面板 |
+| `--st-menu-shadow` / `--st-menu-backdrop-filter` | `var(--st-shadow-3)` / `none` | 菜单材质 |
+| `--st-card-bg` / `--st-card-border` | `surface-container-low` / `transparent` | 卡片（filled/outlined 另有 `--st-card-filled-bg` / `--st-card-outlined-bg`） |
+| `--st-card-outline` | `outline-variant` | outlined 卡片描边 |
+| `--st-card-shadow` / `--st-card-shadow-hover` | `var(--st-shadow-1/2)` | 卡片默认 / hover |
+| `--st-select-popup-bg` / `--st-select-popup-border` | `surface-container` / `transparent` | 下拉弹层 |
+| `--st-snackbar-surface` / `--st-snackbar-on-surface` | `secondary` / `on-secondary` | 消息条默认底/字（`color` 属性仍优先） |
+| `--st-tooltip-bg` | `inverse-surface` | 提示气泡底 |
+| `--st-nav-bar-bg` | `surface-container` | 导航栏底 |
+
+### 阴影
+
+| Token | M3 默认 | 说明 |
+|-------|---------|------|
+| `--st-shadow-1` | `0 0.107em 0.286em rgb(0 0 0 / .3)` | 卡片默认 / 轻浮层 |
+| `--st-shadow-2` | `0 0.143em 0.5em rgb(0 0 0 / .25), …` | 卡片 hover |
+| `--st-shadow-3` | `0 0.071em 0.143em rgb(0 0 0 / .3), …` | 菜单 / 下拉 |
+| `--st-shadow-4` | `0 1em 2.857em -0.714em rgb(0 0 0 / .3)` | 对话框 |
+| `--st-shadow-overlay` | `0 0.2em 0.8em rgb(0 0 0 / .2)` | 下拉弹层 |
+| `--st-shadow-thumb` | `0 0.071em 0.214em rgb(0 0 0 / .25)` | 开关/滑块拇指 |
+
 ### 表面
 
 | Token | M3 默认 | 说明 |
@@ -115,6 +154,40 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 | `--st-disabled-opacity` | `0.38` | disabled 透明度 |
 | `--st-ripple-opacity` | `0.28` | 波纹透明度（`0` = 关闭波纹） |
 | `--st-motion-duration` | `150ms` | 焦点/材质过渡时长 |
+| `--st-motion-duration-fast` | `120ms` | 快速反馈 |
+| `--st-motion-duration-base` | `200ms` | 常规过渡 |
+| `--st-motion-duration-slow` | `300ms` | 指示器/折叠 |
+| `--st-motion-easing` | `cubic-bezier(0.2,0,0,1)` | 标准缓动 |
+| `--st-focus-ring-style` | `solid` | 焦点环线型 |
+| `--st-overlay-enter-duration` / `--st-overlay-exit-duration` | `200ms` / `150ms` | 菜单/下拉开合 |
+| `--st-dialog-enter-duration` / `--st-dialog-exit-duration` / `--st-dialog-scrim-duration` | `300ms` / `200ms` / `250ms` | 对话框与遮罩开合 |
+| `--st-dialog-scrim-filter` | `blur(2px)` | 遮罩毛玻璃 |
+| `--st-tooltip-duration` | `150ms` | 提示入场 |
+| `--st-ripple-duration` | `350ms` | 波纹扩散 |
+
+### 密度与组件材质
+
+| Token | M3 默认 | 说明 |
+|-------|---------|------|
+| `--st-dialog-padding` / `--st-dialog-gap` | `1.43em` / `1.14em` | 对话框内边距/区块间距 |
+| `--st-card-padding` | `1em` | 卡片内边距 |
+| `--st-menu-padding` / `--st-menu-item-padding` | `0.286em` / `0.714em 0.857em` | 菜单/菜单项 |
+| `--st-menu-item-radius` | `0.571em` | 菜单项圆角 |
+| `--st-select-popup-radius` / `--st-select-option-radius` | `0.5em` / `0.357em` | 下拉/选项圆角 |
+| `--st-snackbar-padding` / `--st-snackbar-radius` / `--st-snackbar-shadow` | `0.571em 1em` / `0.286em` / … | 消息条 |
+| `--st-tooltip-padding` / `--st-tooltip-radius` / `--st-tooltip-shadow` | `0.357em 0.643em` / `0.286em` / `none` | 提示 |
+| `--st-textarea-padding` | `0.857em 1em` | 多行输入内边距 |
+| `--st-list-gap` / `--st-list-item-radius` / `--st-list-item-height` / `--st-list-item-padding` | `0.143em` / `0.5em` / `3em` / `0.5em 1em` | 列表 |
+| `--st-checkbox-radius` / `--st-checkbox-border-width` | `0.286em` / `0.143em` | 复选框 |
+| `--st-switch-radius` / `--st-switch-border-width` / `--st-switch-thumb-shadow` | `2.286em` / `0.143em` / … | 开关 |
+| `--st-nav-gap` / `--st-nav-gap-vertical` / `--st-nav-padding-vertical` | `0.286em` / `0.143em` / `0.286em` | 导航间距 |
+| `--st-radio-radius` / `--st-radio-border-width` | `50%` / `0.143em` | 单选 |
+| `--st-icon-radius` | `50%` | 图标按钮 |
+| `--st-slider-track-radius` / `--st-slider-thumb-radius` / `--st-slider-tip-radius` / `--st-slider-thumb-shadow` | `0.286em` / `50%` / `0.286em` / `none` | 滑块 |
+| `--st-progress-size` / `--st-progress-thickness` / `--st-progress-radius` / `--st-progress-duration` | `2.857em` / `0.286em` / `0.286em` / `0.3s` | 进度 |
+| `--st-tab-height` / `--st-tab-layer-radius` / `--st-tabs-indicator-height` / `--st-tabs-indicator-radius` / `--st-tabs-border` | `3.429em` / `0.571em` / `0.143em` / `0` / `outline-variant` | 标签栏 |
+| `--st-nav-pill-radius` / `--st-nav-bar-bg` / `--st-nav-item-padding` / `--st-nav-gap` | `2em` / `surface-container` / `0.857em 1em` / `0.286em` | 导航栏 |
+| `--st-badge-radius` / `--st-badge-font-size` / `--st-badge-shadow` | `1.429em` / `0.786em` / `none` | 徽标 |
 
 ### 颜色（由组件写入，皮肤不要覆盖）
 
@@ -132,6 +205,7 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 |------|------|------|
 | `st-button` | `state-layer` / `loader` / `control` | hover 叠层 / loading spinner / 内部原生 button |
 | `st-input` | `focus-ring` / `underline` / `control` | 内嵌焦点环 / filled 底线 / 内部原生 input |
+| `st-dialog` | `panel` | 对话框面板 |
 
 仅当组件位于 light DOM（不在 `o-page` 等 shadow 内）时，`::part()` 才可达；
 跨 shadow 场景请使用 token。

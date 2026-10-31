@@ -12,14 +12,14 @@
       position: relative;
       width: 13.571em; /* 190px */
       height: 2.857em; /* 40px 触控高度 */
-      font-size: 14px;
-      font-family: inherit;
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
     }
     :host([disabled]) {
       cursor: not-allowed;
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
     }
     :host([disabled]) .native { pointer-events: none; }
 
@@ -28,8 +28,8 @@
     .fill {
       position: absolute;
       top: 50%;
-      height: 0.286em; /* 4px */
-      border-radius: 0.286em;
+      height: var(--st-slider-track-height, 0.286em);
+      border-radius: var(--st-slider-track-radius, 0.286em);
       transform: translateY(-50%);
     }
     .track {
@@ -49,8 +49,9 @@
       top: 50%;
       width: 1.429em; /* 20px */
       height: 1.429em;
-      border-radius: 50%;
+      border-radius: var(--st-slider-thumb-radius, 50%);
       background: var(--st-slider-main, var(--md-sys-color-primary));
+      box-shadow: var(--st-slider-thumb-shadow, none);
       transform: translate(-50%, -50%);
       left: 50%;
     }
@@ -64,7 +65,7 @@
       box-sizing: border-box;
       min-width: 1.714em;
       padding: 0.143em 0.429em;
-      border-radius: 0.286em;
+      border-radius: var(--st-slider-tip-radius, 0.286em);
       font-size: 0.786em; /* 11px */
       line-height: 1.5;
       text-align: center;
@@ -73,7 +74,7 @@
       color: var(--md-sys-color-on-primary);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.15s ease;
+      transition: opacity var(--st-motion-duration, 0.15s) ease;
     }
     .value-tip::after {
       /* 气泡小三角 */
@@ -106,8 +107,9 @@
       border: none;
     }
     .native:focus-visible ~ .thumb {
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: 2px;
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
     }
 
     l-m { display: none; }

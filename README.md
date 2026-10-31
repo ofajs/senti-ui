@@ -123,7 +123,7 @@ The same components can switch **material** without changing colors: `m3` (defau
 <st-button color="error">Delete</st-button>
 ```
 
-Switch at runtime with `setSkin("shadcn")` from `packages/skin/st-skin.js` (persists and syncs across same-origin windows). Currently `st-button` and `st-input` are skinned; the full token / `part` contract and how to author a custom skin are in [packages/skin/README.md](./packages/skin/README.md).
+Switch at runtime with `setSkin("shadcn")` from `packages/skin/st-skin.js` (persists and syncs across same-origin windows). All interactive and surface components consume the skin tokens; the full token / `part` contract and how to author a custom skin are in [packages/skin/README.md](./packages/skin/README.md).
 
 ## Website
 

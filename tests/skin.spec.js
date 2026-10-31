@@ -176,3 +176,176 @@ test("皮肤选择持久化：刷新后仍是 apple", async ({ page }) => {
   expect(state.skin).toBe("apple");
   expect(state.radius).toBeLessThan(11);
 });
+
+test("皮肤覆盖浮动层：dialog / menu / card / select / tooltip / snackbar", async ({ page }) => {
+  await page.waitForFunction(() => {
+    const names = ["st-dialog", "st-menu", "st-card", "st-select", "st-tooltip", "st-snackbar"];
+    return names.every((tag) => document.querySelector(tag)?.shadowRoot);
+  }, null, { timeout: 20_000 });
+
+  await setSkin(page, "shadcn");
+  await waitForSkin(page, () => {
+    const d = document.querySelector("#dialog-skin");
+    return d && parseFloat(getComputedStyle(d.shadowRoot.querySelector(".panel")).borderRadius) < 12;
+  });
+
+  const shadcn = await page.evaluate(() => {
+    const radius = (el) => parseFloat(getComputedStyle(el).borderRadius);
+    const dlg = document.querySelector("#dialog-skin");
+    const menu = document.querySelector("#menu-skin");
+    const card = document.querySelector("#card-elev");
+    const select = document.querySelector("#select-skin");
+    return {
+      dialog: radius(dlg.shadowRoot.querySelector(".panel")),
+      menu: radius(menu.shadowRoot.querySelector(".panel")),
+      card: radius(card),
+      select: radius(select),
+      checkbox: radius(document.querySelector("#cb-skin").shadowRoot.querySelector(".box")),
+      tabIndicator: getComputedStyle(
+        document.querySelector("#tabbar-skin").shadowRoot.querySelector(".indicator")
+      ).borderRadius,
+      switchBorder: parseFloat(
+        getComputedStyle(document.querySelector("#sw-skin").shadowRoot.querySelector(".bg")).borderWidth
+      ),
+      sliderShadow: getComputedStyle(
+        document.querySelector("#slider-skin").shadowRoot.querySelector(".thumb")
+      ).boxShadow,
+      navPill: radius(document.querySelector("#navbar-skin").shadowRoot.querySelector(".active-bg")),
+    };
+  });
+  expect(shadcn.dialog).toBeLessThan(12);
+  expect(shadcn.menu).toBeLessThan(7);
+  expect(shadcn.card).toBeLessThan(7);
+  expect(shadcn.select).toBeLessThan(7);
+  expect(shadcn.checkbox).toBeLessThanOrEqual(4.5);
+  expect(parseFloat(shadcn.tabIndicator)).toBeGreaterThan(100);
+  expect(shadcn.switchBorder).toBeLessThan(1.2);
+  expect(shadcn.sliderShadow).not.toBe("none");
+  expect(shadcn.navPill).toBeLessThan(7);
+
+  await setSkin(page, "apple");
+  await waitForSkin(page, () => {
+    const d = document.querySelector("#dialog-skin");
+    return getComputedStyle(d.shadowRoot.querySelector(".panel")).backdropFilter.includes("blur(24px)");
+  });
+  const apple = await page.evaluate(() => {
+    const filter = (sel, inner) => {
+      const el = document.querySelector(sel);
+      return getComputedStyle(inner ? el.shadowRoot.querySelector(inner) : el).backdropFilter;
+    };
+    return {
+      dialog: filter("#dialog-skin", ".panel"),
+      menu: filter("#menu-skin", ".panel"),
+      card: filter("#card-elev"),
+      tooltip: filter("#tip-skin", ".bubble"),
+      checkbox: parseFloat(
+        getComputedStyle(document.querySelector("#cb-skin").shadowRoot.querySelector(".box")).borderRadius
+      ),
+      dialogRadius: parseFloat(
+        getComputedStyle(document.querySelector("#dialog-skin").shadowRoot.querySelector(".panel")).borderRadius
+      ),
+      switchBorder: parseFloat(
+        getComputedStyle(document.querySelector("#sw-skin").shadowRoot.querySelector(".bg")).borderWidth
+      ),
+      sliderShadow: getComputedStyle(
+        document.querySelector("#slider-skin").shadowRoot.querySelector(".thumb")
+      ).boxShadow,
+    };
+  });
+  expect(apple.dialog).toContain("blur(24px)");
+  expect(apple.menu).toContain("blur(18px)");
+  expect(apple.card).toContain("blur(18px)");
+  expect(apple.tooltip).toContain("blur(18px)");
+  expect(apple.checkbox).toBeGreaterThan(5);
+  expect(apple.dialogRadius).toBeGreaterThan(18);
+  expect(apple.switchBorder).toBeGreaterThan(1.8);
+  expect(apple.sliderShadow).not.toBe("none");
+});
+
+test("皮肤不改变语义色：card / menu / snackbar 仍消费 M3 角色", async ({ page }) => {
+  await page.waitForFunction(() => !!document.querySelector("#card-elev")?.shadowRoot);
+  await setSkin(page, "shadcn");
+  await waitForSkin(page, () => {
+    const d = document.querySelector("#dialog-skin");
+    const r = d && parseFloat(getComputedStyle(d.shadowRoot.querySelector(".panel")).borderRadius);
+    return r > 0 && r < 12;
+  });
+
+  const state = await page.evaluate(() => {
+    const probe = document.createElement("span");
+    document.body.appendChild(probe);
+    const role = (name) => {
+      probe.style.color = `var(--md-sys-color-${name})`;
+      const value = getComputedStyle(probe).color;
+      return value;
+    };
+    const card = getComputedStyle(document.querySelector("#card-elev"));
+    const menu = getComputedStyle(document.querySelector("#menu-skin").shadowRoot.querySelector(".panel"));
+    const result = { cardBg: card.backgroundColor, cardRole: role("surface"), menuBg: menu.backgroundColor, menuRole: role("surface") };
+    probe.remove();
+    return result;
+  });
+  expect(state.cardBg).toBe(state.cardRole);
+  expect(state.menuBg).toBe(state.menuRole);
+});
+
+test("m3 默认皮肤：迁移后的表面保持原值", async ({ page }) => {
+  await page.waitForFunction(() => {
+    const names = ["st-dialog", "st-menu", "st-card", "st-textarea", "st-checkbox", "st-progress"];
+    return names.every((tag) => document.querySelector(tag)?.shadowRoot);
+  }, null, { timeout: 20_000 });
+
+  await page.evaluate(() => document.querySelector("#dialog-skin").setAttribute("open", ""));
+  await page.waitForFunction(() => {
+    const d = document.querySelector("#dialog-skin");
+    return d?.hasAttribute("open") && d.shadowRoot.querySelector(".panel").getBoundingClientRect().height > 0;
+  });
+  const state = await page.evaluate(() => {
+    const radius = (el) => parseFloat(getComputedStyle(el).borderRadius);
+    const dlg = document.querySelector("#dialog-skin");
+    const menu = document.querySelector("#menu-skin");
+    const tabbar = document.querySelector("#tabbar-skin");
+    return {
+      dialog: radius(dlg.shadowRoot.querySelector(".panel")),
+      card: radius(document.querySelector("#card-elev")),
+      menu: radius(menu.shadowRoot.querySelector(".panel")),
+      textarea: radius(document.querySelector("#textarea-skin")),
+      checkbox: radius(document.querySelector("#cb-skin").shadowRoot.querySelector(".box")),
+      progress: parseFloat(
+        getComputedStyle(document.querySelector("#progress-skin").shadowRoot.querySelector(".linear")).height
+      ),
+      indicatorRadius: getComputedStyle(
+        tabbar.shadowRoot.querySelector(".indicator")
+      ).borderRadius,
+    };
+  });
+  expect(state.dialog).toBeGreaterThan(23);
+  expect(state.dialog).toBeLessThan(25);
+  expect(state.card).toBeGreaterThan(11);
+  expect(state.card).toBeLessThan(13);
+  expect(state.menu).toBeGreaterThan(11);
+  expect(state.menu).toBeLessThan(13);
+  expect(state.textarea).toBeGreaterThan(6);
+  expect(state.textarea).toBeLessThan(8);
+  expect(state.checkbox).toBeGreaterThan(3.5);
+  expect(state.checkbox).toBeLessThan(4.5);
+  expect(state.progress).toBeGreaterThan(3.5);
+  expect(state.progress).toBeLessThan(4.5);
+  expect(parseFloat(state.indicatorRadius)).toBe(0);
+});
+
+test("未加载皮肤时仍回退到组件原默认材质", async ({ page }) => {
+  await page.goto("/tests/fixtures/dialog.html");
+  await page.waitForFunction(() => !!document.querySelector("#dlg-autoclose")?.shadowRoot);
+  await page.evaluate(() => document.querySelector("#dlg-autoclose").setAttribute("open", ""));
+  await page.waitForTimeout(150);
+  const state = await page.evaluate(() => {
+    const panel = document.querySelector("#dlg-autoclose").shadowRoot.querySelector(".panel");
+    const cs = getComputedStyle(panel);
+    return { radius: parseFloat(cs.borderRadius), shadow: cs.boxShadow, bg: cs.backgroundColor };
+  });
+  expect(state.radius).toBeGreaterThan(23);
+  expect(state.radius).toBeLessThan(25);
+  expect(state.shadow).not.toBe("none");
+  expect(state.bg).not.toBe("rgba(0, 0, 0, 0)");
+});

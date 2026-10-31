@@ -135,6 +135,90 @@
     </div>
   </div>
 
+
+  <h3>浮层：菜单 / 对话框 / 选择器</h3>
+  <div class="stage">
+    <div class="row">
+      <st-menu>
+        <st-button slot="trigger" variant="outlined">打开菜单</st-button>
+        <st-menu-item><span slot="prefix">✏</span>编辑</st-menu-item>
+        <st-menu-item><span slot="prefix">⧉</span>复制</st-menu-item>
+        <st-menu-item disabled><span slot="prefix">⌫</span>删除</st-menu-item>
+      </st-menu>
+      <st-button variant="outlined" on:click="dialogOpen = true">打开对话框</st-button>
+      <st-select placeholder="选择城市">
+        <option value="sh">上海</option>
+        <option value="bj">北京</option>
+      </st-select>
+      <st-select variant="filled" placeholder="Filled select">
+        <option value="a">选项 A</option>
+        <option value="b">选项 B</option>
+      </st-select>
+    </div>
+    <p class="note">
+      所有浮层共用 <span class="code">--st-menu-*</span> / <span class="code">--st-dialog-*</span> /
+      <span class="code">--st-select-popup-*</span>：M3 是实色分层，Apple 是半透明毛玻璃，shadcn 是扁平细描边。
+    </p>
+  </div>
+
+  <h3>表面：卡片 / 列表 / 文本域</h3>
+  <div class="stage">
+    <div class="row">
+      <st-card style="width: 220px;"><strong>Elevated card</strong><p class="note">M3 level 1 / 皮肤阴影</p></st-card>
+      <st-card variant="outlined" style="width: 220px;"><strong>Outlined card</strong><p class="note">细描边</p></st-card>
+      <st-list style="width: 240px;">
+        <st-list-item button>可点击列表项</st-list-item>
+        <st-list-item>普通列表项</st-list-item>
+        <st-list-item collapsible>折叠项</st-list-item>
+      </st-list>
+      <st-textarea placeholder="多行输入" rows="3" style="width: 240px;"></st-textarea>
+    </div>
+  </div>
+
+  <h3>选择与反馈：check / switch / slider / progress</h3>
+  <div class="stage">
+    <div class="row">
+      <st-checkbox checked>复选框</st-checkbox>
+      <st-switch checked>开关</st-switch>
+      <st-radio name="skin-radio" checked>单选</st-radio>
+    </div>
+    <div class="row">
+      <st-slider default-value="60" style="width: 240px;"></st-slider>
+      <st-progress value="60" style="width: 240px;"></st-progress>
+      <st-progress circular value="60"></st-progress>
+    </div>
+  </div>
+
+  <h3>导航 / 标签 / 气泡 / 消息</h3>
+  <div class="stage">
+    <div class="row">
+      <st-tab-bar style="width: 320px;">
+        <st-tab-item active>邮件</st-tab-item>
+        <st-tab-item>通话</st-tab-item>
+        <st-tab-item>设置</st-tab-item>
+      </st-tab-bar>
+      <st-nav-bar style="width: 320px;">
+        <st-nav-item active><span slot="icon">★</span>首页</st-nav-item>
+        <st-nav-item><span slot="icon">☆</span>我的</st-nav-item>
+      </st-nav-bar>
+    </div>
+    <div class="row">
+      <st-tooltip content="材质随皮肤切换">
+        <st-button variant="outlined">悬停提示</st-button>
+      </st-tooltip>
+      <st-badges value="8"><st-icon-button aria-label="通知">🔔</st-icon-button></st-badges>
+      <st-snackbar open>消息条</st-snackbar>
+    </div>
+  </div>
+
+  <st-dialog sync:open="dialogOpen" auto-close>
+    <h2 slot="headline">皮肤下的对话框</h2>
+    <p>面板圆角、阴影、毛玻璃、边框和密度都由皮肤 token 决定；颜色仍来自 M3 角色。</p>
+    <div slot="actions">
+      <st-button variant="text" on:click="dialogOpen = false">关闭</st-button>
+    </div>
+  </st-dialog>
+
   <h3>怎么切换</h3>
   <pre><code>&lt;!-- 方式一：跑起来切换（持久化到 localStorage，同源全站跟随） --&gt;
 &lt;script type="module"&gt;
@@ -156,6 +240,7 @@
     export default async () => ({
       data: {
         skin: "m3",
+        dialogOpen: false,
         skins: [
           { id: "m3", label: "M3 材质" },
           { id: "apple", label: "Apple 毛玻璃" },

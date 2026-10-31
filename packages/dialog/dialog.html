@@ -31,9 +31,9 @@
       inset: 0;
       /* 轻磨砂遮罩：M3 scrim（黑 @ 28%）+ 轻度 backdrop 磨砂（一点点，不抢内容戏），
          模糊半径用 em 随 font-size 缩放 */
-      background: rgba(0, 0, 0, 0.28);
-      backdrop-filter: blur(2px);
-      -webkit-backdrop-filter: blur(2px);
+      background: var(--st-dialog-scrim, rgba(0, 0, 0, 0.28));
+      backdrop-filter: var(--st-dialog-scrim-filter, blur(2px));
+      -webkit-backdrop-filter: var(--st-dialog-scrim-filter, blur(2px));
       opacity: 0;
     }
 
@@ -42,16 +42,16 @@
        退出 fade + 上移收缩 200ms。用 animation 而非 transition：
        display none→grid 切换时 animation 自动重播 */
     :host([open]) .scrim {
-      animation: st-dlg-scrim-in 0.25s ease forwards;
+      animation: st-dlg-scrim-in var(--st-dialog-scrim-duration, 0.25s) var(--st-motion-easing, ease) forwards;
     }
     :host([closing]) .scrim {
-      animation: st-dlg-scrim-out 0.2s ease forwards;
+      animation: st-dlg-scrim-out var(--st-dialog-exit-duration, 0.2s) ease forwards;
     }
     :host([open]) .panel {
-      animation: st-dlg-in 0.3s ease forwards;
+      animation: st-dlg-in var(--st-dialog-enter-duration, 0.3s) var(--st-motion-easing, ease) forwards;
     }
     :host([closing]) .panel {
-      animation: st-dlg-out 0.2s cubic-bezier(0.2, 0, 0, 1) forwards;
+      animation: st-dlg-out var(--st-dialog-exit-duration, 0.2s) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1)) forwards;
     }
     .panel > * {
       opacity: 0;
@@ -91,16 +91,18 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      gap: 1.14em;
+      gap: var(--st-dialog-gap, 1.14em);
       box-sizing: border-box;
       width: min(34.29em, 100%); /* 480px @ 14px，M3 对话框最大宽度 */
       max-height: 100%;
-      padding: 1.43em;
-      border-radius: 1.714em; /* 24px，M3 extra-large 圆角 */
-      background: var(--md-sys-color-surface-container-high);
+      padding: var(--st-dialog-padding, 1.43em);
+      border-radius: var(--st-dialog-radius, var(--st-radius-xl, 1.714em));
+      background: var(--st-dialog-bg, var(--md-sys-color-surface-container-high));
       color: var(--md-sys-color-on-surface);
-      /* M3 elevation level 3 常量 */
-      box-shadow: 0 1em 2.857em -0.714em rgba(0, 0, 0, 0.3);
+      box-shadow: 0 0 0 var(--st-border-width, 1px) var(--st-dialog-border, transparent),
+        var(--st-dialog-shadow, var(--st-shadow-4, 0 1em 2.857em -0.714em rgba(0, 0, 0, 0.3)));
+      backdrop-filter: var(--st-dialog-backdrop-filter, blur(2px));
+      -webkit-backdrop-filter: var(--st-dialog-backdrop-filter, blur(2px));
     }
     /* 焦点由面板内部可交互元素承载（各自有 focus ring），容器本身不画圈 */
     .panel:focus { outline: none; }

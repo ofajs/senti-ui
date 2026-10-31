@@ -18,8 +18,17 @@
   --st-control-radius: 0.714em; /* 10px */
   --st-field-radius: 0.857em; /* 12px */
   --st-control-padding: 0 1.143em;
+  --st-textarea-padding: .786em .929em;
   --st-field-padding: 0 0.929em;
   --st-border-width: 1px;
+
+  /* 通用形状：更小的圆角、更紧凑的浮层 */
+  --st-radius-xs: 0.286em;
+  --st-radius-sm: 0.5em;
+  --st-radius-md: 0.857em;
+  --st-radius-lg: 1.143em;
+  --st-radius-xl: 1.429em;
+  --st-radius-pill: 999px;
 
   /* 半透明表面：surface 系角色混入透明度，深浅色主题自动适配 */
   --st-outlined-bg: color-mix(in srgb, var(--md-sys-color-surface) 58%, transparent);
@@ -33,6 +42,12 @@
   /* 毛玻璃与浮起：黑色阴影属于材质而非主题色，故不随配色变化 */
   --st-shadow: 0 1px 1px rgb(0 0 0 / 0.05), 0 8px 24px -6px rgb(0 0 0 / 0.18);
   --st-field-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  --st-shadow-1: 0 1px 2px rgb(0 0 0 / 0.06), 0 6px 18px -8px rgb(0 0 0 / 0.16);
+  --st-shadow-2: 0 2px 4px rgb(0 0 0 / 0.06), 0 14px 32px -10px rgb(0 0 0 / 0.2);
+  --st-shadow-3: 0 2px 8px rgb(0 0 0 / 0.08), 0 16px 40px -12px rgb(0 0 0 / 0.22);
+  --st-shadow-4: 0 8px 24px -6px rgb(0 0 0 / 0.18), 0 32px 64px -20px rgb(0 0 0 / 0.28);
+  --st-shadow-overlay: 0 8px 28px -10px rgb(0 0 0 / 0.22);
+  --st-shadow-thumb: 0 1px 3px rgb(0 0 0 / 0.22);
   --st-backdrop-filter: blur(18px) saturate(180%);
   --st-sheen: linear-gradient(
     180deg,
@@ -49,12 +64,100 @@
   --st-field-focus-ring-opacity: 0;
   --st-field-underline-color: transparent;
 
+  /* 半透明浮层 + 毛玻璃：颜色仍来自 M3 角色 */
+  --st-badge-radius: 1.429em;
+  --st-badge-font-size: .786em;
+  --st-badge-shadow: var(--st-shadow-1);
+  --st-dialog-radius: 1.429em;
+  --st-card-radius: .857em;
+  --st-nav-gap: .286em;
+  --st-nav-gap-vertical: .143em;
+  --st-nav-padding-vertical: .286em;
+  --st-nav-item-padding: .786em .929em;
+  --st-tooltip-fg: var(--md-sys-color-inverse-on-surface);
+  --st-tab-height: 3.429em;
+  --st-tab-layer-radius: .571em;
+  --st-tabs-indicator-height: .143em;
+  --st-tabs-indicator-radius: 999px;
+  --st-tabs-border: transparent;
+  --st-nav-pill-radius: 2em;
+  --st-nav-bar-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 72%, transparent);
+  --st-nav-bar-backdrop-filter: blur(18px) saturate(180%);
+  --st-progress-size: 2.857em;
+  --st-progress-thickness: .286em;
+  --st-progress-radius: .286em;
+  --st-progress-duration: .22s;
+  --st-slider-track-radius: .286em;
+  --st-slider-thumb-radius: 50%;
+  --st-slider-tip-radius: .5em;
+  --st-slider-thumb-shadow: var(--st-shadow-thumb);
+  --st-checkbox-radius: .5em;
+  --st-checkbox-border-width: .143em;
+  --st-switch-border-width: .143em;
+  --st-radio-border-width: .143em;
+  --st-radio-radius: 50%;
+  --st-icon-radius: 50%;
+  --st-menu-radius: .857em;
+  --st-menu-item-radius: .5em;
+  --st-select-popup-radius: .857em;
+  --st-select-option-radius: .5em;
+  --st-list-gap: 0.143em;
+  --st-list-item-radius: .5em;
+  --st-list-item-radius-outer: 1.143em;
+  --st-list-item-height: 2.857em;
+  --st-list-item-padding: 0.5em 0.857em;
+  --st-dialog-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 72%, transparent);
+  --st-dialog-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
+  --st-dialog-backdrop-filter: blur(24px) saturate(180%);
+  --st-dialog-scrim: rgb(0 0 0 / 0.18);
+  --st-dialog-scrim-filter: blur(18px) saturate(160%);
+  --st-dialog-enter-duration: 280ms;
+  --st-dialog-exit-duration: 180ms;
+  --st-dialog-scrim-duration: 240ms;
+  --st-menu-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 74%, transparent);
+  --st-menu-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
+  --st-menu-backdrop-filter: blur(18px) saturate(180%);
+  --st-card-bg: color-mix(in srgb, var(--md-sys-color-surface-container-low) 76%, transparent);
+  --st-card-filled-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 70%, transparent);
+  --st-card-outlined-bg: color-mix(in srgb, var(--md-sys-color-surface) 58%, transparent);
+  --st-card-border: color-mix(in srgb, var(--md-sys-color-outline) 32%, transparent);
+  --st-card-outline: color-mix(in srgb, var(--md-sys-color-outline) 32%, transparent);
+  --st-card-backdrop-filter: blur(18px) saturate(180%);
+  --st-select-popup-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 78%, transparent);
+  --st-select-popup-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
+  --st-select-popup-backdrop-filter: blur(18px) saturate(180%);
+  --st-snackbar-radius: .857em;
+  --st-snackbar-shadow: var(--st-shadow-1);
+  --st-snackbar-surface: color-mix(in srgb, var(--md-sys-color-secondary) 86%, transparent);
+  --st-snackbar-on-surface: var(--md-sys-color-on-secondary);
+  --st-snackbar-backdrop-filter: blur(18px) saturate(180%);
+  --st-tooltip-radius: .5em;
+  --st-tooltip-shadow: var(--st-shadow-1);
+  --st-tooltip-bg: color-mix(in srgb, var(--md-sys-color-inverse-surface) 90%, transparent);
+  --st-tooltip-backdrop-filter: blur(18px) saturate(180%);
+
+  /* 密度 */
+  --st-dialog-padding: 1.429em;
+  --st-dialog-gap: 1em;
+  --st-menu-padding: 0.286em;
+  --st-menu-item-padding: 0.714em 0.643em;
+  --st-card-padding: 1em;
+  --st-snackbar-padding: 0.5em 0.929em;
+  --st-tooltip-padding: 0.321em 0.571em;
+
   /* 状态与动效 */
   --st-state-hover: 0.06;
   --st-state-press: 0.1;
   --st-disabled-opacity: 0.4;
   --st-ripple-opacity: 0; /* Apple 风格无波纹 */
   --st-motion-duration: 220ms;
+  --st-motion-duration-fast: 160ms;
+  --st-motion-duration-base: 220ms;
+  --st-motion-duration-slow: 280ms;
+  --st-motion-easing: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --st-overlay-enter-duration: 220ms;
+  --st-overlay-exit-duration: 160ms;
+  --st-tooltip-duration: 160ms;
 
   /* 字体：系统栈，不引入外部字体文件 */
   --st-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;

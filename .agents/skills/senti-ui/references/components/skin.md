@@ -3,7 +3,7 @@
 组件只负责语义与行为，**材质**由皮肤决定：圆角、密度、边框、阴影、毛玻璃、焦点环、动效、波纹。
 **颜色不参与换肤**：所有皮肤消费同一套 M3 角色变量（`--md-sys-color-*`），种子色 / error / success / 深浅色主题永远一致。
 
-已接入皮肤：`st-button`、`st-input`；其余组件暂未 token 化，皮肤下保持 M3 外观。
+已接入皮肤：全部交互与表面组件（button/input/textarea/select/card/dialog/menu/list/checkbox/switch/radio/slider/progress/tabs/nav/tooltip/snackbar/badges）。未加载皮肤时所有 token 回退到组件原默认值。
 
 ## 使用
 
@@ -101,6 +101,15 @@ CSS 变量可以继承穿透。所有规则写在 `[data-skin="名称"]` 下，�
 | `--st-disabled-opacity` | `0.38` | disabled 透明度 |
 | `--st-ripple-opacity` | `0.28` | 波纹透明度（0 = 关闭） |
 | `--st-motion-duration` | `150ms` | 过渡时长 |
+
+### 全组件材质 token（新增）
+
+- 形状：`--st-radius-xs/sm/md/lg/xl/pill`
+- 阴影：`--st-shadow-1/2/3/4`、`--st-shadow-overlay`、`--st-shadow-thumb`
+- 浮层：`--st-dialog-bg/border/shadow/backdrop-filter/scrim`、`--st-menu-bg/border/shadow/backdrop-filter`、`--st-card-bg/border/shadow/shadow-hover`、`--st-select-popup-bg/border/backdrop-filter`、`--st-snackbar-surface/on-surface`、`--st-tooltip-bg`、`--st-nav-bar-bg`
+- 密度：`--st-dialog-padding/gap`、`--st-card-padding`、`--st-menu-padding/menu-item-padding`、`--st-list-item-height/padding`、`--st-snackbar-padding`、`--st-tooltip-padding`、`--st-textarea-padding`、`--st-tab-height`、`--st-nav-item-padding`
+- 动效：`--st-motion-duration-fast/base/slow`、`--st-motion-easing`、`--st-overlay-enter/exit-duration`、`--st-dialog-enter/exit-duration`、`--st-tooltip-duration`、`--st-ripple-duration`
+- 组件形状：`--st-icon-radius`、`--st-checkbox-radius`、`--st-switch-radius`、`--st-radio-radius`、`--st-slider-track/thumb/tip-radius`、`--st-progress-size/thickness/radius`、`--st-tabs-indicator-*`、`--st-nav-pill-radius`、`--st-badge-radius`
 
 ### 颜色（组件写入，皮肤不要覆盖）
 `--st-accent` / `--st-on-accent`：`color` 属性在宿主上内联写为对应 M3 角色，皮肤只消费。

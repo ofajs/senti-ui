@@ -19,24 +19,29 @@
       top: 0;
       box-sizing: border-box;
       max-width: 20em;
-      padding: 0.357em 0.643em; /* 5px 9px */
-      border-radius: 0.286em;
+      padding: var(--st-tooltip-padding, 0.357em 0.643em);
+      border-radius: var(--st-tooltip-radius, 0.286em);
       font-size: 0.857em; /* 12px */
-      font-family: inherit;
+      font-family: var(--st-font, inherit);
       line-height: 1.5;
-      background: var(--md-sys-color-inverse-surface);
-      color: var(--md-sys-color-inverse-on-surface);
+      background: var(--st-tooltip-bg, var(--md-sys-color-inverse-surface));
+      color: var(--st-tooltip-fg, var(--md-sys-color-inverse-on-surface));
+      box-shadow: var(--st-tooltip-shadow, none);
+      backdrop-filter: var(--st-tooltip-backdrop-filter, none);
+      -webkit-backdrop-filter: var(--st-tooltip-backdrop-filter, none);
       z-index: 1200;
       pointer-events: none;
     }
     :host([open]) .bubble { display: block; }
     :host([drop-up]) .bubble {
       transform-origin: 50% 100%;
-      animation: st-tip-in-up 0.15s cubic-bezier(0.2, 0, 0, 1);
+      animation: st-tip-in-up var(--st-tooltip-duration, 0.15s)
+        var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
     :host(:not([drop-up])) .bubble {
       transform-origin: 50% 0;
-      animation: st-tip-in 0.15s cubic-bezier(0.2, 0, 0, 1);
+      animation: st-tip-in var(--st-tooltip-duration, 0.15s)
+        var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
     @keyframes st-tip-in {
       from { opacity: 0; transform: translateY(0.286em); }

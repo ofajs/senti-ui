@@ -9,7 +9,8 @@
       display: inline-flex;
       align-items: center;
       position: relative;
-      font-size: 14px;
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
       line-height: 1.4;
       vertical-align: middle;
       cursor: pointer;
@@ -19,7 +20,7 @@
 
     :host([disabled]) {
       cursor: not-allowed;
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
     }
 
     .box {
@@ -28,12 +29,13 @@
       width: 1.571em; /* 22px */
       height: 1.571em;
       flex-shrink: 0;
-      border: 0.143em solid var(--md-sys-color-on-surface-variant);
-      border-radius: 0.286em; /* 4px */
+      border: var(--st-checkbox-border-width, 0.143em) solid var(--md-sys-color-on-surface-variant);
+      border-radius: var(--st-checkbox-radius, 0.286em);
       display: grid;
       place-items: center;
       color: var(--md-sys-color-on-primary);
-      transition: background-color 0.16s ease, border-color 0.16s ease;
+      transition: background-color var(--st-motion-duration, 0.16s) ease,
+        border-color var(--st-motion-duration, 0.16s) ease;
     }
     /* 选中/不确定态底色由 applyColor 按 color 属性写内联样式（无 color 属性时用默认 primary） */
     :host([checked]) .box,
@@ -52,7 +54,7 @@
       stroke-dashoffset: 26;
     }
     :host([checked]) .checkmark path {
-      animation: st-cb-draw 0.16s ease-out forwards;
+      animation: st-cb-draw var(--st-motion-duration, 0.16s) ease-out forwards;
       animation-delay: 0.1s;
     }
     @keyframes st-cb-draw { to { stroke-dashoffset: 0; } }
@@ -65,7 +67,7 @@
       border-radius: 0.143em;
       background: var(--md-sys-color-on-primary);
       opacity: 0;
-      transition: opacity 0.15s ease;
+      transition: opacity var(--st-motion-duration, 0.15s) ease;
     }
     :host([indeterminate]) .dash { opacity: 1; }
 
@@ -84,8 +86,9 @@
     }
     .native:focus-visible ~ .box {
       /* 焦点圈用 on-surface（与页面背景有对比，坑 #11） */
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: 2px;
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
     }
 
     l-m { display: none; }

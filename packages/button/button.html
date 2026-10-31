@@ -90,7 +90,7 @@
     }
     .native:focus-visible {
       /* 不用 currentColor：filled 按钮文字为白色时白圈画在浅色页面上不可见 */
-      outline: var(--st-focus-ring-width, 2px) solid
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
         var(--st-focus-ring-color, var(--md-sys-color-on-surface));
       outline-offset: var(--st-focus-ring-offset, 2px);
     }

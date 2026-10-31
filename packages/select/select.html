@@ -15,16 +15,21 @@
       position: relative; /* 聚焦描边/底线浮层与下拉弹层的定位基准 */
       gap: 0.571em;
       box-sizing: border-box;
-      height: 2.857em;
+      height: var(--st-height, 2.857em);
       min-width: 13.571em; /* M3 最小填充宽度 = 190px @ 14px */
-      padding: 0 1em;
-      border: 1px solid var(--md-sys-color-outline);
-      border-radius: 0.5em;
-      font-size: 14px;
-      font-family: inherit;
+      padding: var(--st-field-padding, 0 1em);
+      border: var(--st-border-width, 1px) solid
+        var(--st-field-border, var(--md-sys-color-outline));
+      border-radius: var(--st-field-radius, 0.5em);
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
+      letter-spacing: var(--st-letter-spacing, normal);
       line-height: 1;
       color: var(--md-sys-color-on-surface);
-      background-color: transparent;
+      background-color: var(--st-field-bg, transparent);
+      box-shadow: var(--st-field-shadow, none);
+      -webkit-backdrop-filter: var(--st-backdrop-filter, none);
+      backdrop-filter: var(--st-backdrop-filter, none);
       cursor: pointer;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
@@ -32,23 +37,29 @@
 
     /* M3 filled 变体：无全边框，仅底边分隔线，容器底色 */
     :host([variant="filled"]) {
-      background-color: var(--md-sys-color-surface-container-highest);
+      background-color: var(--st-field-filled-bg, var(--md-sys-color-surface-container-highest));
       border-color: transparent;
-      border-bottom-color: var(--md-sys-color-on-surface-variant);
-      border-radius: 0.5em 0.5em 0 0;
+      border-bottom-color: var(--st-field-underline, var(--md-sys-color-on-surface-variant));
+      border-radius: var(--st-field-radius, 0.5em) var(--st-field-radius, 0.5em) 0 0;
     }
 
     /* focus 描边/底线：绝对定位浮层，不挤占布局，由 CSS 过渡呈现动画 */
     .outline-ring {
       position: absolute;
       inset: -1px; /* 盖在 1px 边框外侧，视觉 = 边框加粗到 2px */
-      border: 2px solid var(--md-sys-color-primary);
+      border: 2px solid
+        var(--st-field-focus-ring-color, var(--st-accent, var(--md-sys-color-primary)));
       border-radius: inherit;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 150ms ease;
+      transition: opacity var(--st-motion-duration, 150ms) ease;
     }
-    :host(:focus-within) .outline-ring { opacity: 1; }
+    :host(:focus-within) .outline-ring {
+      opacity: var(--st-field-focus-ring-opacity, 1);
+    }
+    :host(:focus-within) {
+      box-shadow: var(--st-field-focus-shadow, var(--st-field-shadow, none));
+    }
     :host([variant="filled"]) .outline-ring { display: none; }
 
     .line-clip {
@@ -66,13 +77,16 @@
       bottom: 0;
       height: 2px;
       width: 0;
-      background-color: var(--md-sys-color-primary);
-      transition: width 200ms cubic-bezier(0.2, 0, 0, 1);
+      background-color: var(
+        --st-field-underline-color,
+        var(--st-accent, var(--md-sys-color-primary))
+      );
+      transition: width var(--st-motion-duration-base, 200ms) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
     :host(:focus-within) .bottom-line { width: 100%; }
 
     :host([disabled]) {
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
       cursor: not-allowed;
     }
     :host([disabled]) .outline-ring,
@@ -96,7 +110,7 @@
       border-right: 2px solid currentColor;
       border-bottom: 2px solid currentColor;
       transform: rotate(45deg) translateY(-0.1em);
-      transition: transform 200ms ease;
+      transition: transform var(--st-motion-duration-base, 200ms) var(--st-motion-easing, ease);
       flex-shrink: 0;
       opacity: 0.8;
     }
@@ -113,14 +127,18 @@
       min-width: 100%;
       max-height: 15em;
       overflow-y: auto;
-      padding: 0.286em;
+      padding: var(--st-select-popup-padding, 0.286em);
       box-sizing: border-box;
-      background-color: var(--md-sys-color-surface-container);
-      border-radius: 0.5em;
-      box-shadow: 0 0.2em 0.8em rgb(0 0 0 / 0.2);
+      background-color: var(--st-select-popup-bg, var(--md-sys-color-surface-container));
+      border-radius: var(--st-select-popup-radius, 0.5em);
+      box-shadow: 0 0 0 var(--st-border-width, 1px) var(--st-select-popup-border, transparent),
+        var(--st-select-popup-shadow, var(--st-shadow-overlay, 0 0.2em 0.8em rgb(0 0 0 / 0.2)));
+      backdrop-filter: var(--st-select-popup-backdrop-filter, none);
+      -webkit-backdrop-filter: var(--st-select-popup-backdrop-filter, none);
       z-index: 10;
       transform-origin: 50% 0;
-      animation: st-select-in 0.2s cubic-bezier(0.2, 0, 0, 1);
+      animation: st-select-in var(--st-overlay-enter-duration, 0.2s)
+        var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
     /* 下方空间不足时向上弹（open 时 JS 按视口位置判定挂 drop-up） */
     :host([drop-up]) .listbox {
@@ -136,7 +154,8 @@
       pointer-events: none;
       opacity: 0;
       transform: translateY(-0.429em) scale(0.98);
-      transition: opacity 0.15s ease, transform 0.15s ease;
+      transition: opacity var(--st-overlay-exit-duration, 0.15s) ease,
+        transform var(--st-overlay-exit-duration, 0.15s) ease;
     }
     :host([drop-up]) .listbox.closing,
     :host([drop-up][closing]) .listbox {
@@ -158,15 +177,15 @@
       display: flex;
       align-items: center;
       gap: 0.571em;
-      padding: 0.786em 0.714em; /* 视觉行高 2.286em @ 14px */
-      border-radius: 0.357em;
+      padding: var(--st-select-option-padding, 0.786em 0.714em);
+      border-radius: var(--st-select-option-radius, 0.357em);
       cursor: pointer;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .opt:hover { background-color: var(--md-sys-color-surface-container-high); }
-    .opt[data-active] { background-color: var(--md-sys-color-surface-container-high); }
+    .opt:hover { background-color: var(--st-select-option-hover-bg, var(--md-sys-color-surface-container-high)); }
+    .opt[data-active] { background-color: var(--st-select-option-hover-bg, var(--md-sys-color-surface-container-high)); }
     .opt[data-selected] {
       background-color: var(--md-sys-color-secondary-container);
       color: var(--md-sys-color-on-secondary-container);

@@ -10,7 +10,8 @@
       display: inline-flex;
       align-items: center;
       position: relative;
-      font-size: 14px;
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
       vertical-align: middle;
       cursor: pointer;
       user-select: none;
@@ -19,7 +20,7 @@
 
     :host([disabled]) {
       cursor: not-allowed;
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
     }
 
     .circle {
@@ -28,11 +29,11 @@
       width: 1.571em; /* 22px */
       height: 1.571em;
       flex-shrink: 0;
-      border: 0.143em solid var(--md-sys-color-on-surface-variant);
-      border-radius: 50%;
+      border: var(--st-radio-border-width, 0.143em) solid var(--md-sys-color-on-surface-variant);
+      border-radius: var(--st-radio-radius, 50%);
       display: grid;
       place-items: center;
-      transition: border-color 0.16s ease;
+      transition: border-color var(--st-motion-duration, 0.16s) ease;
     }
     :host([checked]) .circle {
       border-color: var(--md-sys-color-primary);
@@ -44,7 +45,8 @@
       height: 0;
       border-radius: 50%;
       background: var(--md-sys-color-primary);
-      transition: width 0.2s cubic-bezier(0.2, 0, 0, 1), height 0.2s cubic-bezier(0.2, 0, 0, 1);
+      transition: width var(--st-motion-duration-base, 0.2s) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1)),
+        height var(--st-motion-duration-base, 0.2s) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
     :host([checked]) .dot {
       width: 0.714em; /* 10px */
@@ -65,8 +67,9 @@
       cursor: inherit;
     }
     .native:focus-visible ~ .circle {
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: 2px;
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
     }
 
     l-m { display: none; }

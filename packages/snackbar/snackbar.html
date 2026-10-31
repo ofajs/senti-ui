@@ -16,19 +16,21 @@
       max-width: 34.286em; /* 480px */
       /* 高度完全由内容决定；上下边距按内容分档（:has 感知插槽）：
          无按钮 8px 舒适；有按钮 4px（40px 按钮撑出 M3 的 48dp，按钮不再额外撑高） */
-      padding: 0.571em 1em;
-      border-radius: 0.286em; /* 4px */
-      font-size: 14px;
-      font-family: inherit;
+      padding: var(--st-snackbar-padding, 0.571em 1em);
+      border-radius: var(--st-snackbar-radius, 0.286em);
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
       line-height: 1.4;
-      background: var(--st-snackbar-bg, var(--md-sys-color-secondary));
-      color: var(--st-snackbar-fg, var(--md-sys-color-on-secondary));
-      box-shadow: 0 0.143em 0.571em rgba(0, 0, 0, 0.2);
+      background: var(--st-snackbar-bg, var(--st-snackbar-surface, var(--md-sys-color-secondary)));
+      color: var(--st-snackbar-fg, var(--st-snackbar-on-surface, var(--md-sys-color-on-secondary)));
+      box-shadow: var(--st-snackbar-shadow, 0 0.143em 0.571em rgba(0, 0, 0, 0.2));
+      backdrop-filter: var(--st-snackbar-backdrop-filter, none);
+      -webkit-backdrop-filter: var(--st-snackbar-backdrop-filter, none);
     }
     /* 有操作按钮时上下边距收紧到 4px（has-action 由 slotchange 探测挂载——
        :host(:has()) 嵌套函数选择器在 ofa 样式作用域下不生效，坑 #20 同类） */
     :host([has-action]) {
-      padding-block: 0.286em;
+      padding-block: var(--st-snackbar-padding-block, 0.286em);
     }
 
 

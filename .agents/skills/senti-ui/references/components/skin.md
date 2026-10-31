@@ -19,11 +19,15 @@
 ```html
 <script type="module">
   import { setSkin } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js";
-  setSkin("shadcn"); // "m3" | "apple" | "shadcn" | 自定义注册的皮肤
+  setSkin("windows"); // "m3" | "apple" | "windows" | "shadcn" | 自定义注册的皮肤
 </script>
 ```
 
-内置皮肤：`m3`（默认）、`apple`（毛玻璃）、`shadcn`（扁平细描边）。
+内置皮肤：
+- `m3`：Material Design 3 默认材质
+- `apple`：半透明毛玻璃 + 连续圆角
+- `windows`：Windows 11 / Fluent——4px 控件、8px 表面、Segoe UI、Mica 表面与 Acrylic 浮层
+- `shadcn`：6px 扁平细描边
 
 ## API（https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js）
 

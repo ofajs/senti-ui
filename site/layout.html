@@ -43,7 +43,7 @@
           }
 
           /* 环境光背景：给半透明材质（Apple 毛玻璃）提供可见的层次。
-             M3 / shadcn 表面不透明，只会从页面留白处透出一点氛围色。 */
+             M3 / windows / shadcn 表面不透明，只会从页面留白处透出一点氛围色。 */
           .ambient {
             position: fixed;
             inset: 0;
@@ -88,7 +88,7 @@
             --orb-duration: 30s;
           }
           /* Apple 毛玻璃：颜色更深、漂移更快，玻璃后面才有可读的色彩层次；
-             M3 / shadcn 表面不透明，保持原来的低对比氛围。 */
+             M3 / windows / shadcn 表面不透明，保持原来的低对比氛围。 */
           .ambient-strong .orb-a {
             background: color-mix(in srgb, var(--md-sys-color-primary) 58%, transparent);
             --orb-duration: 13s;
@@ -323,6 +323,10 @@
                 <st-menu-item on:click="pickSkin('apple')">
                   Apple 毛玻璃
                   <span slot="suffix">{{skin === 'apple' ? '✓' : ''}}</span>
+                </st-menu-item>
+                <st-menu-item on:click="pickSkin('windows')">
+                  Windows 11 风格
+                  <span slot="suffix">{{skin === 'windows' ? '✓' : ''}}</span>
                 </st-menu-item>
                 <st-menu-item on:click="pickSkin('shadcn')">
                   shadcn 扁平

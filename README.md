@@ -115,7 +115,7 @@ For manual control:
 
 ## Skins (material layer)
 
-The same components can switch **material** without changing colors: `m3` (default), `apple` (glassmorphism), `shadcn` (flat, hairline borders). Skins only affect radius, density, borders, shadows, backdrop blur, focus rings, motion and ripple — every skin consumes the same M3 role variables, so seed color, `error`, `success` and light/dark mode keep working.
+The same components can switch **material** without changing colors: `m3` (default), `apple` (glassmorphism), `windows` (Windows 11 / Fluent: Mica + Acrylic), `shadcn` (flat, hairline borders). Skins only affect radius, density, borders, shadows, backdrop blur, focus rings, motion and ripple — every skin consumes the same M3 role variables, so seed color, `error`, `success` and light/dark mode keep working.
 
 ```html
 <html data-skin="apple">
@@ -123,11 +123,11 @@ The same components can switch **material** without changing colors: `m3` (defau
 <st-button color="error">Delete</st-button>
 ```
 
-Switch at runtime with `setSkin("shadcn")` from `packages/skin/st-skin.js` (persists and syncs across same-origin windows). All interactive and surface components consume the skin tokens; the full token / `part` contract and how to author a custom skin are in [packages/skin/README.md](./packages/skin/README.md).
+Switch at runtime with `setSkin("windows")` from `packages/skin/st-skin.js` (persists and syncs across same-origin windows). All interactive and surface components consume the skin tokens; the full token / `part` contract and how to author a custom skin are in [packages/skin/README.md](./packages/skin/README.md).
 
 ## Website
 
-A single-page showcase lives in [`site/`](./site/index.html), built with **SCSR** (ofa.js v5 real-path documents): every component on one page, live skin + light/dark switching, and three side-by-side material previews. Each URL is a real HTML document; scsr turns it into an o-app page after load. Component docs live under [`site/docs/`](./site/docs/index.html) — one real SCSR page per component, with 4–7 scenario-based live demos, attribute tables and slots/events. The docs sidebar lives in a second-level SCSR layout, so it survives component-to-component navigation.
+A single-page showcase lives in [`site/`](./site/index.html), built with **SCSR** (ofa.js v5 real-path documents): every component on one page, live skin + light/dark switching, and four side-by-side material previews. Each URL is a real HTML document; scsr turns it into an o-app page after load. Component docs live under [`site/docs/`](./site/docs/index.html) — one real SCSR page per component, with 4–7 scenario-based live demos, attribute tables and slots/events. The docs sidebar lives in a second-level SCSR layout, so it survives component-to-component navigation.
 
 ```bash
 npm run dev

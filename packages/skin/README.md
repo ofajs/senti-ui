@@ -22,11 +22,17 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 <!-- 方式 B：运行时切换（持久化 + 跨窗口同步） -->
 <script type="module">
   import { setSkin, getSkin, registerSkin } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js";
-  setSkin("shadcn");
+  setSkin("windows");
 </script>
 ```
 
-内置皮肤：`m3`（默认）、`apple`（毛玻璃）、`shadcn`（扁平细描边）。
+内置皮肤：
+- `m3`：Material Design 3 默认材质
+- `apple`：半透明毛玻璃 + 连续圆角
+- `windows`：Windows 11 / Fluent——4px 控件、8px 表面、Segoe UI、Mica 表面与 Acrylic 浮层
+- `shadcn`：6px 扁平细描边
+
+`windows` 的材质分工：常驻表面（卡片 / 对话框 / 输入框）用 Mica——高不透明度的着色底，不预先模糊正文；菜单 / 下拉 / 气泡等浮层用 Acrylic——半透明底 + `blur(30px)`。控件圆角 4px、表面圆角 8px，图标按钮是 4px 方形而不是圆形。
 
 ## API
 

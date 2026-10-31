@@ -44,14 +44,14 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 
 ## 皮肤（材质层）
 
-同一批组件可切换材质而不换颜色：`m3`（默认）/ `apple`（毛玻璃）/ `shadcn`（扁平）。皮肤只改圆角、密度、边框、阴影、毛玻璃、焦点环、动效、波纹；**颜色仍然全部来自 M3 角色**（种子色 / error / success 保留）。全部交互与表面组件均已接入（按钮/输入/选择/卡片/对话框/菜单/列表/选择控件/滑块/进度/标签/导航/提示/消息条/徽标）。
+同一批组件可切换材质而不换颜色：`m3`（默认）/ `apple`（毛玻璃）/ `windows`（Windows 11 / Fluent：Mica + Acrylic）/ `shadcn`（扁平）。皮肤只改圆角、密度、边框、阴影、毛玻璃、焦点环、动效、波纹；**颜色仍然全部来自 M3 角色**（种子色 / error / success 保留）。全部交互与表面组件均已接入（按钮/输入/选择/卡片/对话框/菜单/列表/选择控件/滑块/进度/标签/导航/提示/消息条/徽标）。
 
 ```html
 <html data-skin="apple">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/apple.css">
 ```
 
-运行时切换：`import { setSkin } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js"; setSkin("shadcn")`。
+运行时切换：`import { setSkin } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js"; setSkin("windows")`。
 完整 token / part 表、自定义皮肤写法与注意事项见 [references/components/skin.md](./references/components/skin.md)。
 
 ## 组件清单

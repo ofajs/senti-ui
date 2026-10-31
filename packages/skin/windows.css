@@ -1,0 +1,163 @@
+/**
+ * windows.css — Windows 11 / Fluent（Mica + Acrylic）皮肤
+ *
+ * 只改材质：4px 控件圆角、8px 表面圆角、Segoe UI 字体栈、细描边、
+ * 焦点矩形、Mica 表面与 Acrylic 浮层。
+ * 颜色仍然全部来自 M3 角色变量（--md-sys-color-*），所以种子色、error、
+ * success、深浅色主题都继续生效。
+ *
+ * 重要：皮肤文件只声明 token，不写 st-* 宿主选择器。组件经常位于
+ * o-page / o-app 的 shadow 内，文档树选择器跨不进去；而 CSS 变量可以
+ * 正常继承穿透 shadow，因此 token 是唯一可靠的换肤通道。
+ *
+ * 使用：<html data-skin="windows"> + 引入本文件（或 setSkin("windows")）。
+ */
+[data-skin="windows"] {
+  /* 尺寸：32px 高（14px 字号下 2.286em），Fluent 的紧凑密度 */
+  --st-height: 2.286em;
+  --st-font-size: 14px;
+  --st-control-radius: 0.286em; /* 4px */
+  --st-field-radius: 0.286em;
+  --st-split-min-width: 8.5em;
+  --st-split-padding: 0 0.857em;
+  --st-control-padding: 0 0.857em;
+  --st-textarea-padding: .5em .714em;
+  --st-field-padding: 0 .714em;
+  --st-border-width: 1px;
+
+  /* 通用形状：控件 4px，卡片/菜单/对话框 8px */
+  --st-radius-xs: 0.214em; /* 3px */
+  --st-radius-sm: 0.286em; /* 4px */
+  --st-radius-md: 0.571em; /* 8px */
+  --st-radius-lg: 0.571em;
+  --st-radius-xl: 0.571em;
+  --st-radius-pill: 999px;
+
+  /* Mica 表面：接近实色的着色底，不预先模糊正文（区别于 Apple 的玻璃） */
+  --st-outlined-bg: color-mix(in srgb, var(--md-sys-color-surface) 88%, transparent);
+  --st-outlined-border: color-mix(in srgb, var(--md-sys-color-outline) 40%, transparent);
+  --st-field-bg: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 92%, transparent);
+  --st-field-filled-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 94%, transparent);
+  --st-field-border: color-mix(in srgb, var(--md-sys-color-outline) 46%, transparent);
+  --st-field-underline: transparent;
+  --st-fill-alpha: 100%;
+
+  /* Fluent 阴影：深、窄、低透明度，而不是大范围扩散 */
+  --st-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 0 2px rgb(0 0 0 / 0.1);
+  --st-field-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  --st-shadow-1: 0 1px 2px rgb(0 0 0 / 0.12), 0 0 2px rgb(0 0 0 / 0.1);
+  --st-shadow-2: 0 2px 4px rgb(0 0 0 / 0.14), 0 0 2px rgb(0 0 0 / 0.1);
+  --st-shadow-3: 0 8px 16px rgb(0 0 0 / 0.14);
+  --st-shadow-4: 0 16px 32px rgb(0 0 0 / 0.16), 0 0 2px rgb(0 0 0 / 0.12);
+  --st-shadow-overlay: 0 8px 16px rgb(0 0 0 / 0.14);
+  --st-shadow-thumb: 0 1px 2px rgb(0 0 0 / 0.18);
+  --st-backdrop-filter: none;
+  --st-sheen: none;
+
+  /* 焦点：Windows 焦点矩形，输入框聚焦改为 2px accent 底线 */
+  --st-focus-ring-width: 2px;
+  --st-focus-ring-offset: 2px;
+  --st-focus-ring-color: var(--md-sys-color-on-surface);
+  --st-field-focus-shadow: inset 0 -2px 0 0 var(--md-sys-color-primary);
+  --st-field-focus-ring-opacity: 0;
+  --st-field-underline-color: transparent;
+
+  /* Mica 表面 + Acrylic 浮层：颜色仍来自 M3 角色 */
+  --st-badge-radius: 999px;
+  --st-badge-font-size: .786em;
+  --st-badge-shadow: none;
+  --st-dialog-radius: .571em;
+  --st-card-radius: .571em;
+  --st-nav-gap: .143em;
+  --st-nav-gap-vertical: 0;
+  --st-nav-padding-vertical: .214em;
+  --st-nav-item-padding: .5em .714em;
+  --st-tooltip-fg: var(--md-sys-color-inverse-on-surface);
+  --st-tab-height: 2.857em;
+  --st-tab-layer-radius: .286em;
+  --st-tabs-indicator-height: .143em;
+  --st-tabs-indicator-radius: 0;
+  --st-tabs-border: var(--md-sys-color-outline-variant);
+  --st-nav-pill-radius: .286em;
+  --st-nav-bar-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 92%, transparent);
+  --st-nav-bar-backdrop-filter: none;
+  --st-progress-size: 2.286em;
+  --st-progress-thickness: .214em;
+  --st-progress-radius: .143em;
+  --st-progress-duration: .15s;
+  --st-slider-track-radius: .143em;
+  --st-slider-thumb-radius: 50%;
+  --st-slider-tip-radius: .286em;
+  --st-slider-thumb-shadow: var(--st-shadow-thumb);
+  --st-checkbox-radius: .286em;
+  --st-checkbox-border-width: .071em;
+  --st-switch-border-width: .071em;
+  --st-radio-border-width: .071em;
+  --st-radio-radius: 50%;
+  --st-icon-radius: .286em;
+  --st-menu-radius: .571em;
+  --st-menu-item-radius: .286em;
+  --st-select-popup-radius: .571em;
+  --st-select-option-radius: .286em;
+  --st-list-gap: 0;
+  --st-list-item-radius: .286em;
+  --st-list-item-radius-outer: .571em;
+  --st-list-item-height: 2.286em;
+  --st-list-item-padding: .286em .571em;
+  --st-dialog-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 94%, transparent);
+  --st-dialog-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
+  --st-dialog-backdrop-filter: none;
+  --st-dialog-scrim: rgb(0 0 0 / 0.3);
+  --st-dialog-scrim-filter: none;
+  --st-dialog-enter-duration: 200ms;
+  --st-dialog-exit-duration: 150ms;
+  --st-dialog-scrim-duration: 200ms;
+  --st-menu-bg: rgb(from var(--md-sys-color-surface-container) r g b / 0.72);
+  --st-menu-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
+  --st-menu-backdrop-filter: blur(30px) saturate(120%);
+  --st-card-bg: color-mix(in srgb, var(--md-sys-color-surface-container-low) 90%, transparent);
+  --st-card-filled-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 90%, transparent);
+  --st-card-outlined-bg: color-mix(in srgb, var(--md-sys-color-surface) 88%, transparent);
+  --st-card-border: color-mix(in srgb, var(--md-sys-color-outline) 38%, transparent);
+  --st-card-outline: color-mix(in srgb, var(--md-sys-color-outline) 38%, transparent);
+  --st-card-backdrop-filter: none;
+  --st-select-popup-bg: rgb(from var(--md-sys-color-surface-container) r g b / 0.78);
+  --st-select-popup-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
+  --st-select-popup-backdrop-filter: blur(28px) saturate(120%);
+  --st-snackbar-radius: .571em;
+  --st-snackbar-shadow: var(--st-shadow-3);
+  --st-snackbar-surface: color-mix(in srgb, var(--md-sys-color-secondary) 94%, transparent);
+  --st-snackbar-on-surface: var(--md-sys-color-on-secondary);
+  --st-snackbar-backdrop-filter: none;
+  --st-tooltip-radius: .286em;
+  --st-tooltip-shadow: var(--st-shadow-2);
+  --st-tooltip-bg: color-mix(in srgb, var(--md-sys-color-inverse-surface) 92%, transparent);
+  --st-tooltip-backdrop-filter: blur(20px) saturate(120%);
+
+  /* 密度 */
+  --st-dialog-padding: 1.143em;
+  --st-dialog-gap: .714em;
+  --st-menu-padding: .214em;
+  --st-menu-item-padding: .5em .571em;
+  --st-card-padding: .857em;
+  --st-snackbar-padding: .5em .857em;
+  --st-tooltip-padding: .321em .571em;
+
+  /* 状态与动效：Fluent 的快速、克制过渡 */
+  --st-state-hover: 0.05;
+  --st-state-press: 0.08;
+  --st-disabled-opacity: 0.4;
+  --st-ripple-opacity: 0; /* Windows 用 reveal，不用波纹 */
+  --st-motion-duration: 150ms;
+  --st-motion-duration-fast: 100ms;
+  --st-motion-duration-base: 167ms;
+  --st-motion-duration-slow: 250ms;
+  --st-motion-easing: cubic-bezier(0.1, 0.9, 0.2, 1);
+  --st-overlay-enter-duration: 200ms;
+  --st-overlay-exit-duration: 150ms;
+  --st-tooltip-duration: 150ms;
+
+  /* 字体：Segoe UI Variable 优先，缺失时退回 Segoe UI / 系统栈 */
+  --st-font: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --st-letter-spacing: normal;
+}

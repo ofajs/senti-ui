@@ -26,6 +26,7 @@ const LINK_ID = "st-skin-css";
 const registry = new Map([
   ["m3", new URL("./m3.css", import.meta.url).href],
   ["apple", new URL("./apple.css", import.meta.url).href],
+  ["windows", new URL("./windows.css", import.meta.url).href],
   ["shadcn", new URL("./shadcn.css", import.meta.url).href],
 ]);
 

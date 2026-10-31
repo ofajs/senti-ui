@@ -94,6 +94,44 @@ test("apple 皮肤：毛玻璃 / 阴影 / 系统字体栈", async ({ page }) => 
   expect(state.cardAlpha).toBeLessThan(0.6);
 });
 
+test("windows 皮肤：4px 控件 / 8px 表面 / Mica + Acrylic", async ({ page }) => {
+  expect(await setSkin(page, "windows")).toBe("windows");
+  expect(await page.evaluate(() => document.documentElement.dataset.skin)).toBe("windows");
+  await waitForSkin(page, () => {
+    const btn = document.querySelector("#btn-filled");
+    return btn && parseFloat(getComputedStyle(btn).borderRadius) < 5;
+  });
+
+  const state = await page.evaluate(() => {
+    const btn = document.querySelector("#btn-filled");
+    const card = document.querySelector("#card-elev");
+    const menuPanel = document.querySelector("#menu-skin").shadowRoot.querySelector(".panel");
+    const icon = document.querySelector("#icon-skin");
+    return {
+      radius: parseFloat(getComputedStyle(btn).borderRadius),
+      cardRadius: parseFloat(getComputedStyle(card).borderRadius),
+      menuRadius: parseFloat(getComputedStyle(menuPanel).borderRadius),
+      menuBlur: getComputedStyle(menuPanel).backdropFilter,
+      cardBlur: getComputedStyle(card).backdropFilter,
+      iconRadius: parseFloat(getComputedStyle(icon).borderRadius),
+      font: getComputedStyle(btn).fontFamily,
+      fillAlpha: getComputedStyle(document.documentElement).getPropertyValue("--st-fill-alpha").trim(),
+    };
+  });
+  expect(state.radius).toBeGreaterThan(3.5);
+  expect(state.radius).toBeLessThan(4.5);
+  expect(state.cardRadius).toBeGreaterThan(7.5);
+  expect(state.cardRadius).toBeLessThan(8.5);
+  expect(state.menuRadius).toBeGreaterThan(7.5);
+  // 浮层是 Acrylic（模糊），常驻卡片是 Mica（只着色、不模糊正文）
+  expect(state.menuBlur).toContain("blur(30px)");
+  expect(state.cardBlur).toBe("none");
+  // Windows 图标按钮是 4px 圆角方形，不是圆形
+  expect(state.iconRadius).toBeLessThan(5);
+  expect(state.font).toContain("Segoe UI");
+  expect(state.fillAlpha).toBe("100%");
+});
+
 test("换肤不破坏 M3 语义色：color=error 仍然等于 error 角色", async ({ page }) => {
   await setSkin(page, "shadcn");
   await waitForSkin(page, () => {

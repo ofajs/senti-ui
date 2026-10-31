@@ -58,7 +58,7 @@ site/
 - 文档左侧组件目录（`st-list` + `st-list-item`）和移动端 `st-select` 只存在于 `docs/layout.html` 一处；同父页的组件互相切换时侧栏不销毁、不重排，只替换 `<slot>` 里的正文；
 - 页面切换动画：`app-config.js` 的 `pageAnime` 让离场页淡出，两级 layout 的 `::slotted(o-page)` 让新页轻微上滑入场（0.24s，`prefers-reduced-motion` 下关闭）；页面背景透明，由 layout 的固定环境光层提供底色；文档示例容器 `.demo` / `.demo-stage` / `.demo-content` 也改为半透明，Apple 下同样能透出环境光；
 - **slot 外层必须是相对容器**（`.docs-body { position: relative }`）：离场页会被 scsr 设为 `position: absolute`，没有相对容器时会相对视口定位，切换瞬间露出旧内容造成“闪一下”；
-- **环境光背景**：layout 内固定 `.ambient` 层（三个模糊色球缓慢漂移）位于页面后面；M3 / shadcn 下透明度较低，Apple 下通过 `ambient-strong` 提升到 0.8，半透明卡片、菜单、对话框的毛玻璃才有可见内容。页面 `::slotted(o-page)` 与首页 `:host` 背景透明，否则会盖住环境光；`prefers-reduced-motion` 下停止漂移；
+- **环境光背景**：layout 内固定 `.ambient` 层（三个模糊色球缓慢漂移）位于页面后面；M3 / windows / shadcn 下透明度较低，Apple 下通过 `ambient-strong` 提升到 1，半透明卡片、菜单、对话框的毛玻璃才有可见内容。页面 `::slotted(o-page)` 与首页 `:host` 背景透明，否则会盖住环境光；`prefers-reduced-motion` 下停止漂移；
 - **滚动容器固定为 `.site-scroll`**：文档 head 里 `html, body { height: 100%; overflow: hidden }`，layout 内部用 `.shell { height: 100dvh; overflow: hidden }` + `.site-scroll { overflow-y: auto; overscroll-behavior-y: none }`。这样整页不会在底部继续触发根节点的弹性回弹，header / 阅读进度 / 回到顶部始终固定在视口；滚动进度、`toTop()`、路由切换后的复位都基于 `.site-scroll` 而不是 `window`；
 - 页面入场动画不要用 `animation-fill-mode: both` 保留 `transform`：identity transform 也会成为 `position: fixed` 的包含块，对话框/菜单会相对页面而不是视口定位（内部滚动后尤其明显）。动画结束后必须回到 `transform: none`；
 - header 用 senti-ui 组件搭：两个 `variant="text"` 的 `st-button` 做「组件 / 文档」导航（当前项用 `class:active` 换成 primary 色，不使用 button-group）、`st-icon-button` + `st-tooltip`（主题 / GitHub）、品牌也是 `st-button`：favicon 同款圆角方块 + 白点标记 + SentiUI 字标；导航用页面实例的 `goto()` 保持真实路径与共享布局；
@@ -70,7 +70,7 @@ site/
 `index.html` 里还做了三件事：
 
 1. `st-boot.js` 同步注入首帧主题（防刷新闪色）；
-2. 预载三套皮肤 CSS（页面要同页并列展示三种材质）；
+2. 预载四套皮肤 CSS（页面要同页并列展示四种材质）；
 3. 页面末尾的 module 预加载命令式工具（alert / confirm / prompt / toast / contextMenu）与皮肤 / 主题 API，挂到 `window.__site`（ofa 页面模块不能相对 `import`）。
 
 ## 页面内容
@@ -82,7 +82,7 @@ site/
 - **25 张组件卡片**（`CATALOG / 25 CARDS`）：每张卡片 = 真实组件预览 + 名称 + 标签 + 站内文档 ↗
   - 预览区可交互：按钮、输入、选择、开关、滑块、标签栏、导航、折叠、对话框、菜单、Toast 等都能直接操作
   - 覆盖 20 个模块、29 个 `st-*` 标签，以及 toast / alert / confirm / prompt / contextMenu 命令式工具
-- 三张局部 `data-skin` 材质卡：M3 / Apple 毛玻璃 / shadcn 同页对比，可一键应用到全站
+- 四张局部 `data-skin` 材质卡：M3 / Apple 毛玻璃 / Windows 11 / shadcn 同页对比，可一键应用到全站
 - 快速开始：安装代码、复制、文档入口
 - 深浅色切换（`setThemeMode`）、皮肤切换（`setSkin`）
 
@@ -148,8 +148,8 @@ scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的�
 
 ## 皮肤说明
 
-- 全局皮肤：`html[data-skin]` + `st-skin.js`（三套 CSS 已在 `index.html` 与页面 shadow 内预载，切换零等待）。
-- 局部预览：`.skin-preview[data-skin="..."]`。文档树的 `[data-skin]` 选择器进不了 `o-page` 的 shadow，因此 `template[page]` 顶部额外 `<link>` 了同样的三套 CSS 到 shadow 内；这是本页能「同页三种材质」的关键。
+- 全局皮肤：`html[data-skin]` + `st-skin.js`（四套 CSS 已在 `index.html` 与页面 shadow 内预载，切换零等待）。
+- 局部预览：`.skin-preview[data-skin="..."]`。文档树的 `[data-skin]` 选择器进不了 `o-page` 的 shadow，因此 `template[page]` 顶部额外 `<link>` 了同样的四套 CSS 到 shadow 内；这是本页能「同页四种材质」的关键。
 - 颜色始终来自 M3：种子色、error、success、深浅色主题都不会被皮肤改变。
 
 ## 验证

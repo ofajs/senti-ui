@@ -518,6 +518,54 @@ test("固定定位弹层：页面动画结束后不残留 transform，对话框�
   expect(box.height).toBe(box.viewportHeight);
 });
 
+test("Windows 11 皮肤：菜单可切换，控件与表面采用 Fluent 材质", async ({ page }) => {
+  await page.goto("/site/index.html");
+  await page.evaluate(() => localStorage.removeItem("st-skin"));
+  await page.reload();
+  await page.locator("#skin-menu st-icon-button").waitFor({ state: "visible" });
+  await page.locator("#skin-menu st-icon-button").click();
+  await expect(page.locator("#skin-menu st-menu-item")).toHaveCount(4);
+
+  await page.locator("#skin-menu st-menu-item").filter({ hasText: "Windows 11 风格" }).click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("windows");
+  await page.waitForTimeout(300);
+
+  const state = await page.evaluate(() => {
+    const find = (root, sel) => {
+      const d = root.querySelector(sel);
+      if (d) return d;
+      for (const el of root.querySelectorAll("*")) {
+        if (el.shadowRoot) {
+          const r = find(el.shadowRoot, sel);
+          if (r) return r;
+        }
+      }
+      return null;
+    };
+    const pageEl = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp-grid")
+    );
+    const grid = pageEl.shadowRoot.querySelector(".comp-grid");
+    const button = grid.querySelector(".comp-preview st-button");
+    const icon = find(document, ".top-actions st-icon-button");
+    return {
+      buttonRadius: parseFloat(getComputedStyle(button).borderRadius),
+      iconRadius: parseFloat(getComputedStyle(icon).borderRadius),
+      font: getComputedStyle(icon).fontFamily,
+    };
+  });
+  expect(state.buttonRadius).toBeGreaterThan(3.5);
+  expect(state.buttonRadius).toBeLessThan(4.5);
+  expect(state.iconRadius).toBeLessThan(5);
+  expect(state.font).toContain("Segoe UI");
+
+  // 切回 m3，避免影响同页后续交互
+  await page.locator("#skin-menu st-icon-button").click();
+  await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();
+});
+
 test("共享 header：皮肤菜单切换全站材质并持久化", async ({ page }) => {
   await page.goto("/site/index.html");
   await page.evaluate(() => localStorage.removeItem("st-skin"));
@@ -573,7 +621,7 @@ test("共享 header：皮肤菜单切换全站材质并持久化", async ({ page
     .toBe("m3");
 });
 
-test("官网环境光：Apple 毛玻璃下增强，M3/shadcn 保持低调", async ({ page }) => {
+test("官网环境光：Apple 毛玻璃下增强，M3/windows/shadcn 保持低调", async ({ page }) => {
   await page.goto("/site/index.html");
   await page.waitForTimeout(1500);
   const ambient = () => page.evaluate(() => {

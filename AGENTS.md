@@ -62,7 +62,7 @@ packages/skin/    # 皮肤系统（材质 token + st-skin.js；颜色仍只来�
 1. 在 `packages/{name}/` 创建组件、README、index.html、page.html 四件套
 2. 组件视觉按皮肤 token 约定书写（`var(--st-*, 旧默认值)`），颜色只走 M3 角色；需要外部定制的内部元素加 `part`
 3. 在 `CONTEXT.md` 组件清单表中登记（标签、引入语句、文档链接），并在 `packages/skin/README.md` 补本组件消费的 token / part 行
-4. 在验收页展示至少一套非 M3 皮肤（`data-skin="apple"` 或 `shadcn`）下的样子
+4. 在验收页展示至少一套非 M3 皮肤（`data-skin="apple"` / `windows` / `shadcn`）下的样子
 5. 用 `npm run dev` 起服务（禁缓存），浏览器验证验收页（含换肤与深浅色），确认无误才算完成
 
 ## 坑的沉淀规则

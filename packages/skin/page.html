@@ -1,4 +1,4 @@
-<!-- st-skin 验收页：同一批组件在 m3 / apple / shadcn 三套皮肤下的材质切换 -->
+<!-- st-skin 验收页：同一批组件在 m3 / apple / windows / shadcn 四套皮肤下的材质切换 -->
 <template page>
   <style>
     :host {
@@ -131,7 +131,7 @@
     </div>
     <div class="row">
       <st-button variant="outlined" on:click="focusDemo">聚焦输入框（观察焦点环）</st-button>
-      <span class="muted">M3：内嵌 2px 描边；Apple：外侧柔和光圈；shadcn：外扩 2px ring</span>
+      <span class="muted">M3：内嵌 2px 描边；Apple：外侧柔和光圈；Windows：2px 焦点矩形 + accent 底线；shadcn：外扩 2px ring</span>
     </div>
   </div>
 
@@ -157,7 +157,7 @@
     </div>
     <p class="note">
       所有浮层共用 <span class="code">--st-menu-*</span> / <span class="code">--st-dialog-*</span> /
-      <span class="code">--st-select-popup-*</span>：M3 是实色分层，Apple 是半透明毛玻璃，shadcn 是扁平细描边。
+      <span class="code">--st-select-popup-*</span>：M3 是实色分层，Apple 是半透明毛玻璃，Windows 是 Mica 表面 + Acrylic 浮层，shadcn 是扁平细描边。
     </p>
   </div>
 
@@ -223,7 +223,7 @@
   <pre><code>&lt;!-- 方式一：跑起来切换（持久化到 localStorage，同源全站跟随） --&gt;
 &lt;script type="module"&gt;
   import { setSkin } from "/packages/skin/st-skin.js";
-  setSkin("apple"); // "m3" | "apple" | "shadcn" | 自定义注册的皮肤
+  setSkin("apple"); // "m3" | "apple" | "windows" | "shadcn" | 自定义注册的皮肤
 &lt;/script&gt;
 
 &lt;!-- 方式二：静态写死，首帧就是目标皮肤（无闪切） --&gt;
@@ -244,6 +244,7 @@
         skins: [
           { id: "m3", label: "M3 材质" },
           { id: "apple", label: "Apple 毛玻璃" },
+          { id: "windows", label: "Windows 11 风格" },
           { id: "shadcn", label: "shadcn 扁平" },
         ],
       },

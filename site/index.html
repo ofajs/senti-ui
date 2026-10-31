@@ -12,7 +12,7 @@
   <meta property="og:title" content="Senti-UI — 语义组件，任意材质" />
   <meta
     property="og:description"
-    content="同一批 st-* 组件，同一套 M3 颜色；材质可换（M3 / Apple 毛玻璃 / shadcn），无构建，CDN 即用。"
+    content="同一批 st-* 组件，同一套 M3 颜色；材质可换（M3 / Apple 毛玻璃 / Windows 11 / shadcn），无构建，CDN 即用。"
   />
   <meta name="theme-color" content="#0061A4" />
   <link
@@ -28,10 +28,11 @@
   <!-- 首帧主题引导（同步、禁缓存路径由 npm run dev 提供） -->
   <script src="../packages/boot/st-boot.js"></script>
 
-  <!-- 三套材质同时预载：切换零等待，且允许同页并列展示三种材质 -->
+  <!-- 四套材质同时预载：切换零等待，且允许同页并列展示四种材质 -->
   <link rel="stylesheet" href="../packages/skin/m3.css" />
   <link rel="stylesheet" href="../packages/skin/apple.css" />
   <link rel="stylesheet" href="../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../packages/skin/windows.css" />
 
   <style>
     html,
@@ -108,6 +109,7 @@
         <link rel="stylesheet" href="../packages/skin/m3.css" />
         <link rel="stylesheet" href="../packages/skin/apple.css" />
         <link rel="stylesheet" href="../packages/skin/shadcn.css" />
+        <link rel="stylesheet" href="../packages/skin/windows.css" />
 
         <style>
           :host {
@@ -722,7 +724,7 @@
           /* ---------- 皮肤 ---------- */
           .skin-cards {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 14px;
           }
           .skin-card {
@@ -769,7 +771,7 @@
             padding: 16px;
             border: 1px solid var(--md-sys-color-outline-variant);
             border-radius: 16px;
-            /* 让毛玻璃有东西可模糊：三种材质共用 M3 色彩渐变做背景 */
+            /* 让毛玻璃有东西可模糊：四种材质共用 M3 色彩渐变做背景 */
             background:
               radial-gradient(120% 120% at 10% 0%, color-mix(in srgb, var(--md-sys-color-primary-container) 70%, transparent), transparent 58%),
               radial-gradient(100% 100% at 100% 100%, color-mix(in srgb, var(--md-sys-color-tertiary-container) 60%, transparent), transparent 62%),
@@ -1325,7 +1327,7 @@
     }
     .skin-cards {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
     }
     .skin-card {
@@ -1805,9 +1807,9 @@
       <div class="section-head">
         <div>
           <p class="section-kicker">MATERIALS</p>
-          <h2>三种材质，同页对比</h2>
+          <h2>四种材质，同页对比</h2>
         </div>
-        <p class="section-desc">下面三张卡片各自锁定一种材质（局部 data-skin），颜色仍来自 M3。全站换肤用 setSkin()，或在 &lt;html&gt; 上设置 data-skin。</p>
+        <p class="section-desc">下面四张卡片各自锁定一种材质（局部 data-skin），颜色仍来自 M3。全站换肤用 setSkin()，或在 &lt;html&gt; 上设置 data-skin。</p>
       </div>
       <div class="skin-cards">
         <article class="skin-card">
@@ -1822,6 +1824,14 @@
           <div class="skin-card-head"><h3>Apple 毛玻璃</h3><span class="skin-chip">apple</span></div>
           <p class="skin-desc">半透明表面 + backdrop blur、更小圆角、外侧柔光焦点环，无波纹。</p>
           <div class="skin-preview" data-skin="apple">
+            <st-button>Button</st-button>
+            <st-input placeholder="Input"></st-input>
+          </div>
+        </article>
+        <article class="skin-card">
+          <div class="skin-card-head"><h3>Windows 11</h3><span class="skin-chip">windows</span></div>
+          <p class="skin-desc">4px 控件圆角、8px 表面、Segoe UI、Mica 表面与 Acrylic 浮层，焦点矩形替代外发光。</p>
+          <div class="skin-preview" data-skin="windows">
             <st-button>Button</st-button>
             <st-input placeholder="Input"></st-input>
           </div>

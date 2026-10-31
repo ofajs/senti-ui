@@ -135,6 +135,7 @@ test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
   expect(chrome.nav.map((x) => [x.text, x.variant, x.active])).toEqual([
     ["组件", "text", true],
     ["文档", "text", false],
+    ["皮肤", "text", false],
   ]);
   expect(chrome.nav[0].color).not.toBe(chrome.nav[1].color);
 
@@ -271,6 +272,7 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(state.headerNav).toEqual([
     { variant: "text", active: false },
     { variant: "text", active: true },
+    { variant: "text", active: false },
   ]);
   expect(state.sidebar).toBe(true);
   expect(state.picker).toBe(true);
@@ -524,7 +526,7 @@ test("Windows 11 皮肤：菜单可切换，控件与表面采用 Fluent 材质"
   await page.reload();
   await page.locator("#skin-menu st-icon-button").waitFor({ state: "visible" });
   await page.locator("#skin-menu st-icon-button").click();
-  await expect(page.locator("#skin-menu st-menu-item")).toHaveCount(4);
+  await expect(page.locator("#skin-menu st-menu-item")).toHaveCount(3);
 
   await page.locator("#skin-menu st-menu-item").filter({ hasText: "Windows 11 风格" }).click();
   await expect
@@ -564,6 +566,65 @@ test("Windows 11 皮肤：菜单可切换，控件与表面采用 Fluent 材质"
   // 切回 m3，避免影响同页后续交互
   await page.locator("#skin-menu st-icon-button").click();
   await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();
+});
+
+test("皮肤页：四种材质可选，顶部快捷菜单只保留三巨头", async ({ page }) => {
+  await page.goto("/site/skins.html");
+  await page.evaluate(() => localStorage.removeItem("st-skin"));
+  await page.reload();
+  await page.locator(".skin-card").first().waitFor({ state: "visible" });
+
+  const chrome = await page.evaluate(() => {
+    const layout = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
+    );
+    const sr = layout.shadowRoot;
+    return {
+      nav: [...sr.querySelectorAll(".layout-nav st-button")].map((b) => ({
+        text: b.textContent.trim(),
+        active: b.classList.contains("active"),
+      })),
+      menuCount: sr.querySelectorAll("#skin-menu st-menu-item").length,
+      menuLabels: [...sr.querySelectorAll("#skin-menu st-menu-item")].map((i) =>
+        i.textContent.replace(/\s+/g, " ").trim()
+      ),
+    };
+  });
+  expect(chrome.nav.map((x) => [x.text, x.active])).toEqual([
+    ["组件", false],
+    ["文档", false],
+    ["皮肤", true],
+  ]);
+  expect(chrome.menuCount).toBe(3);
+  expect(chrome.menuLabels.join(" ")).toContain("Apple 毛玻璃");
+  expect(chrome.menuLabels.join(" ")).toContain("Windows 11 风格");
+  expect(chrome.menuLabels.join(" ")).not.toContain("shadcn");
+
+  await expect(page.locator(".skin-card")).toHaveCount(4);
+  await expect(page.locator(".skin-preview[data-skin]")).toHaveCount(4);
+
+  // shadcn 不在快捷菜单里，但皮肤页可以选
+  const shadcn = page.locator(".skin-card").filter({ hasText: "shadcn · 扁平" });
+  await shadcn.locator(".skin-actions st-button").click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("shadcn");
+  expect(await page.evaluate(() => localStorage.getItem("st-skin"))).toBe("shadcn");
+  await expect(page.locator(".current")).toContainText("shadcn · 扁平");
+
+  // 三巨头材质也能从皮肤页切换
+  const windows = page.locator(".skin-card").filter({ hasText: "Microsoft · Windows 11" });
+  await windows.locator(".skin-actions st-button").click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("windows");
+
+  // 收尾恢复 m3
+  const m3 = page.locator(".skin-card").filter({ hasText: "Android · Material 3" });
+  await m3.locator(".skin-actions st-button").click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("m3");
 });
 
 test("共享 header：皮肤菜单切换全站材质并持久化", async ({ page }) => {

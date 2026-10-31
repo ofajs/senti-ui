@@ -127,7 +127,7 @@ Switch at runtime with `setSkin("windows")` from `packages/skin/st-skin.js` (per
 
 ## Website
 
-A single-page showcase lives in [`site/`](./site/index.html), built with **SCSR** (ofa.js v5 real-path documents): every component on one page, live skin + light/dark switching, and four side-by-side material previews. Each URL is a real HTML document; scsr turns it into an o-app page after load. Component docs live under [`site/docs/`](./site/docs/index.html) — one real SCSR page per component, with 4–7 scenario-based live demos, attribute tables and slots/events. The docs sidebar lives in a second-level SCSR layout, so it survives component-to-component navigation.
+A single-page showcase lives in [`site/`](./site/index.html), built with **SCSR** (ofa.js v5 real-path documents): every component on one page, live skin + light/dark switching, four side-by-side material previews, and a dedicated skin page at [`site/skins.html`](./site/skins.html). Each URL is a real HTML document; scsr turns it into an o-app page after load. Component docs live under [`site/docs/`](./site/docs/index.html) — one real SCSR page per component, with 4–7 scenario-based live demos, attribute tables and slots/events. The docs sidebar lives in a second-level SCSR layout, so it survives component-to-component navigation.
 
 ```bash
 npm run dev

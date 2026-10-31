@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>皮肤 — Senti-UI</title>
+  <meta
+    name="description"
+    content="Senti-UI 皮肤页：同一批组件、同一套 M3 颜色，在 Android Material 3、Apple 毛玻璃、Microsoft Windows 11 与 shadcn 扁平材质之间切换。"
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="皮肤 — Senti-UI" />
+  <meta
+    property="og:description"
+    content="三巨头材质同页对比：Android Material 3 / Apple 毛玻璃 / Microsoft Windows 11，另有 shadcn 扁平备用。"
+  />
+  <meta name="theme-color" content="#0061A4" />
+  <link
+    rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E"
+  />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../packages/skin/windows.css" />
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+    }
+    body {
+      font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .nojs {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 12vh 24px;
+      line-height: 1.7;
+    }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>皮肤</h1>
+      <p>皮肤页的实时预览需要 JavaScript；也可以直接查看 <a href="./index.html">组件目录</a>。</p>
+    </div>
+  </noscript>
+
+  <l-m src="../packages/button/button.html"></l-m>
+  <l-m src="../packages/button/icon-button.html"></l-m>
+  <l-m src="../packages/input/input.html"></l-m>
+  <l-m src="../packages/menu/menu.html"></l-m>
+  <l-m src="../packages/tooltip/tooltip.html"></l-m>
+  <l-m src="../packages/progress/progress.html"></l-m>
+
+  <o-app src="./app-config.js">
+    <template page>
+      <!-- 局部 data-skin 预览需要页面 shadow 内的样式表 -->
+      <link rel="stylesheet" href="../packages/skin/m3.css" />
+      <link rel="stylesheet" href="../packages/skin/apple.css" />
+      <link rel="stylesheet" href="../packages/skin/shadcn.css" />
+      <link rel="stylesheet" href="../packages/skin/windows.css" />
+
+      <style>
+        :host {
+          --site-max: 1100px;
+          --gutter: clamp(20px, 4vw, 40px);
+          display: block;
+          background: transparent;
+          color: var(--md-sys-color-on-surface);
+          font-size: 15px;
+          line-height: 1.55;
+        }
+        *,
+        *::before,
+        *::after { box-sizing: border-box; }
+        h1,
+        h2,
+        p { margin: 0; }
+        a { color: inherit; }
+
+        .skins-page {
+          max-width: var(--site-max);
+          margin: 0 auto;
+          padding: clamp(40px, 6vw, 72px) var(--gutter) 88px;
+        }
+        .kicker {
+          color: var(--md-sys-color-primary);
+          font-size: 10.5px;
+          font-weight: 700;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+        }
+        h1 {
+          margin-top: 10px;
+          font-size: clamp(34px, 5vw, 52px);
+          line-height: 1.08;
+          letter-spacing: -0.035em;
+          font-weight: 700;
+        }
+        .lead {
+          max-width: 720px;
+          margin-top: 14px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 14px;
+          line-height: 1.8;
+        }
+        .current {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          margin-top: 22px;
+          padding: 7px 12px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 999px;
+          background: var(--md-sys-color-surface-container-low);
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 12px;
+        }
+        .current strong { color: var(--md-sys-color-on-surface); }
+        .mono {
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 11px;
+        }
+
+        .skin-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 16px;
+          margin-top: 30px;
+        }
+        .skin-card {
+          display: grid;
+          align-content: start;
+          gap: 14px;
+          padding: 18px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 20px;
+          background: var(--md-sys-color-surface-container-low);
+        }
+        .skin-head {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 12px;
+        }
+        .skin-head h2 {
+          font-size: 17px;
+          letter-spacing: -0.015em;
+        }
+        .skin-head p {
+          margin-top: 5px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 12px;
+          line-height: 1.65;
+        }
+        .skin-chip {
+          flex: none;
+          padding: 3px 9px;
+          border-radius: 999px;
+          background: var(--md-sys-color-surface-container-high);
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
+        }
+        .skin-preview {
+          display: grid;
+          gap: 10px;
+          padding: 18px;
+          border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 80%, transparent);
+          border-radius: 14px;
+          background:
+            radial-gradient(120% 130% at 8% 0%, color-mix(in srgb, var(--md-sys-color-primary-container) 75%, transparent), transparent 60%),
+            radial-gradient(120% 130% at 96% 100%, color-mix(in srgb, var(--md-sys-color-tertiary-container) 65%, transparent), transparent 62%),
+            var(--md-sys-color-surface-container-lowest);
+        }
+        .preview-row {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 8px;
+        }
+        .skin-preview st-input { width: 100%; }
+        .skin-actions {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+        }
+        .skin-actions .hint {
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 11px;
+        }
+        .note {
+          margin-top: 26px;
+          padding: 14px 16px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 14px;
+          background: var(--md-sys-color-surface-container-low);
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 12.5px;
+          line-height: 1.75;
+        }
+        .note code {
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 11px;
+          color: var(--md-sys-color-on-surface);
+        }
+        @media (max-width: 860px) {
+          .skin-grid { grid-template-columns: minmax(0, 1fr); }
+        }
+      </style>
+
+      <main class="skins-page">
+        <header>
+          <p class="kicker">MATERIALS</p>
+          <h1>选择材质</h1>
+          <p class="lead">
+            同一批组件、同一套 M3 颜色，只换材质。顶部快捷菜单保留 Android / Apple / Microsoft
+            三种常用风格；shadcn 作为额外的扁平材质，在这里选用。
+          </p>
+          <div class="current">
+            当前材质 <strong>{{skinLabel}}</strong>
+            <span class="mono">data-skin="{{skin}}"</span>
+          </div>
+        </header>
+
+        <section class="skin-grid" aria-label="可选材质">
+          <article class="skin-card">
+            <div class="skin-head">
+              <div>
+                <h2>Android · Material 3</h2>
+                <p>全圆角、state layer、波纹；Material Design 3 的默认触感。</p>
+              </div>
+              <span class="skin-chip">m3</span>
+            </div>
+            <div class="skin-preview" data-skin="m3">
+              <div class="preview-row">
+                <st-button>按钮</st-button>
+                <st-button variant="outlined">描边</st-button>
+                <st-icon-button title="设置">⚙</st-icon-button>
+              </div>
+              <st-input placeholder="输入内容"></st-input>
+            </div>
+            <div class="skin-actions">
+              <st-button
+                attr:variant="skin === 'm3' ? 'filled' : 'outlined'"
+                on:click="use('m3')">
+                {{skin === 'm3' ? '当前材质' : '使用此材质'}}
+              </st-button>
+              <span class="hint">Material Design 3</span>
+            </div>
+          </article>
+
+          <article class="skin-card">
+            <div class="skin-head">
+              <div>
+                <h2>Apple · 毛玻璃</h2>
+                <p>半透明表面 + backdrop blur、连续圆角、外侧柔光焦点环，无波纹。</p>
+              </div>
+              <span class="skin-chip">apple</span>
+            </div>
+            <div class="skin-preview" data-skin="apple">
+              <div class="preview-row">
+                <st-button>按钮</st-button>
+                <st-button variant="outlined">描边</st-button>
+                <st-icon-button title="设置">⚙</st-icon-button>
+              </div>
+              <st-input placeholder="输入内容"></st-input>
+            </div>
+            <div class="skin-actions">
+              <st-button
+                attr:variant="skin === 'apple' ? 'filled' : 'outlined'"
+                on:click="use('apple')">
+                {{skin === 'apple' ? '当前材质' : '使用此材质'}}
+              </st-button>
+              <span class="hint">glassmorphism</span>
+            </div>
+          </article>
+
+          <article class="skin-card">
+            <div class="skin-head">
+              <div>
+                <h2>Microsoft · Windows 11</h2>
+                <p>4px 控件 / 8px 表面、Segoe UI、Mica 表面与 Acrylic 浮层，焦点矩形替代外发光。</p>
+              </div>
+              <span class="skin-chip">windows</span>
+            </div>
+            <div class="skin-preview" data-skin="windows">
+              <div class="preview-row">
+                <st-button>按钮</st-button>
+                <st-button variant="outlined">描边</st-button>
+                <st-icon-button title="设置">⚙</st-icon-button>
+              </div>
+              <st-input placeholder="输入内容"></st-input>
+            </div>
+            <div class="skin-actions">
+              <st-button
+                attr:variant="skin === 'windows' ? 'filled' : 'outlined'"
+                on:click="use('windows')">
+                {{skin === 'windows' ? '当前材质' : '使用此材质'}}
+              </st-button>
+              <span class="hint">Fluent / Mica</span>
+            </div>
+          </article>
+
+          <article class="skin-card">
+            <div class="skin-head">
+              <div>
+                <h2>shadcn · 扁平</h2>
+                <p>6px 圆角、1px 细描边、极轻阴影、外扩 focus ring，紧凑密度。</p>
+              </div>
+              <span class="skin-chip">shadcn</span>
+            </div>
+            <div class="skin-preview" data-skin="shadcn">
+              <div class="preview-row">
+                <st-button>按钮</st-button>
+                <st-button variant="outlined">描边</st-button>
+                <st-icon-button title="设置">⚙</st-icon-button>
+              </div>
+              <st-input placeholder="输入内容"></st-input>
+            </div>
+            <div class="skin-actions">
+              <st-button
+                attr:variant="skin === 'shadcn' ? 'filled' : 'outlined'"
+                on:click="use('shadcn')">
+                {{skin === 'shadcn' ? '当前材质' : '使用此材质'}}
+              </st-button>
+              <span class="hint">额外的扁平选项</span>
+            </div>
+          </article>
+        </section>
+
+        <p class="note">
+          材质只影响圆角、密度、描边、阴影、毛玻璃、焦点环与动效；颜色始终来自 M3 角色，
+          种子色、error、success 与深浅色主题在四套材质下都保持一致。
+          代码里用 <code>setSkin("windows")</code> 或 <code>&lt;html data-skin="windows"&gt;</code> 切换。
+        </p>
+      </main>
+
+      <script>
+        export const parent = "./layout.html";
+
+        export default async () => ({
+          data: {
+            skin: "m3",
+          },
+          ready() {
+            this.syncSkin();
+            this._observer = new MutationObserver(() => this.syncSkin());
+            this._observer.observe(document.documentElement, {
+              attributes: true,
+              attributeFilter: ["data-skin"],
+            });
+          },
+          detached() {
+            this._observer?.disconnect();
+          },
+          proto: {
+            get skinLabel() {
+              return (
+                {
+                  m3: "Android · Material 3",
+                  apple: "Apple · 毛玻璃",
+                  windows: "Microsoft · Windows 11",
+                  shadcn: "shadcn · 扁平",
+                }[this.skin] || this.skin
+              );
+            },
+            syncSkin() {
+              this.skin =
+                document.documentElement.dataset.skin ||
+                localStorage.getItem("st-skin") ||
+                "m3";
+            },
+            use(id) {
+              if (window.__site) window.__site.setSkin(id);
+              else {
+                try {
+                  localStorage.setItem("st-skin", id);
+                } catch {}
+                document.documentElement.dataset.skin = id;
+              }
+              this.skin = id;
+            },
+          },
+        });
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../packages/color/st-theme-mode.js";
+    import { setSkin, getSkin } from "../packages/skin/st-skin.js";
+
+    window.__site = { setThemeMode, getThemeMode, setSkin, getSkin };
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

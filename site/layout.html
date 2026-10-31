@@ -311,6 +311,7 @@
             <nav class="layout-nav" aria-label="主导航">
               <st-button variant="text" class:active="page === 'home'" on:click="go('./index.html')">组件</st-button>
               <st-button variant="text" class:active="page === 'docs'" on:click="go('./docs/index.html')">文档</st-button>
+              <st-button variant="text" class:active="page === 'skins'" on:click="go('./skins.html')">皮肤</st-button>
             </nav>
 
             <div class="top-actions">
@@ -327,10 +328,6 @@
                 <st-menu-item on:click="pickSkin('windows')">
                   Windows 11 风格
                   <span slot="suffix">{{skin === 'windows' ? '✓' : ''}}</span>
-                </st-menu-item>
-                <st-menu-item on:click="pickSkin('shadcn')">
-                  shadcn 扁平
-                  <span slot="suffix">{{skin === 'shadcn' ? '✓' : ''}}</span>
                 </st-menu-item>
               </st-menu>
 
@@ -357,6 +354,7 @@
             <nav class="footer-links" aria-label="页脚导航">
               <a href="./index.html">组件目录</a>
               <a href="./docs/index.html">组件文档</a>
+              <a href="./skins.html">皮肤材质</a>
               <a href="./index.html#start">快速开始</a>
               <a href="https://github.com/ofajs/senti-ui" target="_blank" rel="noreferrer">GitHub</a>
             </nav>
@@ -428,7 +426,8 @@
               detectPage() {
                 const path = location.pathname;
                 const inDocs = /\/docs(\/|$)/.test(path);
-                this.page = inDocs ? "docs" : "home";
+                const inSkins = /\/skins(\.html)?$/.test(path);
+                this.page = inSkins ? "skins" : inDocs ? "docs" : "home";
                 // 文档侧栏在各自的文档页内，不依赖 layout 的 active 状态
                 void 0;
               },

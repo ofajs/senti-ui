@@ -239,7 +239,8 @@ document.querySelector("st-button").addEventListener("click", () => {});
 | 属性 | 默认值 |
 |------|--------|
 | 高度 / 圆角 / 字号 | `2.857em` / `1.429em` / `14px`（与 st-button 一致） |
-| 主区 padding | `0 1.429em` |
+| 最小宽度 | `9.5em`（= 133px，短标签也有呼吸空间） |
+| 主区 padding | `0 1.714em` |
 | 箭头区 | 正方形（aspect-ratio 1/1），与主区分界线 currentColor 40% |
 | 面板 | 与 st-menu 面板一致（min-width 8em、圆角 0.857em、surface-container 底） |
 

@@ -63,9 +63,17 @@
     }
     :host([disabled]) .layer { opacity: 0; }
 
+    /* 文本节点不能被 ::slotted(*) 命中：用一层 wrapper 统一放大图标字形/emoji */
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.571em; /* 22px 图标建议尺寸，随 font-size 等比 */
+      line-height: 1;
+    }
     ::slotted(*) {
       display: inline-flex;
-      font-size: 1.571em; /* 22px 图标建议尺寸，随 font-size 等比 */
+      font-size: inherit;
       line-height: 1;
     }
 
@@ -91,7 +99,7 @@
   <span class="layer"></span>
   <l-m src="../ripple/ripple.html"></l-m>
   <st-ripple></st-ripple>
-  <slot></slot>
+  <span class="icon"><slot></slot></span>
   <button class="native" type="button" tabindex="0"></button>
 
   <script>

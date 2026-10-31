@@ -17,6 +17,8 @@
   --st-letter-spacing: normal;
   --st-control-radius: 1.429em;
   --st-field-radius: 0.5em;
+  --st-split-min-width: 9.5em;
+  --st-split-padding: 0 1.714em;
   --st-control-padding: 0 1.429em;
   --st-textarea-padding: .857em 1em;
   --st-field-padding: 0 1em;

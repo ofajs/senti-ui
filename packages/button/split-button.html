@@ -13,6 +13,7 @@
       align-items: stretch;
       box-sizing: border-box;
       height: var(--st-height, 2.857em); /* 40px，与 st-button 一致 */
+      min-width: var(--st-split-min-width, 9.5em);
       border-radius: var(--st-control-radius, 1.429em);
       border: var(--st-border-width, 1px) solid transparent;
       font-size: var(--st-font-size, 14px);
@@ -66,7 +67,7 @@
       flex: 1;
       min-width: 0;
       gap: 0.571em;
-      padding: var(--st-control-padding, 0 1.429em);
+      padding: var(--st-split-padding, 0 1.714em);
       border-radius: var(--st-control-radius, 1.429em) 0 0 var(--st-control-radius, 1.429em);
     }
     .caret-zone {

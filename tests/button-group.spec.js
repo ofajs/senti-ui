@@ -162,12 +162,19 @@ test("icon-button：四种 variant 的配色差异（透明/填充/容器/描边
 test("icon-button：圆形与等比尺寸", async ({ page }) => {
   await ready(page);
   const geo = await page.evaluate(() => {
-    const cs = getComputedStyle(document.querySelector("#ib-standard"));
-    return { w: cs.width, h: cs.height, radius: cs.borderRadius };
+    const el = document.querySelector("#ib-standard");
+    const cs = getComputedStyle(el);
+    return {
+      w: cs.width,
+      h: cs.height,
+      radius: cs.borderRadius,
+      icon: parseFloat(getComputedStyle(el.shadowRoot.querySelector(".icon")).fontSize),
+    };
   });
   expect(geo.w).toBe(geo.h);
   expect(parseFloat(geo.w)).toBeCloseTo(40, 0);
   expect(geo.radius).toBe("50%");
+  expect(geo.icon).toBeGreaterThan(20);
 });
 
 test("icon-button：click 冒泡到宿主，disabled 原生阻断", async ({ page }) => {

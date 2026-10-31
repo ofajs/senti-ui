@@ -75,13 +75,13 @@
               <header class="docs-group-head">
                 <div>
                   <p class="docs-group-kicker">FOUNDATION</p>
-                  <h2>基础组件 <span>18</span></h2>
+                  <h2>基础组件 <span>17</span></h2>
                 </div>
                 <p class="docs-group-desc">构成页面骨架与完整业务流程：动作、表单、反馈、内容与导航。</p>
               </header>
               <div class="docs-cards">
           <st-card interactive class="docs-card" on:click="goDoc('button')">
-            <span class="cat">动作</span>
+            <span class="cat">基础</span>
             <h2>Button</h2>
             <code>st-button</code>
             <p>三种 M3 variant、语义色、loading 与图标插槽。按钮组、分裂按钮、图标按钮同属一个包。</p>
@@ -164,13 +164,6 @@
             <p>进度：线形 / 环形 × 确定 / 不定。缺省 value 自动视为不定。</p>
             <span class="more">查看用法 →</span>
           </st-card>
-          <st-card interactive class="docs-card" on:click="goDoc('tools')">
-            <span class="cat">反馈</span>
-            <h2>Command tools</h2>
-            <code>toast · alert · confirm · prompt</code>
-            <p>命令式工具：Promise 化、用完即毁。基于 st-snackbar / st-dialog，可在任意 JS 中调用。</p>
-            <span class="more">查看用法 →</span>
-          </st-card>
           <st-card interactive class="docs-card" on:click="goDoc('card')">
             <span class="cat">内容</span>
             <h2>Card</h2>
@@ -213,30 +206,37 @@
               <header class="docs-group-head">
                 <div>
                   <p class="docs-group-kicker">ENHANCEMENT</p>
-                  <h2>辅助组件 <span>3</span></h2>
+                  <h2>辅助组件 <span>4</span></h2>
                 </div>
-                <p class="docs-group-desc">不单独承担业务流程，用来在基础组件之上做锦上添花：波纹、折叠、提示。</p>
+                <p class="docs-group-desc">不单独承担业务流程，用来在基础组件之上做锦上添花：折叠、提示、波纹与命令式工具。</p>
               </header>
               <div class="docs-cards">
-          <st-card interactive class="docs-card" on:click="goDoc('ripple')">
-            <span class="cat">动作</span>
-            <h2>Ripple</h2>
-            <code>st-ripple</code>
-            <p>点击波纹。放在 position: relative 的父元素里即可；st-button 与 interactive 卡片已内嵌。</p>
-            <span class="more">查看用法 →</span>
-          </st-card>
           <st-card interactive class="docs-card" on:click="goDoc('collapse')">
-            <span class="cat">内容</span>
+            <span class="cat">辅助</span>
             <h2>Collapse</h2>
             <code>st-collapse</code>
             <p>高度过渡折叠容器：hide 收起，展开时高度跟随内容（ResizeObserver）。</p>
             <span class="more">查看用法 →</span>
           </st-card>
           <st-card interactive class="docs-card" on:click="goDoc('tooltip')">
-            <span class="cat">反馈</span>
+            <span class="cat">辅助</span>
             <h2>Tooltip</h2>
             <code>st-tooltip</code>
             <p>提示气泡：悬停 / 聚焦显示，fixed 定位自动上下翻转；content 按纯文本渲染。</p>
+            <span class="more">查看用法 →</span>
+          </st-card>
+          <st-card interactive class="docs-card" on:click="goDoc('ripple')">
+            <span class="cat">辅助</span>
+            <h2>Ripple</h2>
+            <code>st-ripple</code>
+            <p>点击波纹。放在 position: relative 的父元素里即可；st-button 与 interactive 卡片已内嵌。</p>
+            <span class="more">查看用法 →</span>
+          </st-card>
+          <st-card interactive class="docs-card" on:click="goDoc('tools')">
+            <span class="cat">辅助</span>
+            <h2>Command tools</h2>
+            <code>toast · alert · confirm · prompt</code>
+            <p>命令式工具：Promise 化、用完即毁。基于 st-snackbar / st-dialog，可在任意 JS 中调用。</p>
             <span class="more">查看用法 →</span>
           </st-card>
               </div>

@@ -16,6 +16,8 @@
   --st-font-size: 14px;
   --st-control-radius: 0.429em; /* 6px */
   --st-field-radius: 0.429em;
+  --st-split-min-width: 8.5em;
+  --st-split-padding: 0 1.143em;
   --st-control-padding: 0 0.857em;
   --st-textarea-padding: .714em .857em;
   --st-field-padding: 0 0.857em;

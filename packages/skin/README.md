@@ -183,6 +183,7 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 | `--st-nav-gap` / `--st-nav-gap-vertical` / `--st-nav-padding-vertical` | `0.286em` / `0.143em` / `0.286em` | 导航间距 |
 | `--st-radio-radius` / `--st-radio-border-width` | `50%` / `0.143em` | 单选 |
 | `--st-icon-radius` | `50%` | 图标按钮 |
+| `--st-split-min-width` / `--st-split-padding` | `9.5em` / `0 1.714em` | split-button 最小宽度 / 主区内边距 |
 | `--st-slider-track-radius` / `--st-slider-thumb-radius` / `--st-slider-tip-radius` / `--st-slider-thumb-shadow` | `0.286em` / `50%` / `0.286em` / `none` | 滑块 |
 | `--st-progress-size` / `--st-progress-thickness` / `--st-progress-radius` / `--st-progress-duration` | `2.857em` / `0.286em` / `0.286em` / `0.3s` | 进度 |
 | `--st-tab-height` / `--st-tab-layer-radius` / `--st-tabs-indicator-height` / `--st-tabs-indicator-radius` / `--st-tabs-border` | `3.429em` / `0.571em` / `0.143em` / `0` / `outline-variant` | 标签栏 |

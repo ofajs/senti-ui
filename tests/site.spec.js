@@ -347,8 +347,8 @@ test("组件文档首页：21 张卡片可进入独立页", async ({ page }) => 
   });
   expect(overview.cards).toBe(21);
   expect(overview.groups).toEqual([
-    { title: "基础组件 18", cards: 18 },
-    { title: "辅助组件 3", cards: 3 },
+    { title: "基础组件 17", cards: 17 },
+    { title: "辅助组件 4", cards: 4 },
   ]);
   await page.evaluate(() => {
     const child = [...document.querySelectorAll("o-page")].find(
@@ -624,4 +624,27 @@ test("文档示例容器在 Apple 下透出环境光", async ({ page }) => {
 
   await page.locator("#skin-menu st-icon-button").click();
   await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();
+});
+
+test("文档侧栏按使用频率排序：Ripple 等低频组件靠后", async ({ page }) => {
+  await page.goto("/site/docs/input.html");
+  await page.waitForTimeout(1200);
+  const state = await page.evaluate(() => {
+    const docs = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side")
+    );
+    const sr = docs.shadowRoot;
+    return {
+      groups: [...sr.querySelectorAll(".side-group")].map((el) => el.textContent.trim()),
+      items: [...sr.querySelectorAll(".docs-side st-list-item")].map((el) =>
+        el.textContent.replace(/\s+/g, " ").trim()
+      ),
+    };
+  });
+  expect(state.groups).toEqual(["基础", "表单", "反馈", "内容", "导航", "辅助"]);
+  const labels = state.items.map((x) => x.replace(/^(概览|Button|Input|Textarea|Select|Checkbox|Switch|Radio|Slider|Dialog|Menu|Snackbar|Progress|Card|Badges|List|Tabs|Navigation|Collapse|Tooltip|Ripple|Command tools).*$/, "$1"));
+  expect(labels[0]).toBe("概览");
+  expect(labels[1]).toBe("Button");
+  expect(labels.indexOf("Ripple")).toBeGreaterThan(labels.indexOf("Navigation"));
+  expect(labels.indexOf("Ripple")).toBeGreaterThan(labels.indexOf("Tooltip"));
 });

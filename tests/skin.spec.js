@@ -74,11 +74,24 @@ test("apple 皮肤：毛玻璃 / 阴影 / 系统字体栈", async ({ page }) => 
   const state = await page.evaluate(() => {
     const btn = document.querySelector("#btn-filled");
     const cs = getComputedStyle(btn);
-    return { blur: cs.backdropFilter, shadow: cs.boxShadow, font: cs.fontFamily };
+    const card = getComputedStyle(document.querySelector("#card-elev"));
+    const alpha = (color) => {
+      const n = color.match(/\/\s*([\d.]+)\)/);
+      return n ? Number(n[1]) : 1;
+    };
+    return {
+      blur: cs.backdropFilter,
+      shadow: cs.boxShadow,
+      font: cs.fontFamily,
+      cardAlpha: alpha(card.backgroundColor),
+      fillAlpha: getComputedStyle(document.documentElement).getPropertyValue("--st-fill-alpha").trim(),
+    };
   });
   expect(state.blur).toContain("blur(18px)");
   expect(state.shadow).not.toBe("none");
   expect(state.font).toContain("-apple-system");
+  expect(state.fillAlpha).toBe("68%");
+  expect(state.cardAlpha).toBeLessThan(0.6);
 });
 
 test("换肤不破坏 M3 语义色：color=error 仍然等于 error 角色", async ({ page }) => {
@@ -253,7 +266,7 @@ test("皮肤覆盖浮动层：dialog / menu / card / select / tooltip / snackbar
     };
   });
   expect(apple.dialog).toContain("blur(24px)");
-  expect(apple.menu).toContain("blur(18px)");
+  expect(apple.menu).toContain("blur(8px)");
   expect(apple.card).toContain("blur(18px)");
   expect(apple.tooltip).toContain("blur(18px)");
   expect(apple.checkbox).toBeGreaterThan(5);

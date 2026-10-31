@@ -174,7 +174,10 @@ test("icon-button：圆形与等比尺寸", async ({ page }) => {
   expect(geo.w).toBe(geo.h);
   expect(parseFloat(geo.w)).toBeCloseTo(40, 0);
   expect(geo.radius).toBe("50%");
-  expect(geo.icon).toBeGreaterThan(20);
+  /* 图标按按钮宽度取比例：自定义大小时不会显得过大/过小 */
+  const ratio = geo.icon / parseFloat(geo.w);
+  expect(ratio).toBeGreaterThan(0.5);
+  expect(ratio).toBeLessThan(0.6);
 });
 
 test("icon-button：click 冒泡到宿主，disabled 原生阻断", async ({ page }) => {
@@ -202,8 +205,14 @@ test("icon-button：color=error + tonal 分支用 error-container 底色", async
       btnBg: getComputedStyle(document.querySelector("#ib-color")).backgroundColor,
     };
   });
+  const parse = (value) => {
+    const n = value.match(/[\d.]+/g).map(Number);
+    return value.startsWith("color(") ? n.slice(0, 3).map((v) => Math.round(v * 255)) : n.slice(0, 3);
+  };
   const hex = errorContainerBg.replace("#", "");
-  expect(btnBg).toBe(
-    `rgb(${parseInt(hex.slice(0, 2), 16)}, ${parseInt(hex.slice(2, 4), 16)}, ${parseInt(hex.slice(4, 6), 16)})`
-  );
+  expect(parse(btnBg)).toEqual([
+    parseInt(hex.slice(0, 2), 16),
+    parseInt(hex.slice(2, 4), 16),
+    parseInt(hex.slice(4, 6), 16),
+  ]);
 });

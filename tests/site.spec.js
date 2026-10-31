@@ -538,8 +538,35 @@ test("共享 header：皮肤菜单切换全站材质并持久化", async ({ page
     .evaluate((el) => getComputedStyle(el).backdropFilter);
   expect(blur).toContain("blur(18px)");
 
-  // 再切回 m3，避免影响同页后续交互
+  // 菜单弹层也要有毛玻璃；header 的毛玻璃必须挂在外层 ::before 上，
+  // 否则 header 自身会成为 backdrop root，后代菜单只能模糊 header 内部
   await page.locator("#skin-menu st-icon-button").click();
+  await page.waitForTimeout(250);
+  const glass = await page.evaluate(() => {
+    const find = (root, sel) => {
+      const d = root.querySelector(sel);
+      if (d) return d;
+      for (const el of root.querySelectorAll("*")) {
+        if (el.shadowRoot) {
+          const r = find(el.shadowRoot, sel);
+          if (r) return r;
+        }
+      }
+      return null;
+    };
+    const header = find(document, "header.top");
+    const menu = find(document, "#skin-menu");
+    return {
+      panelBlur: getComputedStyle(menu.shadowRoot.querySelector(".panel")).backdropFilter,
+      headerBlur: getComputedStyle(header).backdropFilter,
+      headerLayerBlur: getComputedStyle(header, "::before").backdropFilter,
+    };
+  });
+  expect(glass.panelBlur).toContain("blur(8px)");
+  expect(glass.headerBlur).toBe("none");
+  expect(glass.headerLayerBlur).toContain("blur(18px)");
+
+  // 再切回 m3，避免影响同页后续交互
   await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();
   await expect
     .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
@@ -585,13 +612,19 @@ test("官网环境光：Apple 毛玻璃下增强，M3/shadcn 保持低调", asyn
     );
     const grid = page.shadowRoot.querySelector(".comp-grid");
     const card = grid.querySelector(".comp");
+    const component = card.querySelector(".comp-preview st-button");
     return {
       glass: grid.classList.contains("glass"),
-      blur: getComputedStyle(card).backdropFilter,
+      cardBlur: getComputedStyle(card).backdropFilter,
+      cardBg: getComputedStyle(card).backgroundColor,
+      componentBlur: component ? getComputedStyle(component).backdropFilter : "",
     };
   });
   expect(glass.glass).toBe(true);
-  expect(glass.blur).toContain("blur(18px)");
+  /* 展示卡片只做透明外壳，不预先模糊背景；毛玻璃由卡片内的组件自己承担 */
+  expect(glass.cardBlur).toBe("none");
+  expect(glass.cardBg).toBe("rgba(0, 0, 0, 0)");
+  expect(glass.componentBlur).toContain("blur(18px)");
 
   await page.locator("#skin-menu st-icon-button").click();
   await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();
@@ -612,15 +645,19 @@ test("文档示例容器在 Apple 下透出环境光", async ({ page }) => {
     );
     const demo = child.shadowRoot.querySelector(".demo");
     const stage = child.shadowRoot.querySelector(".demo-stage");
+    const input = stage.querySelector("st-input");
     return {
       demoBg: getComputedStyle(demo).backgroundColor,
       demoBlur: getComputedStyle(demo).backdropFilter,
       stageBg: getComputedStyle(stage).backgroundColor,
+      inputBlur: input ? getComputedStyle(input).backdropFilter : "",
     };
   });
-  expect(state.demoBg).not.toBe("rgb(253, 252, 255)");
-  expect(state.demoBlur).toContain("blur(18px)");
+  /* 示例容器透明且不模糊背景，玻璃感来自示例里的组件本身 */
+  expect(state.demoBg).toBe("rgba(0, 0, 0, 0)");
+  expect(state.demoBlur).toBe("none");
   expect(state.stageBg).toBe("rgba(0, 0, 0, 0)");
+  expect(state.inputBlur).toContain("blur(18px)");
 
   await page.locator("#skin-menu st-icon-button").click();
   await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();

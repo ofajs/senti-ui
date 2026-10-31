@@ -209,6 +209,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 56. **ofa.js 组件不能直接注册成 form-associated custom element**——生成的类没有 `formAssociated` / `ElementInternals` 钩子，`static formAssociated = true` 加不进去。表单能力用 light DOM 里的原生“代理控件”实现（`packages/form/form-proxy.js`）：`slot="form-proxy"`（没有对应 slot，不会渲染）但仍是 form 后代，承担 name/value/required/pattern/checked。代价：代理会让 `:host(:empty)` 失效，checkbox/switch/radio 必须改用 `has-label` 属性判断标签是否为空；代理不可见，浏览器原生校验气泡不会锚定到组件，组件改为派发 `invalid` 并设置 `aria-invalid`。
 57. **shadow 内 button 的 `type=submit/reset` 不会提交外层 form**——原生 button 在 shadow 内没有 `form` 关联，`button.form === null`。正确写法：组件监听内部 button 的 click，用 `closest("form")`（或 `form=""` 引用）找到表单后手动 `requestSubmit()` / `reset()`；同理 form 控件要自己同步 reset 回填。
+58. **祖先的 `backdrop-filter` 会成为后代弹层的 backdrop root，弹层毛玻璃“失效”**——给容器（如官网 header）直接加 `backdrop-filter` 后，容器内打开的菜单/提示层即使自身写了 `backdrop-filter: blur(...)`，也只采样容器内部（通常是空的），底下的页面内容完全不糊，表现为“弹层是半透明但没玻璃”。正确写法：把容器自身的毛玻璃放到一个**不是弹层祖先**的层上，例如 `.top::before { position:absolute; inset:0; z-index:-1; backdrop-filter: blur(...) }`，容器本身只留透明背景；弹层保持自己的 `backdrop-filter`。同理，任何承载 `st-menu` / `st-tooltip` / `st-select` 弹层的卡片不要把 `backdrop-filter` 写在卡片自身上。
 
 ## 测试/验证类坑（非 ofa.js）
 

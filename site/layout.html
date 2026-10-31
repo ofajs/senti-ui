@@ -99,10 +99,21 @@
             position: relative;
             flex: none;
             z-index: 60;
-            background: color-mix(in srgb, var(--md-sys-color-surface) 84%, transparent);
+            /* 毛玻璃放在 ::before 上，不放在 header 自身：
+               header 上的 backdrop-filter 会成为后代菜单的 backdrop root，
+               菜单就只能模糊 header 内部，模糊不到底下的页面内容。 */
+            background: transparent;
+            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+          }
+          .top::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: rgb(from var(--md-sys-color-surface) r g b / 0.72);
             -webkit-backdrop-filter: var(--st-backdrop-filter, none);
             backdrop-filter: var(--st-backdrop-filter, none);
-            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+            pointer-events: none;
           }
           .top-inner {
             max-width: var(--site-max);

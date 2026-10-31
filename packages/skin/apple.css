@@ -33,13 +33,13 @@
   --st-radius-pill: 999px;
 
   /* 半透明表面：surface 系角色混入透明度，深浅色主题自动适配 */
-  --st-outlined-bg: color-mix(in srgb, var(--md-sys-color-surface) 58%, transparent);
+  --st-outlined-bg: rgb(from var(--md-sys-color-surface) r g b / 0.38);
   --st-outlined-border: color-mix(in srgb, var(--md-sys-color-outline) 32%, transparent);
-  --st-field-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 55%, transparent);
-  --st-field-filled-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 65%, transparent);
+  --st-field-bg: rgb(from var(--md-sys-color-surface-container-high) r g b / 0.4);
+  --st-field-filled-bg: rgb(from var(--md-sys-color-surface-container-high) r g b / 0.46);
   --st-field-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
   --st-field-underline: transparent;
-  --st-fill-alpha: 100%;
+  --st-fill-alpha: 68%;
 
   /* 毛玻璃与浮起：黑色阴影属于材质而非主题色，故不随配色变化 */
   --st-shadow: 0 1px 1px rgb(0 0 0 / 0.05), 0 8px 24px -6px rgb(0 0 0 / 0.18);
@@ -83,7 +83,7 @@
   --st-tabs-indicator-radius: 999px;
   --st-tabs-border: transparent;
   --st-nav-pill-radius: 2em;
-  --st-nav-bar-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 72%, transparent);
+  --st-nav-bar-bg: rgb(from var(--md-sys-color-surface-container) r g b / 0.42);
   --st-nav-bar-backdrop-filter: blur(18px) saturate(180%);
   --st-progress-size: 2.857em;
   --st-progress-thickness: .286em;
@@ -108,7 +108,7 @@
   --st-list-item-radius-outer: 1.143em;
   --st-list-item-height: 2.857em;
   --st-list-item-padding: 0.5em 0.857em;
-  --st-dialog-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 72%, transparent);
+  --st-dialog-bg: rgb(from var(--md-sys-color-surface-container-high) r g b / 0.52);
   --st-dialog-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
   --st-dialog-backdrop-filter: blur(24px) saturate(180%);
   --st-dialog-scrim: rgb(0 0 0 / 0.18);
@@ -116,26 +116,27 @@
   --st-dialog-enter-duration: 280ms;
   --st-dialog-exit-duration: 180ms;
   --st-dialog-scrim-duration: 240ms;
-  --st-menu-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 74%, transparent);
+  --st-menu-bg: rgb(from var(--md-sys-color-surface-container) r g b / 0.46);
   --st-menu-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
-  --st-menu-backdrop-filter: blur(18px) saturate(180%);
-  --st-card-bg: color-mix(in srgb, var(--md-sys-color-surface-container-low) 76%, transparent);
-  --st-card-filled-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 70%, transparent);
-  --st-card-outlined-bg: color-mix(in srgb, var(--md-sys-color-surface) 58%, transparent);
+  /* 菜单是贴近正文的弹层：模糊比大面积表面轻，才能看出底下的内容轮廓 */
+  --st-menu-backdrop-filter: blur(8px) saturate(140%);
+  --st-card-bg: rgb(from var(--md-sys-color-surface-container-low) r g b / 0.38);
+  --st-card-filled-bg: rgb(from var(--md-sys-color-surface-container-high) r g b / 0.42);
+  --st-card-outlined-bg: rgb(from var(--md-sys-color-surface) r g b / 0.34);
   --st-card-border: color-mix(in srgb, var(--md-sys-color-outline) 32%, transparent);
   --st-card-outline: color-mix(in srgb, var(--md-sys-color-outline) 32%, transparent);
   --st-card-backdrop-filter: blur(18px) saturate(180%);
-  --st-select-popup-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 78%, transparent);
+  --st-select-popup-bg: rgb(from var(--md-sys-color-surface-container) r g b / 0.48);
   --st-select-popup-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
   --st-select-popup-backdrop-filter: blur(18px) saturate(180%);
   --st-snackbar-radius: .857em;
   --st-snackbar-shadow: var(--st-shadow-1);
-  --st-snackbar-surface: color-mix(in srgb, var(--md-sys-color-secondary) 86%, transparent);
+  --st-snackbar-surface: rgb(from var(--md-sys-color-secondary) r g b / 0.62);
   --st-snackbar-on-surface: var(--md-sys-color-on-secondary);
   --st-snackbar-backdrop-filter: blur(18px) saturate(180%);
   --st-tooltip-radius: .5em;
   --st-tooltip-shadow: var(--st-shadow-1);
-  --st-tooltip-bg: color-mix(in srgb, var(--md-sys-color-inverse-surface) 90%, transparent);
+  --st-tooltip-bg: rgb(from var(--md-sys-color-inverse-surface) r g b / 0.7);
   --st-tooltip-backdrop-filter: blur(18px) saturate(180%);
 
   /* 密度 */

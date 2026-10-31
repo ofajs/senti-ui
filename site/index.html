@@ -1082,12 +1082,11 @@
       background: var(--md-sys-color-surface-container-lowest);
       transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.2s ease;
     }
-    /* Apple 皮肤：组件目录卡片也换成玻璃，让环境光能透进来 */
+    /* Apple 皮肤：展示卡片只做透明容器，本身不加毛玻璃。
+       卡片是布局元素，backdrop-filter 会先把背景模糊一遍，反而盖住卡片内组件的毛玻璃层次。 */
     .comp-grid.glass .comp {
       border-radius: var(--st-card-radius, 16px);
-      background: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 14%, transparent);
-      -webkit-backdrop-filter: var(--st-backdrop-filter, blur(18px) saturate(180%));
-      backdrop-filter: var(--st-backdrop-filter, blur(18px) saturate(180%));
+      background: transparent;
       border-color: color-mix(in srgb, var(--md-sys-color-outline) 30%, transparent);
       box-shadow: var(--st-shadow-1);
     }
@@ -1097,7 +1096,7 @@
     }
     .comp-grid.glass .comp-foot {
       border-radius: 0 0 calc(var(--st-card-radius, 16px) - 1px) calc(var(--st-card-radius, 16px) - 1px);
-      background: color-mix(in srgb, var(--md-sys-color-surface-container-low) 22%, transparent);
+      background: transparent;
       border-top-color: color-mix(in srgb, var(--md-sys-color-outline) 24%, transparent);
     }
     .comp:hover {

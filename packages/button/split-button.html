@@ -20,7 +20,11 @@
       font-family: var(--st-font, inherit);
       font-weight: 500;
       letter-spacing: var(--st-letter-spacing, normal);
-      background-color: var(--st-split-bg, var(--md-sys-color-primary));
+      background-color: color-mix(
+        in srgb,
+        var(--st-split-bg, var(--md-sys-color-primary)) var(--st-fill-alpha, 100%),
+        transparent
+      );
       color: var(--st-split-fg, var(--md-sys-color-on-primary));
       border-color: var(--st-split-border, transparent);
       box-shadow: var(--st-shadow, none);

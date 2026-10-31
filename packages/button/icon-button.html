@@ -26,6 +26,8 @@
       background-image: var(--st-sheen, none);
       -webkit-backdrop-filter: var(--st-backdrop-filter, none);
       backdrop-filter: var(--st-backdrop-filter, none);
+      /* 让图标按按钮自身宽度取比例：只改 width/height 时也能保持视觉平衡 */
+      container-type: inline-size;
       transition: box-shadow var(--st-motion-duration, 150ms) ease;
       cursor: pointer;
       user-select: none;
@@ -34,11 +36,19 @@
 
     /* M3 四种图标按钮类型（color 属性通过 --st-icon-* 覆盖，不直接写内联样式） */
     :host([variant="filled"]) {
-      background-color: var(--st-icon-bg, var(--md-sys-color-primary));
+      background-color: color-mix(
+        in srgb,
+        var(--st-icon-bg, var(--md-sys-color-primary)) var(--st-fill-alpha, 100%),
+        transparent
+      );
       color: var(--st-icon-fg, var(--md-sys-color-on-primary));
     }
     :host([variant="tonal"]) {
-      background-color: var(--st-icon-bg, var(--md-sys-color-secondary-container));
+      background-color: color-mix(
+        in srgb,
+        var(--st-icon-bg, var(--md-sys-color-secondary-container)) var(--st-fill-alpha, 100%),
+        transparent
+      );
       color: var(--st-icon-fg, var(--md-sys-color-on-secondary-container));
     }
     :host([variant="outlined"]) {
@@ -68,7 +78,10 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.571em; /* 22px 图标建议尺寸，随 font-size 等比 */
+      /* 图标约按钮宽度的 56%（40px 按钮 ≈ 21px，34px 按钮 ≈ 18px）；
+         跟随按钮尺寸而不是只跟随 font-size，避免自定义大小时图标显得过大 */
+      font-size: 1.429em; /* 不支持容器查询时的回退：20px */
+      font-size: 56cqw;
       line-height: 1;
     }
     ::slotted(*) {

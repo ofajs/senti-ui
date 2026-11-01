@@ -57,13 +57,14 @@ site/
 - `layout.html` 是 SCSR 的**共享父页**：header（favicon 同款标记 + SentiUI 字标 / 组件·文档·皮肤文字导航 / 三巨头材质快捷菜单 / 主题 / GitHub）、footer、以及主题与皮肤状态都在这里；子页在 `<slot>` 中渲染，切页时布局不销毁；材质切换走 `data-skin` / `setSkin()`；
 - `index.html` 声明 `export const parent = "./layout.html"`；`docs/layout.html` 再声明 `export const parent = "../layout.html"`，形成**多级嵌套布局**；`docs/` 下每个组件页声明 `export const parent = "./layout.html"`；
 - 文档左侧组件目录（`st-list` + `st-list-item`）和移动端 `st-select` 只存在于 `docs/layout.html` 一处；同父页的组件互相切换时侧栏不销毁、不重排，只替换 `<slot>` 里的正文；
-- 页面切换动画**只在 `app-config.js` 的 `pageAnime` 里配置**：新页从下方 8px 上移并淡入（0.3s，与 ofa 离场默认时长对齐），离场页原地淡出；命中 `prefers-reduced-motion` 时关闭位移、只留 0.01s 透明度收敛。两级 layout 不写任何切页动画 CSS；页面背景透明，由 layout 的固定环境光层提供底色；文档示例容器 `.demo` / `.demo-stage` / `.demo-content` 也改为半透明，Apple 下同样能透出环境光；
+- 页面切换动画**只在 `app-config.js` 的 `pageAnime` 里配置**：前进时新页从下方 16px 上移并淡入、旧页上移 16px 淡出；后退方向相反（新页从上方 16px 落下）。过渡时长不写在配置里——ofa 自动注入 `all .3s`，入场淡入、离场淡出与位移都在这次过渡里完成。两级 layout 不写任何切页动画 CSS；页面背景透明，由 layout 的固定环境光层提供底色；文档示例容器 `.demo` / `.demo-stage` / `.demo-content` 也改为半透明，Apple 下同样能透出环境光；
 - **slot 外层必须是相对容器**（`.docs-body { position: relative }`）：离场页会被 scsr 设为 `position: absolute`，没有相对容器时会相对视口定位，切换瞬间露出旧内容造成“闪一下”；
 - **环境光背景**：layout 内固定 `.ambient` 层（三个模糊色球缓慢漂移）位于页面后面；M3 / windows / shadcn 下透明度较低，Apple 下通过 `ambient-strong` 提升到 1，半透明卡片、菜单、对话框的毛玻璃才有可见内容。页面 `::slotted(o-page)` 与首页 `:host` 背景透明，否则会盖住环境光；`prefers-reduced-motion` 下停止漂移；
 - **滚动容器固定为 `.site-scroll`**：文档 head 里 `html, body { height: 100%; overflow: hidden }`，layout 内部用 `.shell { height: 100dvh; overflow: hidden }` + `.site-scroll { overflow-y: auto; overscroll-behavior-y: none }`。这样整页不会在底部继续触发根节点的弹性回弹，header / 阅读进度 / 回到顶部始终固定在视口；滚动进度、`toTop()`、路由切换后的复位都基于 `.site-scroll` 而不是 `window`；
 - 切页动画用 `pageAnime` 时，`current.transform` 必须写 `"none"`（不是 `translateY(0)`）：identity transform 也会成为 `position: fixed` 的包含块，对话框/菜单会相对页面而不是视口定位（内部滚动后尤其明显）。代价是入场那 0.3s 内页内 `fixed` 后代临时以 `o-page` 为包含块；布局级 fixed 元素（环境光、回到顶部）在 `o-page` 之外，不受影响；
-- **`transition` 只写在 `current` 里，不要写进 `next` / `previous`**：ofa 的入场是「先写 `next`，rAF+5ms 后再写 `current`」，若起点态自带 `transition`，这一帧会先起一个过渡、随后被 `current` 反向，浏览器把它合并成 0 时长，页面直接跳到位（Chromium 实测：`transform` 过渡只活了 1ms，淡入同样失效）。离场时长不需要配置——ofa 对离场目标恒定注入 `transition: all .3s`；
-- `pageAnime` 只覆盖站内路由切换：整页刷新 / 直接打开某页时 scsr 不经过切换，因此没有入场动画（这是有意接受的，不是 bug）；后退（back）的入场态用的是 `previous`（不含 transform），所以只有淡入没有上移；
+- **不要给 `pageAnime` 三态写 `transition`**：ofa 的入场是「先写 `next`，rAF+5ms 后再写 `current`」，起点态一旦自带 `transition`，这一帧会先起一个过渡、随后被 `current` 反向，浏览器把它合并成 0 时长，页面直接跳到位（Chromium 实测：`transform` 过渡只活了 1ms，淡入同样失效）。三态只写 `opacity` / `transform`，过渡统一由 ofa 注入的 `all .3s` 提供；
+- 当前 `pageAnime` 是静态对象，**没有 `prefers-reduced-motion` 降级**——系统开启「减弱动效」时仍会播放 0.3s 位移 + 淡入。需要恢复时改成 getter，按 `matchMedia("(prefers-reduced-motion: reduce)")` 返回另一组无位移、0.01s 过渡的态（0s 不触发 `transitionend`，离场会多等 350ms 兜底，见 [CONTEXT 坑 #59](../CONTEXT.md)）；
+- `pageAnime` 只覆盖站内路由切换：整页刷新 / 直接打开某页时 scsr 不经过切换，因此没有入场动画（这是有意接受的，不是 bug）；
 - header 用 senti-ui 组件搭：三个 `variant="text"` 的 `st-button` 做「组件 / 文档 / 皮肤」导航（当前项用 `class:active` 换成 primary 色，不使用 button-group）、`st-icon-button` + `st-tooltip`（主题 / GitHub）、品牌也是 `st-button`：favicon 同款圆角方块 + 白点标记 + SentiUI 字标；导航用页面实例的 `goto()` 保持真实路径与共享布局；
 - scsr 接管后，把当前 URL（`/site/`、`/site/index.html`、`/site/docs/button.html` 等）收编为 `<o-page src>`，用同一份 HTML 的 `template[page]` 转译成页面模块，然后移除内联 template；
 - 页面本体随后渲染在 `o-page` 的 shadow 内，`:host` 样式、`this.ele.shadowRoot` 等写法与普通页面模块一致；

@@ -315,8 +315,9 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
         x.textContent.replace(/\s+/g, " ").trim()
       ),
       pickerValue: docs.shadowRoot.querySelector(".docs-picker").value,
-      // pageAnime 三态由 app-config.js 注入 o-page 内联样式
-      transition: child.style.transition,
+      // pageAnime 三态由 app-config.js 注入 o-page 内联样式，过渡由 ofa 注入（all .3s）
+      transitionProperty: getComputedStyle(child).transitionProperty,
+      transitionDuration: getComputedStyle(child).transitionDuration,
       transform: child.style.transform,
       opacity: child.style.opacity,
       animation: getComputedStyle(child).animationName,
@@ -326,12 +327,19 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(after.sidebars).toBe(1);
   expect(after.active[0]).toContain("Slider");
   expect(after.pickerValue).toBe("slider");
-  // 上移淡入由 pageAnime 的 transform + opacity transition 完成
-  expect(after.transition).toContain("transform");
-  expect(after.transition).toContain("opacity");
+  // 上移淡入 = pageAnime 的 transform + opacity，过渡时长来自 ofa
+  expect(after.transitionProperty).toBe("all");
+  expect(after.transitionDuration).toBe("0.3s");
   expect(after.transform).toBe("none");
   expect(after.opacity).toBe("1");
   expect(after.animation).toBe("none");
+
+  // 动画配置只在 app-config.js：起点态带位移、终点归零，且三态都不写 transition
+  const anime = await page.evaluate(async () => (await import("/site/app-config.js")).pageAnime);
+  expect(anime.next.transform).toContain("translateY");
+  expect(anime.previous.transform).toContain("translateY");
+  expect(anime.current.transform).toBe("none");
+  expect([anime.current, anime.next, anime.previous].some((s) => "transition" in s)).toBe(false);
 
   // 上一篇 / 下一篇（olink）：保持 SCSR 布局
   await page.locator(".pager-next").click();

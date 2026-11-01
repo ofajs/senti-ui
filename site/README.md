@@ -18,7 +18,7 @@ npm run dev
 site/
   layout.html      # 一级父页：header / footer / 材质与主题 + <slot>
   index.html       # 组件目录首页（export const parent = "./layout.html"）
-  skins.html       # 皮肤页：四张材质卡 + 应用切换（parent = "./layout.html"）
+  skins.html       # 皮肤页：四张材质卡 + 应用切换 + M3 改色/加色（parent = "./layout.html"）
   docs/
     layout.html    # 二级父页：左侧组件目录 / 移动端 picker + <slot>（parent 指向上级 layout）
     index.html     # 文档概览：21 张卡片，按基础 / 辅助分组（parent = "./layout.html"）
@@ -161,6 +161,18 @@ scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的�
 - 局部预览：`.skin-preview[data-skin="..."]`。文档树的 `[data-skin]` 选择器进不了 `o-page` 的 shadow，因此 `template[page]` 顶部额外 `<link>` 了同样的四套 CSS 到 shadow 内；这是本页能「同页四种材质」的关键。
 - 颜色始终来自 M3：种子色、error、success、深浅色主题都不会被皮肤改变。
 
+## 皮肤页的改色与加色
+
+`skins.html` 底部是 `COLOR / M3` 区块，直接调用 `packages/color/m3-theme.js`（Google Material Color Utilities / HCT）：
+
+- **改色**：种子色选择器或 HEX 输入框，实时 `applyTheme(seed, overrides, customs)`，整套 primary / secondary / tertiary / surface 中性色一起重算
+- **改色（单角色）**：primary / secondary / tertiary / error / success 五个角色可单独覆盖，on-* 与 container 配对仍按 M3 tone 规则推导；可随时复位回自动生成
+- **加色**：添加任意数量自定义变量（如 `brand`），自动生成 `--brand` / `--on-brand` / `--brand-container` / `--on-brand-container` 四配对 token；组件直接 `color="brand"` 使用
+- **持久化**：每次改动写 `st-color-config`（配置）与 `st-theme-css`（下次刷新首帧 CSS），同域页面刷新后一起生效
+- **恢复默认**：清空配置并回到 `#0061A4` 默认体系
+- 颜色工具入口仍指向 `packages/color/index.html`（与官网共用同一份 localStorage 配置）
+- 面板材质复用皮肤的 `--st-card-bg` / `--st-card-border` / `--st-card-backdrop-filter`：M3 / Windows / shadcn 保持实底，Apple 下自动变成半透明 + `blur(18px)` 毛玻璃，让改色工具本身也能看到材质差异
+
 ## 验证
 
 ```bash
@@ -172,10 +184,11 @@ npm test
 
 - `/site/` 目录直开：25 张卡片、29 个 `st-*` 全部升级、无页面错误、`template[page]` 已被 scsr 移除、页面内没有 `/docs/` 链接；
 - 皮肤 / 主题 / 对话框交互；
-- 共享 layout：首页两个 `o-page`（layout + 子页）、header 文字导航 / 主题 / 回到首页，且 header 无材质菜单，品牌标记与 favicon 一致；
+- 共享 layout：首页两个 `o-page`（layout + 子页）、header 文字导航 / 材质快捷菜单 / 主题 / 回到首页，品牌标记与 favicon 一致；
 - 组件文档：三层 `o-page`（site layout + docs layout + 组件页）、侧栏只有一份、每页 4 组以上示例、侧栏切换、移动端 picker 跟随当前页、上一页 / 下一页、阅读进度、页面切换动画；
 - 滚动外壳：`body` 不滚动、内部 `.site-scroll` 滚动、`overscroll-behavior-y: none`，header / 侧栏固定，阅读进度随内部滚动更新，路由切换复位；
 - 固定弹层：页面动画结束后 `transform` 必须回到 `none`，对话框遮罩覆盖整个视口；
+- 皮肤页改色：种子色实时重算 CSS token、加色生成四配对 token、刷新后持久化、恢复默认清空配置；
 - 文档首页 21 张卡片进入独立页；
 - 卡片右下角进入对应 `docs/{id}.html`，header 保持共享；
 - 禁用 JavaScript 时 `<noscript>` 兜底可见。

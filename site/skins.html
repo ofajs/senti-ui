@@ -6,7 +6,7 @@
   <title>皮肤 — Senti-UI</title>
   <meta
     name="description"
-    content="Senti-UI 皮肤页：同一批组件、同一套 M3 颜色，在 Android Material 3、Apple 毛玻璃、Microsoft Windows 11 与 shadcn 扁平材质之间切换。"
+    content="Senti-UI 皮肤页：同一批组件、同一套 M3 颜色，在 Android Material 3、Apple 毛玻璃、Microsoft Windows 11 与 shadcn 扁平材质之间切换；页面底部可用 Google Material Color Utilities 改种子色、覆盖角色与添加自定义颜色。"
   />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="皮肤 — Senti-UI" />
@@ -220,6 +220,322 @@
           font-size: 11px;
           color: var(--md-sys-color-on-surface);
         }
+
+        /* ---------- 颜色体系：改色 / 加色 ---------- */
+        .color-lab {
+          margin-top: 44px;
+          padding-top: 32px;
+          border-top: 1px solid var(--md-sys-color-outline-variant);
+        }
+        .color-lab-head {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 28px;
+        }
+        .color-lab-head h2 {
+          margin-top: 7px;
+          font-size: clamp(24px, 3.2vw, 34px);
+          line-height: 1.1;
+          letter-spacing: -0.035em;
+          font-weight: 700;
+        }
+        .color-lab-desc {
+          max-width: 520px;
+          padding-bottom: 3px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 12.5px;
+          line-height: 1.75;
+          text-align: right;
+        }
+        .color-lab-desc code {
+          color: var(--md-sys-color-on-surface);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 11px;
+        }
+        .color-lab-desc a {
+          color: var(--md-sys-color-primary);
+          text-decoration: none;
+          white-space: nowrap;
+        }
+        .color-lab-desc a:hover { text-decoration: underline; }
+        .color-lab-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+          gap: 16px;
+          align-items: start;
+          margin-top: 20px;
+        }
+        .color-panel,
+        .color-preview {
+          border: 1px solid var(--st-card-border, var(--md-sys-color-outline-variant));
+          border-radius: 20px;
+          /* 复用皮肤卡片材质：Apple 下自动变半透明 + backdrop blur */
+          background: var(--st-card-bg, var(--md-sys-color-surface-container-low));
+          -webkit-backdrop-filter: var(--st-card-backdrop-filter, none);
+          backdrop-filter: var(--st-card-backdrop-filter, none);
+          padding: 18px;
+        }
+        .color-seed-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+        .color-label {
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 12px;
+        }
+        .color-picker {
+          width: 44px;
+          height: 40px;
+          padding: 0;
+          border: 1px solid var(--md-sys-color-outline);
+          border-radius: 11px;
+          background: transparent;
+          cursor: pointer;
+        }
+        .color-picker::-webkit-color-swatch-wrapper { padding: 3px; }
+        .color-picker::-webkit-color-swatch { border: 0; border-radius: 8px; }
+        .hex-input {
+          width: 112px;
+          height: 40px;
+          padding: 0 11px;
+          border: 1px solid var(--md-sys-color-outline);
+          border-radius: 10px;
+          background: var(--md-sys-color-surface);
+          color: var(--md-sys-color-on-surface);
+          font: inherit;
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 12px;
+          letter-spacing: 0.02em;
+        }
+        .color-reset {
+          margin-left: auto;
+          height: 32px;
+          padding: 0 10px;
+          font-size: 11px;
+        }
+        .color-help {
+          margin-top: 9px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 11px;
+          line-height: 1.65;
+        }
+        .role-list {
+          display: grid;
+          gap: 6px;
+          margin-top: 16px;
+        }
+        .role-row {
+          display: grid;
+          grid-template-columns: 38px minmax(0, 1fr) auto auto;
+          gap: 10px;
+          align-items: center;
+          padding: 8px 10px;
+          border-radius: 12px;
+          background: var(--st-card-outlined-bg, var(--md-sys-color-surface));
+        }
+        .role-color {
+          width: 38px;
+          height: 32px;
+          padding: 2px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 8px;
+          background: transparent;
+          cursor: pointer;
+        }
+        .role-color::-webkit-color-swatch-wrapper { padding: 1px; }
+        .role-color::-webkit-color-swatch { border: 0; border-radius: 6px; }
+        .role-meta {
+          min-width: 0;
+          display: grid;
+          gap: 1px;
+        }
+        .role-meta strong {
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.01em;
+        }
+        .role-meta span {
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 10px;
+        }
+        .role-row code {
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
+          white-space: nowrap;
+        }
+        .role-reset {
+          height: 28px;
+          padding: 0 8px;
+          font-size: 10px;
+        }
+        .custom-head {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 12px;
+          margin-top: 20px;
+          padding-top: 16px;
+          border-top: 1px solid var(--md-sys-color-outline-variant);
+        }
+        .custom-head strong {
+          display: block;
+          font-size: 13px;
+          font-weight: 600;
+        }
+        .custom-head span {
+          display: block;
+          margin-top: 3px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 10.5px;
+          line-height: 1.5;
+        }
+        .custom-add {
+          flex: none;
+          height: 32px;
+          padding: 0 10px;
+          font-size: 11px;
+        }
+        .custom-list {
+          display: grid;
+          gap: 6px;
+          margin-top: 10px;
+        }
+        .custom-row {
+          display: grid;
+          grid-template-columns: 38px minmax(0, 1fr) auto auto;
+          gap: 10px;
+          align-items: center;
+          padding: 8px 10px;
+          border-radius: 12px;
+          background: var(--st-card-outlined-bg, var(--md-sys-color-surface));
+        }
+        .name-input {
+          width: 100%;
+          height: 32px;
+          padding: 0 9px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 8px;
+          background: var(--md-sys-color-surface-container-low);
+          color: var(--md-sys-color-on-surface);
+          font: inherit;
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 11px;
+        }
+        .custom-row code {
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
+          white-space: nowrap;
+        }
+        .custom-empty {
+          padding: 12px 10px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 11px;
+          line-height: 1.6;
+        }
+        .color-actions {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-height: 20px;
+          margin-top: 14px;
+        }
+        .color-status {
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 10.5px;
+          line-height: 1.5;
+        }
+        .preview-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+        }
+        .preview-head span {
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 9.5px;
+          font-weight: 700;
+          letter-spacing: 0.14em;
+        }
+        .preview-head code {
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
+        }
+        .preview-controls {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-top: 14px;
+        }
+        .preview-controls st-input { width: 100%; }
+        .token-list {
+          display: grid;
+          gap: 5px;
+          margin-top: 16px;
+          padding-top: 14px;
+          border-top: 1px solid var(--md-sys-color-outline-variant);
+        }
+        .token {
+          display: grid;
+          grid-template-columns: 14px minmax(0, 1fr) auto;
+          gap: 8px;
+          align-items: center;
+          min-width: 0;
+        }
+        .token i {
+          width: 14px;
+          height: 14px;
+          border-radius: 4px;
+          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline) 55%, transparent);
+        }
+        .token code {
+          overflow: hidden;
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .token span {
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
+        }
+        .custom-buttons {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-top: 14px;
+        }
+        .custom-buttons st-button {
+          height: 30px;
+          padding: 0 10px;
+          font-size: 10.5px;
+        }
+        .preview-note {
+          margin-top: 16px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 10.5px;
+          line-height: 1.65;
+        }
+        @media (max-width: 900px) {
+          .color-lab-head { display: grid; gap: 9px; }
+          .color-lab-desc { max-width: none; text-align: left; }
+          .color-lab-grid { grid-template-columns: minmax(0, 1fr); }
+        }
+        @media (max-width: 620px) {
+          .role-row,
+          .custom-row { grid-template-columns: 38px minmax(0, 1fr) auto; }
+          .role-row code,
+          .custom-row code { display: none; }
+          .color-reset { margin-left: 0; }
+        }
+
         @media (max-width: 860px) {
           .skin-grid { grid-template-columns: minmax(0, 1fr); }
         }
@@ -231,7 +547,8 @@
           <h1>选择材质</h1>
           <p class="lead">
             同一批组件、同一套 M3 颜色，只换材质。顶部快捷菜单保留 Android / Apple / Microsoft
-            三种常用风格；shadcn 作为额外的扁平材质，在这里选用。
+            三种常用风格；shadcn 作为额外的扁平材质，在这里选用。页面底部还可以改种子色、
+            覆盖单个角色，或添加自己的颜色变量。
           </p>
           <div class="current">
             当前材质 <strong>{{skinLabel}}</strong>
@@ -350,6 +667,116 @@
           种子色、error、success 与深浅色主题在四套材质下都保持一致。
           代码里用 <code>setSkin("windows")</code> 或 <code>&lt;html data-skin="windows"&gt;</code> 切换。
         </p>
+
+        <section class="color-lab" id="color" aria-labelledby="color-title">
+          <header class="color-lab-head">
+            <div>
+              <p class="kicker">COLOR / M3</p>
+              <h2 id="color-title">改色与加色</h2>
+            </div>
+            <p class="color-lab-desc">
+              颜色不归皮肤管。这里调用 Google Material Color Utilities 的 HCT 算法：
+              改种子色会重算整套 M3 角色；也可以单独覆盖某个角色，或添加
+              <code>brand</code> 这样的自定义颜色变量。
+              <a href="../packages/color/index.html" target="_blank" rel="noreferrer">完整颜色工具 ↗</a>
+            </p>
+          </header>
+
+          <div class="color-lab-grid">
+            <div class="color-panel">
+              <div class="color-seed-row">
+                <span class="color-label">种子色</span>
+                <input class="color-picker" type="color" :value="seed" aria-label="种子色" on:input="setSeed($event.target.value)" />
+                <input class="hex-input" type="text" :value="seed" spellcheck="false" aria-label="种子色 HEX" on:change="setSeed($event.target.value)" />
+                <st-button variant="text" class="color-reset" on:click="resetAll">恢复默认</st-button>
+              </div>
+              <p class="color-help">种子色驱动 primary / secondary / tertiary 与全部 surface 中性色；on-* 与 container 配对由色相和 M3 tone 规则自动推导。</p>
+
+              <div class="role-list">
+                <div class="role-row">
+                  <input class="role-color" type="color" :value="roleColors.primary" aria-label="primary 颜色" on:input="setRole('primary', $event.target.value)" />
+                  <div class="role-meta"><strong>primary</strong><span>{{overrides.primary ? '手动覆盖' : '由种子色生成'}}</span></div>
+                  <code>--md-sys-color-primary</code>
+                  <st-button variant="text" class="role-reset" on:click="resetRole('primary')">复位</st-button>
+                </div>
+                <div class="role-row">
+                  <input class="role-color" type="color" :value="roleColors.secondary" aria-label="secondary 颜色" on:input="setRole('secondary', $event.target.value)" />
+                  <div class="role-meta"><strong>secondary</strong><span>{{overrides.secondary ? '手动覆盖' : '由种子色生成'}}</span></div>
+                  <code>--md-sys-color-secondary</code>
+                  <st-button variant="text" class="role-reset" on:click="resetRole('secondary')">复位</st-button>
+                </div>
+                <div class="role-row">
+                  <input class="role-color" type="color" :value="roleColors.tertiary" aria-label="tertiary 颜色" on:input="setRole('tertiary', $event.target.value)" />
+                  <div class="role-meta"><strong>tertiary</strong><span>{{overrides.tertiary ? '手动覆盖' : '由种子色生成'}}</span></div>
+                  <code>--md-sys-color-tertiary</code>
+                  <st-button variant="text" class="role-reset" on:click="resetRole('tertiary')">复位</st-button>
+                </div>
+                <div class="role-row">
+                  <input class="role-color" type="color" :value="roleColors.error" aria-label="error 颜色" on:input="setRole('error', $event.target.value)" />
+                  <div class="role-meta"><strong>error</strong><span>{{overrides.error ? '手动覆盖' : '由种子色生成'}}</span></div>
+                  <code>--md-sys-color-error</code>
+                  <st-button variant="text" class="role-reset" on:click="resetRole('error')">复位</st-button>
+                </div>
+                <div class="role-row">
+                  <input class="role-color" type="color" :value="roleColors.success" aria-label="success 颜色" on:input="setRole('success', $event.target.value)" />
+                  <div class="role-meta"><strong>success</strong><span>{{overrides.success ? '手动覆盖' : '内置扩展绿色'}}</span></div>
+                  <code>--md-sys-color-success</code>
+                  <st-button variant="text" class="role-reset" on:click="resetRole('success')">复位</st-button>
+                </div>
+              </div>
+
+              <div class="custom-head">
+                <div>
+                  <strong>自定义颜色</strong>
+                  <span>追加 --name / --on-name / --name-container / --on-name-container，组件用 color="name" 消费。</span>
+                </div>
+                <st-button variant="outlined" class="custom-add" on:click="addCustom">＋ 添加颜色</st-button>
+              </div>
+              <div class="custom-list">
+                <o-fill :value="customs" fill-key="name">
+                  <div class="custom-row">
+                    <input class="role-color" type="color" :value="$data.color" aria-label="自定义颜色" on:input="$host.setCustomColor($index, $event.target.value)" />
+                    <input class="name-input" type="text" :value="$data.name" placeholder="brand" maxlength="32" spellcheck="false" aria-label="颜色变量名" on:change="$host.setCustomName($index, $event.target.value)" />
+                    <code :text="'--' + $data.name"></code>
+                    <st-button variant="text" class="role-reset" on:click="$host.removeCustom($index)">移除</st-button>
+                  </div>
+                </o-fill>
+                <o-if :value="customs.length === 0">
+                  <p class="custom-empty">还没有自定义颜色。添加一个变量，就能在任意组件上写 <code>color="brand"</code>。</p>
+                </o-if>
+              </div>
+
+              <div class="color-actions">
+                <span class="color-status">{{colorStatus}}</span>
+              </div>
+            </div>
+
+            <aside class="color-preview">
+              <div class="preview-head"><span>LIVE PREVIEW</span><code>current theme</code></div>
+              <div class="preview-controls">
+                <st-button>Primary</st-button>
+                <st-button color="error">Error</st-button>
+                <st-button color="success">Success</st-button>
+                <st-input placeholder="Input"></st-input>
+              </div>
+              <div class="token-list">
+                <div class="token"><i :style.background="'var(--md-sys-color-primary)'"></i><code>--md-sys-color-primary</code><span>{{roleColors.primary}}</span></div>
+                <div class="token"><i :style.background="'var(--md-sys-color-error)'"></i><code>--md-sys-color-error</code><span>{{roleColors.error}}</span></div>
+                <div class="token"><i :style.background="'var(--md-sys-color-success)'"></i><code>--md-sys-color-success</code><span>{{roleColors.success}}</span></div>
+                <o-fill :value="customTokens" fill-key="name">
+                  <div class="token"><i :style.background="$data.hex"></i><code :text="$data.name"></code><span>{{$data.hex}}</span></div>
+                </o-fill>
+              </div>
+              <div class="custom-buttons">
+                <o-fill :value="customs" fill-key="name">
+                  <st-button variant="outlined" attr:color="$data.name">{{$data.name}}</st-button>
+                </o-fill>
+              </div>
+              <p class="preview-note">改动即时生效，并写入 localStorage；同域其他页面刷新后使用同一套配色。</p>
+            </aside>
+          </div>
+        </section>
+
       </main>
 
       <script>
@@ -358,9 +785,22 @@
         export default async () => ({
           data: {
             skin: "m3",
+            seed: "#0061A4",
+            overrides: {},
+            customs: [],
+            roleColors: {
+              primary: "#0061A4",
+              secondary: "#565E71",
+              tertiary: "#725572",
+              error: "#B3261E",
+              success: "#006E1C",
+            },
+            customTokens: [],
+            colorStatus: "",
           },
           ready() {
             this.syncSkin();
+            this.initColorLab();
             this._observer = new MutationObserver(() => this.syncSkin());
             this._observer.observe(document.documentElement, {
               attributes: true,
@@ -387,6 +827,156 @@
                 localStorage.getItem("st-skin") ||
                 "m3";
             },
+            async initColorLab() {
+              let tries = 0;
+              while (!window.__site?.applyTheme && tries++ < 300) {
+                await new Promise((resolve) => setTimeout(resolve, 20));
+              }
+              if (!window.__site?.applyTheme) {
+                this.colorStatus = "颜色模块加载失败，请刷新重试。";
+                return;
+              }
+              try {
+                const saved = JSON.parse(localStorage.getItem("st-color-config") || "null");
+                if (saved && /^#[0-9a-fA-F]{6}$/.test(saved.seed || "")) {
+                  this.seed = saved.seed.toLowerCase();
+                  this.overrides = saved.overrides || {};
+                  this.customs = Array.isArray(saved.customs)
+                    ? saved.customs.map((c) => ({
+                        name: String(c.name || ""),
+                        color: String(c.color || "#7FDBFF").toLowerCase(),
+                      }))
+                    : [];
+                }
+              } catch {}
+              this.applyColor(false);
+              if (!this.colorStatus) this.colorStatus = "已载入本域配色，修改会即时保存。";
+            },
+            applyColor(persist = true) {
+              const api = window.__site;
+              if (!api?.applyTheme) return;
+              const seed = String(this.seed || "").trim().toLowerCase();
+              if (!/^#[0-9a-f]{6}$/.test(seed)) {
+                this.colorStatus = "种子色格式应为 #RRGGBB";
+                return;
+              }
+              this.seed = seed;
+
+              const overrides = {};
+              for (const role of ["primary", "secondary", "tertiary", "error", "success"]) {
+                const value = String(this.overrides?.[role] || "").toLowerCase();
+                if (/^#[0-9a-f]{6}$/.test(value)) overrides[role] = value;
+              }
+              this.overrides = overrides;
+
+              const customs = this.customs.map((c) => ({
+                name: String(c.name || "").trim(),
+                color: String(c.color || "").toLowerCase(),
+              }));
+              const customsObj = Object.fromEntries(
+                customs
+                  .filter((c) => c.name && /^#[0-9a-f]{6}$/.test(c.color))
+                  .map((c) => [c.name, c.color])
+              );
+
+              api.applyTheme(seed, overrides, customsObj);
+              const auto = api.generateM3Theme(seed).light;
+              this.roleColors = {
+                primary: (overrides.primary || auto.primary).toLowerCase(),
+                secondary: (overrides.secondary || auto.secondary).toLowerCase(),
+                tertiary: (overrides.tertiary || auto.tertiary).toLowerCase(),
+                error: (overrides.error || auto.error).toLowerCase(),
+                success: (overrides.success || auto.success).toLowerCase(),
+              };
+              this.customTokens = Object.entries(api.expandCustoms(customsObj).light).map(
+                ([name, hex]) => ({ name, hex: String(hex).toLowerCase() })
+              );
+
+              if (persist) {
+                localStorage.setItem(
+                  "st-color-config",
+                  JSON.stringify({ seed, overrides, customs })
+                );
+                localStorage.setItem(
+                  "st-theme-css",
+                  api.themeToCss(seed, overrides, customsObj)
+                );
+                this.colorStatus = "已应用，并保存到本域配色。";
+              }
+            },
+            setSeed(value) {
+              const next = String(value || "").trim().toLowerCase();
+              if (!/^#[0-9a-f]{6}$/.test(next)) {
+                this.colorStatus = "种子色格式应为 #RRGGBB";
+                return;
+              }
+              this.seed = next;
+              this.applyColor();
+            },
+            setRole(role, color) {
+              const next = String(color || "").toLowerCase();
+              if (!/^#[0-9a-f]{6}$/.test(next)) return;
+              this.overrides = { ...this.overrides, [role]: next };
+              this.applyColor();
+            },
+            resetRole(role) {
+              const next = { ...this.overrides };
+              delete next[role];
+              this.overrides = next;
+              this.applyColor();
+            },
+            addCustom() {
+              let index = 1;
+              let name = "brand";
+              while (this.customs.some((c) => c.name === name)) {
+                index += 1;
+                name = "brand-" + index;
+              }
+              this.customs = [...this.customs, { name, color: "#ff7a59" }];
+              this.applyColor();
+            },
+            setCustomName(index, name) {
+              let next = String(name || "")
+                .trim()
+                .replace(/[A-Z]/g, (c) => "-" + c.toLowerCase())
+                .replace(/[^a-z0-9-]/g, "-")
+                .replace(/-+/g, "-")
+                .replace(/^-|-$/g, "");
+              if (!next) next = "custom";
+              const base = next;
+              let n = 2;
+              while (this.customs.some((c, i) => i !== index && c.name === next)) {
+                next = base + "-" + n++;
+              }
+              this.customs = this.customs.map((c, i) =>
+                i === index ? { ...c, name: next } : c
+              );
+              this.applyColor();
+            },
+            setCustomColor(index, color) {
+              const next = String(color || "").toLowerCase();
+              if (!/^#[0-9a-f]{6}$/.test(next)) return;
+              this.customs = this.customs.map((c, i) =>
+                i === index ? { ...c, color: next } : c
+              );
+              this.applyColor();
+            },
+            removeCustom(index) {
+              this.customs = this.customs.filter((_, i) => i !== index);
+              this.applyColor();
+            },
+            resetAll() {
+              this.seed = "#0061A4";
+              this.overrides = {};
+              this.customs = [];
+              this.applyColor(false);
+              localStorage.removeItem("st-color-config");
+              const api = window.__site;
+              if (api?.themeToCss) {
+                localStorage.setItem("st-theme-css", api.themeToCss("#0061A4", {}, {}));
+              }
+              this.colorStatus = "已恢复默认 M3 配色。";
+            },
             use(id) {
               if (window.__site) window.__site.setSkin(id);
               else {
@@ -406,8 +996,23 @@
   <script type="module">
     import { setThemeMode, getThemeMode } from "../packages/color/st-theme-mode.js";
     import { setSkin, getSkin } from "../packages/skin/st-skin.js";
+    import {
+      applyTheme,
+      themeToCss,
+      generateM3Theme,
+      expandCustoms,
+    } from "../packages/color/m3-theme.js";
 
-    window.__site = { setThemeMode, getThemeMode, setSkin, getSkin };
+    window.__site = {
+      setThemeMode,
+      getThemeMode,
+      setSkin,
+      getSkin,
+      applyTheme,
+      themeToCss,
+      generateM3Theme,
+      expandCustoms,
+    };
     window.__siteReady = true;
   </script>
 </body>

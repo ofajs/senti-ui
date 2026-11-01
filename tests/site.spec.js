@@ -957,7 +957,14 @@ test("文档示例容器不裁剪下拉弹层", async ({ page }) => {
 
 test("文档侧栏按使用频率排序：Ripple 等低频组件靠后", async ({ page }) => {
   await page.goto("/site/docs/input.html");
-  await page.waitForTimeout(1200);
+  await page.waitForFunction(
+    () =>
+      [...document.querySelectorAll("o-page")].some(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side")
+      ),
+    null,
+    { timeout: 30_000 }
+  );
   const state = await page.evaluate(() => {
     const docs = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side")
@@ -976,4 +983,82 @@ test("文档侧栏按使用频率排序：Ripple 等低频组件靠后", async (
   expect(labels[1]).toBe("Button");
   expect(labels.indexOf("Ripple")).toBeGreaterThan(labels.indexOf("Navigation"));
   expect(labels.indexOf("Ripple")).toBeGreaterThan(labels.indexOf("Tooltip"));
+});
+
+test("皮肤页：M3 改色与加色（种子色 / 自定义变量 / 持久化 / 重置）", async ({ page }) => {
+  await page.goto("/site/skins.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await page.locator(".color-lab").waitFor({ state: "visible" });
+  await expect(page.locator(".role-row")).toHaveCount(5);
+
+  // 面板复用皮肤卡片材质：Apple 下是半透明 + backdrop blur
+  await page.evaluate(() => {
+    document.documentElement.dataset.skin = "apple";
+  });
+  await expect
+    .poll(() =>
+      page.locator(".color-panel").evaluate((el) => getComputedStyle(el).backdropFilter)
+    )
+    .toContain("blur");
+  await page.evaluate(() => {
+    document.documentElement.dataset.skin = "m3";
+  });
+
+  // 改种子色：即时重算 CSS 变量，并写入 st-color-config
+  const seed = page.locator(".hex-input");
+  await seed.fill("#B3261E");
+  await seed.blur();
+  await expect
+    .poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--md-sys-color-primary").trim()))
+    .not.toBe("#0061a4");
+  const savedSeed = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("st-color-config") || "{}")
+  );
+  expect(savedSeed.seed).toBe("#b3261e");
+  await expect(page.locator(".color-status")).toContainText("已应用");
+
+  // 加色：追加 brand 四配对 token，并能在组件里用 color="brand"
+  await page.locator(".custom-add").click();
+  await expect(page.locator(".custom-row")).toHaveCount(1);
+  await expect(page.locator(".custom-row code")).toHaveText("--brand");
+  await expect(page.locator(".token-list .token")).toHaveCount(7); // 3 角色 + 4 自定义
+  await expect(page.locator(".custom-buttons st-button")).toContainText("brand");
+  expect(
+    await page.evaluate(() =>
+      getComputedStyle(document.documentElement).getPropertyValue("--brand").trim()
+    )
+  ).toMatch(/^#[0-9a-f]{6}$/);
+
+  // 改名 + 换色
+  const name = page.locator(".name-input");
+  await name.fill("accent");
+  await name.blur();
+  await expect(page.locator(".custom-row code")).toHaveText("--accent");
+  await page.locator(".custom-row .role-color").evaluate((input) => {
+    input.value = "#00aa66";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  await expect
+    .poll(() =>
+      page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--accent").trim())
+    )
+    .toMatch(/^#[0-9a-f]{6}$/);
+
+  // 刷新后配置仍在
+  await page.reload({ waitUntil: "networkidle" });
+  await page.locator(".color-lab").waitFor({ state: "visible" });
+  await expect(page.locator(".custom-row")).toHaveCount(1);
+  await expect(page.locator(".hex-input")).toHaveValue("#b3261e");
+  await expect(page.locator(".name-input")).toHaveValue("accent");
+
+  // 恢复默认
+  await page.locator(".color-reset").click();
+  await expect(page.locator(".custom-row")).toHaveCount(0);
+  await expect(page.locator(".hex-input")).toHaveValue("#0061a4");
+  await expect(page.locator(".color-status")).toContainText("已恢复默认");
+  expect(await page.evaluate(() => localStorage.getItem("st-color-config"))).toBeNull();
+  expect(
+    await page.evaluate(() =>
+      getComputedStyle(document.documentElement).getPropertyValue("--brand").trim()
+    )
+  ).toBe("");
 });

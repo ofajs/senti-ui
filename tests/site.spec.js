@@ -58,6 +58,7 @@ test("官网首页：25 张卡片 / 29 个标签 / 共享 SCSR 布局，无页�
       pages: pages.length,
       sharedHeader: !!layout,
       heading: sr.querySelector("h1").textContent.trim(),
+      eyebrow: sr.querySelector(".eyebrow").textContent.replace(/\s+/g, " ").trim(),
       sections: [...sr.querySelectorAll("main section[id]")].map((el) => el.id),
       path: location.pathname,
       templateRemoved: !document.querySelector("o-app template[page]"),
@@ -77,6 +78,7 @@ test("官网首页：25 张卡片 / 29 个标签 / 共享 SCSR 布局，无页�
   expect(state.pages).toBe(2);
   expect(state.sharedHeader).toBe(true);
   expect(state.heading).toBe("语义组件，任意材质。");
+  expect(state.eyebrow).toContain("AI-first 前端框架");
   expect(state.tags).toHaveLength(29);
   expect(state.notReady).toEqual([]);
   expect(state.path).toBe("/site/");
@@ -484,6 +486,7 @@ test("手记：目录、首篇文章与共享 header", async ({ page }) => {
       h1: sr.querySelector(".note-hero h1").textContent.trim(),
       sections: sr.querySelectorAll(".note-body h2").length,
       principles: sr.querySelectorAll(".principles li").length,
+      body: sr.querySelector(".note-body").textContent,
       navActive: [...layout.shadowRoot.querySelectorAll(".layout-nav st-button.active")].map((b) =>
         b.textContent.trim()
       ),
@@ -496,6 +499,7 @@ test("手记：目录、首篇文章与共享 header", async ({ page }) => {
   expect(article.h1).toBe("为什么要开发 Senti-UI");
   expect(article.sections).toBe(5);
   expect(article.principles).toBe(3);
+  expect(article.body).toContain("更适合 AI 的前端框架");
   expect(article.navActive).toEqual(["手记"]);
   expect(article.headerCount).toBe(1);
 

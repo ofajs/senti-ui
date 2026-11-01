@@ -1066,3 +1066,47 @@ test("皮肤页：M3 改色与加色（种子色 / 自定义变量 / 持久化 /
     )
   ).toBe("");
 });
+
+test("从手记切到文档：二级 layout 的 list / select 依赖随父页加载", async ({ page }) => {
+  await page.goto("/site/notes/index.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll("o-page")].some(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
+    )
+  );
+  await page.evaluate(() => {
+    const layout = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
+    );
+    [...layout.shadowRoot.querySelectorAll(".layout-nav st-button")]
+      .find((b) => b.textContent.trim() === "文档")
+      .click();
+  });
+  await page.waitForURL("**/site/docs/index.html", { timeout: 30_000 });
+  await page.waitForFunction(() => {
+    const docs = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side")
+    );
+    return !!(docs && docs.shadowRoot.querySelector(".docs-side st-list")?.shadowRoot);
+  });
+
+  const state = await page.evaluate(() => {
+    const docs = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side")
+    );
+    const sr = docs.shadowRoot;
+    const list = sr.querySelector(".docs-side st-list");
+    const item = sr.querySelector(".docs-side st-list-item");
+    const picker = sr.querySelector(".docs-picker");
+    return {
+      listUpgraded: !!list?.shadowRoot,
+      items: sr.querySelectorAll(".docs-side st-list-item").length,
+      firstItemHeight: item?.getBoundingClientRect().height || 0,
+      pickerUpgraded: !!picker?.shadowRoot,
+    };
+  });
+  expect(state.listUpgraded).toBe(true);
+  expect(state.items).toBe(22);
+  expect(state.firstItemHeight).toBeGreaterThan(20);
+  expect(state.pickerUpgraded).toBe(true);
+});

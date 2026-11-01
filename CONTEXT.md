@@ -206,6 +206,8 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 54. **`{{...}}` 在 `<pre>` / `<code>` 内不会被解析（ofa 为代码示例保留字面量）**——官网颜色实验室的 `o-fill` 自定义颜色行用 `<code>{{$data.name}}</code>` 显示 token，实际渲染出字面量 `{{$data.name}}`；同一行的 `<span>{{$data.hex}}</span>` 与 `<st-button>{{$data.name}}</st-button>` 都正常。正确写法：需要动态文本的 `<code>` 元素改用 `:text` 指令（如 `<code :text="'--' + $data.name"></code>`），不要把模板表达式写在 code/pre 的文本节点里。
 
+55. **SCSR 站内跳转只解析目标页的 `template[page]`，目标页 body 里的 `<l-m>` 不会执行**——从手记/皮肤页切到文档时，文档页 body 明明有 `list/list.html` 与 `select/select.html` 的 l-m，但左侧目录只显示分组标题、`st-list-item` 全空（组件未升级）；因为这次导航没有重新解析目标文档 body，`l-m` 标签没有机会运行。正确写法：**父布局自己用到的组件依赖必须在父页模板里再声明一次**——`site/docs/layout.html` 顶部已补 `list` / `select` 的 `<l-m>`。凡是“共享 layout + SCSR 导航”的场景，不要假设入口页加载过的组件在另一栏目入口时仍然存在。
+
 54. **自定义元素构造/ready 期间不能 setAttribute 宿主属性**——组件 factory 里的 `ready` 在 `document.createElement("st-xxx")` 时也可能执行；此时给宿主 `setAttribute`（role/aria/label 等）会抛 `NotSupportedError: The result must not have attributes`，命令式工具（alert 的 `createElement("st-dialog")`）直接挂掉。正确写法：宿主属性放到 `queueMicrotask` 里写，或移到 `attached`；内部 shadow 元素不受此限制。需要初始状态的组件（progress）用 `_a11yReady` 标志跳过构造期的属性写入，微任务里再统一应用。
 55. **内部原生控件的可访问名称不会自动来自 slot 文本**——`.native` 与 label 是兄弟节点，`aria-label` 必须显式同步；宿主上的 `aria-label`/`title` 也要转发给内部控件，否则无障碍树里是空名 button/checkbox。统一用 `packages/a11y/a11y.js` 的 `syncAccessibleName(host, control, { fromSlot })`，并在 detached 里清理 observer。
 

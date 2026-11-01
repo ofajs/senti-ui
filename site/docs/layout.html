@@ -15,6 +15,11 @@
       <template page>
         <link rel="stylesheet" href="../docs.css" />
 
+        <!-- 文档 layout 自己会用到 list / select；从手记、皮肤等其他栏目进入文档时，
+             目标页 body 里的 <l-m> 不会被执行，所以依赖必须在父页里再声明一次。 -->
+        <l-m src="../../packages/list/list.html"></l-m>
+        <l-m src="../../packages/select/select.html"></l-m>
+
         <div class="docs-shell">
           <aside class="docs-side" aria-label="组件文档目录">
             <p class="side-title">Components · 21</p>

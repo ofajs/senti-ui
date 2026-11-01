@@ -844,6 +844,36 @@ test("文档示例容器在 Apple 下透出环境光", async ({ page }) => {
   await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();
 });
 
+test("文档示例容器不裁剪下拉弹层", async ({ page }) => {
+  await page.goto("/site/docs/select.html");
+  await page.waitForTimeout(1500);
+  const state = await page.evaluate(() => {
+    const find = (root, sel) => {
+      const d = root.querySelector(sel);
+      if (d) return d;
+      for (const el of root.querySelectorAll("*")) {
+        if (el.shadowRoot) {
+          const r = find(el.shadowRoot, sel);
+          if (r) return r;
+        }
+      }
+      return null;
+    };
+    const demo = find(document, ".demo");
+    const top = demo.querySelector(".demo-top");
+    const stage = demo.querySelector(".demo-stage");
+    return {
+      overflow: getComputedStyle(demo).overflow,
+      topRadius: getComputedStyle(top).borderTopLeftRadius,
+      stageRadius: getComputedStyle(stage).borderBottomLeftRadius,
+    };
+  });
+  // 弹层（st-select / st-menu）必须能溢出示例容器，圆角由内层自己收口
+  expect(state.overflow).toBe("visible");
+  expect(parseFloat(state.topRadius)).toBeGreaterThan(10);
+  expect(parseFloat(state.stageRadius)).toBeGreaterThan(10);
+});
+
 test("文档侧栏按使用频率排序：Ripple 等低频组件靠后", async ({ page }) => {
   await page.goto("/site/docs/input.html");
   await page.waitForTimeout(1200);

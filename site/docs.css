@@ -74,7 +74,9 @@ code { font-family: ui-monospace, Menlo, monospace; }
   margin-top: 22px;
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: var(--st-card-radius, 16px);
-  overflow: hidden;
+  /* 不裁剪：下拉/菜单等弹层需要溢出示例容器，否则会被按容器高度截断。
+     圆角由内部 .demo-top / .demo-stage / .demo-content 自己收口。 */
+  overflow: visible;
   /* 示例容器只做透明外壳，本身不加毛玻璃：父级的 backdrop-filter 会预先模糊背景，
      让示例里组件自己的毛玻璃看不出效果。透明底让组件材质直接叠在环境光上。 */
   background: transparent;
@@ -86,6 +88,7 @@ code { font-family: ui-monospace, Menlo, monospace; }
   gap: 10px;
   padding: 8px 12px;
   border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: calc(var(--st-card-radius, 16px) - 1px) calc(var(--st-card-radius, 16px) - 1px) 0 0;
   background: rgb(from var(--md-sys-color-surface-container-low) r g b / 0.5);
 }
 .demo-top code { color: var(--md-sys-color-on-surface-variant); font-size: 10px; }
@@ -112,6 +115,7 @@ code { font-family: ui-monospace, Menlo, monospace; }
   gap: 10px;
   min-height: 160px;
   padding: 30px 24px;
+  border-radius: 0 0 calc(var(--st-card-radius, 16px) - 1px) calc(var(--st-card-radius, 16px) - 1px);
   background-color: transparent;
   background-image: radial-gradient(
     circle at 1px 1px,
@@ -493,6 +497,7 @@ code { font-family: ui-monospace, Menlo, monospace; }
   gap: 16px;
   width: 100%;
   padding: 26px 24px;
+  border-radius: 0 0 calc(var(--st-card-radius, 16px) - 1px) calc(var(--st-card-radius, 16px) - 1px);
   background-color: transparent;
   background-image: radial-gradient(
     circle at 1px 1px,

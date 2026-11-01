@@ -218,14 +218,7 @@
             min-height: calc(100vh - 59px);
             /* 页面本身透明，环境光才能从卡片/面板后面透出来 */
             background: transparent;
-            animation: st-page-in 0.24s ease;
-          }
-          @keyframes st-page-in {
-            from { transform: translateY(8px); }
-            to { transform: none; }
-          }
-          @media (prefers-reduced-motion: reduce) {
-            ::slotted(o-page) { animation: none; }
+            /* 切页动画（淡入 + 上移）统一在 app-config.js 的 pageAnime 里配置 */
           }
 
           .read-progress {

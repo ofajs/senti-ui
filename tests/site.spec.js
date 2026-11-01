@@ -283,11 +283,12 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(state.sections).toBeGreaterThanOrEqual(4);
   expect(state.demos).toBeGreaterThanOrEqual(4);
   expect(state.pager).toBe(true);
-  expect(state.animation).toContain("doc-page-in");
+  // 切页动画只在 app-config.js 的 pageAnime 里，父页不再有 CSS 动画
+  expect(state.animation).toBe("none");
   expect(state.slotContainer).toBe("relative");
   expect(state.legacyDocsLinks).toBe(0);
 
-  // 侧栏切换：真实路径 + 布局/侧栏不销毁 + active 更新
+  // 侧栏切换：真实路径 + 布局/侧栏不销毁 + active 更新 + pageAnime 入场
   await page.evaluate(() => {
     const docs = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side")
@@ -302,6 +303,9 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
     const docs = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side")
     );
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
     return {
       pages: [...document.querySelectorAll("o-page")].length,
       sidebars: [...document.querySelectorAll("o-page")].filter(
@@ -311,12 +315,23 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
         x.textContent.replace(/\s+/g, " ").trim()
       ),
       pickerValue: docs.shadowRoot.querySelector(".docs-picker").value,
+      // pageAnime 三态由 app-config.js 注入 o-page 内联样式
+      transition: child.style.transition,
+      transform: child.style.transform,
+      opacity: child.style.opacity,
+      animation: getComputedStyle(child).animationName,
     };
   });
   expect(after.pages).toBe(3);
   expect(after.sidebars).toBe(1);
   expect(after.active[0]).toContain("Slider");
   expect(after.pickerValue).toBe("slider");
+  // 上移淡入由 pageAnime 的 transform + opacity transition 完成
+  expect(after.transition).toContain("transform");
+  expect(after.transition).toContain("opacity");
+  expect(after.transform).toBe("none");
+  expect(after.opacity).toBe("1");
+  expect(after.animation).toBe("none");
 
   // 上一篇 / 下一篇（olink）：保持 SCSR 布局
   await page.locator(".pager-next").click();

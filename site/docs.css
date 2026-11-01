@@ -421,14 +421,7 @@ code { font-family: ui-monospace, Menlo, monospace; }
   display: block;
   min-height: 70vh;
   background: transparent;
-  animation: doc-page-in 0.24s ease;
-}
-@keyframes doc-page-in {
-  from { transform: translateY(7px); }
-  to { transform: none; }
-}
-@media (prefers-reduced-motion: reduce) {
-  ::slotted(o-page) { animation: none; }
+  /* 切页动画（淡入 + 上移）统一在 app-config.js 的 pageAnime 里配置 */
 }
 
 /* 组件页内的用法分区 */

@@ -471,7 +471,7 @@ test("手记：目录、首篇文章与共享 header", async ({ page }) => {
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".note-page")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".note-body h2").length === 6);
+    return !!(child && child.shadowRoot.querySelectorAll(".note-body h2").length === 5);
   });
 
   const article = await page.evaluate(() => {
@@ -494,7 +494,7 @@ test("手记：目录、首篇文章与共享 header", async ({ page }) => {
   });
   expect(article.title).toContain("为什么要开发 Senti-UI");
   expect(article.h1).toBe("为什么要开发 Senti-UI");
-  expect(article.sections).toBe(6);
+  expect(article.sections).toBe(5);
   expect(article.principles).toBe(3);
   expect(article.navActive).toEqual(["手记"]);
   expect(article.headerCount).toBe(1);

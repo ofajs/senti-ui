@@ -223,10 +223,16 @@
 
           .read-progress {
             display: none;
-            position: relative;
-            flex: none;
+            /* 绝对定位浮在 header 下边框外侧（内容区顶部），不参与布局：
+               以前是 .shell 的 flex 项，home ↔ docs 切换时这条 3px 进度条一显一隐，
+               会把整页（连同正在淡出的上一页）挤动 3px，看起来像“先偏一下再动画”。 */
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -4px;
             z-index: 30;
             height: 3px;
+            pointer-events: none;
           }
           .read-progress.show { display: block; }
           .read-progress st-progress {
@@ -333,11 +339,11 @@
               </st-tooltip>
             </div>
           </div>
-        </header>
 
-        <div class="read-progress" class:show="page === 'docs'">
-          <st-progress attr:value="readProgress"></st-progress>
-        </div>
+          <div class="read-progress" class:show="page === 'docs'">
+            <st-progress attr:value="readProgress"></st-progress>
+          </div>
+        </header>
 
         <div class="site-scroll" id="site-scroll">
           <main class="site-main"><slot></slot></main>

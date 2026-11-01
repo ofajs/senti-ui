@@ -107,7 +107,7 @@ site/
   - 可折叠的示例代码
   - 指向 GitHub README 的入口
 - 左侧粘性目录只在 `docs/layout.html` 维护一次，用 `st-list` + `st-list-item` 搭；父页在 `routerChange` 里按当前 URL 高亮，移动端自动显示 `st-select` 组件切换器
-- 页面内用 `st-progress` 做阅读进度条、`st-icon-button` + `st-tooltip` 做回到顶部
+- 页面内用 `st-progress` 做阅读进度条、`st-icon-button` + `st-tooltip` 做回到顶部。**进度条必须绝对定位**（`position: absolute; bottom: -4px`，放在 header 内）：它只在文档页出现，如果按普通 flex 项显隐，home ↔ docs 切换时会多占/少占 3px，把整页（包括正在淡出的上一页）挤动 3px——表现就是“切页前内容先偏一下，再开始动画”；
 - header 与首页完全共用；主题 / 材质切换在 header 中，只影响按钮 / 输入框
 - 仍然是 SCSR：每个组件页都是可直达、可刷新、可分享的真实文档
 - 页面切换有淡入 + 轻微上滑动画；header / 阅读进度常驻，内容区不因侧栏出现而重排

@@ -349,6 +349,50 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(errors).toEqual([]);
 });
 
+test("切页不挤动内容区：阅读进度条显隐不改变页面顶边", async ({ page }) => {
+  const metrics = () =>
+    page.evaluate(() => {
+      const layout = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
+      );
+      const sr = layout.shadowRoot;
+      const bar = sr.querySelector(".read-progress");
+      return {
+        mainTop: sr.querySelector(".site-main").getBoundingClientRect().top,
+        barVisible: getComputedStyle(bar).display !== "none",
+        barTop: bar.getBoundingClientRect().top,
+        headerBottom: sr.querySelector(".top").getBoundingClientRect().bottom,
+      };
+    });
+
+  await page.goto("/site/", { waitUntil: "networkidle", timeout: 60_000 });
+  await waitHome(page);
+  const home = await metrics();
+  expect(home.barVisible).toBe(false);
+
+  await page.evaluate(() => {
+    const layout = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
+    );
+    [...layout.shadowRoot.querySelectorAll(".layout-nav st-button")]
+      .find((b) => b.textContent.includes("文档"))
+      .click();
+  });
+  await page.waitForURL("**/site/docs/index.html", { timeout: 30_000 });
+  await page.waitForFunction(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
+    );
+    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 21);
+  });
+  const docs = await metrics();
+
+  // 进度条出现（docs 页），但它是绝对定位：内容区顶边不动，页面不会被挤 3px
+  expect(docs.barVisible).toBe(true);
+  expect(docs.mainTop).toBe(home.mainTop);
+  expect(docs.barTop).toBeCloseTo(docs.headerBottom, 0);
+});
+
 test("组件文档首页：21 张卡片可进入独立页", async ({ page }) => {
   await page.goto("/site/docs/index.html", { waitUntil: "networkidle", timeout: 60_000 });
   await page.waitForFunction(() => {

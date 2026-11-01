@@ -98,7 +98,11 @@ CSS 变量可以继承穿透。所有规则写在 `[data-skin="名称"]` 下，�
 | `--st-focus-ring-offset` | `2px` | 按钮焦点环偏移 |
 | `--st-focus-ring-color` | `on-surface` | 按钮焦点环颜色 |
 | `--st-field-focus-ring-opacity` | `1` | 输入框内嵌焦点环透明度（0 = 用外侧光圈） |
-| `--st-field-focus-shadow` | 回退 `--st-field-shadow` | 输入框聚焦外侧光圈 |
+| `--st-field-focus-shadow` | `0 0 0 0 transparent` | 输入框聚焦时叠加的中性皮肤阴影 |
+| `--st-field-focus-color` | `var(--md-sys-color-primary)` | 无 `color` 属性时的默认焦点色；有 `color` 时语义色优先 |
+| `--st-field-focus-gap` / `--st-field-focus-gap-color` | `0px` / `transparent` | 焦点色环与控件的间隙 |
+| `--st-field-focus-glow-spread` / `--st-field-focus-glow-alpha` | `0px` / `0%` | 焦点外发光半径 / 透明度（颜色由组件用 `--st-accent` 组合） |
+| `--st-field-focus-underline-height` / `--st-field-focus-underline-alpha` | `0px` / `100%` | 焦点底线高度 / 透明度 |
 | `--st-field-underline-color` | 回退语义色 | filled 输入框聚焦底线（transparent = 关闭） |
 | `--st-state-hover` | `0.08` | hover state layer |
 | `--st-state-press` | `0.12` | active state layer |

@@ -61,8 +61,10 @@
   --st-focus-ring-width: 4px;
   --st-focus-ring-offset: 1px;
   --st-focus-ring-color: color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
-  --st-field-focus-shadow: 0 0 0 4px color-mix(in srgb, var(--md-sys-color-primary) 22%, transparent),
-    var(--st-field-shadow);
+  /* 焦点外发光：颜色由组件用 --st-accent 组合，皮肤只提供几何与透明度 */
+  --st-field-focus-shadow: var(--st-field-shadow);
+  --st-field-focus-glow-spread: 4px;
+  --st-field-focus-glow-alpha: 22%;
   --st-field-focus-ring-opacity: 0;
   --st-field-underline-color: transparent;
 

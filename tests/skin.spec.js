@@ -132,6 +132,42 @@ test("windows 皮肤：4px 控件 / 8px 表面 / Mica + Acrylic", async ({ page 
   expect(state.fillAlpha).toBe("100%");
 });
 
+test("皮肤焦点材质跟随 color 语义色：error 变红而不是主题主色", async ({ page }) => {
+  const isRed = (value) => {
+    const colors = value.match(/rgba?\([^)]+\)|color\(srgb [^)]+\)/g) || [];
+    return colors.some((c) => {
+      const n = c.match(/[\d.]+/g).map(Number);
+      const [r, g, b] = c.startsWith("color(") ? n.slice(0, 3).map((v) => v * 255) : n.slice(0, 3);
+      return r > g * 2 && r > b * 2;
+    });
+  };
+
+  for (const skin of ["apple", "windows", "shadcn"]) {
+    await setSkin(page, skin);
+    await page.waitForTimeout(500);
+    const state = await page.evaluate(() => {
+      const input = document.querySelector("#input-basic");
+      input.setAttribute("color", "error");
+      input.shadowRoot.querySelector("input").focus();
+      return new Promise((resolve) =>
+        setTimeout(() => {
+          const ring = input.shadowRoot.querySelector(".outline-ring");
+          resolve({
+            shadow: getComputedStyle(input).boxShadow,
+            ringColor: getComputedStyle(ring).borderColor,
+            ringOpacity: getComputedStyle(ring).opacity,
+          });
+        }, 350)
+      );
+    });
+
+    // 内嵌描边在皮肤里可能关闭，但皮肤自己的焦点材质必须消费 accent 语义色
+    expect(isRed(state.ringColor)).toBe(true);
+    expect(isRed(state.shadow)).toBe(true);
+    expect(state.ringOpacity).toBe("0");
+  }
+});
+
 test("换肤不破坏 M3 语义色：color=error 仍然等于 error 角色", async ({ page }) => {
   await setSkin(page, "shadcn");
   await waitForSkin(page, () => {

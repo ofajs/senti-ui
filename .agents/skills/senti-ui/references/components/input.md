@@ -139,7 +139,7 @@ $("st-input").on("input", (e) => {
 ```
 
 - 运行时：`import { setSkin } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js"; setSkin("shadcn")`
-- 主要 token：`--st-height` / `--st-field-radius` / `--st-field-padding` / `--st-field-bg` / `--st-field-filled-bg` / `--st-field-border` / `--st-field-underline` / `--st-field-shadow` / `--st-backdrop-filter` / `--st-field-focus-ring-opacity` / `--st-field-focus-shadow` / `--st-field-underline-color`
+- 主要 token：`--st-height` / `--st-field-radius` / `--st-field-padding` / `--st-field-bg` / `--st-field-filled-bg` / `--st-field-border` / `--st-field-underline` / `--st-field-shadow` / `--st-backdrop-filter` / `--st-field-focus-ring-opacity` / `--st-field-focus-shadow` / `--st-field-focus-color` / `--st-field-focus-gap` / `--st-field-focus-gap-color` / `--st-field-focus-glow-spread` / `--st-field-focus-glow-alpha` / `--st-field-focus-underline-height` / `--st-field-focus-underline-alpha` / `--st-field-underline-color`
 - part（light DOM 时可用）：`focus-ring` / `underline` / `control`
 - 完整 token 表见 [skin.md](./skin.md)
 

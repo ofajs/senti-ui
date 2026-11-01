@@ -56,8 +56,13 @@
   --st-focus-ring-width: 2px;
   --st-focus-ring-offset: 2px;
   --st-focus-ring-color: var(--md-sys-color-on-surface);
-  --st-field-focus-shadow: 0 0 0 2px var(--md-sys-color-surface),
-    0 0 0 4px color-mix(in srgb, var(--md-sys-color-on-surface) 55%, transparent);
+  /* 外扩 accent ring：2px surface 间隙 + 2px 角色色，组件组合颜色；无 color 时保持中性 */
+  --st-field-focus-color: var(--md-sys-color-on-surface);
+  --st-field-focus-shadow: var(--st-field-shadow);
+  --st-field-focus-gap: 2px;
+  --st-field-focus-gap-color: var(--md-sys-color-surface);
+  --st-field-focus-glow-spread: 2px;
+  --st-field-focus-glow-alpha: 55%;
   --st-field-focus-ring-opacity: 0;
   --st-field-underline-color: transparent;
 

@@ -57,8 +57,27 @@
     :host(:focus-within) .outline-ring {
       opacity: var(--st-field-focus-ring-opacity, 1);
     }
+    /* 皮肤焦点材质：用 --st-accent 在组件内组合颜色，避免皮肤 token 在祖先处
+       提前解析 var(--st-accent) 而丢失 color 属性的语义色（坑 #59）。
+       默认所有增量均为 0，保持 M3 原有内嵌描边。 */
     :host(:focus-within) {
-      box-shadow: var(--st-field-focus-shadow, var(--st-field-shadow, none));
+      box-shadow:
+        0 0 0 var(--st-field-focus-gap, 0px) var(--st-field-focus-gap-color, transparent),
+        0 0 0 calc(var(--st-field-focus-gap, 0px) + var(--st-field-focus-glow-spread, 0px))
+          color-mix(
+            in srgb,
+            var(--st-accent, var(--st-field-focus-color, var(--md-sys-color-primary)))
+              var(--st-field-focus-glow-alpha, 0%),
+            transparent
+          ),
+        inset 0 calc(-1 * var(--st-field-focus-underline-height, 0px)) 0 0
+          color-mix(
+            in srgb,
+            var(--st-accent, var(--st-field-focus-color, var(--md-sys-color-primary)))
+              var(--st-field-focus-underline-alpha, 100%),
+            transparent
+          ),
+        var(--st-field-focus-shadow, 0 0 0 0 transparent);
     }
     :host([variant="filled"]) .outline-ring { display: none; }
 

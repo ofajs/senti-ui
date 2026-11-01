@@ -147,7 +147,7 @@ document.querySelector("st-input").addEventListener("input", (e) => {
 ```
 
 - 运行时切换：`import { setSkin } from ".../packages/skin/st-skin.js"; setSkin("shadcn")`
-- 本组件消费的主要 token：`--st-height` / `--st-font-size` / `--st-font` / `--st-letter-spacing` / `--st-field-radius` / `--st-field-padding` / `--st-border-width` / `--st-field-bg` / `--st-field-filled-bg` / `--st-field-border` / `--st-field-underline` / `--st-field-shadow` / `--st-backdrop-filter` / `--st-field-focus-ring-opacity` / `--st-field-focus-shadow` / `--st-field-underline-color` / `--st-disabled-opacity`
+- 本组件消费的主要 token：`--st-height` / `--st-font-size` / `--st-font` / `--st-letter-spacing` / `--st-field-radius` / `--st-field-padding` / `--st-border-width` / `--st-field-bg` / `--st-field-filled-bg` / `--st-field-border` / `--st-field-underline` / `--st-field-shadow` / `--st-backdrop-filter` / `--st-field-focus-ring-opacity` / `--st-field-focus-shadow` / `--st-field-focus-color` / `--st-field-focus-gap` / `--st-field-focus-gap-color` / `--st-field-focus-glow-spread` / `--st-field-focus-glow-alpha` / `--st-field-focus-underline-height` / `--st-field-focus-underline-alpha` / `--st-field-underline-color` / `--st-disabled-opacity`
 - `color` 属性在宿主上写入 `--st-accent`：caret、focus 描边、filled 底线都消费它，皮肤可在此基础上换形态（如外侧光圈）
 - 暴露的 part（组件在 light DOM 时可用）：`part="focus-ring"` / `part="underline"` / `part="control"`
 - 皮肤不改变结构与交互范式（如浮动标签仍由组件自身决定，皮肤只管材质）

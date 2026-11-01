@@ -69,6 +69,11 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 所有规则都要写在 `[data-skin="名称"]` 作用域下：多套皮肤 CSS 可以同时加载、互不污染，
 切换时只需要改 `<html data-skin>`。
 
+**焦点材质不要在自己的复合 token 里引用 `--st-accent`**：`--st-accent` 是组件按 `color` 属性写在宿主上的，
+而皮肤 token 在 `<html data-skin>` 上声明时就会解析 `var()`，拿到的永远是空值（见 CONTEXT 坑 #59）。
+皮肤只提供上面这些几何 / 透明度 token，颜色由组件在 `:host` 规则里用 `var(--st-accent)` 组合，
+这样 `color="error"` 在 M3 / Apple / Windows / shadcn 下都会变成对应语义色。
+
 ## Token 一览（组件已消费）
 
 ### 尺寸与字体
@@ -153,7 +158,11 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 | `--st-focus-ring-offset` | `2px` | 按钮焦点环偏移 |
 | `--st-focus-ring-color` | `var(--md-sys-color-on-surface)` | 按钮焦点环颜色 |
 | `--st-field-focus-ring-opacity` | `1` | 输入框内嵌焦点环透明度（设为 `0` 可改用外侧光圈） |
-| `--st-field-focus-shadow` | 回退到 `--st-field-shadow` | 输入框聚焦时的外侧光圈 |
+| `--st-field-focus-shadow` | `0 0 0 0 transparent` | 输入框聚焦时叠加的中性皮肤阴影（不要再把 `--st-accent` 写进这个 token，见下方说明） |
+| `--st-field-focus-color` | `var(--md-sys-color-primary)` | 没有 `color` 属性时的默认焦点色（shadcn 用 `on-surface`；设置 `color` 后仍以语义角色色优先） |
+| `--st-field-focus-gap` / `--st-field-focus-gap-color` | `0px` / `transparent` | 焦点色环与控件之间的间隙 |
+| `--st-field-focus-glow-spread` / `--st-field-focus-glow-alpha` | `0px` / `0%` | 焦点外发光半径 / 透明度，颜色由组件消费 `--st-accent` |
+| `--st-field-focus-underline-height` / `--st-field-focus-underline-alpha` | `0px` / `100%` | 焦点底线高度 / 透明度，颜色由组件消费 `--st-accent` |
 | `--st-field-underline-color` | 回退到语义色 | filled 输入框聚焦底线颜色（设为 `transparent` 可关闭） |
 | `--st-state-hover` | `0.08` | hover state layer 透明度 |
 | `--st-state-press` | `0.12` | active state layer 透明度 |

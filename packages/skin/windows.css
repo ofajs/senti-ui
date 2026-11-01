@@ -58,7 +58,9 @@
   --st-focus-ring-width: 2px;
   --st-focus-ring-offset: 2px;
   --st-focus-ring-color: var(--md-sys-color-on-surface);
-  --st-field-focus-shadow: inset 0 -2px 0 0 var(--md-sys-color-primary);
+  /* 焦点底线：组件用 --st-accent 着色（color="error" 时自动变红） */
+  --st-field-focus-shadow: var(--st-field-shadow);
+  --st-field-focus-underline-height: 2px;
   --st-field-focus-ring-opacity: 0;
   --st-field-underline-color: transparent;
 

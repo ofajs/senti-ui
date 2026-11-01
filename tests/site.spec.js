@@ -133,11 +133,10 @@ test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
   expect(chrome.logoMark).toBe(true);
   expect(chrome.skinMenu).toBe(true);
   expect(chrome.nav.map((x) => [x.text, x.variant, x.active])).toEqual([
-    ["组件", "text", true],
     ["文档", "text", false],
     ["皮肤", "text", false],
   ]);
-  expect(chrome.nav[0].color).not.toBe(chrome.nav[1].color);
+  expect(chrome.nav[0].color).toBe(chrome.nav[1].color);
 
   // 主题（st-icon-button + st-tooltip）auto → light → dark
   for (let i = 0; i < 2; i++) {
@@ -157,7 +156,7 @@ test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
     const layout = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
     );
-    layout.shadowRoot.querySelectorAll(".layout-nav st-button")[1].click();
+    layout.shadowRoot.querySelectorAll(".layout-nav st-button")[0].click();
   });
   await page.waitForURL("**/site/docs/index.html", { timeout: 30_000 });
   await page.waitForFunction(() => {
@@ -180,7 +179,7 @@ test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
     const layout = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
     );
-    layout.shadowRoot.querySelectorAll(".layout-nav st-button")[0].click();
+    layout.shadowRoot.querySelector(".brand-btn").click();
   });
   await waitHome(page);
   await page.evaluate(() => {
@@ -270,7 +269,6 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(state.sideItems).toBe(22);
   expect(state.active[0]).toContain("Input");
   expect(state.headerNav).toEqual([
-    { variant: "text", active: false },
     { variant: "text", active: true },
     { variant: "text", active: false },
   ]);
@@ -658,7 +656,6 @@ test("皮肤页：四种材质可选，顶部快捷菜单只保留三巨头", as
     };
   });
   expect(chrome.nav.map((x) => [x.text, x.active])).toEqual([
-    ["组件", false],
     ["文档", false],
     ["皮肤", true],
   ]);

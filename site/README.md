@@ -54,7 +54,7 @@ site/
 </body>
 ```
 
-- `layout.html` 是 SCSR 的**共享父页**：header（favicon 同款标记 + SentiUI 字标 / 组件·文档·皮肤文字导航 / 三巨头材质快捷菜单 / 主题 / GitHub）、footer、以及主题与皮肤状态都在这里；子页在 `<slot>` 中渲染，切页时布局不销毁；材质切换走 `data-skin` / `setSkin()`；
+- `layout.html` 是 SCSR 的**共享父页**：header（favicon 同款标记 + SentiUI 字标 / 文档·皮肤文字导航（组件目录即首页，点品牌回首页） / 三巨头材质快捷菜单 / 主题 / GitHub）、footer、以及主题与皮肤状态都在这里；子页在 `<slot>` 中渲染，切页时布局不销毁；材质切换走 `data-skin` / `setSkin()`；
 - `index.html` 声明 `export const parent = "./layout.html"`；`docs/layout.html` 再声明 `export const parent = "../layout.html"`，形成**多级嵌套布局**；`docs/` 下每个组件页声明 `export const parent = "./layout.html"`；
 - 文档左侧组件目录（`st-list` + `st-list-item`）和移动端 `st-select` 只存在于 `docs/layout.html` 一处；同父页的组件互相切换时侧栏不销毁、不重排，只替换 `<slot>` 里的正文；
 - 页面切换动画**只在 `app-config.js` 的 `pageAnime` 里配置**：前进时新页从下方 16px 上移并淡入、旧页上移 16px 淡出；后退方向相反（新页从上方 16px 落下）。过渡时长不写在配置里——ofa 自动注入 `all .3s`，入场淡入、离场淡出与位移都在这次过渡里完成。两级 layout 不写任何切页动画 CSS；页面背景透明，由 layout 的固定环境光层提供底色；文档示例容器 `.demo` / `.demo-stage` / `.demo-content` 也改为半透明，Apple 下同样能透出环境光；
@@ -65,7 +65,7 @@ site/
 - **不要给 `pageAnime` 三态写 `transition`**：ofa 的入场是「先写 `next`，rAF+5ms 后再写 `current`」，起点态一旦自带 `transition`，这一帧会先起一个过渡、随后被 `current` 反向，浏览器把它合并成 0 时长，页面直接跳到位（Chromium 实测：`transform` 过渡只活了 1ms，淡入同样失效）。三态只写 `opacity` / `transform`，过渡统一由 ofa 注入的 `all .3s` 提供；
 - 当前 `pageAnime` 是静态对象，**没有 `prefers-reduced-motion` 降级**——系统开启「减弱动效」时仍会播放 0.3s 位移 + 淡入。需要恢复时改成 getter，按 `matchMedia("(prefers-reduced-motion: reduce)")` 返回另一组无位移、0.01s 过渡的态（0s 不触发 `transitionend`，离场会多等 350ms 兜底，见 [CONTEXT 坑 #59](../CONTEXT.md)）；
 - `pageAnime` 只覆盖站内路由切换：整页刷新 / 直接打开某页时 scsr 不经过切换，因此没有入场动画（这是有意接受的，不是 bug）；
-- header 用 senti-ui 组件搭：三个 `variant="text"` 的 `st-button` 做「组件 / 文档 / 皮肤」导航（当前项用 `class:active` 换成 primary 色，不使用 button-group）、`st-icon-button` + `st-tooltip`（主题 / GitHub）、品牌也是 `st-button`：favicon 同款圆角方块 + 白点标记 + SentiUI 字标；导航用页面实例的 `goto()` 保持真实路径与共享布局；
+- header 用 senti-ui 组件搭：两个 `variant="text"` 的 `st-button` 做「文档 / 皮肤」导航（组件目录即首页，不再单独占一个导航项，点品牌字标回首页；当前项用 `class:active` 换成 primary 色，不使用 button-group）、`st-icon-button` + `st-tooltip`（主题 / GitHub）、品牌也是 `st-button`：favicon 同款圆角方块 + 白点标记 + SentiUI 字标；导航用页面实例的 `goto()` 保持真实路径与共享布局；
 - scsr 接管后，把当前 URL（`/site/`、`/site/index.html`、`/site/docs/button.html` 等）收编为 `<o-page src>`，用同一份 HTML 的 `template[page]` 转译成页面模块，然后移除内联 template；
 - 页面本体随后渲染在 `o-page` 的 shadow 内，`:host` 样式、`this.ele.shadowRoot` 等写法与普通页面模块一致；
 - `app-config.js` **不声明 home**：首页就是当前 URL 的页面，声明 home 会与 scsr 竞争；
@@ -81,7 +81,7 @@ site/
 
 采用 shadcn 式的组件目录首页：
 
-- 共享 header（来自 `layout.html`）：组件 / 文档文字切换、深浅色、GitHub
+- 共享 header（来自 `layout.html`）：文档 / 皮肤文字切换（组件目录即首页，点品牌回首页）、深浅色、GitHub
 - 紧凑 intro：标题、一句话说明、统计数据、组件文档 / 源码入口
 - **25 张组件卡片**（`CATALOG / 25 CARDS`）：每张卡片 = 真实组件预览 + 名称 + 标签 + 站内文档 ↗
   - 预览区可交互：按钮、输入、选择、开关、滑块、标签栏、导航、折叠、对话框、菜单、Toast 等都能直接操作

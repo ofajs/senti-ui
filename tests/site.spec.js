@@ -135,6 +135,7 @@ test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
   expect(chrome.nav.map((x) => [x.text, x.variant, x.active])).toEqual([
     ["文档", "text", false],
     ["皮肤", "text", false],
+    ["手记", "text", false],
   ]);
   expect(chrome.nav[0].color).toBe(chrome.nav[1].color);
 
@@ -270,6 +271,7 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(state.active[0]).toContain("Input");
   expect(state.headerNav).toEqual([
     { variant: "text", active: true },
+    { variant: "text", active: false },
     { variant: "text", active: false },
   ]);
   expect(state.sidebar).toBe(true);
@@ -425,6 +427,87 @@ test("组件文档首页：21 张卡片可进入独立页", async ({ page }) => 
   });
   await page.waitForURL("**/site/docs/button.html", { timeout: 30_000 });
   await waitDocPage(page, "Button");
+});
+
+test("手记：目录、首篇文章与共享 header", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+
+  await page.goto("/site/notes/index.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await page.locator(".note-card").waitFor({ state: "visible" });
+
+  const index = await page.evaluate(() => {
+    const pages = [...document.querySelectorAll("o-page")];
+    const layout = pages.find((op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav"));
+    const child = pages.find((op) => op.shadowRoot && op.shadowRoot.querySelector(".notes-index"));
+    const sr = child.shadowRoot;
+    return {
+      title: document.title,
+      sharedHeader: !!layout,
+      nav: [...layout.shadowRoot.querySelectorAll(".layout-nav st-button")].map((b) => ({
+        text: b.textContent.trim(),
+        active: b.classList.contains("active"),
+      })),
+      cards: sr.querySelectorAll(".note-card").length,
+      href: sr.querySelector(".note-card").getAttribute("href"),
+      heading: sr.querySelector(".note-card h2").textContent.trim(),
+    };
+  });
+  expect(index.title).toBe("手记 — Senti-UI");
+  expect(index.sharedHeader).toBe(true);
+  expect(index.nav).toEqual([
+    { text: "文档", active: false },
+    { text: "皮肤", active: false },
+    { text: "手记", active: true },
+  ]);
+  expect(index.cards).toBe(1);
+  expect(index.href).toContain("why-senti-ui.html");
+  expect(index.heading).toBe("为什么要开发 Senti-UI");
+
+  await page.locator(".note-card").click();
+  await page.waitForURL("**/site/notes/why-senti-ui.html", { timeout: 30_000 });
+  await page.locator(".note-page h1").waitFor({ state: "visible" });
+  await page.waitForFunction(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".note-page")
+    );
+    return !!(child && child.shadowRoot.querySelectorAll(".note-body h2").length === 6);
+  });
+
+  const article = await page.evaluate(() => {
+    const pages = [...document.querySelectorAll("o-page")];
+    const layout = pages.find((op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav"));
+    const child = pages.find((op) => op.shadowRoot && op.shadowRoot.querySelector(".note-page"));
+    const sr = child.shadowRoot;
+    return {
+      title: document.title,
+      h1: sr.querySelector(".note-hero h1").textContent.trim(),
+      sections: sr.querySelectorAll(".note-body h2").length,
+      principles: sr.querySelectorAll(".principles li").length,
+      navActive: [...layout.shadowRoot.querySelectorAll(".layout-nav st-button.active")].map((b) =>
+        b.textContent.trim()
+      ),
+      headerCount: pages.filter(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
+      ).length,
+    };
+  });
+  expect(article.title).toContain("为什么要开发 Senti-UI");
+  expect(article.h1).toBe("为什么要开发 Senti-UI");
+  expect(article.sections).toBe(6);
+  expect(article.principles).toBe(3);
+  expect(article.navActive).toEqual(["手记"]);
+  expect(article.headerCount).toBe(1);
+
+  await page.locator(".note-foot a").first().click();
+  await page.waitForURL("**/site/notes/index.html", { timeout: 30_000 });
+  await page.waitForFunction(
+    () =>
+      [...document.querySelectorAll("o-page")].filter(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".notes-index")
+      ).length === 1
+  );
+  expect(errors).toEqual([]);
 });
 
 test("首页卡片进入对应组件文档，header 保持共享", async ({ page }) => {
@@ -658,6 +741,7 @@ test("皮肤页：四种材质可选，顶部快捷菜单只保留三巨头", as
   expect(chrome.nav.map((x) => [x.text, x.active])).toEqual([
     ["文档", false],
     ["皮肤", true],
+    ["手记", false],
   ]);
   expect(chrome.menuCount).toBe(3);
   expect(chrome.menuLabels.join(" ")).toContain("Apple 毛玻璃");

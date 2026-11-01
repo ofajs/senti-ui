@@ -310,6 +310,7 @@
             <nav class="layout-nav" aria-label="主导航">
               <st-button variant="text" class:active="page === 'docs'" on:click="go('./docs/index.html')">文档</st-button>
               <st-button variant="text" class:active="page === 'skins'" on:click="go('./skins.html')">皮肤</st-button>
+              <st-button variant="text" class:active="page === 'notes'" on:click="go('./notes/index.html')">手记</st-button>
             </nav>
 
             <div class="top-actions">
@@ -352,6 +353,7 @@
             <nav class="footer-links" aria-label="页脚导航">
               <a href="./index.html">组件目录</a>
               <a href="./docs/index.html">组件文档</a>
+              <a href="./notes/index.html">设计手记</a>
               <a href="./skins.html">皮肤材质</a>
               <a href="./index.html#start">快速开始</a>
               <a href="https://github.com/ofajs/senti-ui" target="_blank" rel="noreferrer">GitHub</a>
@@ -421,13 +423,14 @@
               get themeLabel() {
                 return { auto: "跟随系统", light: "浅色", dark: "深色" }[this.themeMode] || "跟随系统";
               },
+              routePage(path) {
+                if (/\/docs(\/|$)/.test(path)) return "docs";
+                if (/\/skins(\.html)?$/.test(path)) return "skins";
+                if (/\/notes(\/|$)/.test(path)) return "notes";
+                return "home";
+              },
               detectPage() {
-                const path = location.pathname;
-                const inDocs = /\/docs(\/|$)/.test(path);
-                const inSkins = /\/skins(\.html)?$/.test(path);
-                this.page = inSkins ? "skins" : inDocs ? "docs" : "home";
-                // 文档侧栏在各自的文档页内，不依赖 layout 的 active 状态
-                void 0;
+                this.page = this.routePage(location.pathname);
               },
               updateProgress() {
                 if (this.page !== "docs") {
@@ -446,8 +449,7 @@
                 this._scrollHost?.scrollTo({ top: 0, behavior: "smooth" });
               },
               go(path) {
-                const inDocs = path.indexOf("docs/") >= 0;
-                this.page = inDocs ? "docs" : "home";
+                this.page = this.routePage(path);
                 if (this.goto) this.goto(path);
                 else location.href = path;
               },

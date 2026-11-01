@@ -55,11 +55,18 @@ test("slider：disabled 原生阻断", async ({ page }) => {
 
 test("slider：color=error 拇指为 error 角色色", async ({ page }) => {
   const { token, thumb } = await page.evaluate(() => {
+    const parse = (value) => {
+      if (value.startsWith("#")) {
+        const h = value.slice(1);
+        return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+      }
+      const n = value.match(/[\d.]+/g).map(Number);
+      return value.startsWith("color(") ? n.slice(0, 3).map((v) => Math.round(v * 255)) : n.slice(0, 3);
+    };
     const token = getComputedStyle(document.documentElement).getPropertyValue("--md-sys-color-error").trim();
-    return { token, thumb: getComputedStyle(document.querySelector("#sl-color").shadowRoot.querySelector(".thumb")).backgroundColor };
+    return { token: parse(token), thumb: parse(getComputedStyle(document.querySelector("#sl-color").shadowRoot.querySelector(".thumb")).backgroundColor) };
   });
-  const hex = token.replace("#", "");
-  expect(thumb).toBe(`rgb(${parseInt(hex.slice(0, 2), 16)}, ${parseInt(hex.slice(2, 4), 16)}, ${parseInt(hex.slice(4, 6), 16)})`);
+  expect(thumb).toEqual(token);
 });
 
 // ---------- st-progress ----------

@@ -46,6 +46,17 @@
       transition: border-color var(--st-motion-duration-slow, 0.3s) ease,
         background-color var(--st-motion-duration-slow, 0.3s) ease;
     }
+    /* 选中轨道：皮肤可给半透明填充 + backdrop blur（Apple 毛玻璃） */
+    :host([checked]) .bg {
+      background: color-mix(
+        in srgb,
+        var(--st-switch-checked-bg, var(--md-sys-color-primary)) var(--st-switch-fill-alpha, 100%),
+        transparent
+      );
+      border-color: var(--st-switch-checked-bg, var(--md-sys-color-primary));
+      -webkit-backdrop-filter: var(--st-switch-backdrop-filter, none);
+      backdrop-filter: var(--st-switch-backdrop-filter, none);
+    }
 
     /* 拇指：未选中 outline 灰 + scale(0.6) 收缩，选中复原并滑到右侧 */
     .thumb {
@@ -227,13 +238,12 @@
 
           const bg = sr.querySelector(".bg");
           if (on) {
-            bg.style.background = main;
-            bg.style.borderColor = main;
+            // 只写语义色变量，背景由 CSS 按皮肤 token 组合（可以是实色或毛玻璃）
+            bg.style.setProperty("--st-switch-checked-bg", main);
             thumb.style.background = onMain;
             thumb.style.color = main; // 对勾颜色 = 角色色（拇指底为 on-角色色）
           } else {
-            bg.style.background = "";
-            bg.style.borderColor = "";
+            bg.style.removeProperty("--st-switch-checked-bg");
             thumb.style.background = "";
             thumb.style.color = "";
           }

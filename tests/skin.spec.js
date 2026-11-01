@@ -337,6 +337,9 @@ test("皮肤覆盖浮动层：dialog / menu / card / select / tooltip / snackbar
       sliderShadow: getComputedStyle(
         document.querySelector("#slider-skin").shadowRoot.querySelector(".thumb")
       ).boxShadow,
+      switchBlur: filter("#sw-skin", ".bg"),
+      checkboxBlur: filter("#cb-skin", ".box"),
+      sliderBlur: filter("#slider-skin", ".thumb"),
     };
   });
   expect(apple.dialog).toContain("blur(24px)");
@@ -347,6 +350,10 @@ test("皮肤覆盖浮动层：dialog / menu / card / select / tooltip / snackbar
   expect(apple.dialogRadius).toBeGreaterThan(18);
   expect(apple.switchBorder).toBeGreaterThan(1.8);
   expect(apple.sliderShadow).not.toBe("none");
+  // Apple 下选中态的开关轨道 / 复选框 / 滑块拇指带半透明 + backdrop blur
+  expect(apple.switchBlur).toContain("blur(");
+  expect(apple.checkboxBlur).toContain("blur(");
+  expect(apple.sliderBlur).toContain("blur(");
 });
 
 test("皮肤不改变语义色：card / menu / snackbar 仍消费 M3 角色", async ({ page }) => {

@@ -70,16 +70,22 @@ test("checkbox：disabled 阻断交互（点击/键盘均无效）", async ({ pa
 
 test("checkbox：color 属性改变选中态底色（error 角色色）", async ({ page }) => {
   const { errorBg, boxBg } = await page.evaluate(() => {
+    // 组件用 color-mix 组合皮肤透明度，序列化可能是 rgb() 或 color(srgb ...)，统一换算通道
+    const parse = (value) => {
+      if (value.startsWith("#")) {
+        const h = value.slice(1);
+        return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+      }
+      const n = value.match(/[\d.]+/g).map(Number);
+      return value.startsWith("color(") ? n.slice(0, 3).map((v) => Math.round(v * 255)) : n.slice(0, 3);
+    };
     const token = getComputedStyle(document.documentElement).getPropertyValue("--md-sys-color-error").trim();
     return {
-      errorBg: token,
-      boxBg: getComputedStyle(document.querySelector("#cb-color").shadowRoot.querySelector(".box")).backgroundColor,
+      errorBg: parse(token),
+      boxBg: parse(getComputedStyle(document.querySelector("#cb-color").shadowRoot.querySelector(".box")).backgroundColor),
     };
   });
-  const hex = errorBg.replace("#", "");
-  expect(boxBg).toBe(
-    `rgb(${parseInt(hex.slice(0, 2), 16)}, ${parseInt(hex.slice(2, 4), 16)}, ${parseInt(hex.slice(4, 6), 16)})`
-  );
+  expect(boxBg).toEqual(errorBg);
 });
 
 // ---------- st-switch ----------

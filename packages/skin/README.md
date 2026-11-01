@@ -194,12 +194,16 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 | `--st-textarea-padding` | `0.857em 1em` | 多行输入内边距 |
 | `--st-list-gap` / `--st-list-item-radius` / `--st-list-item-height` / `--st-list-item-padding` | `0.143em` / `0.5em` / `3em` / `0.5em 1em` | 列表 |
 | `--st-checkbox-radius` / `--st-checkbox-border-width` | `0.286em` / `0.143em` | 复选框 |
+| `--st-checkbox-fill-alpha` / `--st-checkbox-backdrop-filter` | `100%` / `none` | 选中态填充透明度 / 毛玻璃（Apple 下为半透明） |
 | `--st-switch-radius` / `--st-switch-border-width` / `--st-switch-thumb-shadow` | `2.286em` / `0.143em` / … | 开关 |
+| `--st-switch-fill-alpha` / `--st-switch-backdrop-filter` | `100%` / `none` | 选中轨道填充透明度 / 毛玻璃（Apple 下为半透明） |
 | `--st-nav-gap` / `--st-nav-gap-vertical` / `--st-nav-padding-vertical` | `0.286em` / `0.143em` / `0.286em` | 导航间距 |
 | `--st-radio-radius` / `--st-radio-border-width` | `50%` / `0.143em` | 单选 |
+| `--st-radio-fill-alpha` / `--st-radio-backdrop-filter` | `100%` / `none` | 选中圆点填充透明度 / 毛玻璃 |
 | `--st-icon-radius` | `50%` | 图标按钮 |
 | `--st-split-min-width` / `--st-split-padding` | `9.5em` / `0 1.714em` | split-button 最小宽度 / 主区内边距 |
 | `--st-slider-track-radius` / `--st-slider-thumb-radius` / `--st-slider-tip-radius` / `--st-slider-thumb-shadow` | `0.286em` / `50%` / `0.286em` / `none` | 滑块 |
+| `--st-slider-fill-alpha` / `--st-slider-backdrop-filter` | `100%` / `none` | 激活轨道 / 拇指填充透明度与毛玻璃（气泡保持实色） |
 | `--st-progress-size` / `--st-progress-thickness` / `--st-progress-radius` / `--st-progress-duration` | `2.857em` / `0.286em` / `0.286em` / `0.3s` | 进度 |
 | `--st-tab-height` / `--st-tab-layer-radius` / `--st-tabs-indicator-height` / `--st-tabs-indicator-radius` / `--st-tabs-border` | `3.429em` / `0.571em` / `0.143em` / `0` / `outline-variant` | 标签栏 |
 | `--st-nav-pill-radius` / `--st-nav-bar-bg` / `--st-nav-item-padding` / `--st-nav-gap` | `2em` / `surface-container` / `0.857em 1em` / `0.286em` | 导航栏 |

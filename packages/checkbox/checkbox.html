@@ -40,7 +40,14 @@
     /* 选中/不确定态底色由 applyColor 按 color 属性写内联样式（无 color 属性时用默认 primary） */
     :host([checked]) .box,
     :host([indeterminate]) .box {
-      border-color: var(--md-sys-color-primary);
+      border-color: var(--st-checkbox-checked-bg, var(--md-sys-color-primary));
+      background: color-mix(
+        in srgb,
+        var(--st-checkbox-checked-bg, var(--md-sys-color-primary)) var(--st-checkbox-fill-alpha, 100%),
+        transparent
+      );
+      -webkit-backdrop-filter: var(--st-checkbox-backdrop-filter, none);
+      backdrop-filter: var(--st-checkbox-backdrop-filter, none);
     }
 
     /* 对勾：stroke-dash 描边入场 */
@@ -210,11 +217,10 @@
             const main = name
               ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
               : "var(--md-sys-color-primary)";
-            box.style.background = main;
-            box.style.borderColor = main;
+            // 只写语义色变量，填充由 CSS 按皮肤 token 组合（实色 / 毛玻璃）
+            box.style.setProperty("--st-checkbox-checked-bg", main);
           } else {
-            box.style.background = "";
-            box.style.borderColor = "";
+            box.style.removeProperty("--st-checkbox-checked-bg");
           }
           box.style.color = name
             ? `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-primary)))`

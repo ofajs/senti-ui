@@ -36,7 +36,7 @@
       transition: border-color var(--st-motion-duration, 0.16s) ease;
     }
     :host([checked]) .circle {
-      border-color: var(--md-sys-color-primary);
+      border-color: var(--st-radio-dot-bg, var(--md-sys-color-primary));
     }
 
     /* 选中圆点：宽度弹性入场（M3 emphasized 曲线） */
@@ -44,7 +44,13 @@
       width: 0;
       height: 0;
       border-radius: 50%;
-      background: var(--md-sys-color-primary);
+      background: color-mix(
+        in srgb,
+        var(--st-radio-dot-bg, var(--md-sys-color-primary)) var(--st-radio-fill-alpha, 100%),
+        transparent
+      );
+      -webkit-backdrop-filter: var(--st-radio-backdrop-filter, none);
+      backdrop-filter: var(--st-radio-backdrop-filter, none);
       transition: width var(--st-motion-duration-base, 0.2s) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1)),
         height var(--st-motion-duration-base, 0.2s) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
@@ -189,11 +195,9 @@
           const name = this.color;
           if (this.checked !== null && name) {
             const main = `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`;
-            circle.style.borderColor = main;
-            dot.style.background = main;
+            circle.style.setProperty("--st-radio-dot-bg", main);
           } else {
-            circle.style.borderColor = "";
-            dot.style.background = "";
+            circle.style.removeProperty("--st-radio-dot-bg");
           }
         },
       },

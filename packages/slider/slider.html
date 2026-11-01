@@ -40,7 +40,13 @@
     .fill {
       left: 0.714em;
       width: 50%;
-      background: var(--st-slider-main, var(--md-sys-color-primary));
+      background: color-mix(
+        in srgb,
+        var(--st-slider-main, var(--md-sys-color-primary)) var(--st-slider-fill-alpha, 100%),
+        transparent
+      );
+      -webkit-backdrop-filter: var(--st-slider-backdrop-filter, none);
+      backdrop-filter: var(--st-slider-backdrop-filter, none);
     }
 
     /* M3 拇指：20px 角色色圆点，轨道端点间移动；拖动/聚焦时显示数值气泡 */
@@ -50,7 +56,13 @@
       width: 1.429em; /* 20px */
       height: 1.429em;
       border-radius: var(--st-slider-thumb-radius, 50%);
-      background: var(--st-slider-main, var(--md-sys-color-primary));
+      background: color-mix(
+        in srgb,
+        var(--st-slider-main, var(--md-sys-color-primary)) var(--st-slider-fill-alpha, 100%),
+        transparent
+      );
+      -webkit-backdrop-filter: var(--st-slider-backdrop-filter, none);
+      backdrop-filter: var(--st-slider-backdrop-filter, none);
       box-shadow: var(--st-slider-thumb-shadow, none);
       transform: translate(-50%, -50%);
       left: 50%;

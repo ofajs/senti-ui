@@ -63,6 +63,7 @@ test("官网首页：25 张卡片 / 29 个标签 / 共享 SCSR 布局，无页�
       path: location.pathname,
       templateRemoved: !document.querySelector("o-app template[page]"),
       cards: sr.querySelectorAll(".comp").length,
+      lastCard: [...sr.querySelectorAll(".comp")].at(-1)?.querySelector(".comp-id h3")?.textContent.trim(),
       tags,
       notReady: tags.filter((tag) => {
         const el = sr.querySelector(tag);
@@ -85,6 +86,8 @@ test("官网首页：25 张卡片 / 29 个标签 / 共享 SCSR 布局，无页�
   expect(state.templateRemoved).toBe(true);
   expect(state.sections).toEqual(["top", "components", "skins", "start"]);
   expect(state.cards).toBe(25);
+  // Ripple 是 M3 专属的材质细节，放到组件卡片最后
+  expect(state.lastCard).toBe("Ripple");
   expect(state.legacyDocsLinks).toBe(0);
   expect(errors).toEqual([]);
 

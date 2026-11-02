@@ -317,7 +317,7 @@
               <st-menu id="skin-menu" align="right">
                 <st-icon-button slot="trigger" title="切换材质">◈</st-icon-button>
                 <st-menu-item on:click="pickSkin('m3')">
-                  M3 材质
+                  M3 主题
                   <span slot="suffix">{{skin === 'm3' ? '✓' : ''}}</span>
                 </st-menu-item>
                 <st-menu-item on:click="pickSkin('apple')">
@@ -469,7 +469,15 @@
                   }
                 }
               },
-              pickSkin(id) {
+              async pickSkin(id) {
+                // 官网把“材质”当作完整主题：换肤同时套用该材质的官方配色。
+                const theme = await this.themeApi();
+                if (theme?.applyThemePreset) {
+                  const result = theme.applyThemePreset(id);
+                  this.skin = result.skin;
+                  this.themeMode = result.mode;
+                  return;
+                }
                 if (window.__site) window.__site.setSkin(id);
                 else {
                   try {
@@ -478,6 +486,19 @@
                   document.documentElement.dataset.skin = id;
                 }
                 this.skin = id;
+              },
+              async themeApi() {
+                if (window.__siteTheme?.applyThemePreset) return window.__siteTheme;
+                // 布局的 <body> 脚本在 SCSR 子页里不会执行，所以这里按当前文档深度
+                // 动态定位 /site/theme-presets.js（docs/ 与 notes/ 比 layout 深一层）。
+                const prefix = /\/(docs|notes)(\/|$)/.test(location.pathname) ? "../" : "./";
+                try {
+                  const mod = await import(new URL(prefix + "theme-presets.js", location.href).href);
+                  window.__siteTheme = { ...(window.__siteTheme || {}), ...mod };
+                  return window.__siteTheme;
+                } catch {
+                  return null;
+                }
               },
               cycleTheme() {
                 const order = ["auto", "light", "dark"];

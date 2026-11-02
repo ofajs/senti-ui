@@ -132,6 +132,47 @@ test("windows 皮肤：4px 控件 / 8px 表面 / Mica + Acrylic", async ({ page 
   expect(state.fillAlpha).toBe("100%");
 });
 
+test("cyberpunk 皮肤：零圆角 / 等宽字 / 霓虹外发光", async ({ page }) => {
+  expect(await setSkin(page, "cyberpunk")).toBe("cyberpunk");
+  expect(await page.evaluate(() => document.documentElement.dataset.skin)).toBe("cyberpunk");
+  await waitForSkin(page, () => {
+    const btn = document.querySelector("#btn-filled");
+    return btn && parseFloat(getComputedStyle(btn).borderRadius) === 0;
+  });
+
+  const state = await page.evaluate(() => {
+    const btn = document.querySelector("#btn-filled");
+    const card = document.querySelector("#card-elev");
+    const icon = document.querySelector("#icon-skin");
+    const sw = document.querySelector("#sw-skin").shadowRoot.querySelector(".bg");
+    const thumb = document.querySelector("#slider-skin").shadowRoot.querySelector(".thumb");
+    const cs = getComputedStyle(btn);
+    return {
+      radius: parseFloat(cs.borderRadius),
+      cardRadius: parseFloat(getComputedStyle(card).borderRadius),
+      iconRadius: parseFloat(getComputedStyle(icon).borderRadius),
+      switchRadius: parseFloat(getComputedStyle(sw).borderRadius),
+      thumbRadius: parseFloat(getComputedStyle(thumb).borderRadius),
+      font: cs.fontFamily,
+      shadow: cs.boxShadow,
+      sheen: cs.backgroundImage,
+      backdrop: cs.backdropFilter,
+      fillAlpha: getComputedStyle(document.documentElement).getPropertyValue("--st-fill-alpha").trim(),
+    };
+  });
+  expect(state.radius).toBe(0);
+  expect(state.cardRadius).toBe(0);
+  expect(state.iconRadius).toBe(0);
+  expect(state.switchRadius).toBe(0);
+  expect(state.thumbRadius).toBe(0);
+  expect(state.font.toLowerCase()).toContain("monospace");
+  // 霓虹边缘 = 多层发光阴影；CRT 扫描线高光只作用在控件表面
+  expect(state.shadow).not.toBe("none");
+  expect(state.sheen).toContain("repeating-linear-gradient");
+  expect(state.backdrop).toBe("none");
+  expect(state.fillAlpha).toBe("100%");
+});
+
 test("皮肤焦点材质跟随 color 语义色：error 变红而不是主题主色", async ({ page }) => {
   const isRed = (value) => {
     const colors = value.match(/rgba?\([^)]+\)|color\(srgb [^)]+\)/g) || [];

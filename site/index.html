@@ -32,6 +32,7 @@
   <link rel="stylesheet" href="../packages/skin/m3.css" />
   <link rel="stylesheet" href="../packages/skin/apple.css" />
   <link rel="stylesheet" href="../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../packages/skin/cyberpunk.css" />
   <link rel="stylesheet" href="../packages/skin/windows.css" />
 
   <style>
@@ -66,32 +67,6 @@
   </style>
 </head>
 <body>
-  <!-- 组件按需引入：本页聚合全部组件，故全部预载 -->
-  <l-m src="../packages/button/button.html"></l-m>
-  <l-m src="../packages/button/button-group.html"></l-m>
-  <l-m src="../packages/button/split-button.html"></l-m>
-  <l-m src="../packages/button/icon-button.html"></l-m>
-  <l-m src="../packages/input/input.html"></l-m>
-  <l-m src="../packages/textarea/textarea.html"></l-m>
-  <l-m src="../packages/select/select.html"></l-m>
-  <l-m src="../packages/dialog/dialog.html"></l-m>
-  <l-m src="../packages/checkbox/checkbox.html"></l-m>
-  <l-m src="../packages/switch/switch.html"></l-m>
-  <l-m src="../packages/radio/radio.html"></l-m>
-  <l-m src="../packages/snackbar/snackbar.html"></l-m>
-  <l-m src="../packages/slider/slider.html"></l-m>
-  <l-m src="../packages/progress/progress.html"></l-m>
-  <l-m src="../packages/tooltip/tooltip.html"></l-m>
-  <l-m src="../packages/card/card.html"></l-m>
-  <l-m src="../packages/badges/badges.html"></l-m>
-  <l-m src="../packages/collapse/collapse.html"></l-m>
-  <l-m src="../packages/list/list.html"></l-m>
-  <l-m src="../packages/menu/menu.html"></l-m>
-  <l-m src="../packages/tabs/tab-bar.html"></l-m>
-  <l-m src="../packages/navigation/nav-bar.html"></l-m>
-  <l-m src="../packages/navigation/nav-layout.html"></l-m>
-  <l-m src="../packages/ripple/ripple.html"></l-m>
-
   <!-- SCSR 契约：完整页面内联在 o-app 的 template[page] 里；
        真实路径 /site/ 即当前文档，scsr 接管后由 o-page 从 URL 收编渲染 -->
   <noscript>
@@ -104,11 +79,38 @@
 
   <o-app src="./app-config.js">
     <template page>
+        <!-- 组件按需引入：本页聚合全部组件，故全部预载 -->
+        <l-m src="../packages/button/button.html"></l-m>
+        <l-m src="../packages/button/button-group.html"></l-m>
+        <l-m src="../packages/button/split-button.html"></l-m>
+        <l-m src="../packages/button/icon-button.html"></l-m>
+        <l-m src="../packages/input/input.html"></l-m>
+        <l-m src="../packages/textarea/textarea.html"></l-m>
+        <l-m src="../packages/select/select.html"></l-m>
+        <l-m src="../packages/dialog/dialog.html"></l-m>
+        <l-m src="../packages/checkbox/checkbox.html"></l-m>
+        <l-m src="../packages/switch/switch.html"></l-m>
+        <l-m src="../packages/radio/radio.html"></l-m>
+        <l-m src="../packages/snackbar/snackbar.html"></l-m>
+        <l-m src="../packages/slider/slider.html"></l-m>
+        <l-m src="../packages/progress/progress.html"></l-m>
+        <l-m src="../packages/tooltip/tooltip.html"></l-m>
+        <l-m src="../packages/card/card.html"></l-m>
+        <l-m src="../packages/badges/badges.html"></l-m>
+        <l-m src="../packages/collapse/collapse.html"></l-m>
+        <l-m src="../packages/list/list.html"></l-m>
+        <l-m src="../packages/menu/menu.html"></l-m>
+        <l-m src="../packages/tabs/tab-bar.html"></l-m>
+        <l-m src="../packages/navigation/nav-bar.html"></l-m>
+        <l-m src="../packages/navigation/nav-layout.html"></l-m>
+        <l-m src="../packages/ripple/ripple.html"></l-m>
+
         <!-- 局部皮肤预览（data-skin 卡片）需要 shadow 内的样式表：
              文档树里的 [data-skin] 规则进不了 page shadow，而 link 可以 -->
         <link rel="stylesheet" href="../packages/skin/m3.css" />
         <link rel="stylesheet" href="../packages/skin/apple.css" />
         <link rel="stylesheet" href="../packages/skin/shadcn.css" />
+        <link rel="stylesheet" href="../packages/skin/cyberpunk.css" />
         <link rel="stylesheet" href="../packages/skin/windows.css" />
 
         <style>

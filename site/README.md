@@ -18,7 +18,7 @@ npm run dev
 site/
   layout.html      # 一级父页：header / footer / 材质与主题 + <slot>
   index.html       # 组件目录首页（export const parent = "./layout.html"）
-  skins.html       # 皮肤页：四张材质卡 + 应用切换 + M3 改色/加色（parent = "./layout.html"）
+  skins.html       # 主题页：五张主题卡（材质 + 官方配色）+ 改色/加色（parent = "./layout.html"）
   docs/
     layout.html    # 二级父页：左侧组件目录 / 移动端 picker + <slot>（parent 指向上级 layout）
     index.html     # 文档概览：21 张卡片，按基础 / 辅助分组（parent = "./layout.html"）
@@ -31,6 +31,7 @@ site/
     why-senti-ui.html  # 第一篇文章：为什么要开发 Senti-UI
   notes.css        # 手记目录与正文共用的 shadow 样式表
   app-config.js    # o-app 配置（不声明 home；pageAnime 控制真实路径切换动画）
+  theme-presets.js # 主题预设：官方配色、按材质槽位记忆、切换时一并套用（页面层）
   README.md
 ```
 
@@ -38,11 +39,12 @@ site/
 
 ```html
 <body>
-  <!-- 组件与 l-m 仍可放在 o-app 外 -->
-  <l-m src="../packages/button/button.html"></l-m>
-
   <o-app src="./app-config.js">
     <template page>
+      <!-- l-m 必须放在 template[page] 内：SCSR 站内跳转只解析目标页的 template，
+           目标页 body 里的 <l-m> 不会执行。 -->
+      <l-m src="../packages/button/button.html"></l-m>
+
       <style>…页面样式…</style>
       …整页内容…
       <script>
@@ -79,7 +81,7 @@ site/
 `index.html` / `skins.html` 里还做了三件事：
 
 1. `st-boot.js` 同步注入首帧主题（防刷新闪色）；
-2. 预载四套皮肤 CSS（页面要同页并列展示四种材质）；
+2. 预载五套皮肤 CSS（页面要同页并列展示多种材质）；
 3. 页面末尾的 module 预加载命令式工具（alert / confirm / prompt / toast / contextMenu）与皮肤 / 主题 API，挂到 `window.__site`（ofa 页面模块不能相对 `import`）。
 
 ## 页面内容
@@ -156,11 +158,14 @@ scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的�
 3. 若有命令式 API，在页面末尾 module 中 import 并挂到 `window.__site`；
 4. 需要换肤的组件先按 `packages/skin/README.md` 接入 token。
 
-## 皮肤说明
+## 皮肤与主题
 
-- 全局皮肤：`html[data-skin]` + `st-skin.js`（四套 CSS 已在 `index.html` 与页面 shadow 内预载，切换零等待）。
-- 局部预览：`.skin-preview[data-skin="..."]`。文档树的 `[data-skin]` 选择器进不了 `o-page` 的 shadow，因此 `template[page]` 顶部额外 `<link>` 了同样的四套 CSS 到 shadow 内；这是本页能「同页四种材质」的关键。
-- 颜色始终来自 M3：种子色、error、success、深浅色主题都不会被皮肤改变。
+- 包内皮肤：`html[data-skin]` + `st-skin.js`（五套 CSS 已在 `index.html` 与页面 shadow 内预载，切换零等待）；皮肤仍只改材质，颜色来自 M3。
+- 官网「主题」= 材质 + 官方配色：M3 蓝 `#0061A4` / Apple iOS 蓝 `#007AFF` / Windows 蓝 `#0078D4` / shadcn zinc `#18181B` / Cyberpunk 洋红 `#FF2E97` + 青 `#00E5FF`（深色）。切换主题时由 `site/theme-presets.js` 一起套用。
+- 每个主题的颜色与深浅模式按材质存进 `st-theme-palettes`；M3 槽位承接用户原本的品牌色，所以从 Cyberpunk 回到 M3 会恢复进入前的配色。
+- 局部预览：`.skin-preview[data-skin="..."]` 会在元素上写入该主题官方配色的 `--md-sys-color-*` 局部变量，所以五张卡能同页展示不同颜色；这只影响预览，不改全站。
+- 文档树的 `[data-skin]` 选择器进不了 `o-page` 的 shadow，因此 `template[page]` 顶部额外 `<link>` 了五套 CSS 到 shadow 内；这是本页能「同页多种材质」的关键。
+- `setSkin()` 仍然只换材质；header 菜单和 skins 页的切换走主题预设，才会同时换色。
 
 ## 皮肤页的改色与加色
 
@@ -172,7 +177,8 @@ scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的�
 - **持久化**：每次改动写 `st-color-config`（配置）与 `st-theme-css`（下次刷新首帧 CSS），同域页面刷新后一起生效
 - **恢复默认**：清空配置并回到 `#0061A4` 默认体系
 - 颜色工具入口仍指向 `packages/color/index.html`（与官网共用同一份 localStorage 配置）
-- 面板材质复用皮肤的 `--st-card-bg` / `--st-card-border` / `--st-card-backdrop-filter`：M3 / Windows / shadcn 保持实底，Apple 下自动变成半透明 + `blur(18px)` 毛玻璃，让改色工具本身也能看到材质差异
+- 面板材质复用皮肤的 `--st-card-bg` / `--st-card-border` / `--st-card-backdrop-filter`：M3 / Windows / shadcn / Cyberpunk 保持实底，Apple 下自动变成半透明 + `blur(18px)` 毛玻璃，让改色工具本身也能看到材质差异
+- 改色面板操作的是**当前主题的槽位**：切走时把 `st-color-config` 与模式存进 `st-theme-palettes[skin]`，切回时恢复
 
 ## 验证
 

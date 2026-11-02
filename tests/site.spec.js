@@ -96,6 +96,38 @@ test("官网首页：25 张卡片 / 29 个标签 / 共享 SCSR 布局，无页�
   expect(await page.evaluate(() => location.pathname)).toBe("/site/");
 });
 
+test("从主题页切回首页：首页组件依赖随 template 重新加载", async ({ page }) => {
+  await page.goto("/site/skins.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await page.locator(".skin-card").first().waitFor({ state: "visible" });
+
+  await page.locator(".brand-btn").click();
+  await page.waitForURL("**/site/index.html", { timeout: 30_000 });
+  await waitHome(page);
+  await page.waitForTimeout(800);
+
+  const state = await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp")
+    );
+    const sr = child.shadowRoot;
+    const missing = [];
+    for (const el of sr.querySelectorAll("*")) {
+      const tag = el.tagName.toLowerCase();
+      if (tag.startsWith("st-") && !el.shadowRoot) missing.push(tag);
+    }
+    return {
+      cards: sr.querySelectorAll(".comp").length,
+      missing: [...new Set(missing)],
+      buttonGroup: !!sr.querySelector("st-button-group")?.shadowRoot,
+      select: !!sr.querySelector("st-select")?.shadowRoot,
+    };
+  });
+  expect(state.cards).toBe(25);
+  expect(state.missing).toEqual([]);
+  expect(state.buttonGroup).toBe(true);
+  expect(state.select).toBe(true);
+});
+
 test("SCSR：index.html 真实路径可直达", async ({ page }) => {
   await page.goto("/site/index.html", { waitUntil: "networkidle", timeout: 60_000 });
   await waitHome(page);
@@ -720,10 +752,10 @@ test("Windows 11 皮肤：菜单可切换，控件与表面采用 Fluent 材质"
 
   // 切回 m3，避免影响同页后续交互
   await page.locator("#skin-menu st-icon-button").click();
-  await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();
+  await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 主题" }).click();
 });
 
-test("皮肤页：四种材质可选，顶部快捷菜单只保留三巨头", async ({ page }) => {
+test("主题页：五套主题可选，顶部快捷菜单只保留三巨头", async ({ page }) => {
   await page.goto("/site/skins.html");
   await page.evaluate(() => localStorage.removeItem("st-skin"));
   await page.reload();
@@ -754,9 +786,10 @@ test("皮肤页：四种材质可选，顶部快捷菜单只保留三巨头", as
   expect(chrome.menuLabels.join(" ")).toContain("Apple 毛玻璃");
   expect(chrome.menuLabels.join(" ")).toContain("Windows 11 风格");
   expect(chrome.menuLabels.join(" ")).not.toContain("shadcn");
+  expect(chrome.menuLabels.join(" ")).not.toContain("Cyberpunk");
 
-  await expect(page.locator(".skin-card")).toHaveCount(4);
-  await expect(page.locator(".skin-preview[data-skin]")).toHaveCount(4);
+  await expect(page.locator(".skin-card")).toHaveCount(5);
+  await expect(page.locator(".skin-preview[data-skin]")).toHaveCount(5);
 
   // shadcn 不在快捷菜单里，但皮肤页可以选
   const shadcn = page.locator(".skin-card").filter({ hasText: "shadcn · 扁平" });
@@ -766,6 +799,25 @@ test("皮肤页：四种材质可选，顶部快捷菜单只保留三巨头", as
     .toBe("shadcn");
   expect(await page.evaluate(() => localStorage.getItem("st-skin"))).toBe("shadcn");
   await expect(page.locator(".current")).toContainText("shadcn · 扁平");
+
+  // Cyberpunk：零圆角 + 等宽字 + 霓虹外发光，且不在快捷菜单里
+  const cyberpunk = page.locator(".skin-card").filter({ hasText: "Cyberpunk · 霓虹终端" });
+  await cyberpunk.locator(".skin-actions st-button").filter({ hasText: "使用此主题" }).click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("cyberpunk");
+  expect(await page.evaluate(() => localStorage.getItem("st-skin"))).toBe("cyberpunk");
+  await expect(page.locator(".current")).toContainText("Cyberpunk · 霓虹终端");
+  const cyberStyle = await page
+    .locator('.skin-preview[data-skin="cyberpunk"] st-button')
+    .first()
+    .evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return { radius: parseFloat(cs.borderRadius), font: cs.fontFamily, shadow: cs.boxShadow };
+    });
+  expect(cyberStyle.radius).toBe(0);
+  expect(cyberStyle.font).toContain("monospace");
+  expect(cyberStyle.shadow).not.toBe("none");
 
   // 三巨头材质也能从皮肤页切换
   const windows = page.locator(".skin-card").filter({ hasText: "Microsoft · Windows 11" });
@@ -780,6 +832,231 @@ test("皮肤页：四种材质可选，顶部快捷菜单只保留三巨头", as
   await expect
     .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
     .toBe("m3");
+});
+
+test("Cyberpunk 主题：套用深色 + 霓虹配色，颜色仍走 M3", async ({ page }) => {
+  await page.goto("/site/skins.html");
+  await page.evaluate(() => {
+    localStorage.removeItem("st-skin");
+    localStorage.removeItem("st-theme-mode");
+    localStorage.removeItem("st-color-config");
+  });
+  await page.reload();
+  await page.locator(".skin-card").first().waitFor({ state: "visible" });
+
+  const cyberpunk = page.locator(".skin-card").filter({ hasText: "Cyberpunk · 霓虹终端" });
+  await cyberpunk.locator(".skin-actions st-button").filter({ hasText: "使用此主题" }).click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("cyberpunk");
+
+  const state = await page.evaluate(() => {
+    const saved = JSON.parse(localStorage.getItem("st-color-config") || "{}");
+    return {
+      dark: document.documentElement.classList.contains("st-dark"),
+      mode: localStorage.getItem("st-theme-mode"),
+      seed: saved.seed,
+      tertiary: saved.overrides?.tertiary,
+    };
+  });
+  expect(state.dark).toBe(true);
+  expect(state.mode).toBe("dark");
+  expect(state.seed).toBe("#ff2e97");
+  expect(state.tertiary).toBe("#00e5ff");
+
+  // 皮肤不改变颜色：filled 按钮仍然消费 M3 primary / on-primary
+  const colors = await page.evaluate(() => {
+    const find = (root, sel) => {
+      const d = root.querySelector(sel);
+      if (d) return d;
+      for (const el of root.querySelectorAll("*")) {
+        if (el.shadowRoot) {
+          const r = find(el.shadowRoot, sel);
+          if (r) return r;
+        }
+      }
+      return null;
+    };
+    const btn = find(document, '.skin-preview[data-skin="cyberpunk"] st-button');
+    const probe = document.createElement("span");
+    document.body.appendChild(probe);
+    probe.style.color = "var(--md-sys-color-primary)";
+    const primary = getComputedStyle(probe).color;
+    probe.style.color = "var(--md-sys-color-on-primary)";
+    const onPrimary = getComputedStyle(probe).color;
+    probe.remove();
+    const parse = (value) => {
+      const n = value.match(/[\d.]+/g).map(Number);
+      return value.startsWith("color(")
+        ? n.slice(0, 3).map((v) => Math.round(v * 255))
+        : n.slice(0, 3);
+    };
+    const cs = getComputedStyle(btn);
+    return { bg: parse(cs.backgroundColor), color: parse(cs.color), primary: parse(primary), onPrimary: parse(onPrimary) };
+  });
+  expect(colors.bg).toEqual(colors.primary);
+  expect(colors.color).toEqual(colors.onPrimary);
+});
+
+test("主题预设：每套材质带官方配色，并按主题记住各自颜色", async ({ page }) => {
+  await page.goto("/site/skins.html");
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.locator(".skin-card").first().waitFor({ state: "visible" });
+
+  const card = (text) => page.locator(".skin-card").filter({ hasText: text });
+  const themeState = () =>
+    page.evaluate(() => {
+      const saved = JSON.parse(localStorage.getItem("st-color-config") || "{}");
+      return {
+        skin: document.documentElement.dataset.skin,
+        seed: saved.seed,
+        primary: saved.overrides?.primary,
+      };
+    });
+
+  // Apple：官方 iOS 蓝
+  await card("Apple · 毛玻璃").locator(".skin-actions st-button").click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("apple");
+  expect(await themeState()).toMatchObject({ seed: "#007aff", primary: undefined });
+
+  // shadcn：官方 zinc 灰阶（三个品牌角色都固定为灰）
+  await card("shadcn · 扁平").locator(".skin-actions st-button").click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("shadcn");
+  const shadcn = await page.evaluate(() => {
+    const saved = JSON.parse(localStorage.getItem("st-color-config") || "{}");
+    return { seed: saved.seed, overrides: saved.overrides };
+  });
+  expect(shadcn.seed).toBe("#18181b");
+  expect(shadcn.overrides).toEqual({
+    primary: "#18181b",
+    secondary: "#3f3f46",
+    tertiary: "#52525b",
+  });
+
+  // 回到 M3：恢复进入 Apple 之前的默认配色
+  await card("Android · Material 3").locator(".skin-actions st-button").click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("m3");
+  expect(await themeState()).toMatchObject({ seed: "#0061a4", primary: undefined });
+
+  // 再回 Apple：从主题槽位恢复，而不是重新生成
+  await card("Apple · 毛玻璃").locator(".skin-actions st-button").click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("apple");
+  expect(await themeState()).toMatchObject({ seed: "#007aff", primary: undefined });
+});
+
+test("离开 Cyberpunk：恢复进入前的配色与主题模式", async ({ page }) => {
+  await page.goto("/site/skins.html");
+  await page.evaluate(() => {
+    localStorage.clear();
+    localStorage.setItem(
+      "st-color-config",
+      JSON.stringify({
+        seed: "#336699",
+        overrides: { error: "#aa0000" },
+        customs: [{ name: "brand", color: "#12ab34" }],
+      })
+    );
+    localStorage.setItem("st-theme-mode", "light");
+  });
+  await page.reload();
+  await page.locator(".skin-card").first().waitFor({ state: "visible" });
+
+  const cyberpunk = page.locator(".skin-card").filter({ hasText: "Cyberpunk · 霓虹终端" });
+  const m3 = page.locator(".skin-card").filter({ hasText: "Android · Material 3" });
+
+  // 进入 Cyberpunk：深色 + 洋红/青
+  await cyberpunk.locator(".skin-actions st-button").filter({ hasText: "使用此主题" }).click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("cyberpunk");
+  expect(await page.evaluate(() => document.documentElement.classList.contains("st-dark"))).toBe(true);
+
+  // 从皮肤页切回 M3：颜色与浅色模式都要回来
+  await m3.locator(".skin-actions st-button").click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("m3");
+  const restored = await page.evaluate(() => {
+    const saved = JSON.parse(localStorage.getItem("st-color-config") || "{}");
+    return {
+      dark: document.documentElement.classList.contains("st-dark"),
+      light: document.documentElement.classList.contains("st-light"),
+      mode: localStorage.getItem("st-theme-mode"),
+      seed: saved.seed,
+      error: saved.overrides?.error,
+      customs: saved.customs,
+      backup: localStorage.getItem("st-cyberpunk-backup"),
+    };
+  });
+  expect(restored.dark).toBe(false);
+  expect(restored.light).toBe(true);
+  expect(restored.mode).toBe("light");
+  expect(restored.seed).toBe("#336699");
+  expect(restored.error).toBe("#aa0000");
+  expect(restored.customs).toEqual([{ name: "brand", color: "#12ab34" }]);
+  expect(restored.backup).toBeNull();
+
+  // header 菜单切走也同样恢复
+  await cyberpunk.locator(".skin-actions st-button").filter({ hasText: "使用此主题" }).click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("cyberpunk");
+  await page.locator("#skin-menu st-icon-button").click();
+  await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 主题" }).click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("m3");
+  const viaHeader = await page.evaluate(() => {
+    const saved = JSON.parse(localStorage.getItem("st-color-config") || "{}");
+    return {
+      dark: document.documentElement.classList.contains("st-dark"),
+      mode: localStorage.getItem("st-theme-mode"),
+      seed: saved.seed,
+      error: saved.overrides?.error,
+    };
+  });
+  expect(viaHeader.dark).toBe(false);
+  expect(viaHeader.mode).toBe("light");
+  expect(viaHeader.seed).toBe("#336699");
+  expect(viaHeader.error).toBe("#aa0000");
+
+  // 跨页：在 docs 子页用 header 切走也要恢复
+  // （SCSR 子页不执行 layout 的 body 脚本，restore 走 layout 页面模块里的动态 import）
+  await cyberpunk.locator(".skin-actions st-button").filter({ hasText: "使用此主题" }).click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("cyberpunk");
+  await page.goto("/site/docs/button.html", { waitUntil: "networkidle" });
+  await page.locator("#skin-menu st-icon-button").waitFor({ state: "visible" });
+  await page.locator("#skin-menu st-icon-button").click();
+  await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 主题" }).click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("m3");
+  const crossPage = await page.evaluate(() => {
+    const saved = JSON.parse(localStorage.getItem("st-color-config") || "{}");
+    return {
+      dark: document.documentElement.classList.contains("st-dark"),
+      mode: localStorage.getItem("st-theme-mode"),
+      seed: saved.seed,
+      error: saved.overrides?.error,
+      backup: localStorage.getItem("st-cyberpunk-backup"),
+    };
+  });
+  expect(crossPage.dark).toBe(false);
+  expect(crossPage.mode).toBe("light");
+  expect(crossPage.seed).toBe("#336699");
+  expect(crossPage.error).toBe("#aa0000");
+  expect(crossPage.backup).toBeNull();
 });
 
 test("共享 header：皮肤菜单切换全站材质并持久化", async ({ page }) => {
@@ -831,7 +1108,7 @@ test("共享 header：皮肤菜单切换全站材质并持久化", async ({ page
   expect(glass.headerLayerBlur).toContain("blur(18px)");
 
   // 再切回 m3，避免影响同页后续交互
-  await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();
+  await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 主题" }).click();
   await expect
     .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
     .toBe("m3");
@@ -896,7 +1173,7 @@ test("官网环境光：Apple 毛玻璃下增强，M3/windows/shadcn 保持低�
   expect(glass.componentBlur).toContain("blur(18px)");
 
   await page.locator("#skin-menu st-icon-button").click();
-  await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();
+  await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 主题" }).click();
 });
 
 test("文档示例容器在 Apple 下透出环境光", async ({ page }) => {
@@ -929,7 +1206,7 @@ test("文档示例容器在 Apple 下透出环境光", async ({ page }) => {
   expect(state.inputBlur).toContain("blur(18px)");
 
   await page.locator("#skin-menu st-icon-button").click();
-  await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 材质" }).click();
+  await page.locator("#skin-menu st-menu-item").filter({ hasText: "M3 主题" }).click();
 });
 
 test("文档示例容器不裁剪下拉弹层", async ({ page }) => {
@@ -1092,6 +1369,18 @@ test("从手记切到文档：二级 layout 的 list / select 依赖随父页加
     );
     return !!(docs && docs.shadowRoot.querySelector(".docs-side st-list")?.shadowRoot);
   });
+  // 切页动画期间离场页可能还在 slot 里，等侧栏真正参与布局再量高度
+  await page.waitForFunction(
+    () => {
+      const docs = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side")
+      );
+      const item = docs?.shadowRoot.querySelector(".docs-side st-list-item");
+      return !!item && item.getBoundingClientRect().height > 20;
+    },
+    null,
+    { timeout: 5_000 }
+  );
 
   const state = await page.evaluate(() => {
     const docs = [...document.querySelectorAll("o-page")].find(
@@ -1112,4 +1401,42 @@ test("从手记切到文档：二级 layout 的 list / select 依赖随父页加
   expect(state.items).toBe(22);
   expect(state.firstItemHeight).toBeGreaterThan(20);
   expect(state.pickerUpgraded).toBe(true);
+
+  // 目标文档页自己的组件依赖也必须在 template 内：从手记进入时按钮组 / 分裂按钮要能升级
+  await page.evaluate(() => {
+    const docs = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-side")
+    );
+    [...docs.shadowRoot.querySelectorAll(".docs-side st-list-item")]
+      .find((el) => el.textContent.includes("Button"))
+      .click();
+  });
+  await page.waitForURL("**/site/docs/button.html", { timeout: 30_000 });
+  await page.waitForFunction(
+    () => {
+      const walk = (root) => {
+        for (const el of root.querySelectorAll("*")) {
+          if (el.tagName === "ST-BUTTON-GROUP" && el.shadowRoot) return true;
+          if (el.shadowRoot && walk(el.shadowRoot)) return true;
+        }
+        return false;
+      };
+      return walk(document);
+    },
+    null,
+    { timeout: 15_000 }
+  );
+  const missing = await page.evaluate(() => {
+    const missing = [];
+    const walk = (root) => {
+      for (const el of root.querySelectorAll("*")) {
+        const tag = el.tagName.toLowerCase();
+        if (tag.startsWith("st-") && !el.shadowRoot) missing.push(tag);
+        if (el.shadowRoot) walk(el.shadowRoot);
+      }
+    };
+    walk(document);
+    return [...new Set(missing)];
+  });
+  expect(missing).toEqual([]);
 });

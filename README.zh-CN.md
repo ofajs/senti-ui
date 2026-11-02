@@ -115,7 +115,7 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 
 ## 皮肤（材质层）
 
-同一批组件可以只换**材质**、不换颜色：`m3`（默认）/ `apple`（毛玻璃）/ `windows`（Windows 11 / Fluent：Mica + Acrylic）/ `shadcn`（扁平细描边）。皮肤只影响圆角、密度、描边、阴影、毛玻璃、焦点环、动效与波纹；所有皮肤消费同一套 M3 角色变量，种子色、`error`、`success` 与深浅色主题继续生效。
+同一批组件可以只换**材质**、不换颜色：`m3`（默认）/ `apple`（毛玻璃）/ `windows`（Windows 11 / Fluent：Mica + Acrylic）/ `shadcn`（扁平细描边）/ `cyberpunk`（零圆角、等宽字、霓虹描边与发光）。皮肤只影响圆角、密度、描边、阴影、毛玻璃、焦点环、动效与波纹；所有皮肤消费同一套 M3 角色变量，种子色、`error`、`success` 与深浅色主题继续生效。
 
 ```html
 <html data-skin="apple">
@@ -125,9 +125,11 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 
 运行时用 `packages/skin/st-skin.js` 的 `setSkin("windows")` 切换（持久化并跨同源窗口同步）。全部交互与表面组件都已接入；完整 token / `part` 契约与自定义皮肤写法见 [packages/skin/README.md](./packages/skin/README.md)。
 
+官网另有一层**主题预设**（只存在于 `site/theme-presets.js`，不属于包 API）：每套材质配一套官方配色（M3 蓝 / Apple iOS 蓝 / Windows 蓝 / shadcn zinc / Cyberpunk 洋红+青），切换时一并套用，并按材质记住各自的颜色与深浅模式；`setSkin()` 本身仍然只换材质。
+
 ## 官网首页
 
-单页聚合官网在 [`site/`](./site/index.html)：全部组件摆在一页，支持实时换肤、深浅色切换与四种材质并排对比；独立皮肤页在 [`site/skins.html`](./site/skins.html)，顶部快捷菜单只保留三巨头材质。采用 **ofa.js v5 + scsr**（真实路径文档；加载后由 scsr 收编为 o-app 页面）。组件使用说明在 [`site/docs/`](./site/docs/index.html)：每个组件一个独立 SCSR 页，按场景拆成 4–7 组可交互示例，并附属性表、插槽 / 事件；左侧目录由二级 SCSR 父页共享，组件间切换不销毁。
+单页聚合官网在 [`site/`](./site/index.html)：全部组件摆在一页，支持实时换肤、深浅色切换与多种材质并排对比；独立皮肤页在 [`site/skins.html`](./site/skins.html)，可选 M3 / Apple / Windows / shadcn / Cyberpunk 五套材质，顶部快捷菜单只保留三巨头材质。采用 **ofa.js v5 + scsr**（真实路径文档；加载后由 scsr 收编为 o-app 页面）。组件使用说明在 [`site/docs/`](./site/docs/index.html)：每个组件一个独立 SCSR 页，按场景拆成 4–7 组可交互示例，并附属性表、插槽 / 事件；左侧目录由二级 SCSR 父页共享，组件间切换不销毁。
 
 ```bash
 npm run dev

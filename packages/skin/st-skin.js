@@ -28,6 +28,7 @@ const registry = new Map([
   ["apple", new URL("./apple.css", import.meta.url).href],
   ["windows", new URL("./windows.css", import.meta.url).href],
   ["shadcn", new URL("./shadcn.css", import.meta.url).href],
+  ["cyberpunk", new URL("./cyberpunk.css", import.meta.url).href],
 ]);
 
 const readStored = () => {

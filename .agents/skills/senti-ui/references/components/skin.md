@@ -19,7 +19,7 @@
 ```html
 <script type="module">
   import { setSkin } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js";
-  setSkin("windows"); // "m3" | "apple" | "windows" | "shadcn" | 自定义注册的皮肤
+  setSkin("windows"); // "m3" | "apple" | "windows" | "shadcn" | "cyberpunk" | 自定义注册的皮肤
 </script>
 ```
 
@@ -28,6 +28,8 @@
 - `apple`：半透明毛玻璃 + 连续圆角
 - `windows`：Windows 11 / Fluent——4px 控件、8px 表面、Segoe UI、Mica 表面与 Acrylic 浮层
 - `shadcn`：6px 扁平细描边
+- `cyberpunk`：零圆角、等宽字、霓虹描边与外发光、方形开关/滑块拇指；建议配深色主题和霓虹种子色
+- 官网皮肤页把材质作为“主题”：每套带官方配色（M3 蓝 / Apple iOS 蓝 / Windows 蓝 / shadcn zinc / Cyberpunk 洋红+青），切换时一并套用并按材质记住颜色（页面层 `site/theme-presets.js`）；`setSkin()` 本身只换材质
 
 ## API（https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js）
 

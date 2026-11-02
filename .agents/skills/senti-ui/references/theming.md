@@ -6,7 +6,7 @@ CDN 前缀：`https://cdn.jsdelivr.net/gh/ofajs/senti-ui`（下称 `{cdn}`）。
 
 ## 皮肤（材质层，不改变颜色）
 
-颜色换的是“配色”，皮肤换的是“材质”。`{cdn}/packages/skin/` 提供 `m3` / `apple`（毛玻璃）/ `windows`（Windows 11 / Fluent：Mica + Acrylic）/ `shadcn`（扁平）四套皮肤，只改圆角、密度、描边、阴影、毛玻璃、焦点环、动效与波纹，**继续消费同一套 `--md-sys-color-*`**：
+颜色换的是“配色”，皮肤换的是“材质”。`{cdn}/packages/skin/` 提供 `m3` / `apple`（毛玻璃）/ `windows`（Windows 11 / Fluent：Mica + Acrylic）/ `shadcn`（扁平）/ `cyberpunk`（霓虹终端）五套皮肤，只改圆角、密度、描边、阴影、毛玻璃、焦点环、动效与波纹，**继续消费同一套 `--md-sys-color-*`**：
 
 ```html
 <html data-skin="apple">

@@ -115,7 +115,7 @@ For manual control:
 
 ## Skins (material layer)
 
-The same components can switch **material** without changing colors: `m3` (default), `apple` (glassmorphism), `windows` (Windows 11 / Fluent: Mica + Acrylic), `shadcn` (flat, hairline borders). Skins only affect radius, density, borders, shadows, backdrop blur, focus rings, motion and ripple — every skin consumes the same M3 role variables, so seed color, `error`, `success` and light/dark mode keep working.
+The same components can switch **material** without changing colors: `m3` (default), `apple` (glassmorphism), `windows` (Windows 11 / Fluent: Mica + Acrylic), `shadcn` (flat, hairline borders), `cyberpunk` (zero radius, monospace, neon edges and glow). Skins only affect radius, density, borders, shadows, backdrop blur, focus rings, motion and ripple — every skin consumes the same M3 role variables, so seed color, `error`, `success` and light/dark mode keep working.
 
 ```html
 <html data-skin="apple">
@@ -124,6 +124,8 @@ The same components can switch **material** without changing colors: `m3` (defau
 ```
 
 Switch at runtime with `setSkin("windows")` from `packages/skin/st-skin.js` (persists and syncs across same-origin windows). All interactive and surface components consume the skin tokens; the full token / `part` contract and how to author a custom skin are in [packages/skin/README.md](./packages/skin/README.md).
+
+The website adds a **theme preset** layer on top (only in `site/theme-presets.js`, not part of the package API): each material ships with an official palette (M3 blue / Apple iOS blue / Windows blue / shadcn zinc / Cyberpunk magenta + cyan), applied together on switch and remembered per material (color + light/dark mode). `setSkin()` itself still changes material only.
 
 ## Website
 

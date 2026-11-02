@@ -1,4 +1,4 @@
-<!-- st-skin 验收页：同一批组件在 m3 / apple / windows / shadcn 四套皮肤下的材质切换 -->
+<!-- st-skin 验收页：同一批组件在 m3 / apple / windows / shadcn / cyberpunk 五套皮肤下的材质切换 -->
 <template page>
   <style>
     :host {
@@ -223,7 +223,7 @@
   <pre><code>&lt;!-- 方式一：跑起来切换（持久化到 localStorage，同源全站跟随） --&gt;
 &lt;script type="module"&gt;
   import { setSkin } from "/packages/skin/st-skin.js";
-  setSkin("apple"); // "m3" | "apple" | "windows" | "shadcn" | 自定义注册的皮肤
+  setSkin("apple"); // "m3" | "apple" | "windows" | "shadcn" | "cyberpunk" | 自定义注册的皮肤
 &lt;/script&gt;
 
 &lt;!-- 方式二：静态写死，首帧就是目标皮肤（无闪切） --&gt;
@@ -246,6 +246,7 @@
           { id: "apple", label: "Apple 毛玻璃" },
           { id: "windows", label: "Windows 11 风格" },
           { id: "shadcn", label: "shadcn 扁平" },
+          { id: "cyberpunk", label: "Cyberpunk 霓虹" },
         ],
       },
       ready() {

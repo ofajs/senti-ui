@@ -6,7 +6,7 @@
 
 ## 皮肤 st-skin（材质层）
 
-- `m3`（默认）/ `apple`（毛玻璃）/ `windows`（Windows 11 / Fluent：Mica + Acrylic）/ `shadcn`（扁平）；只改材质，颜色仍走 M3
+- `m3`（默认）/ `apple`（毛玻璃）/ `windows`（Windows 11 / Fluent：Mica + Acrylic）/ `shadcn`（扁平）/ `cyberpunk`（零圆角霓虹终端）；只改材质，颜色仍走 M3
 - 切换：`import { setSkin } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js"; setSkin("apple")`；静态：`<html data-skin="apple">` + `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/apple.css">`
 - 已接入全部交互与表面组件；token / part 表与自定义皮肤见 [components/skin.md](./components/skin.md)
 

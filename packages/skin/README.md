@@ -31,8 +31,13 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 - `apple`：半透明毛玻璃 + 连续圆角
 - `windows`：Windows 11 / Fluent——4px 控件、8px 表面、Segoe UI、Mica 表面与 Acrylic 浮层
 - `shadcn`：6px 扁平细描边
+- `cyberpunk`：零圆角、等宽字、霓虹描边与外发光、方形开关/滑块拇指、CRT 扫描线；建议配深色主题和霓虹种子色
 
 `windows` 的材质分工：常驻表面（卡片 / 对话框 / 输入框）用 Mica——高不透明度的着色底，不预先模糊正文；菜单 / 下拉 / 气泡等浮层用 Acrylic——半透明底 + `blur(30px)`。控件圆角 4px、表面圆角 8px，图标按钮是 4px 方形而不是圆形。
+
+`cyberpunk` 的霓虹来自 M3 角色：描边与外发光全部用 `color-mix(primary …)` 组合，所以 `color="error"`、换种子色、深浅色切换都会跟着变。皮肤本身不提供“深色”或“洋红”，那属于配色和主题模式（`setThemeMode("dark")` + 种子色）。
+
+官网的皮肤页把“材质”当成完整主题：每套材质带官方配色（M3 蓝 `#0061A4` / Apple iOS 蓝 `#007AFF` / Windows 蓝 `#0078D4` / shadcn zinc `#18181B` / Cyberpunk 洋红 `#FF2E97` + 青 `#00E5FF`），由页面层的 `site/theme-presets.js` 在切换时一起套用，并按材质把颜色与深浅模式存进 `st-theme-palettes`，切回来时恢复。卡片里的官方配色预览是局部 CSS 变量，不影响全站。包内的 `setSkin("cyberpunk")` 仍然只换材质。
 
 ## API
 

@@ -6,13 +6,13 @@
   <title>皮肤 — Senti-UI</title>
   <meta
     name="description"
-    content="Senti-UI 皮肤页：同一批组件、同一套 M3 颜色，在 Android Material 3、Apple 毛玻璃、Microsoft Windows 11 与 shadcn 扁平材质之间切换；页面底部可用 Google Material Color Utilities 改种子色、覆盖角色与添加自定义颜色。"
+    content="Senti-UI 主题页：同一批组件，在 Android Material 3、Apple 毛玻璃、Microsoft Windows 11、shadcn 扁平与 Cyberpunk 霓虹终端之间切换；每套主题带官方配色（M3 蓝 / iOS 蓝 / Windows 蓝 / zinc 灰阶 / 洋红青），并按主题记住各自的颜色；页面底部可用 Google Material Color Utilities 改种子色、覆盖角色与添加自定义颜色。"
   />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="皮肤 — Senti-UI" />
   <meta
     property="og:description"
-    content="三巨头材质同页对比：Android Material 3 / Apple 毛玻璃 / Microsoft Windows 11，另有 shadcn 扁平备用。"
+    content="主题同页对比：Android Material 3 / Apple 毛玻璃 / Microsoft Windows 11 / shadcn 扁平 / Cyberpunk 霓虹终端，每套带官方配色与独立颜色记忆。"
   />
   <meta name="theme-color" content="#0061A4" />
   <link
@@ -27,6 +27,7 @@
   <link rel="stylesheet" href="../packages/skin/m3.css" />
   <link rel="stylesheet" href="../packages/skin/apple.css" />
   <link rel="stylesheet" href="../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../packages/skin/cyberpunk.css" />
   <link rel="stylesheet" href="../packages/skin/windows.css" />
   <style>
     html,
@@ -60,19 +61,20 @@
     </div>
   </noscript>
 
-  <l-m src="../packages/button/button.html"></l-m>
-  <l-m src="../packages/button/icon-button.html"></l-m>
-  <l-m src="../packages/input/input.html"></l-m>
-  <l-m src="../packages/menu/menu.html"></l-m>
-  <l-m src="../packages/tooltip/tooltip.html"></l-m>
-  <l-m src="../packages/progress/progress.html"></l-m>
-
   <o-app src="./app-config.js">
     <template page>
+      <l-m src="../packages/button/button.html"></l-m>
+      <l-m src="../packages/button/icon-button.html"></l-m>
+      <l-m src="../packages/input/input.html"></l-m>
+      <l-m src="../packages/menu/menu.html"></l-m>
+      <l-m src="../packages/tooltip/tooltip.html"></l-m>
+      <l-m src="../packages/progress/progress.html"></l-m>
+
       <!-- 局部 data-skin 预览需要页面 shadow 内的样式表 -->
       <link rel="stylesheet" href="../packages/skin/m3.css" />
       <link rel="stylesheet" href="../packages/skin/apple.css" />
       <link rel="stylesheet" href="../packages/skin/shadcn.css" />
+      <link rel="stylesheet" href="../packages/skin/cyberpunk.css" />
       <link rel="stylesheet" href="../packages/skin/windows.css" />
 
       <style>
@@ -544,24 +546,24 @@
       <main class="skins-page">
         <header>
           <p class="kicker">MATERIALS</p>
-          <h1>选择材质</h1>
+          <h1>选择主题</h1>
           <p class="lead">
-            同一批组件、同一套 M3 颜色，只换材质。顶部快捷菜单保留 Android / Apple / Microsoft
-            三种常用风格；shadcn 作为额外的扁平材质，在这里选用。页面底部还可以改种子色、
-            覆盖单个角色，或添加自己的颜色变量。
+            每套材质都有各自的官方配色：M3 蓝、Apple iOS 蓝、Windows 11 蓝、shadcn zinc 灰阶、
+            Cyberpunk 洋红/青。点选会同时切换材质与配色，并按主题记住各自的颜色；页面底部
+            仍然可以改种子色、覆盖单个角色，或添加自己的颜色变量。
           </p>
           <div class="current">
-            当前材质 <strong>{{skinLabel}}</strong>
+            当前主题 <strong>{{skinLabel}}</strong>
             <span class="mono">data-skin="{{skin}}"</span>
           </div>
         </header>
 
-        <section class="skin-grid" aria-label="可选材质">
+        <section class="skin-grid" aria-label="可选主题">
           <article class="skin-card">
             <div class="skin-head">
               <div>
                 <h2>Android · Material 3</h2>
-                <p>全圆角、state layer、波纹；Material Design 3 的默认触感。</p>
+                <p>全圆角、state layer、波纹；Material Design 3 的默认触感。官方色：Senti 蓝。</p>
               </div>
               <span class="skin-chip">m3</span>
             </div>
@@ -577,7 +579,7 @@
               <st-button
                 attr:variant="skin === 'm3' ? 'filled' : 'outlined'"
                 on:click="use('m3')">
-                {{skin === 'm3' ? '当前材质' : '使用此材质'}}
+                {{skin === 'm3' ? '当前主题' : '使用此主题'}}
               </st-button>
               <span class="hint">Material Design 3</span>
             </div>
@@ -587,7 +589,7 @@
             <div class="skin-head">
               <div>
                 <h2>Apple · 毛玻璃</h2>
-                <p>半透明表面 + backdrop blur、连续圆角、外侧柔光焦点环，无波纹。</p>
+                <p>半透明表面 + backdrop blur、连续圆角、外侧柔光焦点环，无波纹。官方色：iOS 蓝。</p>
               </div>
               <span class="skin-chip">apple</span>
             </div>
@@ -603,7 +605,7 @@
               <st-button
                 attr:variant="skin === 'apple' ? 'filled' : 'outlined'"
                 on:click="use('apple')">
-                {{skin === 'apple' ? '当前材质' : '使用此材质'}}
+                {{skin === 'apple' ? '当前主题' : '使用此主题'}}
               </st-button>
               <span class="hint">glassmorphism</span>
             </div>
@@ -613,7 +615,7 @@
             <div class="skin-head">
               <div>
                 <h2>Microsoft · Windows 11</h2>
-                <p>4px 控件 / 8px 表面、Segoe UI、Mica 表面与 Acrylic 浮层，焦点矩形替代外发光。</p>
+                <p>4px 控件 / 8px 表面、Segoe UI、Mica 表面与 Acrylic 浮层。官方色：Windows 蓝。</p>
               </div>
               <span class="skin-chip">windows</span>
             </div>
@@ -629,7 +631,7 @@
               <st-button
                 attr:variant="skin === 'windows' ? 'filled' : 'outlined'"
                 on:click="use('windows')">
-                {{skin === 'windows' ? '当前材质' : '使用此材质'}}
+                {{skin === 'windows' ? '当前主题' : '使用此主题'}}
               </st-button>
               <span class="hint">Fluent / Mica</span>
             </div>
@@ -639,7 +641,7 @@
             <div class="skin-head">
               <div>
                 <h2>shadcn · 扁平</h2>
-                <p>6px 圆角、1px 细描边、极轻阴影、外扩 focus ring，紧凑密度。</p>
+                <p>6px 圆角、1px 细描边、极轻阴影、外扩 focus ring。官方色：zinc 灰阶。</p>
               </div>
               <span class="skin-chip">shadcn</span>
             </div>
@@ -655,17 +657,44 @@
               <st-button
                 attr:variant="skin === 'shadcn' ? 'filled' : 'outlined'"
                 on:click="use('shadcn')">
-                {{skin === 'shadcn' ? '当前材质' : '使用此材质'}}
+                {{skin === 'shadcn' ? '当前主题' : '使用此主题'}}
               </st-button>
               <span class="hint">额外的扁平选项</span>
+            </div>
+          </article>
+
+          <article class="skin-card">
+            <div class="skin-head">
+              <div>
+                <h2>Cyberpunk · 霓虹终端</h2>
+                <p>零圆角、等宽字、霓虹描边与外发光、方形开关 / 滑块拇指；选中时会一并套用深色 + 洋红/青配色。</p>
+              </div>
+              <span class="skin-chip">cyberpunk</span>
+            </div>
+            <div class="skin-preview" data-skin="cyberpunk">
+              <div class="preview-row">
+                <st-button>按钮</st-button>
+                <st-button variant="outlined">描边</st-button>
+                <st-icon-button title="设置">⚙</st-icon-button>
+              </div>
+              <st-input placeholder="输入内容"></st-input>
+            </div>
+            <div class="skin-actions">
+              <st-button
+                attr:variant="skin === 'cyberpunk' ? 'filled' : 'outlined'"
+                on:click="useCyberpunk">
+                {{skin === 'cyberpunk' ? '当前主题' : '使用此主题'}}
+              </st-button>
+              <span class="hint">深色 + 洋红 / 青</span>
             </div>
           </article>
         </section>
 
         <p class="note">
-          材质只影响圆角、密度、描边、阴影、毛玻璃、焦点环与动效；颜色始终来自 M3 角色，
-          种子色、error、success 与深浅色主题在四套材质下都保持一致。
-          代码里用 <code>setSkin("windows")</code> 或 <code>&lt;html data-skin="windows"&gt;</code> 切换。
+          每套主题 = 材质 + 官方配色。切换时会保存当前主题的颜色与深浅模式，切回来时恢复；
+          M3 的槽位承接你原本的品牌色，所以从 Cyberpunk 回到 M3 会得到进入前的配色。
+          皮肤 CSS 本身仍然只写 token、不写颜色，<code>setSkin()</code> 也只换材质；
+          这套主题预设只存在于官网演示层。
         </p>
 
         <section class="color-lab" id="color" aria-labelledby="color-title">
@@ -801,6 +830,7 @@
           ready() {
             this.syncSkin();
             this.initColorLab();
+            this.initPreviewPalettes();
             this._observer = new MutationObserver(() => this.syncSkin());
             this._observer.observe(document.documentElement, {
               attributes: true,
@@ -809,6 +839,10 @@
           },
           detached() {
             this._observer?.disconnect();
+            this._previewObserver?.disconnect();
+            if (this._previewMedia && this._onPreviewScheme) {
+              this._previewMedia.removeEventListener("change", this._onPreviewScheme);
+            }
           },
           proto: {
             get skinLabel() {
@@ -818,6 +852,7 @@
                   apple: "Apple · 毛玻璃",
                   windows: "Microsoft · Windows 11",
                   shadcn: "shadcn · 扁平",
+                  cyberpunk: "Cyberpunk · 霓虹终端",
                 }[this.skin] || this.skin
               );
             },
@@ -826,6 +861,39 @@
                 document.documentElement.dataset.skin ||
                 localStorage.getItem("st-skin") ||
                 "m3";
+            },
+            async initPreviewPalettes() {
+              let tries = 0;
+              while (!window.__site?.previewThemes && tries++ < 300) {
+                await new Promise((resolve) => setTimeout(resolve, 20));
+              }
+              if (!window.__site?.previewThemes) return;
+              this.applyPreviewPalettes();
+              this._previewObserver = new MutationObserver(() => this.applyPreviewPalettes());
+              this._previewObserver.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ["class"],
+              });
+              this._previewMedia = window.matchMedia("(prefers-color-scheme: dark)");
+              this._onPreviewScheme = () => this.applyPreviewPalettes();
+              this._previewMedia.addEventListener("change", this._onPreviewScheme);
+            },
+            applyPreviewPalettes() {
+              const themes = window.__site?.previewThemes;
+              const root = this.ele?.shadowRoot;
+              if (!themes || !root) return;
+              const dark =
+                document.documentElement.classList.contains("st-dark") ||
+                (!document.documentElement.classList.contains("st-light") &&
+                  window.matchMedia("(prefers-color-scheme: dark)").matches);
+              for (const el of root.querySelectorAll(".skin-preview[data-skin]")) {
+                const theme = themes[el.dataset.skin];
+                if (!theme) continue;
+                const vars = theme.forceDark || dark ? theme.dark : theme.light;
+                for (const [name, value] of Object.entries(vars)) {
+                  el.style.setProperty(name, value);
+                }
+              }
             },
             async initColorLab() {
               let tries = 0;
@@ -978,6 +1046,17 @@
               this.colorStatus = "已恢复默认 M3 配色。";
             },
             use(id) {
+              const theme = window.__siteTheme;
+              if (theme?.applyThemePreset) {
+                const result = theme.applyThemePreset(id);
+                this.skin = result.skin;
+                this.seed = result.config.seed;
+                this.overrides = result.config.overrides;
+                this.customs = result.config.customs;
+                this.applyColor(false);
+                this.colorStatus = "已切换到 " + this.skinLabel + " 主题。";
+                return;
+              }
               if (window.__site) window.__site.setSkin(id);
               else {
                 try {
@@ -986,6 +1065,11 @@
                 document.documentElement.dataset.skin = id;
               }
               this.skin = id;
+            },
+            useCyberpunk() {
+              // Cyberpunk 的官方配色（深色 + 洋红/青）由主题预设统一提供；
+              // 皮肤 CSS 本身仍然不写任何颜色。
+              this.use("cyberpunk");
             },
           },
         });
@@ -1002,6 +1086,24 @@
       generateM3Theme,
       expandCustoms,
     } from "../packages/color/m3-theme.js";
+    import { THEME_PRESETS, applyThemePreset } from "./theme-presets.js";
+
+    const toVars = (scheme) =>
+      Object.fromEntries(
+        Object.entries(scheme).map(([name, value]) => [
+          "--md-sys-color-" + name.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase()),
+          value,
+        ])
+      );
+    const previewThemes = {};
+    for (const [id, preset] of Object.entries(THEME_PRESETS)) {
+      const theme = generateM3Theme(preset.seed, preset.overrides || {});
+      previewThemes[id] = {
+        light: toVars(theme.light),
+        dark: toVars(theme.dark),
+        forceDark: id === "cyberpunk",
+      };
+    }
 
     window.__site = {
       setThemeMode,
@@ -1012,7 +1114,9 @@
       themeToCss,
       generateM3Theme,
       expandCustoms,
+      previewThemes,
     };
+    window.__siteTheme = { ...(window.__siteTheme || {}), THEME_PRESETS, applyThemePreset };
     window.__siteReady = true;
   </script>
 </body>

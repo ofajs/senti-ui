@@ -1398,6 +1398,73 @@ test("皮肤页：M3 改色与加色（种子色 / 自定义变量 / 持久化 /
   ).toBe("");
 });
 
+test("皮肤页：可用色块变量按白天 / 黑夜面板展示，变量名可复制", async ({ page }) => {
+  await page.context().grantPermissions(["clipboard-read", "clipboard-write"], {
+    origin: "http://127.0.0.1:8642",
+  });
+  await page.goto("/site/skins.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await page.locator(".swatch-library").waitFor({ state: "visible" });
+
+  await expect(page.locator(".swatch-panel")).toHaveCount(2);
+  await expect(page.locator("#swatch-light .swatch-card")).toHaveCount(34);
+  await expect(page.locator("#swatch-dark .swatch-card")).toHaveCount(34);
+
+  const panels = await page.locator(".swatch-panel").evaluateAll((els) =>
+    els.map((el) => ({
+      bg: getComputedStyle(el).backgroundColor,
+      token: el.querySelector(".swatch-token code").textContent,
+      hex: el.querySelector(".swatch-block span").textContent,
+      surface: getComputedStyle(el).getPropertyValue("--md-sys-color-surface-container").trim(),
+    }))
+  );
+  expect(panels[0].token).toBe("--md-sys-color-primary");
+  expect(panels[1].token).toBe("--md-sys-color-primary");
+  expect(panels[0].hex).not.toBe(panels[1].hex);
+  expect(panels[0].bg).not.toBe(panels[1].bg);
+  expect(panels[0].surface).not.toBe(panels[1].surface);
+
+  // 点击变量名复制 token 本身
+  const firstLightToken = page.locator("#swatch-light .swatch-token").first();
+  await firstLightToken.click();
+  await expect(page.locator(".swatch-copy-status")).toHaveText(
+    "已复制 --md-sys-color-primary"
+  );
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    "--md-sys-color-primary"
+  );
+
+  const luminance = (rgb) => {
+    const [r, g, b] = rgb.match(/\d+/g).map(Number);
+    return r * 0.299 + g * 0.587 + b * 0.114;
+  };
+  expect(luminance(panels[0].bg)).toBeGreaterThan(luminance(panels[1].bg));
+  for (const value of [panels[0].surface, panels[1].surface]) {
+    expect(value).toMatch(/^#[0-9a-f]{6}$/);
+  }
+
+  // 改种子色后，两块面板里的 primary 色块都实时重算
+  const lightHex = page.locator("#swatch-light .swatch-card").first().locator(".swatch-block span");
+  const darkHex = page.locator("#swatch-dark .swatch-card").first().locator(".swatch-block span");
+  const beforeLight = await lightHex.textContent();
+  const beforeDark = await darkHex.textContent();
+  await page.locator(".hex-input").fill("#b3261e");
+  await page.locator(".hex-input").blur();
+  await expect(lightHex).not.toHaveText(beforeLight);
+  await expect(darkHex).not.toHaveText(beforeDark);
+
+  // 自定义颜色同步展开为 4 个配对变量，并在两块面板中各出现一次
+  await page.locator(".custom-add").click();
+  await expect(page.locator("#swatch-light .swatch-card")).toHaveCount(38);
+  await expect(page.locator("#swatch-dark .swatch-card")).toHaveCount(38);
+  for (const selector of ["#swatch-light .swatch-token code", "#swatch-dark .swatch-token code"]) {
+    const tokens = await page.locator(selector).allTextContents();
+    expect(tokens).toContain("--brand");
+    expect(tokens).toContain("--on-brand");
+    expect(tokens).toContain("--brand-container");
+    expect(tokens).toContain("--on-brand-container");
+  }
+});
+
 test("从手记切到文档：二级 layout 的 list / select 依赖随父页加载", async ({ page }) => {
   await page.goto("/site/notes/index.html", { waitUntil: "networkidle", timeout: 60_000 });
   await page.waitForFunction(() =>

@@ -525,10 +525,147 @@
           font-size: 10.5px;
           line-height: 1.65;
         }
+        /* ---------- 可用色块变量：白天 / 黑夜各自铺对应 surface，避免串背景 ---------- */
+        .swatch-library {
+          margin-top: 26px;
+          padding-top: 24px;
+          border-top: 1px solid var(--md-sys-color-outline-variant);
+        }
+        .swatch-head {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 24px;
+        }
+        .swatch-head h3 {
+          margin-top: 6px;
+          font-size: clamp(19px, 2.3vw, 26px);
+          line-height: 1.15;
+          letter-spacing: -0.03em;
+          font-weight: 700;
+        }
+        .swatch-desc {
+          max-width: 560px;
+          padding-bottom: 2px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 11.5px;
+          line-height: 1.7;
+          text-align: right;
+        }
+        .swatch-panels {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          align-items: start;
+          gap: 12px;
+          margin-top: 16px;
+        }
+        .swatch-panel {
+          min-width: 0;
+          padding: 14px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 16px;
+          background: var(--md-sys-color-surface-container);
+          color: var(--md-sys-color-on-surface);
+        }
+        .swatch-panel-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+        }
+        .swatch-panel-head span {
+          color: var(--md-sys-color-on-surface);
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+        }
+        .swatch-panel-head code {
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 9.5px;
+        }
+        .swatch-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(126px, 1fr));
+          gap: 8px;
+          margin-top: 12px;
+        }
+        .swatch-card {
+          min-width: 0;
+          overflow: hidden;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 10px;
+          background: var(--md-sys-color-surface-container-low);
+        }
+        .swatch-block {
+          display: flex;
+          align-items: flex-end;
+          justify-content: flex-end;
+          height: 54px;
+          padding: 6px 8px;
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
+          letter-spacing: 0.01em;
+        }
+        .swatch-token {
+          display: flex;
+          align-items: flex-start;
+          gap: 6px;
+          width: 100%;
+          padding: 6px 8px;
+          border: 0;
+          border-radius: 0;
+          background: transparent;
+          color: var(--md-sys-color-on-surface-variant);
+          font: inherit;
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 9px;
+          line-height: 1.45;
+          text-align: left;
+          cursor: pointer;
+        }
+        .swatch-token code {
+          min-width: 0;
+          overflow-wrap: anywhere;
+          font: inherit;
+        }
+        .swatch-token .copy-mark {
+          flex: none;
+          margin-left: auto;
+          opacity: 0.45;
+          transition: opacity 0.15s ease;
+        }
+        .swatch-token:hover {
+          color: var(--md-sys-color-primary);
+          background: color-mix(in srgb, var(--md-sys-color-primary) 9%, transparent);
+        }
+        .swatch-token:hover .copy-mark,
+        .swatch-token.copied .copy-mark {
+          opacity: 1;
+        }
+        .swatch-token.copied {
+          color: var(--md-sys-color-primary);
+        }
+        .swatch-token:focus-visible {
+          outline: 2px solid var(--md-sys-color-primary);
+          outline-offset: -2px;
+        }
+        .swatch-copy-status {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip-path: inset(50%);
+          white-space: nowrap;
+        }
         @media (max-width: 900px) {
-          .color-lab-head { display: grid; gap: 9px; }
-          .color-lab-desc { max-width: none; text-align: left; }
-          .color-lab-grid { grid-template-columns: minmax(0, 1fr); }
+          .color-lab-head,
+          .swatch-head { display: grid; gap: 9px; }
+          .color-lab-desc,
+          .swatch-desc { max-width: none; text-align: left; }
+          .color-lab-grid,
+          .swatch-panels { grid-template-columns: minmax(0, 1fr); }
         }
         @media (max-width: 620px) {
           .role-row,
@@ -804,6 +941,62 @@
               <p class="preview-note">改动即时生效，并写入 localStorage；同域其他页面刷新后使用同一套配色。</p>
             </aside>
           </div>
+
+          <section class="swatch-library" aria-labelledby="swatch-title">
+            <header class="swatch-head">
+              <div>
+                <p class="kicker">TOKENS / LIGHT + DARK</p>
+                <h3 id="swatch-title">可用色块变量</h3>
+              </div>
+              <p class="swatch-desc">
+                左右两块分别用对应模式的 surface-container 铺底，同一套 token 在白天 / 黑夜下的
+                真实背景与文字对比都按该模式呈现；点击变量名可复制。种子色、角色覆盖和自定义色改动会实时重算。
+              </p>
+            </header>
+            <p class="swatch-copy-status" role="status" aria-live="polite" :text="copyStatus"></p>
+
+            <div class="swatch-panels">
+              <section class="swatch-panel" id="swatch-light" aria-label="白天模式颜色变量">
+                <div class="swatch-panel-head">
+                  <span>白天 · LIGHT</span>
+                  <code>color-scheme: light</code>
+                </div>
+                <div class="swatch-grid">
+                  <o-fill :value="lightSwatches" fill-key="varName">
+                    <div class="swatch-card" :title="$data.varName + ': ' + $data.hex">
+                      <div class="swatch-block" :style.background="$data.hex" :style.color="$data.text">
+                        <span :text="$data.hex"></span>
+                      </div>
+                      <button class="swatch-token" type="button" title="点击复制 CSS 变量名" on:click="$host.copyToken($event)">
+                        <code :text="$data.varName"></code>
+                        <span class="copy-mark" aria-hidden="true">⧉</span>
+                      </button>
+                    </div>
+                  </o-fill>
+                </div>
+              </section>
+
+              <section class="swatch-panel" id="swatch-dark" aria-label="黑夜模式颜色变量">
+                <div class="swatch-panel-head">
+                  <span>黑夜 · DARK</span>
+                  <code>color-scheme: dark</code>
+                </div>
+                <div class="swatch-grid">
+                  <o-fill :value="darkSwatches" fill-key="varName">
+                    <div class="swatch-card" :title="$data.varName + ': ' + $data.hex">
+                      <div class="swatch-block" :style.background="$data.hex" :style.color="$data.text">
+                        <span :text="$data.hex"></span>
+                      </div>
+                      <button class="swatch-token" type="button" title="点击复制 CSS 变量名" on:click="$host.copyToken($event)">
+                        <code :text="$data.varName"></code>
+                        <span class="copy-mark" aria-hidden="true">⧉</span>
+                      </button>
+                    </div>
+                  </o-fill>
+                </div>
+              </section>
+            </div>
+          </section>
         </section>
 
       </main>
@@ -825,6 +1018,9 @@
               success: "#006E1C",
             },
             customTokens: [],
+            lightSwatches: [],
+            darkSwatches: [],
+            copyStatus: "",
             colorStatus: "",
           },
           ready() {
@@ -947,8 +1143,9 @@
                   .map((c) => [c.name, c.color])
               );
 
+              const generated = api.generateM3Theme(seed, overrides);
               api.applyTheme(seed, overrides, customsObj);
-              const auto = api.generateM3Theme(seed).light;
+              const auto = generated.light;
               this.roleColors = {
                 primary: (overrides.primary || auto.primary).toLowerCase(),
                 secondary: (overrides.secondary || auto.secondary).toLowerCase(),
@@ -956,9 +1153,58 @@
                 error: (overrides.error || auto.error).toLowerCase(),
                 success: (overrides.success || auto.success).toLowerCase(),
               };
-              this.customTokens = Object.entries(api.expandCustoms(customsObj).light).map(
+              const expanded = api.expandCustoms(customsObj);
+              this.customTokens = Object.entries(expanded.light).map(
                 ([name, hex]) => ({ name, hex: String(hex).toLowerCase() })
               );
+
+              const contrastColor = (hex) => {
+                const n = parseInt(hex.slice(1), 16);
+                const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+                return (r * 299 + g * 587 + b * 114) / 1000 > 128 ? "#000000" : "#ffffff";
+              };
+              const toSwatches = (scheme, customScheme) => {
+                const items = Object.keys(scheme).map((name) => {
+                  const hex = String(scheme[name]).toLowerCase();
+                  return {
+                    varName:
+                      "--md-sys-color-" +
+                      name.replace(/[A-Z]/g, (char) => "-" + char.toLowerCase()),
+                    hex,
+                    text: contrastColor(hex),
+                  };
+                });
+                for (const [varName, value] of Object.entries(customScheme)) {
+                  const hex = String(value).toLowerCase();
+                  items.push({ varName, hex, text: contrastColor(hex) });
+                }
+                return items;
+              };
+              this.lightSwatches = toSwatches(generated.light, expanded.light);
+              this.darkSwatches = toSwatches(generated.dark, expanded.dark);
+
+              // 两块面板各自铺该模式的 surface / 文字色；子元素只消费面板内的局部变量。
+              const root = this.ele?.shadowRoot;
+              const panelVars = {
+                primary: "primary",
+                surface: "surface",
+                surfaceContainer: "surface-container",
+                surfaceContainerLow: "surface-container-low",
+                onSurface: "on-surface",
+                onSurfaceVariant: "on-surface-variant",
+                outline: "outline",
+                outlineVariant: "outline-variant",
+              };
+              for (const [id, scheme] of [
+                ["#swatch-light", generated.light],
+                ["#swatch-dark", generated.dark],
+              ]) {
+                const panel = root?.querySelector(id);
+                if (!panel) continue;
+                for (const [key, varName] of Object.entries(panelVars)) {
+                  panel.style.setProperty("--md-sys-color-" + varName, scheme[key]);
+                }
+              }
 
               if (persist) {
                 localStorage.setItem(
@@ -971,6 +1217,46 @@
                 );
                 this.colorStatus = "已应用，并保存到本域配色。";
               }
+            },
+            async copyToken(event) {
+              const button = event.currentTarget;
+              const token = button?.querySelector("code")?.textContent.trim();
+              if (!token) return;
+
+              let copied = false;
+              try {
+                await navigator.clipboard.writeText(token);
+                copied = true;
+              } catch {}
+              if (!copied) {
+                // 非安全上下文 / 剪贴板权限被拒时的兜底
+                const area = document.createElement("textarea");
+                area.value = token;
+                area.setAttribute("readonly", "");
+                area.style.position = "fixed";
+                area.style.top = "-1000px";
+                document.body.appendChild(area);
+                area.select();
+                try {
+                  copied = document.execCommand("copy");
+                } finally {
+                  area.remove();
+                }
+              }
+
+              if (!copied) {
+                this.copyStatus = "复制失败，请手动选择变量名";
+                return;
+              }
+              this.copyStatus = "已复制 " + token;
+              button.classList.add("copied");
+              const mark = button.querySelector(".copy-mark");
+              if (mark) mark.textContent = "✓";
+              clearTimeout(button._copyTimer);
+              button._copyTimer = setTimeout(() => {
+                button.classList.remove("copied");
+                if (mark) mark.textContent = "⧉";
+              }, 1200);
             },
             setSeed(value) {
               const next = String(value || "").trim().toLowerCase();

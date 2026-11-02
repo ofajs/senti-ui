@@ -174,7 +174,7 @@ scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的�
 - **改色**：种子色选择器或 HEX 输入框，实时 `applyTheme(seed, overrides, customs)`，整套 primary / secondary / tertiary / surface 中性色一起重算
 - **改色（单角色）**：primary / secondary / tertiary / error / success 五个角色可单独覆盖，on-* 与 container 配对仍按 M3 tone 规则推导；可随时复位回自动生成
 - **加色**：添加任意数量自定义变量（如 `brand`），自动生成 `--brand` / `--on-brand` / `--brand-container` / `--on-brand-container` 四配对 token；组件直接 `color="brand"` 使用
-- **可用色块变量**：工具下方分「白天 / 黑夜」两块面板，各用该模式的 `surface-container` 铺底；按 Primary / Secondary / Tertiary / Error / Success + 自定义颜色分组，每组 4 个堆叠色块（角色色 / on / container / on-container），色块底色与文字色使用该模式配对 token，下方标注变量名；点击任意色块复制变量名；改种子色、覆盖角色或增删自定义色时实时重算；`<code>` 内的动态文本要用 `:text`（见 CONTEXT 坑 #54）
+- **可用色块变量**：工具下方分「白天 / 黑夜」两块面板，各用该模式的 `surface-container` 铺底；按 Primary / Secondary / Tertiary / Error / Success + 自定义颜色分组，每组 4 个堆叠色块（角色色 / on / container / on-container），色块底色与文字色使用该模式配对 token，下方标注变量名；角色组下方再按三段布局补 Surface / Surface Variant、五层 Surface Container、On Surface / On Surface Variant / Outline / Outline Variant（当前 M3 生成器未提供 Surface Dim / Surface Bright，故未列），同样可点击复制；改种子色、覆盖角色或增删自定义色时实时重算；`<code>` 内的动态文本要用 `:text`（见 CONTEXT 坑 #54）
 - **色块模式**：标题右侧 `st-button-group` 切换「变量模式 / 色块模式」；色块模式调用 `generateTonalPalettes({ primary, secondary, tertiary, error, success })`，按角色面板里当前实际的颜色（含手动覆盖）生成 Primary / Secondary / Tertiary / Error / Success 五条音调盘；每个自定义颜色再追加一条同名音调盘，每条展示 0–100 共 14 个 tone；点击任意 tone 色块复制该行变量名（标准角色 `--md-sys-color-*`，自定义 `--name`）
 - **变量位置标记**：色块面板下方「标出变量位置」radio 组（白天 / 黑夜，默认白天），在对应的 tone 列叠加长条：白天为色值 40 / on 100 / container 90 / on-container 10，黑夜为色值 80 / on 20 / container 30 / on-container 90；宽屏是跨行的连续长条，移动端改为对应 tone 色块的描边；切换 radio 时提示与标记同步更新
 - **持久化**：每次改动写 `st-color-config`（配置）与 `st-theme-css`（下次刷新首帧 CSS），同域页面刷新后一起生效

@@ -606,7 +606,8 @@
           border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
           border-radius: 12px;
         }
-        .color-block {
+        .color-block,
+        .surface-block {
           display: flex;
           flex-direction: column;
           align-items: flex-start;
@@ -622,15 +623,40 @@
           text-align: left;
           cursor: pointer;
         }
-        .color-block:hover {
+        .color-block:hover,
+        .surface-block:hover {
           box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 38%, transparent);
         }
-        .color-block.copied {
+        .color-block.copied,
+        .surface-block.copied {
           box-shadow: inset 0 0 0 3px currentColor;
         }
-        .color-block:focus-visible {
+        .color-block:focus-visible,
+        .surface-block:focus-visible {
           outline: 2px solid currentColor;
           outline-offset: -3px;
+        }
+        .surface-groups {
+          display: grid;
+          gap: 8px;
+          margin-top: 10px;
+        }
+        .surface-row {
+          display: grid;
+          gap: 8px;
+        }
+        .surface-row:nth-child(1) {
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+        .surface-row:nth-child(2) {
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        }
+        .surface-row:nth-child(3) {
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+        .surface-block {
+          min-height: 58px;
+          border-radius: 8px;
         }
         .block-label {
           font-size: 11.5px;
@@ -1140,6 +1166,18 @@
                       </div>
                     </o-fill>
                   </div>
+                  <div class="surface-groups" aria-label="Surface 与 Outline 变量">
+                    <o-fill :value="lightSurfaceRows" fill-key="key">
+                      <div class="surface-row">
+                        <o-fill :value="$data.blocks" fill-key="token">
+                          <button class="surface-block" type="button" attr:aria-label="'点击复制 ' + $data.token" :style.background="$data.hex" :style.color="$data.text" on:click="$host.copyToken($event)">
+                            <span class="block-label" :text="$data.label"></span>
+                            <code class="block-token" :text="$data.token"></code>
+                          </button>
+                        </o-fill>
+                      </div>
+                    </o-fill>
+                  </div>
                 </section>
 
                 <section class="swatch-panel" id="swatch-dark" aria-label="黑夜模式颜色变量" :style.background="darkPanel.surfaceContainer" :style.color="darkPanel.onSurface">
@@ -1152,6 +1190,18 @@
                       <div class="color-group">
                         <o-fill :value="$data.blocks" fill-key="token">
                           <button class="color-block" type="button" attr:aria-label="'点击复制 ' + $data.token" :style.background="$data.hex" :style.color="$data.text" on:click="$host.copyToken($event)">
+                            <span class="block-label" :text="$data.label"></span>
+                            <code class="block-token" :text="$data.token"></code>
+                          </button>
+                        </o-fill>
+                      </div>
+                    </o-fill>
+                  </div>
+                  <div class="surface-groups" aria-label="Surface 与 Outline 变量">
+                    <o-fill :value="darkSurfaceRows" fill-key="key">
+                      <div class="surface-row">
+                        <o-fill :value="$data.blocks" fill-key="token">
+                          <button class="surface-block" type="button" attr:aria-label="'点击复制 ' + $data.token" :style.background="$data.hex" :style.color="$data.text" on:click="$host.copyToken($event)">
                             <span class="block-label" :text="$data.label"></span>
                             <code class="block-token" :text="$data.token"></code>
                           </button>
@@ -1238,6 +1288,8 @@
             customTokens: [],
             lightGroups: [],
             darkGroups: [],
+            lightSurfaceRows: [],
+            darkSurfaceRows: [],
             lightPanel: {},
             darkPanel: {},
             tonePalettes: [],
@@ -1455,6 +1507,45 @@
               };
               this.lightGroups = makeGroups(generated.light, expanded.light);
               this.darkGroups = makeGroups(generated.dark, expanded.dark);
+
+              const makeSurfaceRows = (scheme) => {
+                const block = (key, label) => ({
+                  token: "--md-sys-color-" + key.replace(/[A-Z]/g, (char) => "-" + char.toLowerCase()),
+                  label,
+                  hex: scheme[key],
+                  text: contrastColor(scheme[key]),
+                });
+                return [
+                  {
+                    key: "base",
+                    blocks: [
+                      block("surface", "Surface"),
+                      block("surfaceVariant", "Surface Variant"),
+                    ],
+                  },
+                  {
+                    key: "containers",
+                    blocks: [
+                      block("surfaceContainerLowest", "Surface Container Lowest"),
+                      block("surfaceContainerLow", "Surface Container Low"),
+                      block("surfaceContainer", "Surface Container"),
+                      block("surfaceContainerHigh", "Surface Container High"),
+                      block("surfaceContainerHighest", "Surface Container Highest"),
+                    ],
+                  },
+                  {
+                    key: "content",
+                    blocks: [
+                      block("onSurface", "On Surface"),
+                      block("onSurfaceVariant", "On Surface Variant"),
+                      block("outline", "Outline"),
+                      block("outlineVariant", "Outline Variant"),
+                    ],
+                  },
+                ];
+              };
+              this.lightSurfaceRows = makeSurfaceRows(generated.light);
+              this.darkSurfaceRows = makeSurfaceRows(generated.dark);
 
               const rolePalettes = api
                 .generateTonalPalettes({

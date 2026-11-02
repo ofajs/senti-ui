@@ -1410,6 +1410,16 @@ test("皮肤页：可用色块变量按角色分组展示白天 / 黑夜，色�
   await expect(page.locator("#swatch-dark .color-group")).toHaveCount(5);
   await expect(page.locator("#swatch-light .color-block")).toHaveCount(20);
   await expect(page.locator("#swatch-dark .color-block")).toHaveCount(20);
+  await expect(page.locator("#swatch-light .surface-block")).toHaveCount(11);
+  await expect(page.locator("#swatch-dark .surface-block")).toHaveCount(11);
+  const surfaceTokens = await page
+    .locator("#swatch-light .surface-block .block-token")
+    .allTextContents();
+  expect(surfaceTokens).toContain("--md-sys-color-surface");
+  expect(surfaceTokens).toContain("--md-sys-color-surface-container-lowest");
+  expect(surfaceTokens).toContain("--md-sys-color-surface-container-highest");
+  expect(surfaceTokens).toContain("--md-sys-color-on-surface-variant");
+  expect(surfaceTokens).toContain("--md-sys-color-outline-variant");
 
   const lightLabels = await page
     .locator("#swatch-light .color-group")
@@ -1452,6 +1462,15 @@ test("皮肤页：可用色块变量按角色分组展示白天 / 黑夜，色�
   );
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
     "--md-sys-color-primary"
+  );
+
+  // Surface / Outline 变量同样可复制
+  await page.locator("#swatch-light .surface-block").first().click();
+  await expect(page.locator(".swatch-copy-status")).toHaveText(
+    "已复制 --md-sys-color-surface"
+  );
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    "--md-sys-color-surface"
   );
 
   const luminance = (rgb) => {
@@ -1604,6 +1623,7 @@ test("皮肤页：可用色块变量按角色分组展示白天 / 黑夜，色�
   await expect(page.locator(".swatch-panel")).toHaveCount(2);
   await expect(page.locator(".tone-row")).toHaveCount(0);
   await expect(page.locator("#swatch-light .color-group")).toHaveCount(6);
+  await expect(page.locator("#swatch-light .surface-block")).toHaveCount(11);
 
   // 切回变量模式后，两块面板必须重新拿到各自的 surface 背景，不能都落到当前深色主题上
   const backPanels = await page.locator(".swatch-panel").evaluateAll((els) =>

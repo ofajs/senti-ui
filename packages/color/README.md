@@ -117,6 +117,7 @@ const rolePalettes = generateTonalPalettes({          // 当前实际角色色�
   primary: "#6750A4", secondary: "#625B71", tertiary: "#7D5260",
   error: "#B3261E", success: "#006E1C",
 });
+const customPalettes = generateTonalPalettes({ brand: "#FF0000" }); // 自定义变量也可传
 ```
 
 API 签名：
@@ -127,7 +128,7 @@ API 签名：
 | `themeToCss(seedHex, overrides?, customs?)` | → CSS 文本（`:root` + `html.st-dark` 两个块，可保存为静态 CSS） |
 | `applyTheme(seedHex, overrides?, customs?)` | 生成并动态注入当前文档（含媒体查询深色跟随） |
 | `expandCustoms(customs)` | `{ brand: "#FF0000" }` → 四配对 token 的 `{ light, dark }` |
-| `generateTonalPalettes(seedHex \| roleColors)` | 种子色 → 标准五条音调盘（Primary / Secondary / Tertiary / Neutral / Neutral variant）；传角色色对象 → 当前实际角色色（含覆盖）的 Primary / Secondary / Tertiary / Error / Success 五条盘；每条含 0–100 的 14 个 tone |
+| `generateTonalPalettes(seedHex \| roleColors)` | 种子色 → 标准五条音调盘（Primary / Secondary / Tertiary / Neutral / Neutral variant）；传角色色对象 → 当前实际角色色（含覆盖）及自定义变量的音调盘（标准角色用 Primary / Secondary / Tertiary / Error / Success 标签，自定义键用变量名作标签）；每条含 0–100 的 14 个 tone |
 
 `overrides` 可选键：`primary` / `secondary` / `tertiary` / `error` / `success`。自定义变量按 M3 tone 规则推导：浅色 tone `[40, 100, 90, 10]`，深色 `[80, 20, 30, 90]`（角色/on/容器/on容器）。
 

@@ -1433,6 +1433,12 @@ test("皮肤页：可用色块变量按白天 / 黑夜面板展示，变量名�
     "--md-sys-color-primary"
   );
 
+  // 点击色块本身也能复制同一个变量名
+  await page.locator("#swatch-light .swatch-card").first().locator(".swatch-block").click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    "--md-sys-color-primary"
+  );
+
   const luminance = (rgb) => {
     const [r, g, b] = rgb.match(/\d+/g).map(Number);
     return r * 0.299 + g * 0.587 + b * 0.114;
@@ -1467,17 +1473,25 @@ test("皮肤页：可用色块变量按白天 / 黑夜面板展示，变量名�
   // 色块模式：五条 M3 音调盘，每条 0–100 共 14 个 tone
   await page.locator(".swatch-switch st-button").filter({ hasText: "色块模式" }).click();
   await expect(page.locator(".swatch-panels")).toHaveCount(0);
-  await expect(page.locator(".tone-row")).toHaveCount(5);
-  await expect(page.locator(".tone-chip")).toHaveCount(70);
+  await expect(page.locator(".tone-row")).toHaveCount(6);
+  await expect(page.locator(".tone-chip")).toHaveCount(84);
   await expect(page.locator(".tone-name span:last-child")).toHaveText([
     "Primary",
     "Secondary",
     "Tertiary",
     "Error",
     "Success",
+    "brand",
   ]);
   const firstTone = page.locator(".tone-row").first().locator(".tone-chip").first();
-  await expect(firstTone).toHaveAttribute("title", "0 · #000000");
+  await expect(firstTone).toHaveAttribute(
+    "title",
+    /^Tone 0 · #000000 · 点击复制 --md-sys-color-primary$/
+  );
+  const customTone = page.locator(".tone-row").last().locator(".tone-chip").first();
+  await customTone.click();
+  await expect(page.locator(".swatch-copy-status")).toHaveText("已复制 --brand");
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("--brand");
 
   // 手动覆盖角色后，音调盘的大圆点必须换成该角色当前实际颜色
   await page.locator(".role-row").filter({ hasText: "primary" }).locator(".role-color").evaluate((input) => {
@@ -1496,7 +1510,10 @@ test("皮肤页：可用色块变量按白天 / 黑夜面板展示，变量名�
       window.__site
         .generateTonalPalettes({ primary: "#336699" })[0].tones.find((tone) => tone.tone === 40).hex
   );
-  await expect(primary40).toHaveAttribute("title", "40 · " + expected40);
+  await expect(primary40).toHaveAttribute(
+    "title",
+    new RegExp("^Tone 40 · " + expected40 + " · 点击复制 --md-sys-color-primary$")
+  );
 
   const palettes = await page.evaluate(() =>
     window.__site

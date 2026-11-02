@@ -611,11 +611,23 @@
           display: flex;
           align-items: flex-end;
           justify-content: flex-end;
+          width: 100%;
           height: 54px;
           padding: 6px 8px;
+          border: 0;
+          border-radius: 0;
           font-family: ui-monospace, Menlo, monospace;
           font-size: 10px;
           letter-spacing: 0.01em;
+          text-align: right;
+          cursor: pointer;
+        }
+        .swatch-block.copied {
+          box-shadow: inset 0 0 0 2px var(--md-sys-color-primary);
+        }
+        .swatch-block:focus-visible {
+          outline: 2px solid var(--md-sys-color-primary);
+          outline-offset: -3px;
         }
         .swatch-token {
           display: flex;
@@ -712,10 +724,29 @@
           justify-content: center;
           min-width: 0;
           height: 48px;
+          padding: 0;
+          border: 0;
           border-radius: 5px;
           font-family: ui-monospace, Menlo, monospace;
           font-size: 9.5px;
           line-height: 1;
+          cursor: pointer;
+        }
+        .tone-chip.copied {
+          outline: 2px solid var(--md-sys-color-on-surface);
+          outline-offset: -2px;
+        }
+        .tone-chip:focus-visible {
+          outline: 2px solid var(--md-sys-color-primary);
+          outline-offset: -2px;
+        }
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip-path: inset(50%);
+          white-space: nowrap;
         }
         .swatch-copy-status {
           position: absolute;
@@ -1030,7 +1061,7 @@
                 </st-button-group>
                 <p class="swatch-desc">
                   左右两块分别用对应模式的 surface-container 铺底，同一套 token 在白天 / 黑夜下的
-                  真实背景与文字对比都按该模式呈现；点击变量名可复制。种子色、角色覆盖和自定义色改动会实时重算。
+                  真实背景与文字对比都按该模式呈现；点击变量名或色块均可复制。种子色、角色覆盖和自定义色改动会实时重算。
                 </p>
               </div>
             </header>
@@ -1046,9 +1077,10 @@
                 <div class="swatch-grid">
                   <o-fill :value="lightSwatches" fill-key="varName">
                     <div class="swatch-card" attr:title="$data.varName + ': ' + $data.hex">
-                      <div class="swatch-block" :style.background="$data.hex" :style.color="$data.text">
+                      <button class="swatch-block" type="button" attr:aria-label="'点击复制 ' + $data.varName" title="点击复制 CSS 变量名" on:click="$host.copyToken($event)" :style.background="$data.hex" :style.color="$data.text">
                         <span :text="$data.hex"></span>
-                      </div>
+                        <code class="sr-only" aria-hidden="true" :text="$data.varName"></code>
+                      </button>
                       <button class="swatch-token" type="button" title="点击复制 CSS 变量名" on:click="$host.copyToken($event)">
                         <code :text="$data.varName"></code>
                         <span class="copy-mark" aria-hidden="true">⧉</span>
@@ -1066,9 +1098,10 @@
                 <div class="swatch-grid">
                   <o-fill :value="darkSwatches" fill-key="varName">
                     <div class="swatch-card" attr:title="$data.varName + ': ' + $data.hex">
-                      <div class="swatch-block" :style.background="$data.hex" :style.color="$data.text">
+                      <button class="swatch-block" type="button" attr:aria-label="'点击复制 ' + $data.varName" title="点击复制 CSS 变量名" on:click="$host.copyToken($event)" :style.background="$data.hex" :style.color="$data.text">
                         <span :text="$data.hex"></span>
-                      </div>
+                        <code class="sr-only" aria-hidden="true" :text="$data.varName"></code>
+                      </button>
                       <button class="swatch-token" type="button" title="点击复制 CSS 变量名" on:click="$host.copyToken($event)">
                         <code :text="$data.varName"></code>
                         <span class="copy-mark" aria-hidden="true">⧉</span>
@@ -1091,9 +1124,10 @@
                     <span class="tone-arrow" aria-hidden="true">→</span>
                     <div class="tone-strip">
                       <o-fill :value="$data.tones" fill-key="tone">
-                        <div class="tone-chip" :style.background="$data.hex" :style.color="$data.text" attr:title="$data.tone + ' · ' + $data.hex">
+                        <button class="tone-chip" type="button" attr:aria-label="'Tone ' + $data.tone + '，点击复制 ' + $data.varName" attr:title="'Tone ' + $data.tone + ' · ' + $data.hex + ' · 点击复制 ' + $data.varName" on:click="$host.copyToken($event)" :style.background="$data.hex" :style.color="$data.text">
                           <span :text="$data.tone"></span>
-                        </div>
+                          <code class="sr-only" aria-hidden="true" :text="$data.varName"></code>
+                        </button>
                       </o-fill>
                     </div>
                   </div>
@@ -1288,7 +1322,7 @@
               };
               this.lightSwatches = toSwatches(generated.light, expanded.light);
               this.darkSwatches = toSwatches(generated.dark, expanded.dark);
-              this.tonePalettes = api
+              const rolePalettes = api
                 .generateTonalPalettes({
                   primary: this.roleColors.primary,
                   secondary: this.roleColors.secondary,
@@ -1299,12 +1333,25 @@
                 .map((palette) => ({
                   key: palette.key,
                   label: palette.label,
+                  varName: "--md-sys-color-" + palette.key,
                   dot: palette.color,
-                  tones: palette.tones.map((tone) => ({
-                    ...tone,
-                    text: contrastColor(tone.hex),
-                  })),
+                  tones: palette.tones,
                 }));
+              const customPalettes = api.generateTonalPalettes(customsObj).map((palette) => ({
+                key: palette.key,
+                label: palette.label,
+                varName: "--" + palette.key,
+                dot: palette.color,
+                tones: palette.tones,
+              }));
+              this.tonePalettes = [...rolePalettes, ...customPalettes].map((palette) => ({
+                ...palette,
+                tones: palette.tones.map((tone) => ({
+                  ...tone,
+                  varName: palette.varName,
+                  text: contrastColor(tone.hex),
+                })),
+              }));
 
               // 两块面板各自铺该模式的 surface / 文字色；子元素只消费面板内的局部变量。
               const root = this.ele?.shadowRoot;

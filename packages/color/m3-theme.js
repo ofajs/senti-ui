@@ -81,27 +81,28 @@ export const TONE_STEPS = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 98, 99, 10
 /**
  * 生成 M3 音调盘（tonal palettes）
  * - 传种子色字符串：输出标准 Primary / Secondary / Tertiary / Neutral / Neutral variant 五条盘
- * - 传角色色对象：输出当前实际角色色（含 overrides）的 Primary / Secondary / Tertiary /
- *   Error / Success 五条盘，适合官网色块模式与角色面板对齐
+ * - 传角色色对象：输出当前实际角色色（含 overrides）的盘；标准角色用 Primary / Secondary /
+ *   Tertiary / Error / Success 标签，自定义变量用变量名作标签，适合官网色块模式与角色面板对齐
  * 每条盘包含 0–100 共 14 个 tone。
  * @param {string|Object<string,string>} source 种子色，或 { primary, secondary, tertiary, error, success }
  * @returns {Array<{key: string, label: string, color: string, tones: Array<{tone: number, hex: string}>}>}
  */
 export function generateTonalPalettes(source) {
   if (source && typeof source === "object") {
-    return [
-      ["primary", "Primary"],
-      ["secondary", "Secondary"],
-      ["tertiary", "Tertiary"],
-      ["error", "Error"],
-      ["success", "Success"],
-    ]
-      .filter(([key]) => /^#[0-9a-fA-F]{6}$/.test(source[key] || ""))
-      .map(([key, label]) => ({
+    const labels = {
+      primary: "Primary",
+      secondary: "Secondary",
+      tertiary: "Tertiary",
+      error: "Error",
+      success: "Success",
+    };
+    return Object.entries(source)
+      .filter(([, color]) => /^#[0-9a-fA-F]{6}$/.test(color || ""))
+      .map(([key, color]) => ({
         key,
-        label,
-        color: source[key].toLowerCase(),
-        tones: toneStrip(source[key]),
+        label: labels[key] || key,
+        color: color.toLowerCase(),
+        tones: toneStrip(color),
       }));
   }
 

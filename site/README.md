@@ -175,6 +175,7 @@ scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的�
 - **改色（单角色）**：primary / secondary / tertiary / error / success 五个角色可单独覆盖，on-* 与 container 配对仍按 M3 tone 规则推导；可随时复位回自动生成
 - **加色**：添加任意数量自定义变量（如 `brand`），自动生成 `--brand` / `--on-brand` / `--brand-container` / `--on-brand-container` 四配对 token；组件直接 `color="brand"` 使用
 - **可用色块变量**：工具下方分「白天 / 黑夜」两块面板，各用该模式的 `surface-container` 铺底，展示 34 个 M3 token + 自定义配对 token 的色块、HEX 与变量名；点击变量名复制 token；改种子色、覆盖角色或增删自定义色时实时重算；`<code>` 内的动态文本要用 `:text`（见 CONTEXT 坑 #54）
+- **色块模式**：标题右侧 `st-button-group` 切换「变量模式 / 色块模式」；色块模式调用 `generateTonalPalettes({ primary, secondary, tertiary, error, success })`，按角色面板里当前实际的颜色（含手动覆盖）生成 Primary / Secondary / Tertiary / Error / Success 五条音调盘，每条展示 0–100 共 14 个 tone
 - **持久化**：每次改动写 `st-color-config`（配置）与 `st-theme-css`（下次刷新首帧 CSS），同域页面刷新后一起生效
 - **恢复默认**：清空配置并回到 `#0061A4` 默认体系
 - 颜色工具入口仍指向 `packages/color/index.html`（与官网共用同一份 localStorage 配置）
@@ -196,7 +197,7 @@ npm test
 - 组件文档：三层 `o-page`（site layout + docs layout + 组件页）、侧栏只有一份、每页 4 组以上示例、侧栏切换、移动端 picker 跟随当前页、上一页 / 下一页、阅读进度、页面切换动画；
 - 滚动外壳：`body` 不滚动、内部 `.site-scroll` 滚动、`overscroll-behavior-y: none`，header / 侧栏固定，阅读进度随内部滚动更新，路由切换复位；
 - 固定弹层：页面动画结束后 `transform` 必须回到 `none`，对话框遮罩覆盖整个视口；
-- 皮肤页改色：种子色实时重算 CSS token、加色生成四配对 token、可用色块分白天 / 黑夜面板展示、变量名可复制且随改色更新、刷新后持久化、恢复默认清空配置；
+- 皮肤页改色：种子色实时重算 CSS token、加色生成四配对 token、可用色块分白天 / 黑夜面板展示、变量名可复制、色块模式展示当前角色色的五条音调盘且随改色更新、刷新后持久化、恢复默认清空配置；
 - 文档首页 21 张卡片进入独立页；
 - 卡片右下角进入对应 `docs/{id}.html`，header 保持共享；
 - 禁用 JavaScript 时 `<noscript>` 兜底可见。

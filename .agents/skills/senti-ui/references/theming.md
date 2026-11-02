@@ -98,13 +98,15 @@ localStorage.setItem("st-color-config", JSON.stringify({
 ### 3. JS API（`{cdn}/packages/color/m3-theme.js`，程序化主题）
 
 ```js
-import { applyTheme, themeToCss, generateM3Theme, expandCustoms } from "{cdn}/packages/color/m3-theme.js";
+import { applyTheme, themeToCss, generateM3Theme, expandCustoms, generateTonalPalettes } from "{cdn}/packages/color/m3-theme.js";
 
 applyTheme("#6750A4");                               // 生成并注入当前文档，即时生效
 applyTheme("#6750A4", { primary: "#B3261E" }, { brand: "#FF0000" });
 const css = themeToCss("#6750A4");                   // 完整 CSS 文本（浅色+深色两块），可存静态文件
 const { light, dark } = generateM3Theme("#6750A4");  // 结构化数据
 expandCustoms({ brand: "#FF0000" });                 // 只展开自定义变量的四配对 token
+generateTonalPalettes("#6750A4");                    // 标准 M3 五条音调盘（seed 版）
+generateTonalPalettes({ primary: "#6750A4", error: "#B3261E", success: "#006E1C" }); // 实际角色色盘
 ```
 
 自定义变量按 M3 tone 规则推导四配对：浅色 tone `[40, 100, 90, 10]`（角色/on/容器/on容器），深色 `[80, 20, 30, 90]`。

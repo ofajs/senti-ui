@@ -75,6 +75,67 @@ function deriveRoleTokens(hex, scheme) {
   );
 }
 
+// M3 音调盘的标准 tone 采样点（0 = 黑，100 = 白）
+export const TONE_STEPS = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100];
+
+/**
+ * 生成 M3 音调盘（tonal palettes）
+ * - 传种子色字符串：输出标准 Primary / Secondary / Tertiary / Neutral / Neutral variant 五条盘
+ * - 传角色色对象：输出当前实际角色色（含 overrides）的 Primary / Secondary / Tertiary /
+ *   Error / Success 五条盘，适合官网色块模式与角色面板对齐
+ * 每条盘包含 0–100 共 14 个 tone。
+ * @param {string|Object<string,string>} source 种子色，或 { primary, secondary, tertiary, error, success }
+ * @returns {Array<{key: string, label: string, color: string, tones: Array<{tone: number, hex: string}>}>}
+ */
+export function generateTonalPalettes(source) {
+  if (source && typeof source === "object") {
+    return [
+      ["primary", "Primary"],
+      ["secondary", "Secondary"],
+      ["tertiary", "Tertiary"],
+      ["error", "Error"],
+      ["success", "Success"],
+    ]
+      .filter(([key]) => /^#[0-9a-fA-F]{6}$/.test(source[key] || ""))
+      .map(([key, label]) => ({
+        key,
+        label,
+        color: source[key].toLowerCase(),
+        tones: toneStrip(source[key]),
+      }));
+  }
+
+  const theme = themeFromSourceColor(argbFromHex(source));
+  return [
+    ["primary", "Primary"],
+    ["secondary", "Secondary"],
+    ["tertiary", "Tertiary"],
+    ["neutral", "Neutral"],
+    ["neutralVariant", "Neutral variant"],
+  ].map(([key, label]) => {
+    const palette = theme.palettes[key];
+    return {
+      key,
+      label,
+      color: hexFromArgb(palette.tone(40)).toLowerCase(),
+      tones: TONE_STEPS.map((tone) => ({
+        tone,
+        hex: hexFromArgb(palette.tone(tone)).toLowerCase(),
+      })),
+    };
+  });
+}
+
+// 从一个具体颜色提取色相/色度，再按 tone 采样；用于角色色盘（不受 seed 归一化影响）
+function toneStrip(hex) {
+  const argb = argbFromHex(hex);
+  const cam = Cam16.fromInt ? Cam16.fromInt(argb) : Cam16.fromArgb(argb);
+  return TONE_STEPS.map((tone) => ({
+    tone,
+    hex: hexFromArgb(Hct.from(cam.hue, cam.chroma, tone).toInt()).toLowerCase(),
+  }));
+}
+
 /**
  * 生成完整的 M3 颜色体系
  * @param {string} seedHex 种子色，如 "#6750A4"

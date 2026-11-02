@@ -105,13 +105,18 @@ localStorage.setItem("st-color-config", JSON.stringify({
 ### 3. JS API（m3-theme.js，适合程序化主题）
 
 ```js
-import { generateM3Theme, themeToCss, applyTheme, expandCustoms } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/m3-theme.js";
+import { generateM3Theme, themeToCss, applyTheme, expandCustoms, generateTonalPalettes } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/m3-theme.js";
 
 applyTheme("#6750A4");                        // 生成并注入当前文档，即时生效
 applyTheme("#6750A4", { primary: "#B3261E" }, { brand: "#FF0000" });
 const css = themeToCss("#6750A4");            // 生成完整 CSS 文本（浅色+深色两块），可存为静态主题文件
 const { light, dark } = generateM3Theme("#6750A4");  // 结构化数据 { light: {...}, dark: {...} }
 const pair = expandCustoms({ brand: "#FF0000" });    // 只展开自定义变量的四配对 token
+const palettes = generateTonalPalettes("#6750A4");   // 标准 M3 五条音调盘（seed 版）
+const rolePalettes = generateTonalPalettes({          // 当前实际角色色（含覆盖）五条盘
+  primary: "#6750A4", secondary: "#625B71", tertiary: "#7D5260",
+  error: "#B3261E", success: "#006E1C",
+});
 ```
 
 API 签名：
@@ -122,6 +127,7 @@ API 签名：
 | `themeToCss(seedHex, overrides?, customs?)` | → CSS 文本（`:root` + `html.st-dark` 两个块，可保存为静态 CSS） |
 | `applyTheme(seedHex, overrides?, customs?)` | 生成并动态注入当前文档（含媒体查询深色跟随） |
 | `expandCustoms(customs)` | `{ brand: "#FF0000" }` → 四配对 token 的 `{ light, dark }` |
+| `generateTonalPalettes(seedHex \| roleColors)` | 种子色 → 标准五条音调盘（Primary / Secondary / Tertiary / Neutral / Neutral variant）；传角色色对象 → 当前实际角色色（含覆盖）的 Primary / Secondary / Tertiary / Error / Success 五条盘；每条含 0–100 的 14 个 tone |
 
 `overrides` 可选键：`primary` / `secondary` / `tertiary` / `error` / `success`。自定义变量按 M3 tone 规则推导：浅色 tone `[40, 100, 90, 10]`，深色 `[80, 20, 30, 90]`（角色/on/容器/on容器）。
 

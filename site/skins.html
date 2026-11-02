@@ -64,6 +64,7 @@
   <o-app src="./app-config.js">
     <template page>
       <l-m src="../packages/button/button.html"></l-m>
+      <l-m src="../packages/button/button-group.html"></l-m>
       <l-m src="../packages/button/icon-button.html"></l-m>
       <l-m src="../packages/input/input.html"></l-m>
       <l-m src="../packages/menu/menu.html"></l-m>
@@ -544,6 +545,14 @@
           letter-spacing: -0.03em;
           font-weight: 700;
         }
+        .swatch-head-side {
+          display: grid;
+          justify-items: end;
+          gap: 8px;
+        }
+        .swatch-switch {
+          font-size: 11px;
+        }
         .swatch-desc {
           max-width: 560px;
           padding-bottom: 2px;
@@ -651,6 +660,63 @@
           outline: 2px solid var(--md-sys-color-primary);
           outline-offset: -2px;
         }
+        .tone-palettes {
+          display: grid;
+          gap: 13px;
+          margin-top: 16px;
+          padding: 18px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 16px;
+          background: var(--md-sys-color-surface-container-low);
+        }
+        .tone-row {
+          display: grid;
+          grid-template-columns: 190px 26px minmax(0, 1fr);
+          align-items: center;
+          gap: 12px;
+        }
+        .tone-name {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          min-width: 0;
+        }
+        .tone-dot {
+          flex: none;
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline) 45%, transparent);
+        }
+        .tone-name span:last-child {
+          overflow: hidden;
+          font-size: 12px;
+          font-weight: 600;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .tone-arrow {
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 13px;
+          text-align: center;
+        }
+        .tone-strip {
+          display: grid;
+          grid-template-columns: repeat(14, minmax(0, 1fr));
+          gap: 2px;
+          min-width: 0;
+        }
+        .tone-chip {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 0;
+          height: 48px;
+          border-radius: 5px;
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 9.5px;
+          line-height: 1;
+        }
         .swatch-copy-status {
           position: absolute;
           width: 1px;
@@ -666,6 +732,15 @@
           .swatch-desc { max-width: none; text-align: left; }
           .color-lab-grid,
           .swatch-panels { grid-template-columns: minmax(0, 1fr); }
+          .swatch-head-side { justify-items: start; }
+          .swatch-desc { text-align: left; }
+          .tone-row { grid-template-columns: 140px 20px minmax(0, 1fr); }
+        }
+        @media (max-width: 700px) {
+          .tone-row { grid-template-columns: minmax(0, 1fr); gap: 7px; }
+          .tone-arrow { display: none; }
+          .tone-strip { gap: 1px; }
+          .tone-chip { height: 42px; font-size: 9px; }
         }
         @media (max-width: 620px) {
           .role-row,
@@ -948,14 +1023,21 @@
                 <p class="kicker">TOKENS / LIGHT + DARK</p>
                 <h3 id="swatch-title">可用色块变量</h3>
               </div>
-              <p class="swatch-desc">
-                左右两块分别用对应模式的 surface-container 铺底，同一套 token 在白天 / 黑夜下的
-                真实背景与文字对比都按该模式呈现；点击变量名可复制。种子色、角色覆盖和自定义色改动会实时重算。
-              </p>
+              <div class="swatch-head-side">
+                <st-button-group connected class="swatch-switch">
+                  <st-button attr:variant="swatchView === 'tokens' ? 'filled' : 'outlined'" on:click="swatchView = 'tokens'">变量模式</st-button>
+                  <st-button attr:variant="swatchView === 'tones' ? 'filled' : 'outlined'" on:click="swatchView = 'tones'">色块模式</st-button>
+                </st-button-group>
+                <p class="swatch-desc">
+                  左右两块分别用对应模式的 surface-container 铺底，同一套 token 在白天 / 黑夜下的
+                  真实背景与文字对比都按该模式呈现；点击变量名可复制。种子色、角色覆盖和自定义色改动会实时重算。
+                </p>
+              </div>
             </header>
             <p class="swatch-copy-status" role="status" aria-live="polite" :text="copyStatus"></p>
 
-            <div class="swatch-panels">
+            <o-if :value="swatchView === 'tokens'">
+              <div class="swatch-panels">
               <section class="swatch-panel" id="swatch-light" aria-label="白天模式颜色变量">
                 <div class="swatch-panel-head">
                   <span>白天 · LIGHT</span>
@@ -963,7 +1045,7 @@
                 </div>
                 <div class="swatch-grid">
                   <o-fill :value="lightSwatches" fill-key="varName">
-                    <div class="swatch-card" :title="$data.varName + ': ' + $data.hex">
+                    <div class="swatch-card" attr:title="$data.varName + ': ' + $data.hex">
                       <div class="swatch-block" :style.background="$data.hex" :style.color="$data.text">
                         <span :text="$data.hex"></span>
                       </div>
@@ -983,7 +1065,7 @@
                 </div>
                 <div class="swatch-grid">
                   <o-fill :value="darkSwatches" fill-key="varName">
-                    <div class="swatch-card" :title="$data.varName + ': ' + $data.hex">
+                    <div class="swatch-card" attr:title="$data.varName + ': ' + $data.hex">
                       <div class="swatch-block" :style.background="$data.hex" :style.color="$data.text">
                         <span :text="$data.hex"></span>
                       </div>
@@ -995,7 +1077,29 @@
                   </o-fill>
                 </div>
               </section>
-            </div>
+              </div>
+            </o-if>
+
+            <o-if :value="swatchView === 'tones'">
+              <div class="tone-palettes">
+                <o-fill :value="tonePalettes" fill-key="key">
+                  <div class="tone-row">
+                    <div class="tone-name">
+                      <span class="tone-dot" :style.background="$data.dot"></span>
+                      <span :text="$data.label"></span>
+                    </div>
+                    <span class="tone-arrow" aria-hidden="true">→</span>
+                    <div class="tone-strip">
+                      <o-fill :value="$data.tones" fill-key="tone">
+                        <div class="tone-chip" :style.background="$data.hex" :style.color="$data.text" attr:title="$data.tone + ' · ' + $data.hex">
+                          <span :text="$data.tone"></span>
+                        </div>
+                      </o-fill>
+                    </div>
+                  </div>
+                </o-fill>
+              </div>
+            </o-if>
           </section>
         </section>
 
@@ -1020,6 +1124,8 @@
             customTokens: [],
             lightSwatches: [],
             darkSwatches: [],
+            tonePalettes: [],
+            swatchView: "tokens",
             copyStatus: "",
             colorStatus: "",
           },
@@ -1182,6 +1288,23 @@
               };
               this.lightSwatches = toSwatches(generated.light, expanded.light);
               this.darkSwatches = toSwatches(generated.dark, expanded.dark);
+              this.tonePalettes = api
+                .generateTonalPalettes({
+                  primary: this.roleColors.primary,
+                  secondary: this.roleColors.secondary,
+                  tertiary: this.roleColors.tertiary,
+                  error: this.roleColors.error,
+                  success: this.roleColors.success,
+                })
+                .map((palette) => ({
+                  key: palette.key,
+                  label: palette.label,
+                  dot: palette.color,
+                  tones: palette.tones.map((tone) => ({
+                    ...tone,
+                    text: contrastColor(tone.hex),
+                  })),
+                }));
 
               // 两块面板各自铺该模式的 surface / 文字色；子元素只消费面板内的局部变量。
               const root = this.ele?.shadowRoot;

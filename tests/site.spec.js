@@ -1398,7 +1398,7 @@ test("皮肤页：M3 改色与加色（种子色 / 自定义变量 / 持久化 /
   ).toBe("");
 });
 
-test("皮肤页：可用色块变量按白天 / 黑夜面板展示，变量名可复制", async ({ page }) => {
+test("皮肤页：可用色块变量按角色分组展示白天 / 黑夜，色块可复制", async ({ page }) => {
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"], {
     origin: "http://127.0.0.1:8642",
   });
@@ -1406,35 +1406,50 @@ test("皮肤页：可用色块变量按白天 / 黑夜面板展示，变量名�
   await page.locator(".swatch-library").waitFor({ state: "visible" });
 
   await expect(page.locator(".swatch-panel")).toHaveCount(2);
-  await expect(page.locator("#swatch-light .swatch-card")).toHaveCount(34);
-  await expect(page.locator("#swatch-dark .swatch-card")).toHaveCount(34);
+  await expect(page.locator("#swatch-light .color-group")).toHaveCount(5);
+  await expect(page.locator("#swatch-dark .color-group")).toHaveCount(5);
+  await expect(page.locator("#swatch-light .color-block")).toHaveCount(20);
+  await expect(page.locator("#swatch-dark .color-block")).toHaveCount(20);
+
+  const lightLabels = await page
+    .locator("#swatch-light .color-group")
+    .first()
+    .locator(".block-label")
+    .allTextContents();
+  expect(lightLabels).toEqual([
+    "Primary",
+    "On Primary",
+    "Primary Container",
+    "On Primary Container",
+  ]);
+  const lightTokens = await page
+    .locator("#swatch-light .color-group")
+    .first()
+    .locator(".block-token")
+    .allTextContents();
+  expect(lightTokens).toEqual([
+    "--md-sys-color-primary",
+    "--md-sys-color-on-primary",
+    "--md-sys-color-primary-container",
+    "--md-sys-color-on-primary-container",
+  ]);
 
   const panels = await page.locator(".swatch-panel").evaluateAll((els) =>
-    els.map((el) => ({
-      bg: getComputedStyle(el).backgroundColor,
-      token: el.querySelector(".swatch-token code").textContent,
-      hex: el.querySelector(".swatch-block span").textContent,
-      surface: getComputedStyle(el).getPropertyValue("--md-sys-color-surface-container").trim(),
-    }))
+    els.map((el) => getComputedStyle(el).backgroundColor)
   );
-  expect(panels[0].token).toBe("--md-sys-color-primary");
-  expect(panels[1].token).toBe("--md-sys-color-primary");
-  expect(panels[0].hex).not.toBe(panels[1].hex);
-  expect(panels[0].bg).not.toBe(panels[1].bg);
-  expect(panels[0].surface).not.toBe(panels[1].surface);
+  expect(panels[0]).not.toBe(panels[1]);
 
-  // 点击变量名复制 token 本身
-  const firstLightToken = page.locator("#swatch-light .swatch-token").first();
-  await firstLightToken.click();
+  const lightPrimary = page.locator("#swatch-light .color-block").first();
+  const darkPrimary = page.locator("#swatch-dark .color-block").first();
+  const lightBg = await lightPrimary.evaluate((el) => getComputedStyle(el).backgroundColor);
+  const darkBg = await darkPrimary.evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(lightBg).not.toBe(darkBg);
+
+  // 点击任意色块复制它的 CSS 变量名
+  await lightPrimary.click();
   await expect(page.locator(".swatch-copy-status")).toHaveText(
     "已复制 --md-sys-color-primary"
   );
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    "--md-sys-color-primary"
-  );
-
-  // 点击色块本身也能复制同一个变量名
-  await page.locator("#swatch-light .swatch-card").first().locator(".swatch-block").click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
     "--md-sys-color-primary"
   );
@@ -1443,26 +1458,25 @@ test("皮肤页：可用色块变量按白天 / 黑夜面板展示，变量名�
     const [r, g, b] = rgb.match(/\d+/g).map(Number);
     return r * 0.299 + g * 0.587 + b * 0.114;
   };
-  expect(luminance(panels[0].bg)).toBeGreaterThan(luminance(panels[1].bg));
-  for (const value of [panels[0].surface, panels[1].surface]) {
-    expect(value).toMatch(/^#[0-9a-f]{6}$/);
-  }
+  expect(luminance(panels[0])).toBeGreaterThan(luminance(panels[1]));
 
-  // 改种子色后，两块面板里的 primary 色块都实时重算
-  const lightHex = page.locator("#swatch-light .swatch-card").first().locator(".swatch-block span");
-  const darkHex = page.locator("#swatch-dark .swatch-card").first().locator(".swatch-block span");
-  const beforeLight = await lightHex.textContent();
-  const beforeDark = await darkHex.textContent();
+  // 改种子色后，白天 / 黑夜两块 primary 的底色都实时重算
   await page.locator(".hex-input").fill("#b3261e");
   await page.locator(".hex-input").blur();
-  await expect(lightHex).not.toHaveText(beforeLight);
-  await expect(darkHex).not.toHaveText(beforeDark);
+  await expect
+    .poll(() => lightPrimary.evaluate((el) => getComputedStyle(el).backgroundColor))
+    .not.toBe(lightBg);
+  await expect
+    .poll(() => darkPrimary.evaluate((el) => getComputedStyle(el).backgroundColor))
+    .not.toBe(darkBg);
 
-  // 自定义颜色同步展开为 4 个配对变量，并在两块面板中各出现一次
+  // 自定义颜色按角色分组追加到两块面板
   await page.locator(".custom-add").click();
-  await expect(page.locator("#swatch-light .swatch-card")).toHaveCount(38);
-  await expect(page.locator("#swatch-dark .swatch-card")).toHaveCount(38);
-  for (const selector of ["#swatch-light .swatch-token code", "#swatch-dark .swatch-token code"]) {
+  await expect(page.locator("#swatch-light .color-group")).toHaveCount(6);
+  await expect(page.locator("#swatch-dark .color-group")).toHaveCount(6);
+  await expect(page.locator("#swatch-light .color-block")).toHaveCount(24);
+  await expect(page.locator("#swatch-dark .color-block")).toHaveCount(24);
+  for (const selector of ["#swatch-light .block-token", "#swatch-dark .block-token"]) {
     const tokens = await page.locator(selector).allTextContents();
     expect(tokens).toContain("--brand");
     expect(tokens).toContain("--on-brand");
@@ -1546,9 +1560,57 @@ test("皮肤页：可用色块变量按白天 / 黑夜面板展示，变量名�
   ]);
   expect(palettes[0].tones).toEqual([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100]);
 
+  // radio 切换白天 / 黑夜的变量位置映射，四条长条对齐到对应 tone 列
+  await expect(page.locator(".tone-guides-option input")).toHaveCount(2);
+  await expect(page.locator(".tone-guides-option input").first()).toBeChecked();
+  await expect(page.locator(".tone-guides-hint")).toHaveText(
+    "浅色：色值 40 · on 100 · container 90 · on-container 10"
+  );
+  await expect(page.locator(".tone-guide:visible")).toHaveCount(4);
+  expect(
+    await page.locator(".tone-palettes").evaluate((el) => getComputedStyle(el).overflow)
+  ).toBe("visible");
+
+  const guideBox = await page.locator(".tone-guide:nth-child(5)").boundingBox();
+  const chipBox = await page
+    .locator(".tone-row")
+    .first()
+    .locator(".tone-chip")
+    .nth(4)
+    .boundingBox();
+  expect(guideBox.x).toBeCloseTo(chipBox.x, 1);
+  expect(guideBox.width).toBeCloseTo(chipBox.width, 1);
+  const guideBorder = await page.locator(".tone-guide:nth-child(5)").evaluate((el) => {
+    const style = getComputedStyle(el);
+    return [style.borderTopWidth, style.borderBottomWidth];
+  });
+  expect(guideBorder).toEqual(["2px", "2px"]);
+
+  // 黑夜 radio：同一组色块切换为 80 / 20 / 30 / 90
+  await page.locator(".tone-guides-option").filter({ hasText: "黑夜" }).click();
+  await expect(page.locator(".tone-guides-option input").nth(1)).toBeChecked();
+  await expect(page.locator(".tone-guides-hint")).toHaveText(
+    "深色：色值 80 · on 20 · container 30 · on-container 90"
+  );
+  await expect(page.locator(".tone-guide:nth-child(9)")).toBeVisible();
+  await expect(page.locator(".tone-guide:nth-child(5)")).toBeHidden();
+
+  await page.locator(".tone-guides-option").filter({ hasText: "白天" }).click();
+  await expect(page.locator(".tone-guides-hint")).toHaveText(
+    "浅色：色值 40 · on 100 · container 90 · on-container 10"
+  );
+
   await page.locator(".swatch-switch st-button").filter({ hasText: "变量模式" }).click();
   await expect(page.locator(".swatch-panel")).toHaveCount(2);
   await expect(page.locator(".tone-row")).toHaveCount(0);
+  await expect(page.locator("#swatch-light .color-group")).toHaveCount(6);
+
+  // 切回变量模式后，两块面板必须重新拿到各自的 surface 背景，不能都落到当前深色主题上
+  const backPanels = await page.locator(".swatch-panel").evaluateAll((els) =>
+    els.map((el) => getComputedStyle(el).backgroundColor)
+  );
+  expect(backPanels[0]).not.toBe(backPanels[1]);
+  expect(luminance(backPanels[0])).toBeGreaterThan(luminance(backPanels[1]));
 });
 
 test("从手记切到文档：二级 layout 的 list / select 依赖随父页加载", async ({ page }) => {

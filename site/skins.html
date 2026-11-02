@@ -563,7 +563,7 @@
         }
         .swatch-panels {
           display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
+          grid-template-columns: minmax(0, 1fr);
           align-items: start;
           gap: 12px;
           margin-top: 16px;
@@ -571,7 +571,7 @@
         .swatch-panel {
           min-width: 0;
           padding: 14px;
-          border: 1px solid var(--md-sys-color-outline-variant);
+          border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
           border-radius: 16px;
           background: var(--md-sys-color-surface-container);
           color: var(--md-sys-color-on-surface);
@@ -583,96 +583,72 @@
           gap: 10px;
         }
         .swatch-panel-head span {
-          color: var(--md-sys-color-on-surface);
+          color: inherit;
           font-size: 11px;
           font-weight: 700;
           letter-spacing: 0.1em;
           text-transform: uppercase;
         }
         .swatch-panel-head code {
-          color: var(--md-sys-color-on-surface-variant);
+          color: inherit;
+          opacity: 0.65;
           font-family: ui-monospace, Menlo, monospace;
           font-size: 9.5px;
         }
-        .swatch-grid {
+        .color-groups {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(126px, 1fr));
-          gap: 8px;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 10px;
           margin-top: 12px;
         }
-        .swatch-card {
-          min-width: 0;
+        .color-group {
           overflow: hidden;
-          border: 1px solid var(--md-sys-color-outline-variant);
-          border-radius: 10px;
-          background: var(--md-sys-color-surface-container-low);
+          border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+          border-radius: 12px;
         }
-        .swatch-block {
+        .color-block {
           display: flex;
-          align-items: flex-end;
-          justify-content: flex-end;
-          width: 100%;
-          height: 54px;
-          padding: 6px 8px;
-          border: 0;
-          border-radius: 0;
-          font-family: ui-monospace, Menlo, monospace;
-          font-size: 10px;
-          letter-spacing: 0.01em;
-          text-align: right;
-          cursor: pointer;
-        }
-        .swatch-block.copied {
-          box-shadow: inset 0 0 0 2px var(--md-sys-color-primary);
-        }
-        .swatch-block:focus-visible {
-          outline: 2px solid var(--md-sys-color-primary);
-          outline-offset: -3px;
-        }
-        .swatch-token {
-          display: flex;
+          flex-direction: column;
           align-items: flex-start;
-          gap: 6px;
+          justify-content: center;
+          gap: 3px;
           width: 100%;
-          padding: 6px 8px;
+          min-height: 66px;
+          padding: 10px 12px;
           border: 0;
           border-radius: 0;
           background: transparent;
-          color: var(--md-sys-color-on-surface-variant);
           font: inherit;
-          font-family: ui-monospace, Menlo, monospace;
-          font-size: 9px;
-          line-height: 1.45;
           text-align: left;
           cursor: pointer;
         }
-        .swatch-token code {
-          min-width: 0;
+        .color-block:hover {
+          box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 38%, transparent);
+        }
+        .color-block.copied {
+          box-shadow: inset 0 0 0 3px currentColor;
+        }
+        .color-block:focus-visible {
+          outline: 2px solid currentColor;
+          outline-offset: -3px;
+        }
+        .block-label {
+          font-size: 11.5px;
+          font-weight: 600;
+          line-height: 1.3;
+        }
+        .block-token {
+          display: block;
+          max-width: 100%;
+          opacity: 0.7;
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 8.5px;
+          line-height: 1.35;
           overflow-wrap: anywhere;
-          font: inherit;
-        }
-        .swatch-token .copy-mark {
-          flex: none;
-          margin-left: auto;
-          opacity: 0.45;
-          transition: opacity 0.15s ease;
-        }
-        .swatch-token:hover {
-          color: var(--md-sys-color-primary);
-          background: color-mix(in srgb, var(--md-sys-color-primary) 9%, transparent);
-        }
-        .swatch-token:hover .copy-mark,
-        .swatch-token.copied .copy-mark {
-          opacity: 1;
-        }
-        .swatch-token.copied {
-          color: var(--md-sys-color-primary);
-        }
-        .swatch-token:focus-visible {
-          outline: 2px solid var(--md-sys-color-primary);
-          outline-offset: -2px;
         }
         .tone-palettes {
+          position: relative;
+          overflow: visible;
           display: grid;
           gap: 13px;
           margin-top: 16px;
@@ -680,6 +656,71 @@
           border: 1px solid var(--md-sys-color-outline-variant);
           border-radius: 16px;
           background: var(--md-sys-color-surface-container-low);
+        }
+        .tone-guides {
+          position: absolute;
+          inset: 18px;
+          z-index: 2;
+          overflow: visible;
+          display: grid;
+          grid-template-columns: 190px 26px minmax(0, 1fr);
+          gap: 12px;
+          pointer-events: none;
+        }
+        .tone-guides-track {
+          grid-column: 3;
+          display: grid;
+          grid-template-columns: repeat(14, minmax(0, 1fr));
+          gap: 2px;
+        }
+        .tone-guide {
+          display: none;
+          grid-row: 1;
+          height: 100%;
+          border: 2px solid var(--md-sys-color-primary);
+          border-radius: 6px;
+          background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
+        }
+        .tone-palettes.light-guide .tone-guide:nth-child(2),
+        .tone-palettes.light-guide .tone-guide:nth-child(5),
+        .tone-palettes.light-guide .tone-guide:nth-child(10),
+        .tone-palettes.light-guide .tone-guide:nth-child(14),
+        .tone-palettes.dark-guide .tone-guide:nth-child(3),
+        .tone-palettes.dark-guide .tone-guide:nth-child(4),
+        .tone-palettes.dark-guide .tone-guide:nth-child(9),
+        .tone-palettes.dark-guide .tone-guide:nth-child(10) {
+          display: block;
+        }
+        .tone-guides-bar {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 7px 14px;
+          margin-top: 12px;
+          font-size: 11px;
+        }
+        .tone-guides-title {
+          color: var(--md-sys-color-on-surface);
+        }
+        .tone-guides-option {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          color: var(--md-sys-color-on-surface-variant);
+          cursor: pointer;
+          user-select: none;
+        }
+        .tone-guides-option input {
+          width: 14px;
+          height: 14px;
+          margin: 0;
+          accent-color: var(--md-sys-color-primary);
+          cursor: pointer;
+        }
+        .tone-guides-hint {
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
         }
         .tone-row {
           display: grid;
@@ -766,12 +807,25 @@
           .swatch-head-side { justify-items: start; }
           .swatch-desc { text-align: left; }
           .tone-row { grid-template-columns: 140px 20px minmax(0, 1fr); }
+          .tone-guides { grid-template-columns: 140px 20px minmax(0, 1fr); }
         }
         @media (max-width: 700px) {
           .tone-row { grid-template-columns: minmax(0, 1fr); gap: 7px; }
           .tone-arrow { display: none; }
           .tone-strip { gap: 1px; }
           .tone-chip { height: 42px; font-size: 9px; }
+          .tone-guides { display: none; }
+          .tone-palettes.light-guide .tone-strip .tone-chip:nth-child(2),
+          .tone-palettes.light-guide .tone-strip .tone-chip:nth-child(5),
+          .tone-palettes.light-guide .tone-strip .tone-chip:nth-child(10),
+          .tone-palettes.light-guide .tone-strip .tone-chip:nth-child(14),
+          .tone-palettes.dark-guide .tone-strip .tone-chip:nth-child(3),
+          .tone-palettes.dark-guide .tone-strip .tone-chip:nth-child(4),
+          .tone-palettes.dark-guide .tone-strip .tone-chip:nth-child(9),
+          .tone-palettes.dark-guide .tone-strip .tone-chip:nth-child(10) {
+            outline: 2px solid color-mix(in srgb, var(--md-sys-color-primary) 78%, transparent);
+            outline-offset: -2px;
+          }
         }
         @media (max-width: 620px) {
           .role-row,
@@ -1056,8 +1110,8 @@
               </div>
               <div class="swatch-head-side">
                 <st-button-group connected class="swatch-switch">
-                  <st-button attr:variant="swatchView === 'tokens' ? 'filled' : 'outlined'" on:click="swatchView = 'tokens'">变量模式</st-button>
-                  <st-button attr:variant="swatchView === 'tones' ? 'filled' : 'outlined'" on:click="swatchView = 'tones'">色块模式</st-button>
+                  <st-button attr:variant="swatchView === 'tokens' ? 'filled' : 'outlined'" on:click="setSwatchView('tokens')">变量模式</st-button>
+                  <st-button attr:variant="swatchView === 'tones' ? 'filled' : 'outlined'" on:click="setSwatchView('tones')">色块模式</st-button>
                 </st-button-group>
                 <p class="swatch-desc">
                   左右两块分别用对应模式的 surface-container 铺底，同一套 token 在白天 / 黑夜下的
@@ -1069,52 +1123,48 @@
 
             <o-if :value="swatchView === 'tokens'">
               <div class="swatch-panels">
-              <section class="swatch-panel" id="swatch-light" aria-label="白天模式颜色变量">
-                <div class="swatch-panel-head">
-                  <span>白天 · LIGHT</span>
-                  <code>color-scheme: light</code>
-                </div>
-                <div class="swatch-grid">
-                  <o-fill :value="lightSwatches" fill-key="varName">
-                    <div class="swatch-card" attr:title="$data.varName + ': ' + $data.hex">
-                      <button class="swatch-block" type="button" attr:aria-label="'点击复制 ' + $data.varName" title="点击复制 CSS 变量名" on:click="$host.copyToken($event)" :style.background="$data.hex" :style.color="$data.text">
-                        <span :text="$data.hex"></span>
-                        <code class="sr-only" aria-hidden="true" :text="$data.varName"></code>
-                      </button>
-                      <button class="swatch-token" type="button" title="点击复制 CSS 变量名" on:click="$host.copyToken($event)">
-                        <code :text="$data.varName"></code>
-                        <span class="copy-mark" aria-hidden="true">⧉</span>
-                      </button>
-                    </div>
-                  </o-fill>
-                </div>
-              </section>
+                <section class="swatch-panel" id="swatch-light" aria-label="白天模式颜色变量" :style.background="lightPanel.surfaceContainer" :style.color="lightPanel.onSurface">
+                  <div class="swatch-panel-head">
+                    <span>白天 · LIGHT</span>
+                    <code>color-scheme: light</code>
+                  </div>
+                  <div class="color-groups">
+                    <o-fill :value="lightGroups" fill-key="key">
+                      <div class="color-group">
+                        <o-fill :value="$data.blocks" fill-key="token">
+                          <button class="color-block" type="button" attr:aria-label="'点击复制 ' + $data.token" :style.background="$data.hex" :style.color="$data.text" on:click="$host.copyToken($event)">
+                            <span class="block-label" :text="$data.label"></span>
+                            <code class="block-token" :text="$data.token"></code>
+                          </button>
+                        </o-fill>
+                      </div>
+                    </o-fill>
+                  </div>
+                </section>
 
-              <section class="swatch-panel" id="swatch-dark" aria-label="黑夜模式颜色变量">
-                <div class="swatch-panel-head">
-                  <span>黑夜 · DARK</span>
-                  <code>color-scheme: dark</code>
-                </div>
-                <div class="swatch-grid">
-                  <o-fill :value="darkSwatches" fill-key="varName">
-                    <div class="swatch-card" attr:title="$data.varName + ': ' + $data.hex">
-                      <button class="swatch-block" type="button" attr:aria-label="'点击复制 ' + $data.varName" title="点击复制 CSS 变量名" on:click="$host.copyToken($event)" :style.background="$data.hex" :style.color="$data.text">
-                        <span :text="$data.hex"></span>
-                        <code class="sr-only" aria-hidden="true" :text="$data.varName"></code>
-                      </button>
-                      <button class="swatch-token" type="button" title="点击复制 CSS 变量名" on:click="$host.copyToken($event)">
-                        <code :text="$data.varName"></code>
-                        <span class="copy-mark" aria-hidden="true">⧉</span>
-                      </button>
-                    </div>
-                  </o-fill>
-                </div>
-              </section>
+                <section class="swatch-panel" id="swatch-dark" aria-label="黑夜模式颜色变量" :style.background="darkPanel.surfaceContainer" :style.color="darkPanel.onSurface">
+                  <div class="swatch-panel-head">
+                    <span>黑夜 · DARK</span>
+                    <code>color-scheme: dark</code>
+                  </div>
+                  <div class="color-groups">
+                    <o-fill :value="darkGroups" fill-key="key">
+                      <div class="color-group">
+                        <o-fill :value="$data.blocks" fill-key="token">
+                          <button class="color-block" type="button" attr:aria-label="'点击复制 ' + $data.token" :style.background="$data.hex" :style.color="$data.text" on:click="$host.copyToken($event)">
+                            <span class="block-label" :text="$data.label"></span>
+                            <code class="block-token" :text="$data.token"></code>
+                          </button>
+                        </o-fill>
+                      </div>
+                    </o-fill>
+                  </div>
+                </section>
               </div>
             </o-if>
 
             <o-if :value="swatchView === 'tones'">
-              <div class="tone-palettes">
+              <div class="tone-palettes" class:light-guide="toneGuideMode === 'light'" class:dark-guide="toneGuideMode === 'dark'">
                 <o-fill :value="tonePalettes" fill-key="key">
                   <div class="tone-row">
                     <div class="tone-name">
@@ -1132,6 +1182,36 @@
                     </div>
                   </div>
                 </o-fill>
+                <div class="tone-guides" aria-hidden="true">
+                  <div class="tone-guides-track">
+                      <span class="tone-guide" style="grid-column: 1"></span>
+                      <span class="tone-guide" style="grid-column: 2"></span>
+                      <span class="tone-guide" style="grid-column: 3"></span>
+                      <span class="tone-guide" style="grid-column: 4"></span>
+                      <span class="tone-guide" style="grid-column: 5"></span>
+                      <span class="tone-guide" style="grid-column: 6"></span>
+                      <span class="tone-guide" style="grid-column: 7"></span>
+                      <span class="tone-guide" style="grid-column: 8"></span>
+                      <span class="tone-guide" style="grid-column: 9"></span>
+                      <span class="tone-guide" style="grid-column: 10"></span>
+                      <span class="tone-guide" style="grid-column: 11"></span>
+                      <span class="tone-guide" style="grid-column: 12"></span>
+                      <span class="tone-guide" style="grid-column: 13"></span>
+                      <span class="tone-guide" style="grid-column: 14"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="tone-guides-bar">
+                <span class="tone-guides-title">标出变量位置</span>
+                <label class="tone-guides-option">
+                  <input type="radio" name="tone-guide-mode" value="light" attr:checked="toneGuideMode === 'light'" on:change="setToneGuides('light')" />
+                  白天
+                </label>
+                <label class="tone-guides-option">
+                  <input type="radio" name="tone-guide-mode" value="dark" attr:checked="toneGuideMode === 'dark'" on:change="setToneGuides('dark')" />
+                  黑夜
+                </label>
+                <span class="tone-guides-hint" :text="toneGuideHint"></span>
               </div>
             </o-if>
           </section>
@@ -1156,9 +1236,13 @@
               success: "#006E1C",
             },
             customTokens: [],
-            lightSwatches: [],
-            darkSwatches: [],
+            lightGroups: [],
+            darkGroups: [],
+            lightPanel: {},
+            darkPanel: {},
             tonePalettes: [],
+            toneGuideMode: "light",
+            toneGuideHint: "浅色：色值 40 · on 100 · container 90 · on-container 10",
             swatchView: "tokens",
             copyStatus: "",
             colorStatus: "",
@@ -1303,25 +1387,75 @@
                 const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
                 return (r * 299 + g * 587 + b * 114) / 1000 > 128 ? "#000000" : "#ffffff";
               };
-              const toSwatches = (scheme, customScheme) => {
-                const items = Object.keys(scheme).map((name) => {
-                  const hex = String(scheme[name]).toLowerCase();
+              const normalizeName = (name) => {
+                let key = String(name).trim().replace(/[A-Z]/g, (char) => "-" + char.toLowerCase());
+                if (!key.startsWith("--")) key = "--" + key.replace(/^-+/, "");
+                return key;
+              };
+              const makeGroups = (scheme, extra) => {
+                const groups = [
+                  ["primary", "Primary"],
+                  ["secondary", "Secondary"],
+                  ["tertiary", "Tertiary"],
+                  ["error", "Error"],
+                  ["success", "Success"],
+                ].map(([key, label]) => {
+                  const cap = key[0].toUpperCase() + key.slice(1);
                   return {
-                    varName:
-                      "--md-sys-color-" +
-                      name.replace(/[A-Z]/g, (char) => "-" + char.toLowerCase()),
-                    hex,
-                    text: contrastColor(hex),
+                    key,
+                    label,
+                    blocks: [
+                      {
+                        label,
+                        token: "--md-sys-color-" + key,
+                        hex: scheme[key],
+                        text: scheme["on" + cap],
+                      },
+                      {
+                        label: "On " + label,
+                        token: "--md-sys-color-on-" + key,
+                        hex: scheme["on" + cap],
+                        text: scheme[key],
+                      },
+                      {
+                        label: label + " Container",
+                        token: "--md-sys-color-" + key + "-container",
+                        hex: scheme[key + "Container"],
+                        text: scheme["on" + cap + "Container"],
+                      },
+                      {
+                        label: "On " + label + " Container",
+                        token: "--md-sys-color-on-" + key + "-container",
+                        hex: scheme["on" + cap + "Container"],
+                        text: scheme[key + "Container"],
+                      },
+                    ],
                   };
                 });
-                for (const [varName, value] of Object.entries(customScheme)) {
-                  const hex = String(value).toLowerCase();
-                  items.push({ varName, hex, text: contrastColor(hex) });
+                for (const custom of customs) {
+                  const base = normalizeName(custom.name);
+                  if (!extra[base]) continue;
+                  const on = base.replace(/^--/, "--on-");
+                  const container = base + "-container";
+                  const onContainer = on + "-container";
+                  if (!extra[on] || !extra[container] || !extra[onContainer]) continue;
+                  const label = base.replace(/^--/, "");
+                  groups.push({
+                    key: "custom-" + label,
+                    label,
+                    blocks: [
+                      { label, token: base, hex: extra[base], text: extra[on] },
+                      { label: "On " + label, token: on, hex: extra[on], text: extra[base] },
+                      { label: label + " Container", token: container, hex: extra[container], text: extra[onContainer] },
+                      { label: "On " + label + " Container", token: onContainer, hex: extra[onContainer], text: extra[container] },
+                    ],
+                  });
                 }
-                return items;
+                return groups;
               };
-              this.lightSwatches = toSwatches(generated.light, expanded.light);
-              this.darkSwatches = toSwatches(generated.dark, expanded.dark);
+              this.lightGroups = makeGroups(generated.light, expanded.light);
+              this.darkGroups = makeGroups(generated.dark, expanded.dark);
+
               const rolePalettes = api
                 .generateTonalPalettes({
                   primary: this.roleColors.primary,
@@ -1353,28 +1487,15 @@
                 })),
               }));
 
-              // 两块面板各自铺该模式的 surface / 文字色；子元素只消费面板内的局部变量。
-              const root = this.ele?.shadowRoot;
-              const panelVars = {
-                primary: "primary",
-                surface: "surface",
-                surfaceContainer: "surface-container",
-                surfaceContainerLow: "surface-container-low",
-                onSurface: "on-surface",
-                onSurfaceVariant: "on-surface-variant",
-                outline: "outline",
-                outlineVariant: "outline-variant",
+              // 两块面板各自铺该模式的 surface / 文字色；色块自身仍用内联配对色。
+              this.lightPanel = {
+                surfaceContainer: generated.light.surfaceContainer,
+                onSurface: generated.light.onSurface,
               };
-              for (const [id, scheme] of [
-                ["#swatch-light", generated.light],
-                ["#swatch-dark", generated.dark],
-              ]) {
-                const panel = root?.querySelector(id);
-                if (!panel) continue;
-                for (const [key, varName] of Object.entries(panelVars)) {
-                  panel.style.setProperty("--md-sys-color-" + varName, scheme[key]);
-                }
-              }
+              this.darkPanel = {
+                surfaceContainer: generated.dark.surfaceContainer,
+                onSurface: generated.dark.onSurface,
+              };
 
               if (persist) {
                 localStorage.setItem(
@@ -1387,6 +1508,34 @@
                 );
                 this.colorStatus = "已应用，并保存到本域配色。";
               }
+            },
+            setSwatchView(view) {
+              this.swatchView = view;
+            },
+            setToneGuides(mode) {
+              this.toneGuideMode = mode === "dark" ? "dark" : "light";
+              this.refreshToneGuides();
+            },
+            refreshToneGuides() {
+              const dark = this.toneGuideMode === "dark";
+              const definitions = dark
+                ? [
+                    { label: "色值", tone: 80 },
+                    { label: "on", tone: 20 },
+                    { label: "container", tone: 30 },
+                    { label: "on-container", tone: 90 },
+                  ]
+                : [
+                    { label: "色值", tone: 40 },
+                    { label: "on", tone: 100 },
+                    { label: "container", tone: 90 },
+                    { label: "on-container", tone: 10 },
+                  ];
+              this.toneGuideMode = dark ? "dark" : "light";
+              this.toneGuideHint =
+                (dark ? "深色" : "浅色") +
+                "：" +
+                definitions.map((item) => item.label + " " + item.tone).join(" · ");
             },
             async copyToken(event) {
               const button = event.currentTarget;

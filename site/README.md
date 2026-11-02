@@ -174,8 +174,9 @@ scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的�
 - **改色**：种子色选择器或 HEX 输入框，实时 `applyTheme(seed, overrides, customs)`，整套 primary / secondary / tertiary / surface 中性色一起重算
 - **改色（单角色）**：primary / secondary / tertiary / error / success 五个角色可单独覆盖，on-* 与 container 配对仍按 M3 tone 规则推导；可随时复位回自动生成
 - **加色**：添加任意数量自定义变量（如 `brand`），自动生成 `--brand` / `--on-brand` / `--brand-container` / `--on-brand-container` 四配对 token；组件直接 `color="brand"` 使用
-- **可用色块变量**：工具下方分「白天 / 黑夜」两块面板，各用该模式的 `surface-container` 铺底，展示 34 个 M3 token + 自定义配对 token 的色块、HEX 与变量名；点击变量名复制 token；改种子色、覆盖角色或增删自定义色时实时重算；`<code>` 内的动态文本要用 `:text`（见 CONTEXT 坑 #54）
+- **可用色块变量**：工具下方分「白天 / 黑夜」两块面板，各用该模式的 `surface-container` 铺底；按 Primary / Secondary / Tertiary / Error / Success + 自定义颜色分组，每组 4 个堆叠色块（角色色 / on / container / on-container），色块底色与文字色使用该模式配对 token，下方标注变量名；点击任意色块复制变量名；改种子色、覆盖角色或增删自定义色时实时重算；`<code>` 内的动态文本要用 `:text`（见 CONTEXT 坑 #54）
 - **色块模式**：标题右侧 `st-button-group` 切换「变量模式 / 色块模式」；色块模式调用 `generateTonalPalettes({ primary, secondary, tertiary, error, success })`，按角色面板里当前实际的颜色（含手动覆盖）生成 Primary / Secondary / Tertiary / Error / Success 五条音调盘；每个自定义颜色再追加一条同名音调盘，每条展示 0–100 共 14 个 tone；点击任意 tone 色块复制该行变量名（标准角色 `--md-sys-color-*`，自定义 `--name`）
+- **变量位置标记**：色块面板下方「标出变量位置」radio 组（白天 / 黑夜，默认白天），在对应的 tone 列叠加长条：白天为色值 40 / on 100 / container 90 / on-container 10，黑夜为色值 80 / on 20 / container 30 / on-container 90；宽屏是跨行的连续长条，移动端改为对应 tone 色块的描边；切换 radio 时提示与标记同步更新
 - **持久化**：每次改动写 `st-color-config`（配置）与 `st-theme-css`（下次刷新首帧 CSS），同域页面刷新后一起生效
 - **恢复默认**：清空配置并回到 `#0061A4` 默认体系
 - 颜色工具入口仍指向 `packages/color/index.html`（与官网共用同一份 localStorage 配置）
@@ -197,7 +198,7 @@ npm test
 - 组件文档：三层 `o-page`（site layout + docs layout + 组件页）、侧栏只有一份、每页 4 组以上示例、侧栏切换、移动端 picker 跟随当前页、上一页 / 下一页、阅读进度、页面切换动画；
 - 滚动外壳：`body` 不滚动、内部 `.site-scroll` 滚动、`overscroll-behavior-y: none`，header / 侧栏固定，阅读进度随内部滚动更新，路由切换复位；
 - 固定弹层：页面动画结束后 `transform` 必须回到 `none`，对话框遮罩覆盖整个视口；
-- 皮肤页改色：种子色实时重算 CSS token、加色生成四配对 token、可用色块分白天 / 黑夜面板展示、变量名与色块均可复制、色块模式展示当前角色色 + 自定义色的音调盘且随改色更新、刷新后持久化、恢复默认清空配置；
+- 皮肤页改色：种子色实时重算 CSS token、加色生成四配对 token、可用色块按角色分组、分白天 / 黑夜面板展示且色块可复制、色块模式展示当前角色色 + 自定义色的音调盘且随改色更新、刷新后持久化、恢复默认清空配置；
 - 文档首页 21 张卡片进入独立页；
 - 卡片右下角进入对应 `docs/{id}.html`，header 保持共享；
 - 禁用 JavaScript 时 `<noscript>` 兜底可见。

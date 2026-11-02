@@ -89,13 +89,16 @@ export default async function toast(options) {
   // 文本走 textContent，天然防注入
   snackbarEl.textContent = message;
 
-  // 关闭按钮：用小号 st-icon-button（font-size 缩小整体等比缩小，不撑高消息条）；
-  // 颜色用 color 属性——默认 secondary 底上 on-secondary，彩色底上 on-角色色
+  // 关闭按钮是 icon-only 动作：用标准 st-icon-button（透明底、圆形）。
+  // M3 的圆形来自 --st-icon-radius: 50%；text button 的轮廓是胶囊，不适合只有 ✕ 的关闭动作。
+  // 颜色用 color 属性——默认 secondary 底上 on-secondary，彩色底上 on-角色色。
   const closeBtn = document.createElement("st-icon-button");
   closeBtn.setAttribute("slot", "action");
+  closeBtn.setAttribute("variant", "standard");
   closeBtn.setAttribute("color", color ? `on-${color}` : "on-secondary");
   closeBtn.setAttribute("title", "关闭");
-  closeBtn.style.fontSize = "10px"; /* 40px 默认太大，10px → 约 28px */
+  closeBtn.setAttribute("aria-label", "关闭");
+  closeBtn.style.fontSize = "10px"; /* 约 28px，不撑高消息条 */
   closeBtn.textContent = "✕";
   snackbarEl.appendChild(closeBtn);
 

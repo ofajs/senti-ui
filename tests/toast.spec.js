@@ -26,6 +26,22 @@ test("toast：出现于左下角固定容器，默认 3s 自动消失", async ({
   expect(geo.nearLeft).toBe(true);
   expect(geo.text).toContain("已保存");
 
+  // 关闭按钮是 icon-only 动作：标准 icon-button、透明底、圆形
+  const close = await page.evaluate(() => {
+    const btn = document.querySelector('.st-toast [slot="action"]');
+    const cs = btn ? getComputedStyle(btn) : null;
+    return {
+      tag: btn?.tagName,
+      variant: btn?.getAttribute("variant"),
+      background: cs?.backgroundColor,
+      radius: cs?.borderRadius,
+    };
+  });
+  expect(close.tag).toBe("ST-ICON-BUTTON");
+  expect(close.variant).toBe("standard");
+  expect(close.background).toBe("rgba(0, 0, 0, 0)");
+  expect(close.radius).toBe("50%");
+
   await page.waitForTimeout(3500);
   expect(await page.evaluate(() => document.querySelectorAll(".st-toast").length)).toBe(0);
 });

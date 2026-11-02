@@ -80,7 +80,7 @@ const t = await toast({ message: "点 ✕ 关闭", duration: 0 });
 t.close(); // 手动关闭（返回 { close, el }）
 ```
 
-实现说明：消息条复用 st-snackbar（✕ 关闭用**小号 st-icon-button**，`font-size: 10px` 等比缩小到约 28px 不撑高消息条；按钮色走 `color` 属性——默认 `secondary` 底上 `on-secondary`、彩色底上 `on-角色色`）；消息文本走 `textContent` 天然防注入；容器 `pointer-events: none` 不挡页面交互。
+实现说明：消息条复用 st-snackbar（✕ 关闭用**小号 `st-icon-button variant="standard"`**，`font-size: 10px` 约 28px，透明底、圆形（`--st-icon-radius: 50%`），不撑高消息条；按钮色走 `color` 属性——默认 `secondary` 底上 `on-secondary`、彩色底上 `on-角色色`）；消息文本走 `textContent` 天然防注入；容器 `pointer-events: none` 不挡页面交互。
 
 ## 注意事项与使用技巧
 

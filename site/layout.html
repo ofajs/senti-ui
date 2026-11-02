@@ -378,6 +378,7 @@
             ready() {
               this.detectPage();
               this.syncChrome();
+              this.initSiteApi();
               this._onPop = () => this.detectPage();
               this._onScroll = () => this.updateProgress();
               this._onSkinStorage = (e) => {
@@ -486,6 +487,63 @@
                   document.documentElement.dataset.skin = id;
                 }
                 this.skin = id;
+              },
+              async initSiteApi() {
+                // SCSR 站内跳转不会执行目标页 body 里的 module，所以把全站命令式 API
+                // 收敛到持久存在的 layout 里初始化一次；各页面仍可用 window.__site。
+                const sitePrefix = /\/(docs|notes)(\/|$)/.test(location.pathname) ? "../" : "./";
+                const pkgPrefix = sitePrefix === "../" ? "../../packages/" : "../packages/";
+                const load = (path) => import(new URL(path, location.href).href);
+                try {
+                  const [themeMode, skin, m3, alertMod, confirmMod, promptMod, toastMod, contextMod, presets] =
+                    await Promise.all([
+                      load(pkgPrefix + "color/st-theme-mode.js"),
+                      load(pkgPrefix + "skin/st-skin.js"),
+                      load(pkgPrefix + "color/m3-theme.js"),
+                      load(pkgPrefix + "dialog/alert.js"),
+                      load(pkgPrefix + "dialog/confirm.js"),
+                      load(pkgPrefix + "dialog/prompt.js"),
+                      load(pkgPrefix + "snackbar/toast.js"),
+                      load(pkgPrefix + "menu/context-menu.js"),
+                      load(sitePrefix + "theme-presets.js"),
+                    ]);
+                  const toVars = (scheme) =>
+                    Object.fromEntries(
+                      Object.entries(scheme).map(([name, value]) => [
+                        "--md-sys-color-" + name.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase()),
+                        value,
+                      ])
+                    );
+                  const previewThemes = {};
+                  for (const [id, preset] of Object.entries(presets.THEME_PRESETS)) {
+                    const theme = m3.generateM3Theme(preset.seed, preset.overrides || {});
+                    previewThemes[id] = {
+                      light: toVars(theme.light),
+                      dark: toVars(theme.dark),
+                      forceDark: id === "cyberpunk",
+                    };
+                  }
+                  window.__site = Object.assign(window.__site || {}, {
+                    setThemeMode: themeMode.setThemeMode,
+                    getThemeMode: themeMode.getThemeMode,
+                    setSkin: skin.setSkin,
+                    getSkin: skin.getSkin,
+                    applyTheme: m3.applyTheme,
+                    themeToCss: m3.themeToCss,
+                    generateM3Theme: m3.generateM3Theme,
+                    expandCustoms: m3.expandCustoms,
+                    alert: alertMod.default,
+                    confirm: confirmMod.default,
+                    prompt: promptMod.default,
+                    toast: toastMod.default,
+                    contextMenu: contextMod.default,
+                    previewThemes,
+                  });
+                  window.__siteTheme = Object.assign(window.__siteTheme || {}, presets);
+                  window.__siteReady = true;
+                } catch (error) {
+                  console.error("site API init failed", error);
+                }
               },
               async themeApi() {
                 if (window.__siteTheme?.applyThemePreset) return window.__siteTheme;

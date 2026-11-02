@@ -82,7 +82,7 @@ site/
 
 1. `st-boot.js` 同步注入首帧主题（防刷新闪色）；
 2. 预载五套皮肤 CSS（页面要同页并列展示多种材质）；
-3. 页面末尾的 module 预加载命令式工具（alert / confirm / prompt / toast / contextMenu）与皮肤 / 主题 API，挂到 `window.__site`（ofa 页面模块不能相对 `import`）。
+3. 命令式工具（alert / confirm / prompt / toast / contextMenu）与皮肤 / 主题 API 由 `layout.html` 的 `initSiteApi()` 预加载并挂到 `window.__site`（页面 body module 只做 `Object.assign` 兜底；SCSR 跳转不会执行目标页 body module）。
 
 ## 页面内容
 
@@ -155,7 +155,7 @@ scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的�
 
 1. 在 `site/index.html` 的 `l-m` 列表补一条；
 2. 在 `template[page]` 对应分组补一张 `.spec` 卡片；
-3. 若有命令式 API，在页面末尾 module 中 import 并挂到 `window.__site`；
+3. 若有命令式 API，优先挂到 `layout.html` 的 `initSiteApi()`；页面 body module 只能作为直接打开的兜底，并且必须 `Object.assign` 合并，不能覆盖已有 API；
 4. 需要换肤的组件先按 `packages/skin/README.md` 接入 token。
 
 ## 皮肤与主题

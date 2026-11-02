@@ -1074,50 +1074,9 @@
           },
         });
       </script>
+
     </template>
   </o-app>
 
-  <script type="module">
-    import { setThemeMode, getThemeMode } from "../packages/color/st-theme-mode.js";
-    import { setSkin, getSkin } from "../packages/skin/st-skin.js";
-    import {
-      applyTheme,
-      themeToCss,
-      generateM3Theme,
-      expandCustoms,
-    } from "../packages/color/m3-theme.js";
-    import { THEME_PRESETS, applyThemePreset } from "./theme-presets.js";
-
-    const toVars = (scheme) =>
-      Object.fromEntries(
-        Object.entries(scheme).map(([name, value]) => [
-          "--md-sys-color-" + name.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase()),
-          value,
-        ])
-      );
-    const previewThemes = {};
-    for (const [id, preset] of Object.entries(THEME_PRESETS)) {
-      const theme = generateM3Theme(preset.seed, preset.overrides || {});
-      previewThemes[id] = {
-        light: toVars(theme.light),
-        dark: toVars(theme.dark),
-        forceDark: id === "cyberpunk",
-      };
-    }
-
-    window.__site = {
-      setThemeMode,
-      getThemeMode,
-      setSkin,
-      getSkin,
-      applyTheme,
-      themeToCss,
-      generateM3Theme,
-      expandCustoms,
-      previewThemes,
-    };
-    window.__siteTheme = { ...(window.__siteTheme || {}), THEME_PRESETS, applyThemePreset };
-    window.__siteReady = true;
-  </script>
 </body>
 </html>

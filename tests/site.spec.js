@@ -953,6 +953,57 @@ test("主题预设：每套材质带官方配色，并按主题记住各自颜�
   expect(await themeState()).toMatchObject({ seed: "#007aff", primary: undefined });
 });
 
+test("主题预览：刷新和切页后仍按各自官方配色渲染", async ({ page }) => {
+  await page.goto("/site/skins.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await page.evaluate(() => localStorage.clear());
+  await page.reload({ waitUntil: "networkidle", timeout: 60_000 });
+  await page.locator(".skin-card").first().waitFor({ state: "visible" });
+
+  // 选 shadcn，再把站点切到其他页面并刷新，最后从 header 回皮肤页
+  const shadcnCard = page.locator(".skin-card").filter({ hasText: "shadcn · 扁平" });
+  await shadcnCard.locator(".skin-actions st-button").click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("shadcn");
+
+  await page.goto("/site/docs/button.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await page.reload({ waitUntil: "networkidle", timeout: 60_000 });
+  await page.locator(".layout-nav st-button").filter({ hasText: "皮肤" }).click();
+  await page.waitForURL("**/site/skins.html", { timeout: 30_000 });
+  await page.locator(".skin-card").first().waitFor({ state: "visible" });
+  await page.waitForTimeout(800);
+
+  const state = await page.evaluate(() => {
+    const find = (root, sel) => {
+      const el = root.querySelector(sel);
+      if (el) return el;
+      for (const child of root.querySelectorAll("*")) {
+        if (child.shadowRoot) {
+          const found = find(child.shadowRoot, sel);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    const ids = ["m3", "apple", "windows", "shadcn", "cyberpunk"];
+    const primaries = {};
+    for (const id of ids) {
+      const el = find(document, `.skin-preview[data-skin="${id}"]`);
+      primaries[id] = el?.style.getPropertyValue("--md-sys-color-primary") || "";
+    }
+    return {
+      api: !!(window.__site?.applyTheme && window.__site?.previewThemes),
+      primaries,
+    };
+  });
+  expect(state.api).toBe(true);
+  for (const value of Object.values(state.primaries)) expect(value).not.toBe("");
+  expect(state.primaries.m3).not.toBe(state.primaries.shadcn);
+  expect(state.primaries.apple).not.toBe(state.primaries.shadcn);
+  expect(state.primaries.cyberpunk).not.toBe(state.primaries.shadcn);
+  expect(new Set(Object.values(state.primaries)).size).toBeGreaterThanOrEqual(4);
+});
+
 test("离开 Cyberpunk：恢复进入前的配色与主题模式", async ({ page }) => {
   await page.goto("/site/skins.html");
   await page.evaluate(() => {

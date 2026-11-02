@@ -468,7 +468,7 @@ if (ok === true) {
     import prompt from "../../packages/dialog/prompt.js";
     import toast from "../../packages/snackbar/toast.js";
     import contextMenu from "../../packages/menu/context-menu.js";
-    window.__site = { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu };
+    window.__site = Object.assign(window.__site || {}, { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu });
     window.__siteReady = true;
   </script>
 </body>

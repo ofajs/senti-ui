@@ -71,7 +71,7 @@
               <p class="doc-lead">st-list 只负责纵向排列，st-list-item 负责内容与交互：button 可点击、disabled 禁用、collapsible + expanded 折叠子列表。首尾项自动大圆角，子列表按层级自动缩进。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
-                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/list/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/list/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
               </div>
             </header>
 
@@ -83,14 +83,14 @@
                 <div class="demo-stage">
                   <st-list style="width: 100%; max-width: 460px;">
                     <st-list-item button on:click="pick('收件箱')">
-                      <span slot="prefix">📥</span>
+                      <iconify-icon slot="prefix" icon="mdi:inbox-arrow-down"></iconify-icon>
                       <div>收件箱<span secondary style="display: block;">12 封未读</span></div>
                       <span slot="suffix">12</span>
                     </st-list-item>
                     <st-list-item button on:click="pick('已发送')">
-                      <span slot="prefix">📤</span>
+                      <iconify-icon slot="prefix" icon="mdi:send"></iconify-icon>
                       <div>已发送<span secondary style="display: block;">最近发送：今天 09:12</span></div>
-                      <span slot="suffix">›</span>
+                      <iconify-icon slot="suffix" icon="mdi:chevron-right"></iconify-icon>
                     </st-list-item>
                     <st-list-item button on:click="pick('草稿')">
                       <span slot="prefix">📝</span>
@@ -111,7 +111,7 @@
                 <summary>示例代码</summary>
                 <pre><code>&lt;st-list&gt;
   &lt;st-list-item button&gt;
-    &lt;span slot="prefix"&gt;📥&lt;/span&gt;
+    &lt;iconify-icon slot="prefix" icon="mdi:inbox-arrow-down"&gt;&lt;/iconify-icon&gt;
     &lt;div&gt;收件箱&lt;span secondary&gt;12 封未读&lt;/span&gt;&lt;/div&gt;
     &lt;span slot="suffix"&gt;12&lt;/span&gt;
   &lt;/st-list-item&gt;
@@ -131,17 +131,17 @@
                     <st-list-item button on:click="pick('个人资料')">
                       <span slot="prefix">👤</span>
                       <div>个人资料<span secondary style="display: block;">头像、昵称与简介</span></div>
-                      <span slot="suffix">›</span>
+                      <iconify-icon slot="suffix" icon="mdi:chevron-right"></iconify-icon>
                     </st-list-item>
                     <st-list-item button on:click="pick('通知设置')">
-                      <span slot="prefix">🔔</span>
+                      <iconify-icon slot="prefix" icon="mdi:bell-outline"></iconify-icon>
                       <div>通知设置<span secondary style="display: block;">邮件、桌面与移动端</span></div>
-                      <span slot="suffix">›</span>
+                      <iconify-icon slot="suffix" icon="mdi:chevron-right"></iconify-icon>
                     </st-list-item>
                     <st-list-item button on:click="pick('安全中心')">
                       <span slot="prefix">🔒</span>
                       <div>安全中心<span secondary style="display: block;">两步验证已开启</span></div>
-                      <span slot="suffix">›</span>
+                      <iconify-icon slot="suffix" icon="mdi:chevron-right"></iconify-icon>
                     </st-list-item>
                     <hr>
                     <st-list-item>
@@ -157,7 +157,7 @@
                 <pre><code>&lt;st-list-item button on:click="pick('个人资料')"&gt;
   &lt;span slot="prefix"&gt;👤&lt;/span&gt;
   &lt;div&gt;个人资料&lt;span secondary&gt;头像、昵称与简介&lt;/span&gt;&lt;/div&gt;
-  &lt;span slot="suffix"&gt;›&lt;/span&gt;
+  &lt;iconify-icon slot="suffix" icon="mdi:chevron-right"&gt;&lt;/iconify-icon&gt;
 &lt;/st-list-item&gt;</code></pre>
               </details>
             </section>
@@ -172,7 +172,7 @@
                     <st-list-item button on:click="blockedClicks += 1">
                       <span slot="prefix">✅</span>
                       <div>可用项<span secondary style="display: block;">点击计数会 +1</span></div>
-                      <span slot="suffix">›</span>
+                      <iconify-icon slot="suffix" icon="mdi:chevron-right"></iconify-icon>
                     </st-list-item>
                     <st-list-item button disabled on:click="blockedClicks += 1">
                       <span slot="prefix">⛔</span>
@@ -187,7 +187,7 @@
                     <st-list-item button on:click="blockedClicks += 1">
                       <span slot="prefix">🔄</span>
                       <div>另一个可用项</div>
-                      <span slot="suffix">›</span>
+                      <iconify-icon slot="suffix" icon="mdi:chevron-right"></iconify-icon>
                     </st-list-item>
                   </st-list>
                   <span class="demo-note">可点击项累计：{{blockedClicks}} 次（点禁用项不会增加）</span>
@@ -232,7 +232,7 @@
                       </st-list>
                     </st-list-item>
                     <st-list-item button on:click="pick('收藏')">
-                      <span slot="prefix">⭐</span>收藏
+                      <iconify-icon slot="prefix" icon="mdi:star-outline"></iconify-icon>收藏
                       <span slot="suffix">8</span>
                     </st-list-item>
                   </st-list>
@@ -321,10 +321,10 @@
                     <span class="demo-label">账户</span>
                     <st-list style="width: 100%;">
                       <st-list-item button on:click="pick('账户信息')">
-                        <span slot="prefix">🪪</span>账户信息<span slot="suffix">›</span>
+                        <span slot="prefix">🪪</span>账户信息<iconify-icon slot="suffix" icon="mdi:chevron-right"></iconify-icon>
                       </st-list-item>
                       <st-list-item button on:click="pick('登录方式')">
-                        <span slot="prefix">🔑</span>登录方式<span slot="suffix">›</span>
+                        <span slot="prefix">🔑</span>登录方式<iconify-icon slot="suffix" icon="mdi:chevron-right"></iconify-icon>
                       </st-list-item>
                       <st-list-item button on:click="pick('订阅方案')">
                         <span slot="prefix">💳</span>订阅方案<span slot="suffix">Pro</span>
@@ -335,10 +335,10 @@
                     <span class="demo-label">帮助与支持</span>
                     <st-list style="width: 100%;">
                       <st-list-item button on:click="pick('使用文档')">
-                        <span slot="prefix">📖</span>使用文档<span slot="suffix">↗</span>
+                        <iconify-icon slot="prefix" icon="mdi:book-open-variant"></iconify-icon>使用文档<iconify-icon slot="suffix" icon="mdi:open-in-new"></iconify-icon>
                       </st-list-item>
                       <st-list-item button on:click="pick('反馈问题')">
-                        <span slot="prefix">💬</span>反馈问题<span slot="suffix">↗</span>
+                        <iconify-icon slot="prefix" icon="mdi:message-text"></iconify-icon>反馈问题<iconify-icon slot="suffix" icon="mdi:open-in-new"></iconify-icon>
                       </st-list-item>
                       <st-list-item button disabled>
                         <span slot="prefix">📞</span>电话支持<span slot="suffix">工作时间</span>
@@ -352,10 +352,10 @@
                 <summary>示例代码（导航列表）</summary>
                 <pre><code>&lt;st-list&gt;
   &lt;st-list-item button on:click="go('account')"&gt;
-    &lt;span slot="prefix"&gt;🪪&lt;/span&gt;账户信息&lt;span slot="suffix"&gt;›&lt;/span&gt;
+    &lt;span slot="prefix"&gt;🪪&lt;/span&gt;账户信息&lt;iconify-icon slot="suffix" icon="mdi:chevron-right"&gt;&lt;/iconify-icon&gt;
   &lt;/st-list-item&gt;
   &lt;st-list-item button on:click="go('security')"&gt;
-    &lt;span slot="prefix"&gt;🔑&lt;/span&gt;登录方式&lt;span slot="suffix"&gt;›&lt;/span&gt;
+    &lt;span slot="prefix"&gt;🔑&lt;/span&gt;登录方式&lt;iconify-icon slot="suffix" icon="mdi:chevron-right"&gt;&lt;/iconify-icon&gt;
   &lt;/st-list-item&gt;
 &lt;/st-list&gt;</code></pre>
               </details>
@@ -390,7 +390,7 @@
             </div>
 
             <nav class="doc-pager" aria-label="上下篇">
-              <a class="pager-link" olink href="./badges.html"><span>上一页</span>← Badges</a><a class="pager-link pager-next" olink href="./tabs.html"><span>下一页</span>Tabs →</a>
+              <a class="pager-link" olink href="./badges.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Badges</a><a class="pager-link pager-next" olink href="./tabs.html"><span>下一页</span>Tabs <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
             </nav>
           </article>
       <script>

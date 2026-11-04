@@ -811,12 +811,12 @@
           .start-list li {
             display: flex;
             gap: 9px;
-            align-items: baseline;
+            align-items: flex-start;
           }
-          .start-list li::before {
-            content: "✓";
+          .start-check {
             color: var(--md-sys-color-success);
-            font-weight: 700;
+            font-size: 1.05em;
+            flex: none;
           }
           .code-panel {
             overflow: hidden;
@@ -1431,8 +1431,8 @@
           <div><strong>0</strong><span>构建步骤</span></div>
         </div>
         <div class="cta">
-          <st-button on:click="jump('components')">浏览组件 <span slot="suffix">↓</span></st-button>
-          <st-button variant="outlined" on:click="goDocs">组件文档 ↗</st-button>
+          <st-button on:click="jump('components')">浏览组件 <iconify-icon slot="suffix" icon="mdi:arrow-down"></iconify-icon></st-button>
+          <st-button variant="outlined" on:click="goDocs">组件文档 <iconify-icon slot="suffix" icon="mdi:arrow-top-right"></iconify-icon></st-button>
         </div>
         <p class="intro-hint">颜色仍来自 M3 · 材质由 data-skin 与皮肤 CSS 决定</p>
       </div>
@@ -1443,7 +1443,7 @@
         <div>
           <p class="section-kicker">CATALOG / 25 CARDS</p>
           <h2>所有组件</h2>
-          <p class="catalog-desc">卡片里的组件可以直接点、输入、开合；每张卡片右下角 ↗ 进入该组件的完整文档与验收页。</p>
+          <p class="catalog-desc">卡片里的组件可以直接点、输入、开合；每张卡片右下角 <iconify-icon icon="mdi:arrow-top-right"></iconify-icon> 进入该组件的完整文档与验收页。</p>
         </div>
         <p class="catalog-meta">动作 · 输入 · 反馈 · 内容 · 导航</p>
       </div>
@@ -1460,7 +1460,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Button</h3><code>st-button</code></div>
-            <a class="comp-link" href="./docs/button.html" rel="noreferrer" aria-label="Button 文档">↗</a>
+            <a class="comp-link" href="./docs/button.html" rel="noreferrer" aria-label="Button 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1474,7 +1474,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Button Group</h3><code>st-button-group</code></div>
-            <a class="comp-link" href="./docs/button.html" rel="noreferrer" aria-label="Button Group 文档">↗</a>
+            <a class="comp-link" href="./docs/button.html" rel="noreferrer" aria-label="Button Group 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1488,48 +1488,48 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Split Button</h3><code>st-split-button</code></div>
-            <a class="comp-link" href="./docs/button.html" rel="noreferrer" aria-label="Split Button 文档">↗</a>
+            <a class="comp-link" href="./docs/button.html" rel="noreferrer" aria-label="Split Button 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
         <article class="comp">
           <div class="comp-preview">
             <div class="row">
-              <st-icon-button title="收藏">★</st-icon-button>
-              <st-icon-button variant="filled" title="完成">✓</st-icon-button>
-              <st-icon-button variant="tonal" color="error" title="删除">⌫</st-icon-button>
-              <st-icon-button variant="outlined" title="设置">⚙</st-icon-button>
+              <st-icon-button title="收藏"><iconify-icon icon="mdi:star-outline"></iconify-icon></st-icon-button>
+              <st-icon-button variant="filled" title="完成"><iconify-icon icon="mdi:check"></iconify-icon></st-icon-button>
+              <st-icon-button variant="tonal" color="error" title="删除"><iconify-icon icon="mdi:backspace-outline"></iconify-icon></st-icon-button>
+              <st-icon-button variant="outlined" title="设置"><iconify-icon icon="mdi:cog"></iconify-icon></st-icon-button>
             </div>
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Icon Button</h3><code>st-icon-button</code></div>
-            <a class="comp-link" href="./docs/button.html" rel="noreferrer" aria-label="Icon Button 文档">↗</a>
+            <a class="comp-link" href="./docs/button.html" rel="noreferrer" aria-label="Icon Button 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
         <article class="comp">
           <div class="comp-preview">
             <div class="row">
-              <st-badges value="8"><st-icon-button title="通知">🔔</st-icon-button></st-badges>
-              <st-badges value="99+"><st-icon-button title="消息">✉</st-icon-button></st-badges>
-              <st-badges color="success"><st-icon-button variant="outlined" title="在线">●</st-icon-button></st-badges>
+              <st-badges value="8"><st-icon-button title="通知"><iconify-icon icon="mdi:bell-outline"></iconify-icon></st-icon-button></st-badges>
+              <st-badges value="99+"><st-icon-button title="消息"><iconify-icon icon="mdi:email-outline"></iconify-icon></st-icon-button></st-badges>
+              <st-badges color="success"><st-icon-button variant="outlined" title="在线"><iconify-icon icon="mdi:circle"></iconify-icon></st-icon-button></st-badges>
             </div>
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Badges</h3><code>st-badges</code></div>
-            <a class="comp-link" href="./docs/badges.html" rel="noreferrer" aria-label="Badges 文档">↗</a>
+            <a class="comp-link" href="./docs/badges.html" rel="noreferrer" aria-label="Badges 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
         <!-- ===== 输入 ===== -->
         <article class="comp">
           <div class="comp-preview">
-            <st-input placeholder="you@example.com"><span slot="prefix">✉</span></st-input>
+            <st-input placeholder="you@example.com"><iconify-icon slot="prefix" icon="mdi:email-outline"></iconify-icon></st-input>
             <st-input color="error" placeholder="校验错误态"></st-input>
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Input</h3><code>st-input</code></div>
-            <a class="comp-link" href="./docs/input.html" rel="noreferrer" aria-label="Input 文档">↗</a>
+            <a class="comp-link" href="./docs/input.html" rel="noreferrer" aria-label="Input 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1539,7 +1539,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Textarea</h3><code>st-textarea</code></div>
-            <a class="comp-link" href="./docs/textarea.html" rel="noreferrer" aria-label="Textarea 文档">↗</a>
+            <a class="comp-link" href="./docs/textarea.html" rel="noreferrer" aria-label="Textarea 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1554,7 +1554,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Select</h3><code>st-select</code></div>
-            <a class="comp-link" href="./docs/select.html" rel="noreferrer" aria-label="Select 文档">↗</a>
+            <a class="comp-link" href="./docs/select.html" rel="noreferrer" aria-label="Select 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1567,7 +1567,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Checkbox</h3><code>st-checkbox</code></div>
-            <a class="comp-link" href="./docs/checkbox.html" rel="noreferrer" aria-label="Checkbox 文档">↗</a>
+            <a class="comp-link" href="./docs/checkbox.html" rel="noreferrer" aria-label="Checkbox 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1580,7 +1580,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Switch</h3><code>st-switch</code></div>
-            <a class="comp-link" href="./docs/switch.html" rel="noreferrer" aria-label="Switch 文档">↗</a>
+            <a class="comp-link" href="./docs/switch.html" rel="noreferrer" aria-label="Switch 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1594,7 +1594,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Radio</h3><code>st-radio</code></div>
-            <a class="comp-link" href="./docs/radio.html" rel="noreferrer" aria-label="Radio 文档">↗</a>
+            <a class="comp-link" href="./docs/radio.html" rel="noreferrer" aria-label="Radio 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1605,7 +1605,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Slider</h3><code>st-slider</code></div>
-            <a class="comp-link" href="./docs/slider.html" rel="noreferrer" aria-label="Slider 文档">↗</a>
+            <a class="comp-link" href="./docs/slider.html" rel="noreferrer" aria-label="Slider 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1617,7 +1617,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Dialog</h3><code>st-dialog</code></div>
-            <a class="comp-link" href="./docs/dialog.html" rel="noreferrer" aria-label="Dialog 文档">↗</a>
+            <a class="comp-link" href="./docs/dialog.html" rel="noreferrer" aria-label="Dialog 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1627,13 +1627,13 @@
               <st-button slot="trigger" variant="outlined">打开菜单 ▾</st-button>
               <st-menu-item on:click="menuPick('编辑')"><span slot="prefix">✏</span>编辑</st-menu-item>
               <st-menu-item on:click="menuPick('复制')"><span slot="prefix">⧉</span>复制</st-menu-item>
-              <st-menu-item disabled><span slot="prefix">⌫</span>删除（禁用）</st-menu-item>
+              <st-menu-item disabled><iconify-icon slot="prefix" icon="mdi:backspace-outline"></iconify-icon>删除（禁用）</st-menu-item>
             </st-menu>
             <span class="mini-note">Escape / 点外部关闭</span>
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Menu</h3><code>st-menu</code></div>
-            <a class="comp-link" href="./docs/menu.html" rel="noreferrer" aria-label="Menu 文档">↗</a>
+            <a class="comp-link" href="./docs/menu.html" rel="noreferrer" aria-label="Menu 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1646,7 +1646,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Snackbar</h3><code>st-snackbar</code></div>
-            <a class="comp-link" href="./docs/snackbar.html" rel="noreferrer" aria-label="Snackbar 文档">↗</a>
+            <a class="comp-link" href="./docs/snackbar.html" rel="noreferrer" aria-label="Snackbar 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1663,7 +1663,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Command tools</h3><code>toast · alert · confirm</code></div>
-            <a class="comp-link" href="./docs/tools.html" rel="noreferrer" aria-label="命令式工具文档">↗</a>
+            <a class="comp-link" href="./docs/tools.html" rel="noreferrer" aria-label="命令式工具文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1676,7 +1676,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Tooltip</h3><code>st-tooltip</code></div>
-            <a class="comp-link" href="./docs/tooltip.html" rel="noreferrer" aria-label="Tooltip 文档">↗</a>
+            <a class="comp-link" href="./docs/tooltip.html" rel="noreferrer" aria-label="Tooltip 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1692,7 +1692,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Progress</h3><code>st-progress</code></div>
-            <a class="comp-link" href="./docs/progress.html" rel="noreferrer" aria-label="Progress 文档">↗</a>
+            <a class="comp-link" href="./docs/progress.html" rel="noreferrer" aria-label="Progress 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1706,7 +1706,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Card</h3><code>st-card</code></div>
-            <a class="comp-link" href="./docs/card.html" rel="noreferrer" aria-label="Card 文档">↗</a>
+            <a class="comp-link" href="./docs/card.html" rel="noreferrer" aria-label="Card 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1714,18 +1714,18 @@
           <div class="comp-preview">
             <st-list class="site-list">
               <st-list-item button on:click="listPick('收件箱')">
-                <span slot="prefix">📥</span>
+                <iconify-icon slot="prefix" icon="mdi:inbox-arrow-down"></iconify-icon>
                 <div>收件箱<span secondary>12 封未读</span></div>
               </st-list-item>
               <st-list-item button on:click="listPick('已发送')">
-                <span slot="prefix">📤</span>
+                <iconify-icon slot="prefix" icon="mdi:send"></iconify-icon>
                 <div>已发送</div>
               </st-list-item>
             </st-list>
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>List</h3><code>st-list</code></div>
-            <a class="comp-link" href="./docs/list.html" rel="noreferrer" aria-label="List 文档">↗</a>
+            <a class="comp-link" href="./docs/list.html" rel="noreferrer" aria-label="List 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1738,7 +1738,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Collapse</h3><code>st-collapse</code></div>
-            <a class="comp-link" href="./docs/collapse.html" rel="noreferrer" aria-label="Collapse 文档">↗</a>
+            <a class="comp-link" href="./docs/collapse.html" rel="noreferrer" aria-label="Collapse 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1746,15 +1746,15 @@
         <article class="comp">
           <div class="comp-preview">
             <st-tab-bar>
-              <st-tab-item attr:active="tab === 0" on:click="tab = 0"><span slot="icon">◐</span>概览</st-tab-item>
+              <st-tab-item attr:active="tab === 0" on:click="tab = 0"><iconify-icon slot="icon" icon="mdi:contrast-circle"></iconify-icon>概览</st-tab-item>
               <st-tab-item attr:active="tab === 1" on:click="tab = 1"><span slot="icon">◫</span>活动</st-tab-item>
-              <st-tab-item attr:active="tab === 2" on:click="tab = 2"><span slot="icon">⚙</span>设置</st-tab-item>
+              <st-tab-item attr:active="tab === 2" on:click="tab = 2"><iconify-icon slot="icon" icon="mdi:cog"></iconify-icon>设置</st-tab-item>
             </st-tab-bar>
             <span class="result">当前页：{{tabLabel}}</span>
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Tabs</h3><code>st-tab-bar</code></div>
-            <a class="comp-link" href="./docs/tabs.html" rel="noreferrer" aria-label="Tabs 文档">↗</a>
+            <a class="comp-link" href="./docs/tabs.html" rel="noreferrer" aria-label="Tabs 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1769,7 +1769,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Navigation</h3><code>st-nav-bar</code></div>
-            <a class="comp-link" href="./docs/navigation.html" rel="noreferrer" aria-label="Navigation 文档">↗</a>
+            <a class="comp-link" href="./docs/navigation.html" rel="noreferrer" aria-label="Navigation 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1779,7 +1779,7 @@
               <st-nav-bar slot="nav">
                 <st-nav-item attr:active="railTab === 0" on:click="railTab = 0"><span slot="icon">◫</span>概览</st-nav-item>
                 <st-nav-item attr:active="railTab === 1" on:click="railTab = 1"><span slot="icon">✦</span>组件</st-nav-item>
-                <st-nav-item attr:active="railTab === 2" on:click="railTab = 2"><span slot="icon">◐</span>材质</st-nav-item>
+                <st-nav-item attr:active="railTab === 2" on:click="railTab = 2"><iconify-icon slot="icon" icon="mdi:contrast-circle"></iconify-icon>材质</st-nav-item>
               </st-nav-bar>
               <div class="nav-layout-mini-body">
                 <strong>{{railLabel}}</strong>
@@ -1789,7 +1789,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Nav Layout</h3><code>st-nav-layout</code></div>
-            <a class="comp-link" href="./docs/navigation.html" rel="noreferrer" aria-label="Nav Layout 文档">↗</a>
+            <a class="comp-link" href="./docs/navigation.html" rel="noreferrer" aria-label="Nav Layout 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1799,7 +1799,7 @@
           </div>
           <div class="comp-foot">
             <div class="comp-id"><h3>Ripple</h3><code>st-ripple</code></div>
-            <a class="comp-link" href="./docs/ripple.html" rel="noreferrer" aria-label="Ripple 文档">↗</a>
+            <a class="comp-link" href="./docs/ripple.html" rel="noreferrer" aria-label="Ripple 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1856,13 +1856,16 @@
             不需要 Node、打包器或配置文件。ofa.js v5 + 一个 <span class="mono">l-m</span> 标签，组件在浏览器里完成注册。
           </p>
           <ul class="start-list">
-            <li>颜色由组件自动引入的 st-color-init.js 注入，深浅色跟随系统。</li>
-            <li>皮肤可选：加 <span class="mono">data-skin</span> 与一行 CSS，或调用 setSkin()。</li>
-            <li>完整属性表与验收页：<a href="./docs/index.html">打开组件文档</a>。</li>
+            <li><iconify-icon class="start-check" icon="mdi:check-circle"></iconify-icon><span>颜色由组件自动引入的 st-color-init.js 注入，深浅色跟随系统。</span></li>
+            <li><iconify-icon class="start-check" icon="mdi:check-circle"></iconify-icon><span>皮肤可选：加 <span class="mono">data-skin</span> 与一行 CSS，或调用 setSkin()。</span></li>
+            <li><iconify-icon class="start-check" icon="mdi:check-circle"></iconify-icon><span>完整属性表与验收页：<a href="./docs/index.html">打开组件文档</a>。</span></li>
           </ul>
           <div class="cta">
-            <st-button on:click="copyCode">{{copied ? "已复制 ✓" : "复制安装代码"}}</st-button>
-            <st-button variant="outlined" on:click="openRepo">GitHub ↗</st-button>
+            <st-button on:click="copyCode">
+              {{copied ? "已复制" : "复制安装代码"}}
+              <iconify-icon slot="suffix" attr:icon="copied ? 'mdi:check' : 'mdi:content-copy'"></iconify-icon>
+            </st-button>
+            <st-button variant="outlined" on:click="openRepo">GitHub <iconify-icon slot="suffix" icon="mdi:github"></iconify-icon></st-button>
           </div>
         </div>
         <div class="code-panel">

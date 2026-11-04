@@ -71,7 +71,7 @@
               <p class="doc-lead">四种按钮形态同属一个包：普通按钮、按钮组、分裂按钮、图标按钮。语义只由 variant / color / disabled / loading 表达，尺寸与材质直接写原生 CSS。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
-                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/button/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/button/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
               </div>
             </header>
 
@@ -180,8 +180,8 @@
               <div class="demo">
                 <div class="demo-top"><span class="live"><i></i>LIVE</span><code>slot / font-size</code></div>
                 <div class="demo-stage">
-                  <st-button><span slot="prefix">🔍</span>Search</st-button>
-                  <st-button variant="outlined">Settings<span slot="suffix">⚙️</span></st-button>
+                  <st-button><iconify-icon slot="prefix" icon="mdi:magnify"></iconify-icon>Search</st-button>
+                  <st-button variant="outlined">Settings<iconify-icon slot="suffix" icon="mdi:cog"></iconify-icon></st-button>
                   <st-button style="font-size: 12px;">12px</st-button>
                   <st-button>Default 14px</st-button>
                   <st-button style="font-size: 18px;">18px</st-button>
@@ -190,8 +190,8 @@
               </div>
               <details class="snippet">
                 <summary>示例代码</summary>
-                <pre><code>&lt;st-button&gt;&lt;span slot="prefix"&gt;🔍&lt;/span&gt;Search&lt;/st-button&gt;
-&lt;st-button variant="outlined"&gt;Settings&lt;span slot="suffix"&gt;⚙️&lt;/span&gt;&lt;/st-button&gt;
+                <pre><code>&lt;st-button&gt;&lt;iconify-icon slot="prefix" icon="mdi:magnify"&gt;&lt;/iconify-icon&gt;Search&lt;/st-button&gt;
+&lt;st-button variant="outlined"&gt;Settings&lt;iconify-icon slot="suffix" icon="mdi:cog"&gt;&lt;/iconify-icon&gt;&lt;/st-button&gt;
 
 &lt;st-button style="font-size: 12px;"&gt;12px&lt;/st-button&gt;
 &lt;st-button style="height: 32px; border-radius: 8px; font-size: 12px;"&gt;Compact&lt;/st-button&gt;</code></pre>
@@ -244,7 +244,7 @@
                 <div class="demo-stage">
                   <st-split-button on:click="splitCount += 1">
                     发送
-                    <span slot="prefix">📤</span>
+                    <iconify-icon slot="prefix" icon="mdi:send"></iconify-icon>
                     <st-menu-item slot="menu" on:click="lastPick = '发送到邮箱'">发送到邮箱</st-menu-item>
                     <st-menu-item slot="menu" on:click="lastPick = '发送到云盘'">发送到云盘</st-menu-item>
                     <hr slot="menu">
@@ -274,10 +274,10 @@
               <div class="demo">
                 <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-icon-button</code></div>
                 <div class="demo-stage">
-                  <st-icon-button title="收藏" on:click="iconCount += 1">⭐</st-icon-button>
+                  <st-icon-button title="收藏" on:click="iconCount += 1"><iconify-icon icon="mdi:star-outline"></iconify-icon></st-icon-button>
                   <st-icon-button variant="filled" title="确认" on:click="iconCount += 1">✅</st-icon-button>
                   <st-icon-button variant="tonal" title="删除" on:click="iconCount += 1">🗑</st-icon-button>
-                  <st-icon-button variant="outlined" title="设置" on:click="iconCount += 1">⚙️</st-icon-button>
+                  <st-icon-button variant="outlined" title="设置" on:click="iconCount += 1"><iconify-icon icon="mdi:cog"></iconify-icon></st-icon-button>
                   <st-icon-button variant="filled" color="error" title="错误操作" on:click="iconCount += 1">🚫</st-icon-button>
                   <st-icon-button variant="tonal" color="success" title="保存" on:click="iconCount += 1">💾</st-icon-button>
                   <st-icon-button variant="outlined" disabled title="禁用">🔒</st-icon-button>
@@ -286,7 +286,7 @@
               </div>
               <details class="snippet">
                 <summary>示例代码</summary>
-                <pre><code>&lt;st-icon-button title="收藏"&gt;⭐&lt;/st-icon-button&gt;
+                <pre><code>&lt;st-icon-button title="收藏"&gt;&lt;iconify-icon icon="mdi:star-outline"&gt;&lt;/iconify-icon&gt;&lt;/st-icon-button&gt;
 &lt;st-icon-button variant="filled" title="确认"&gt;✅&lt;/st-icon-button&gt;
 &lt;st-icon-button variant="tonal" color="error" title="删除"&gt;🗑&lt;/st-icon-button&gt;</code></pre>
               </details>
@@ -319,7 +319,7 @@
             </div>
 
             <nav class="doc-pager" aria-label="上下篇">
-              <div class="pager-empty"></div><a class="pager-link pager-next" olink href="./input.html"><span>下一页</span>Input →</a>
+              <div class="pager-empty"></div><a class="pager-link pager-next" olink href="./input.html"><span>下一页</span>Input <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
             </nav>
           </article>
       <script>

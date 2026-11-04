@@ -156,6 +156,38 @@ test("首页三张系统 UI 卡使用平台默认配色，不跟随站点主题�
   expect(after.map((x) => x.primary)).toEqual(before.map((x) => x.primary));
 });
 
+test("Iconify Web Component 已加载，header 与模式图标渲染为 SVG", async ({ page }) => {
+  await page.goto("/site/", { waitUntil: "networkidle", timeout: 60_000 });
+  await waitHome(page);
+  await page.waitForFunction(() => customElements.get("iconify-icon"), null, {
+    timeout: 20_000,
+  });
+  await page.waitForFunction(
+    () => {
+      const layout = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot?.querySelector(".layout-nav")
+      );
+      const icon = layout?.shadowRoot.querySelector(".theme-mode > iconify-icon");
+      return !!icon?.shadowRoot?.querySelector("svg");
+    },
+    null,
+    { timeout: 20_000 }
+  );
+
+  const readThemeIcon = () =>
+    page.evaluate(() => {
+      const layout = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot?.querySelector(".layout-nav")
+      );
+      return layout.shadowRoot.querySelector(".theme-mode > iconify-icon")?.getAttribute("icon");
+    });
+  expect(await readThemeIcon()).toBe("mdi:theme-light-dark");
+
+  await page.locator("st-select.theme-select").click();
+  await page.locator("st-select.theme-select .opt").filter({ hasText: "深色" }).click();
+  await expect.poll(readThemeIcon).toBe("mdi:weather-night");
+});
+
 test("从主题页切回首页：首页组件依赖随 template 重新加载", async ({ page }) => {
   await page.goto("/site/skins.html", { waitUntil: "networkidle", timeout: 60_000 });
   await page.locator(".skin-card").first().waitFor({ state: "visible" });

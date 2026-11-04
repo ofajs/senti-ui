@@ -71,7 +71,7 @@
               <p class="doc-lead">标签栏只负责外观与指示条动画：active 由外部逻辑切换，切换后内容面板由你自己的 data 决定。st-tab-item 支持 icon 插槽与 disabled，宽度与字号直接用原生 CSS 调整。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
-                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/tabs/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/tabs/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
               </div>
             </header>
 
@@ -84,7 +84,7 @@
                   <st-tab-bar style="width: 100%;">
                     <st-tab-item attr:active="tab === 0" on:click="select(0)"><span slot="icon">📧</span>邮件</st-tab-item>
                     <st-tab-item attr:active="tab === 1" on:click="select(1)"><span slot="icon">📞</span>通话</st-tab-item>
-                    <st-tab-item attr:active="tab === 2" on:click="select(2)"><span slot="icon">⭐</span>收藏</st-tab-item>
+                    <st-tab-item attr:active="tab === 2" on:click="select(2)"><iconify-icon slot="icon" icon="mdi:star-outline"></iconify-icon>收藏</st-tab-item>
                   </st-tab-bar>
                   <div style="width: 100%;">
                     <div class="demo-copy" attr:hidden="tab !== 0" style="margin-top: 10px;">邮件 · 3 封未读。指示条会跟随 active 项移动，面板内容完全由页面 data 决定。</div>
@@ -115,9 +115,9 @@
                   <div style="width: 100%;">
                     <span class="demo-label">带图标 · 4 项</span>
                     <st-tab-bar style="width: 100%; margin-top: 6px;">
-                      <st-tab-item attr:active="iconTab === 0" on:click="iconTab = 0"><span slot="icon">🏠</span>首页</st-tab-item>
-                      <st-tab-item attr:active="iconTab === 1" on:click="iconTab = 1"><span slot="icon">🔍</span>发现</st-tab-item>
-                      <st-tab-item attr:active="iconTab === 2" on:click="iconTab = 2"><span slot="icon">🔔</span>通知</st-tab-item>
+                      <st-tab-item attr:active="iconTab === 0" on:click="iconTab = 0"><iconify-icon slot="icon" icon="mdi:home-outline"></iconify-icon>首页</st-tab-item>
+                      <st-tab-item attr:active="iconTab === 1" on:click="iconTab = 1"><iconify-icon slot="icon" icon="mdi:magnify"></iconify-icon>发现</st-tab-item>
+                      <st-tab-item attr:active="iconTab === 2" on:click="iconTab = 2"><iconify-icon slot="icon" icon="mdi:bell-outline"></iconify-icon>通知</st-tab-item>
                       <st-tab-item attr:active="iconTab === 3" on:click="iconTab = 3"><span slot="icon">👤</span>我的</st-tab-item>
                     </st-tab-bar>
                     <span class="demo-note" style="display: block;">当前图标标签：{{iconName}}</span>
@@ -149,10 +149,10 @@
                 <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled</code></div>
                 <div class="demo-stage">
                   <st-tab-bar style="width: 100%;">
-                    <st-tab-item attr:active="guardTab === 0" on:click="guardSelect(0)"><span slot="icon">📥</span>收件箱</st-tab-item>
-                    <st-tab-item attr:active="guardTab === 1" on:click="guardSelect(1)"><span slot="icon">📤</span>已发送</st-tab-item>
-                    <st-tab-item disabled><span slot="icon">💬</span>聊天</st-tab-item>
-                    <st-tab-item disabled><span slot="icon">⚙️</span>设置</st-tab-item>
+                    <st-tab-item attr:active="guardTab === 0" on:click="guardSelect(0)"><iconify-icon slot="icon" icon="mdi:inbox-arrow-down"></iconify-icon>收件箱</st-tab-item>
+                    <st-tab-item attr:active="guardTab === 1" on:click="guardSelect(1)"><iconify-icon slot="icon" icon="mdi:send"></iconify-icon>已发送</st-tab-item>
+                    <st-tab-item disabled><iconify-icon slot="icon" icon="mdi:message-text"></iconify-icon>聊天</st-tab-item>
+                    <st-tab-item disabled><iconify-icon slot="icon" icon="mdi:cog"></iconify-icon>设置</st-tab-item>
                   </st-tab-bar>
                   <span class="demo-note" style="display: block;">当前：{{guardName}} · 可用项点击 {{guardClicks}} 次（点禁用项不增加）</span>
                 </div>
@@ -160,7 +160,7 @@
               <details class="snippet">
                 <summary>示例代码</summary>
                 <pre><code>&lt;st-tab-item disabled&gt;
-  &lt;span slot="icon"&gt;💬&lt;/span&gt;聊天
+  &lt;iconify-icon slot="icon" icon="mdi:message-text"&gt;&lt;/iconify-icon&gt;聊天
 &lt;/st-tab-item&gt;</code></pre>
               </details>
             </section>
@@ -211,9 +211,9 @@
                 <div class="demo-top"><span class="live"><i></i>LIVE</span><code>外部按钮控制</code></div>
                 <div class="demo-stage block" style="gap: 12px;">
                   <st-tab-bar style="width: 100%;">
-                    <st-tab-item attr:active="progTab === 0" on:click="progSelect(0)"><span slot="icon">◐</span>概览</st-tab-item>
+                    <st-tab-item attr:active="progTab === 0" on:click="progSelect(0)"><iconify-icon slot="icon" icon="mdi:contrast-circle"></iconify-icon>概览</st-tab-item>
                     <st-tab-item attr:active="progTab === 1" on:click="progSelect(1)"><span slot="icon">◫</span>活动</st-tab-item>
-                    <st-tab-item attr:active="progTab === 2" on:click="progSelect(2)"><span slot="icon">⚙</span>设置</st-tab-item>
+                    <st-tab-item attr:active="progTab === 2" on:click="progSelect(2)"><iconify-icon slot="icon" icon="mdi:cog"></iconify-icon>设置</st-tab-item>
                   </st-tab-bar>
                   <div class="row">
                     <st-button variant="outlined" on:click="prevTab">上一项</st-button>
@@ -291,7 +291,7 @@ nextTab() {
             </div>
 
             <nav class="doc-pager" aria-label="上下篇">
-              <a class="pager-link" olink href="./list.html"><span>上一页</span>← List</a><a class="pager-link pager-next" olink href="./navigation.html"><span>下一页</span>Navigation →</a>
+              <a class="pager-link" olink href="./list.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> List</a><a class="pager-link pager-next" olink href="./navigation.html"><span>下一页</span>Navigation <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
             </nav>
           </article>
       <script>

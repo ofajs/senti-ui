@@ -71,7 +71,7 @@
               <p class="doc-lead">单选下拉框。选项写在 light DOM：原生 option 或 st-option 富内容；也支持 :options 动态数组。键盘、弹层翻转和 change 回显都已内建。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
-                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/select/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/select/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
               </div>
             </header>
 
@@ -209,7 +209,7 @@
                   <div class="demo-cell">
                     <span class="demo-label">st-option + label</span>
                     <st-select default-value="relay" placeholder="选择部署方式">
-                      <st-option value="direct" label="直连"><span style="margin-right: 8px;">⚡</span><b>直连</b> Direct</st-option>
+                      <st-option value="direct" label="直连"><iconify-icon icon="mdi:flash" style="margin-right:8px"></iconify-icon><b>直连</b> Direct</st-option>
                       <st-option value="relay" label="邀请码"><span style="margin-right: 8px;">🔑</span><b>邀请码</b> <span style="opacity: 0.62;">Invite code</span></st-option>
                       <st-option label="无 value（取 label）">缺省 value 演示</st-option>
                     </st-select>
@@ -219,7 +219,7 @@
               <details class="snippet">
                 <summary>示例代码</summary>
                 <pre><code>&lt;st-select default-value="relay"&gt;
-  &lt;st-option value="direct" label="直连"&gt;⚡ 直连 Direct&lt;/st-option&gt;
+  &lt;st-option value="direct" label="直连"&gt;&lt;iconify-icon icon="mdi:flash"&gt;&lt;/iconify-icon&gt; 直连 Direct&lt;/st-option&gt;
   &lt;st-option value="relay" label="邀请码"&gt;🔑 邀请码 Invite code&lt;/st-option&gt;
 &lt;/st-select&gt;</code></pre>
               </details>
@@ -332,7 +332,7 @@
             </div>
 
             <nav class="doc-pager" aria-label="上下篇">
-              <a class="pager-link" olink href="./textarea.html"><span>上一页</span>← Textarea</a><a class="pager-link pager-next" olink href="./checkbox.html"><span>下一页</span>Checkbox →</a>
+              <a class="pager-link" olink href="./textarea.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Textarea</a><a class="pager-link pager-next" olink href="./checkbox.html"><span>下一页</span>Checkbox <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
             </nav>
           </article>
       <script>

@@ -71,7 +71,7 @@
               <p class="doc-lead">徽标：无 value 时是小圆点，有数字时封顶显示 max+，非数字字符串原样展示。默认插槽放被标记的元素，徽标钉在其右上角且不拦截点击。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
-                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/badges/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/badges/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
               </div>
             </header>
 
@@ -82,16 +82,16 @@
                 <div class="demo-top"><span class="live"><i></i>LIVE</span><code>value</code></div>
                 <div class="demo-stage">
                   <st-badges>
-                    <st-icon-button title="通知">🔔</st-icon-button>
+                    <st-icon-button title="通知"><iconify-icon icon="mdi:bell-outline"></iconify-icon></st-icon-button>
                   </st-badges>
                   <st-badges value="3">
-                    <st-icon-button title="消息">✉️</st-icon-button>
+                    <st-icon-button title="消息"><iconify-icon icon="mdi:email-outline"></iconify-icon></st-icon-button>
                   </st-badges>
                   <st-badges value="NEW" color="success">
                     <st-button variant="outlined">新版</st-button>
                   </st-badges>
                   <st-badges value="120" style="justify-self: start;">
-                    <st-icon-button title="更多">📬</st-icon-button>
+                    <st-icon-button title="更多"><iconify-icon icon="mdi:mailbox"></iconify-icon></st-icon-button>
                   </st-badges>
                   <span class="demo-note">最后一个显示 99+，因为默认 max 是 99；圆点不带数字。</span>
                 </div>
@@ -100,12 +100,12 @@
                 <summary>示例代码</summary>
                 <pre><code>&lt;!-- 无 value：小圆点 --&gt;
 &lt;st-badges&gt;
-  &lt;st-icon-button title="通知"&gt;🔔&lt;/st-icon-button&gt;
+  &lt;st-icon-button title="通知"&gt;&lt;iconify-icon icon="mdi:bell-outline"&gt;&lt;/iconify-icon&gt;&lt;/st-icon-button&gt;
 &lt;/st-badges&gt;
 
 &lt;!-- 数字；超过 max 显示 99+ --&gt;
 &lt;st-badges value="12"&gt;
-  &lt;st-icon-button title="消息"&gt;✉️&lt;/st-icon-button&gt;
+  &lt;st-icon-button title="消息"&gt;&lt;iconify-icon icon="mdi:email-outline"&gt;&lt;/iconify-icon&gt;&lt;/st-icon-button&gt;
 &lt;/st-badges&gt;
 
 &lt;!-- 非数字：原样展示 --&gt;
@@ -137,10 +137,10 @@
                     <st-button color="error" variant="outlined">异常</st-button>
                   </st-badges>
                   <st-badges value="9">
-                    <st-icon-button variant="filled" title="通知">🔔</st-icon-button>
+                    <st-icon-button variant="filled" title="通知"><iconify-icon icon="mdi:bell-outline"></iconify-icon></st-icon-button>
                   </st-badges>
                   <st-badges value="99+">
-                    <st-icon-button variant="tonal" title="私信">✉️</st-icon-button>
+                    <st-icon-button variant="tonal" title="私信"><iconify-icon icon="mdi:email-outline"></iconify-icon></st-icon-button>
                   </st-badges>
                   <st-badges>
                     <st-icon-button variant="outlined" title="待处理">📋</st-icon-button>
@@ -154,7 +154,7 @@
 &lt;/st-badges&gt;
 
 &lt;st-badges value="9"&gt;
-  &lt;st-icon-button variant="filled" title="通知"&gt;🔔&lt;/st-icon-button&gt;
+  &lt;st-icon-button variant="filled" title="通知"&gt;&lt;iconify-icon icon="mdi:bell-outline"&gt;&lt;/iconify-icon&gt;&lt;/st-icon-button&gt;
 &lt;/st-badges&gt;
 
 &lt;!-- 圆点：只提醒“有新内容” --&gt;
@@ -171,19 +171,19 @@
                 <div class="demo-top"><span class="live"><i></i>LIVE</span><code>color</code></div>
                 <div class="demo-stage">
                   <st-badges value="5" color="primary">
-                    <st-icon-button title="收件箱">📥</st-icon-button>
+                    <st-icon-button title="收件箱"><iconify-icon icon="mdi:inbox-arrow-down"></iconify-icon></st-icon-button>
                   </st-badges>
                   <st-badges value="5" color="success">
-                    <st-icon-button title="消息">✉️</st-icon-button>
+                    <st-icon-button title="消息"><iconify-icon icon="mdi:email-outline"></iconify-icon></st-icon-button>
                   </st-badges>
                   <st-badges value="5" color="tertiary">
-                    <st-icon-button title="收藏">⭐</st-icon-button>
+                    <st-icon-button title="收藏"><iconify-icon icon="mdi:star-outline"></iconify-icon></st-icon-button>
                   </st-badges>
                   <st-badges value="5" color="secondary">
-                    <st-icon-button title="设置">⚙️</st-icon-button>
+                    <st-icon-button title="设置"><iconify-icon icon="mdi:cog"></iconify-icon></st-icon-button>
                   </st-badges>
                   <st-badges value="5">
-                    <st-icon-button title="警告">⚠️</st-icon-button>
+                    <st-icon-button title="警告"><iconify-icon icon="mdi:alert-outline"></iconify-icon></st-icon-button>
                   </st-badges>
                 </div>
               </div>
@@ -204,13 +204,13 @@
                 <div class="demo-stage grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
                   <div class="demo-cell" style="display: flex; align-items: center; gap: 16px; padding: 4px 0;">
                     <st-badges value="12" max="9">
-                      <st-icon-button title="聊天">💬</st-icon-button>
+                      <st-icon-button title="聊天"><iconify-icon icon="mdi:message-text"></iconify-icon></st-icon-button>
                     </st-badges>
                     <span class="demo-label">数值 12 · 上限 9 → 9+</span>
                   </div>
                   <div class="demo-cell" style="display: flex; align-items: center; gap: 16px; padding: 4px 0;">
                     <st-badges value="120">
-                      <st-icon-button title="邮件">📬</st-icon-button>
+                      <st-icon-button title="邮件"><iconify-icon icon="mdi:mailbox"></iconify-icon></st-icon-button>
                     </st-badges>
                     <span class="demo-label">数值 120 · 上限 99（默认）→ 99+</span>
                   </div>
@@ -295,19 +295,19 @@
                   <st-list style="width: 100%; max-width: 440px;">
                     <st-list-item button>
                       <st-badges slot="prefix" value="12">
-                        <span>📥</span>
+                        <iconify-icon icon="mdi:inbox-arrow-down"></iconify-icon>
                       </st-badges>
                       收件箱<span slot="suffix">刚刚</span>
                     </st-list-item>
                     <st-list-item button>
                       <st-badges slot="prefix">
-                        <span>📤</span>
+                        <iconify-icon icon="mdi:send"></iconify-icon>
                       </st-badges>
                       已发送
                     </st-list-item>
                     <st-list-item button>
                       <st-badges slot="prefix" value="3" color="success">
-                        <span>💬</span>
+                        <iconify-icon icon="mdi:message-text"></iconify-icon>
                       </st-badges>
                       评论<span slot="suffix">3 条未读</span>
                     </st-list-item>
@@ -327,7 +327,7 @@
                 <summary>示例代码（列表与头像）</summary>
                 <pre><code>&lt;st-list&gt;
   &lt;st-list-item button&gt;
-    &lt;st-badges slot="prefix" value="12"&gt;&lt;span&gt;📥&lt;/span&gt;&lt;/st-badges&gt;
+    &lt;st-badges slot="prefix" value="12"&gt;&lt;iconify-icon icon="mdi:inbox-arrow-down"&gt;&lt;/iconify-icon&gt;&lt;/st-badges&gt;
     收件箱&lt;span slot="suffix"&gt;刚刚&lt;/span&gt;
   &lt;/st-list-item&gt;
 &lt;/st-list&gt;
@@ -369,7 +369,7 @@
             </div>
 
             <nav class="doc-pager" aria-label="上下篇">
-              <a class="pager-link" olink href="./card.html"><span>上一页</span>← Card</a><a class="pager-link pager-next" olink href="./list.html"><span>下一页</span>List →</a>
+              <a class="pager-link" olink href="./card.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Card</a><a class="pager-link pager-next" olink href="./list.html"><span>下一页</span>List <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
             </nav>
           </article>
       <script>

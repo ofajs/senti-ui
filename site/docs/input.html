@@ -71,7 +71,7 @@
               <p class="doc-lead">单行输入框：outlined / filled 两种类型，前后缀插槽与原生 type。value 是运行时状态，初始值用 default-value；focus 描边与 caret 由 color 语义色控制。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
-                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/input/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/input/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
               </div>
             </header>
 
@@ -83,7 +83,7 @@
                 <div class="demo-stage grid">
                   <div class="demo-cell">
                     <span class="demo-label">outlined</span>
-                    <st-input placeholder="you@example.com"><span slot="prefix">✉</span></st-input>
+                    <st-input placeholder="you@example.com"><iconify-icon slot="prefix" icon="mdi:email-outline"></iconify-icon></st-input>
                   </div>
                   <div class="demo-cell">
                     <span class="demo-label">filled + 初始值</span>
@@ -91,14 +91,14 @@
                   </div>
                   <div class="demo-cell">
                     <span class="demo-label">前后缀插槽</span>
-                    <st-input placeholder="搜索组件"><span slot="prefix">🔍</span><span slot="suffix">⏎</span></st-input>
+                    <st-input placeholder="搜索组件"><iconify-icon slot="prefix" icon="mdi:magnify"></iconify-icon><iconify-icon slot="suffix" icon="mdi:keyboard-return"></iconify-icon></st-input>
                   </div>
                 </div>
               </div>
               <details class="snippet">
                 <summary>示例代码</summary>
                 <pre><code>&lt;st-input placeholder="you@example.com"&gt;
-  &lt;span slot="prefix"&gt;✉&lt;/span&gt;
+  &lt;iconify-icon slot="prefix" icon="mdi:email-outline"&gt;&lt;/iconify-icon&gt;
 &lt;/st-input&gt;
 
 &lt;st-input variant="filled" default-value="已填充的内容"&gt;&lt;/st-input&gt;</code></pre>
@@ -151,7 +151,7 @@
                 <div class="demo-stage grid">
                   <div class="demo-cell">
                     <span class="demo-label">email</span>
-                    <st-input type="email" placeholder="you@example.com"><span slot="prefix">✉</span></st-input>
+                    <st-input type="email" placeholder="you@example.com"><iconify-icon slot="prefix" icon="mdi:email-outline"></iconify-icon></st-input>
                   </div>
                   <div class="demo-cell">
                     <span class="demo-label">number</span>
@@ -306,7 +306,7 @@
             </div>
 
             <nav class="doc-pager" aria-label="上下篇">
-              <a class="pager-link" olink href="./button.html"><span>上一页</span>← Button</a><a class="pager-link pager-next" olink href="./textarea.html"><span>下一页</span>Textarea →</a>
+              <a class="pager-link" olink href="./button.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Button</a><a class="pager-link pager-next" olink href="./textarea.html"><span>下一页</span>Textarea <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
             </nav>
           </article>
       <script>

@@ -88,7 +88,8 @@ site/
 
 采用 shadcn 式的组件目录首页：
 
-- 共享 header（来自 `layout.html`）：文档 / 皮肤 / 手记文字切换（组件目录即首页，点品牌回首页）、自动 / 浅色 / 深色（`st-select`）、GitHub
+- 共享 header（来自 `layout.html`）：文档 / 皮肤 / 手记文字切换（组件目录即首页，点品牌回首页）、自动 / 浅色 / 深色（`st-select` + 随模式变化的 Iconify 图标）、GitHub
+- **图标统一走 Iconify Web Component**（`iconify-icon`，由 `layout.html` 注入 `code.iconify.design` 的 2.1.0 脚本）：header、首页 CTA / 文档链接 / 图标按钮、皮肤页与文档导航都用 `<iconify-icon icon="mdi:...">`，不再用 emoji / Unicode 箭头；组件库内部用 CSS 绘制的对勾、箭头、关闭按钮不引入外部图标依赖
 - 紧凑 intro：标题、一句话说明、统计数据、组件文档 / 源码入口
 - **25 张组件卡片**（`CATALOG / 25 CARDS`）：每张卡片 = 真实组件预览 + 名称 + 标签 + 站内文档 ↗
   - 预览区可交互：按钮、输入、选择、开关、滑块、标签栏、导航、折叠、对话框、菜单、Toast 等都能直接操作

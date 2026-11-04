@@ -196,12 +196,26 @@
             height: 34px;
             font-size: 15px;
           }
+          .theme-mode {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+          }
+          .theme-mode > iconify-icon {
+            font-size: 15px;
+            color: var(--md-sys-color-on-surface-variant);
+          }
           .theme-select {
-            width: 92px;
-            min-width: 92px;
+            width: 84px;
+            min-width: 84px;
             height: 32px;
             font-size: 11px;
           }
+          .menu-check {
+            display: inline-flex;
+            visibility: hidden;
+          }
+          .menu-check.show { visibility: visible; }
           /* body overflow:hidden 后，整站唯一的滚动容器在这里；
              overscroll-behavior 阻断滚动链，避免到底部再触发根节点弹性。 */
           .site-scroll {
@@ -290,7 +304,7 @@
             .layout-nav { display: none; }
             .top-inner { gap: 8px; }
             .top-actions { gap: 4px; }
-            .theme-select { width: 84px; min-width: 84px; }
+            .theme-select { width: 76px; min-width: 76px; }
             .github-btn { display: none; }
             .footer { flex-direction: column; align-items: flex-start; }
           }
@@ -322,34 +336,37 @@
 
             <div class="top-actions">
               <st-menu id="skin-menu" align="right">
-                <st-icon-button slot="trigger" title="切换材质">◈</st-icon-button>
+                <st-icon-button slot="trigger" title="切换材质"><iconify-icon icon="mdi:palette-swatch"></iconify-icon></st-icon-button>
                 <st-menu-item on:click="pickSkin('m3')">
                   M3 主题
-                  <span slot="suffix">{{skin === 'm3' ? '✓' : ''}}</span>
+                  <span slot="suffix" class="menu-check" class:show="skin === 'm3'"><iconify-icon icon="mdi:check"></iconify-icon></span>
                 </st-menu-item>
                 <st-menu-item on:click="pickSkin('apple')">
                   Apple 毛玻璃
-                  <span slot="suffix">{{skin === 'apple' ? '✓' : ''}}</span>
+                  <span slot="suffix" class="menu-check" class:show="skin === 'apple'"><iconify-icon icon="mdi:check"></iconify-icon></span>
                 </st-menu-item>
                 <st-menu-item on:click="pickSkin('windows')">
                   Windows 11 风格
-                  <span slot="suffix">{{skin === 'windows' ? '✓' : ''}}</span>
+                  <span slot="suffix" class="menu-check" class:show="skin === 'windows'"><iconify-icon icon="mdi:check"></iconify-icon></span>
                 </st-menu-item>
               </st-menu>
 
-              <st-select
-                class="theme-select"
-                :value="themeMode"
-                aria-label="深浅色模式"
-                on:change="setThemeMode($event.target.value)"
-              >
-                <option value="auto">自动</option>
-                <option value="light">浅色</option>
-                <option value="dark">深色</option>
-              </st-select>
+              <span class="theme-mode">
+                <iconify-icon attr:icon="themeModeIcon" aria-hidden="true"></iconify-icon>
+                <st-select
+                  class="theme-select"
+                  :value="themeMode"
+                  aria-label="深浅色模式"
+                  on:change="setThemeMode($event.target.value)"
+                >
+                  <st-option value="auto" label="自动"><iconify-icon icon="mdi:theme-light-dark"></iconify-icon><span>自动</span></st-option>
+                  <st-option value="light" label="浅色"><iconify-icon icon="mdi:white-balance-sunny"></iconify-icon><span>浅色</span></st-option>
+                  <st-option value="dark" label="深色"><iconify-icon icon="mdi:weather-night"></iconify-icon><span>深色</span></st-option>
+                </st-select>
+              </span>
 
               <st-tooltip content="GitHub 仓库">
-                <st-icon-button class="github-btn" title="GitHub" on:click="openRepo">↗</st-icon-button>
+                <st-icon-button class="github-btn" title="GitHub" on:click="openRepo"><iconify-icon icon="mdi:github"></iconify-icon></st-icon-button>
               </st-tooltip>
             </div>
           </div>
@@ -377,11 +394,20 @@
         </div>
 
         <st-tooltip content="回到顶部">
-          <st-icon-button class="to-top" class:show="page === 'docs'" title="回到顶部" on:click="toTop">↑</st-icon-button>
+          <st-icon-button class="to-top" class:show="page === 'docs'" title="回到顶部" on:click="toTop"><iconify-icon icon="mdi:arrow-up"></iconify-icon></st-icon-button>
         </st-tooltip>
         </div>
 
         <script>
+          // 图标统一走 Iconify Web Component（共享布局注入一次，全站页面可用）
+          if (!customElements.get("iconify-icon") && !document.querySelector("script[data-iconify]")) {
+            const iconifyScript = document.createElement("script");
+            iconifyScript.src = "https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js";
+            iconifyScript.async = true;
+            iconifyScript.dataset.iconify = "";
+            document.head.appendChild(iconifyScript);
+          }
+
           export default async () => ({
             data: {
               page: "home",
@@ -451,6 +477,15 @@
               this.updateProgress();
             },
             proto: {
+              get themeModeIcon() {
+                return (
+                  {
+                    auto: "mdi:theme-light-dark",
+                    light: "mdi:white-balance-sunny",
+                    dark: "mdi:weather-night",
+                  }[this.themeMode] || "mdi:theme-light-dark"
+                );
+              },
               routePage(path) {
                 if (/\/docs(\/|$)/.test(path)) return "docs";
                 if (/\/skins(\.html)?$/.test(path)) return "skins";

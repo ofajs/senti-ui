@@ -908,7 +908,7 @@
               <div class="preview-row">
                 <st-button>按钮</st-button>
                 <st-button variant="outlined">描边</st-button>
-                <st-icon-button title="设置">⚙</st-icon-button>
+                <st-icon-button title="设置"><iconify-icon icon="mdi:cog"></iconify-icon></st-icon-button>
               </div>
               <st-input placeholder="输入内容"></st-input>
             </div>
@@ -934,7 +934,7 @@
               <div class="preview-row">
                 <st-button>按钮</st-button>
                 <st-button variant="outlined">描边</st-button>
-                <st-icon-button title="设置">⚙</st-icon-button>
+                <st-icon-button title="设置"><iconify-icon icon="mdi:cog"></iconify-icon></st-icon-button>
               </div>
               <st-input placeholder="输入内容"></st-input>
             </div>
@@ -960,7 +960,7 @@
               <div class="preview-row">
                 <st-button>按钮</st-button>
                 <st-button variant="outlined">描边</st-button>
-                <st-icon-button title="设置">⚙</st-icon-button>
+                <st-icon-button title="设置"><iconify-icon icon="mdi:cog"></iconify-icon></st-icon-button>
               </div>
               <st-input placeholder="输入内容"></st-input>
             </div>
@@ -986,7 +986,7 @@
               <div class="preview-row">
                 <st-button>按钮</st-button>
                 <st-button variant="outlined">描边</st-button>
-                <st-icon-button title="设置">⚙</st-icon-button>
+                <st-icon-button title="设置"><iconify-icon icon="mdi:cog"></iconify-icon></st-icon-button>
               </div>
               <st-input placeholder="输入内容"></st-input>
             </div>
@@ -1012,7 +1012,7 @@
               <div class="preview-row">
                 <st-button>按钮</st-button>
                 <st-button variant="outlined">描边</st-button>
-                <st-icon-button title="设置">⚙</st-icon-button>
+                <st-icon-button title="设置"><iconify-icon icon="mdi:cog"></iconify-icon></st-icon-button>
               </div>
               <st-input placeholder="输入内容"></st-input>
             </div>
@@ -1048,7 +1048,7 @@
               颜色不归皮肤管。这里调用 Google Material Color Utilities 的 HCT 算法：
               改种子色会重算整套 M3 角色；也可以单独覆盖某个角色，或添加
               <code>brand</code> 这样的自定义颜色变量。
-              <a href="../packages/color/index.html" target="_blank" rel="noreferrer">完整颜色工具 ↗</a>
+              <a href="../packages/color/index.html" target="_blank" rel="noreferrer">完整颜色工具 <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
             </p>
           </header>
 
@@ -1107,7 +1107,7 @@
                   <strong>自定义颜色</strong>
                   <span>追加 --name / --on-name / --name-container / --on-name-container，组件用 color="name" 消费。</span>
                 </div>
-                <st-button variant="outlined" class="custom-add" on:click="addCustom">＋ 添加颜色</st-button>
+                <st-button variant="outlined" class="custom-add" on:click="addCustom"><iconify-icon slot="prefix" icon="mdi:plus"></iconify-icon>添加颜色</st-button>
               </div>
               <div class="custom-list">
                 <o-fill :value="customs" fill-key="name">
@@ -1246,7 +1246,7 @@
                       <span class="tone-dot" :style.background="$data.dot"></span>
                       <span :text="$data.label"></span>
                     </div>
-                    <span class="tone-arrow" aria-hidden="true">→</span>
+                    <span class="tone-arrow" aria-hidden="true"><iconify-icon icon="mdi:arrow-right"></iconify-icon></span>
                     <div class="tone-strip">
                       <o-fill :value="$data.tones" fill-key="tone">
                         <button class="tone-chip" type="button" attr:aria-label="'Tone ' + $data.tone + '，点击复制 ' + $data.varName" attr:title="'Tone ' + $data.tone + ' · ' + $data.hex + ' · 点击复制 ' + $data.varName" on:click="$host.copyToken($event)" :style.background="$data.hex" :style.color="$data.text">
@@ -1704,7 +1704,7 @@
               this.copyStatus = "已复制 " + token;
               button.classList.add("copied");
               const mark = button.querySelector(".copy-mark");
-              if (mark) mark.textContent = "✓";
+              if (mark) mark.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon>';
               clearTimeout(button._copyTimer);
               button._copyTimer = setTimeout(() => {
                 button.classList.remove("copied");

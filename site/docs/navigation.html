@@ -71,7 +71,7 @@
               <p class="doc-lead">三个组件分工明确：st-nav-bar 控制排列方向，st-nav-item 控制文字位置与选中态，st-nav-layout 按自身宽度在底部导航、横排导航与左侧 rail 之间切换。active 始终由外部切换。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
-                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/navigation/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/navigation/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
               </div>
             </header>
 
@@ -82,10 +82,10 @@
                 <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-nav-bar + st-nav-item</code></div>
                 <div class="demo-stage block" style="gap: 12px;">
                   <st-nav-bar style="width: 100%;">
-                    <st-nav-item attr:active="navTab === 0" on:click="selectNav(0)"><span slot="icon">🏠</span>首页</st-nav-item>
-                    <st-nav-item attr:active="navTab === 1" on:click="selectNav(1)"><span slot="icon">🔍</span>发现</st-nav-item>
+                    <st-nav-item attr:active="navTab === 0" on:click="selectNav(0)"><iconify-icon slot="icon" icon="mdi:home-outline"></iconify-icon>首页</st-nav-item>
+                    <st-nav-item attr:active="navTab === 1" on:click="selectNav(1)"><iconify-icon slot="icon" icon="mdi:magnify"></iconify-icon>发现</st-nav-item>
                     <st-nav-item attr:active="navTab === 2" on:click="selectNav(2)">
-                      <span slot="icon" style="position: relative;">🔔<span style="position: absolute; top: -4px; right: -8px; min-width: 13px; height: 13px; padding: 0 3px; border-radius: 7px; background: var(--md-sys-color-error); color: var(--md-sys-color-on-error); font-size: 9px; line-height: 13px; text-align: center;">3</span></span>
+                      <span slot="icon" style="position: relative;"><iconify-icon icon="mdi:bell-outline"></iconify-icon><span style="position: absolute; top: -4px; right: -8px; min-width: 13px; height: 13px; padding: 0 3px; border-radius: 7px; background: var(--md-sys-color-error); color: var(--md-sys-color-on-error); font-size: 9px; line-height: 13px; text-align: center;">3</span></span>
                       消息
                     </st-nav-item>
                     <st-nav-item attr:active="navTab === 3" on:click="selectNav(3)"><span slot="icon">👤</span>我的</st-nav-item>
@@ -97,11 +97,11 @@
                 <summary>示例代码（含角标）</summary>
                 <pre><code>&lt;st-nav-bar&gt;
   &lt;st-nav-item attr:active="nav === 0" on:click="nav = 0"&gt;
-    &lt;span slot="icon"&gt;🏠&lt;/span&gt;首页
+    &lt;iconify-icon slot="icon" icon="mdi:home-outline"&gt;&lt;/iconify-icon&gt;首页
   &lt;/st-nav-item&gt;
   &lt;st-nav-item attr:active="nav === 1" on:click="nav = 1"&gt;
     &lt;span slot="icon" style="position: relative;"&gt;
-      🔔&lt;span style="position: absolute; top: -4px; right: -8px;"&gt;3&lt;/span&gt;
+      &lt;iconify-icon icon="mdi:bell-outline"&gt;&lt;/iconify-icon&gt;&lt;span style="position: absolute; top: -4px; right: -8px;"&gt;3&lt;/span&gt;
     &lt;/span&gt;消息
   &lt;/st-nav-item&gt;
 &lt;/st-nav-bar&gt;</code></pre>
@@ -117,17 +117,17 @@
                   <div style="width: 100%;">
                     <span class="demo-label">默认 14px</span>
                     <st-nav-bar style="width: 100%; margin-top: 6px;">
-                      <st-nav-item attr:active="sizeTabA === 0" on:click="sizeTabA = 0"><span slot="icon">📥</span>收件箱</st-nav-item>
+                      <st-nav-item attr:active="sizeTabA === 0" on:click="sizeTabA = 0"><iconify-icon slot="icon" icon="mdi:inbox-arrow-down"></iconify-icon>收件箱</st-nav-item>
                       <st-nav-item attr:active="sizeTabA === 1" on:click="sizeTabA = 1"><span slot="icon">🏷️</span>标签</st-nav-item>
-                      <st-nav-item attr:active="sizeTabA === 2" on:click="sizeTabA = 2"><span slot="icon">📤</span>已发送</st-nav-item>
+                      <st-nav-item attr:active="sizeTabA === 2" on:click="sizeTabA = 2"><iconify-icon slot="icon" icon="mdi:send"></iconify-icon>已发送</st-nav-item>
                     </st-nav-bar>
                   </div>
                   <div style="width: 100%;">
                     <span class="demo-label">font-size: 12px · 自定义底色</span>
                     <st-nav-bar style="width: 100%; margin-top: 6px; font-size: 12px; background: var(--md-sys-color-surface-container-high); border-radius: 16px; overflow: hidden;">
-                      <st-nav-item attr:active="sizeTabB === 0" on:click="sizeTabB = 0"><span slot="icon">📥</span>收件箱</st-nav-item>
+                      <st-nav-item attr:active="sizeTabB === 0" on:click="sizeTabB = 0"><iconify-icon slot="icon" icon="mdi:inbox-arrow-down"></iconify-icon>收件箱</st-nav-item>
                       <st-nav-item attr:active="sizeTabB === 1" on:click="sizeTabB = 1"><span slot="icon">🏷️</span>标签</st-nav-item>
-                      <st-nav-item attr:active="sizeTabB === 2" on:click="sizeTabB = 2"><span slot="icon">📤</span>已发送</st-nav-item>
+                      <st-nav-item attr:active="sizeTabB === 2" on:click="sizeTabB = 2"><iconify-icon slot="icon" icon="mdi:send"></iconify-icon>已发送</st-nav-item>
                     </st-nav-bar>
                   </div>
                 </div>
@@ -135,7 +135,7 @@
               <details class="snippet">
                 <summary>示例代码（缩放与换底色）</summary>
                 <pre><code>&lt;st-nav-bar style="font-size: 12px; border-radius: 16px; overflow: hidden;"&gt;
-  &lt;st-nav-item active&gt;&lt;span slot="icon"&gt;📥&lt;/span&gt;收件箱&lt;/st-nav-item&gt;
+  &lt;st-nav-item active&gt;&lt;iconify-icon slot="icon" icon="mdi:inbox-arrow-down"&gt;&lt;/iconify-icon&gt;收件箱&lt;/st-nav-item&gt;
   &lt;st-nav-item&gt;&lt;span slot="icon"&gt;🏷️&lt;/span&gt;标签&lt;/st-nav-item&gt;
 &lt;/st-nav-bar&gt;</code></pre>
               </details>
@@ -150,17 +150,17 @@
                   <div class="demo-cell">
                     <span class="demo-label">rail：bar vertical</span>
                     <st-nav-bar vertical style="width: fit-content; border-radius: 16px; overflow: hidden;">
-                      <st-nav-item attr:active="railTab === 0" on:click="railTab = 0"><span slot="icon">📥</span>收件箱</st-nav-item>
+                      <st-nav-item attr:active="railTab === 0" on:click="railTab = 0"><iconify-icon slot="icon" icon="mdi:inbox-arrow-down"></iconify-icon>收件箱</st-nav-item>
                       <st-nav-item attr:active="railTab === 1" on:click="railTab = 1"><span slot="icon">🏷️</span>标签</st-nav-item>
-                      <st-nav-item attr:active="railTab === 2" on:click="railTab = 2"><span slot="icon">📤</span>已发送</st-nav-item>
+                      <st-nav-item attr:active="railTab === 2" on:click="railTab = 2"><iconify-icon slot="icon" icon="mdi:send"></iconify-icon>已发送</st-nav-item>
                     </st-nav-bar>
                   </div>
                   <div class="demo-cell">
                     <span class="demo-label">抽屉：vertical + parallel</span>
                     <st-nav-bar vertical style="width: fit-content; border-radius: 16px; overflow: hidden;">
-                      <st-nav-item parallel attr:active="drawerTab === 0" on:click="drawerTab = 0"><span slot="icon">📥</span>收件箱</st-nav-item>
+                      <st-nav-item parallel attr:active="drawerTab === 0" on:click="drawerTab = 0"><iconify-icon slot="icon" icon="mdi:inbox-arrow-down"></iconify-icon>收件箱</st-nav-item>
                       <st-nav-item parallel attr:active="drawerTab === 1" on:click="drawerTab = 1"><span slot="icon">🏷️</span>标签</st-nav-item>
-                      <st-nav-item parallel attr:active="drawerTab === 2" on:click="drawerTab = 2"><span slot="icon">📤</span>已发送</st-nav-item>
+                      <st-nav-item parallel attr:active="drawerTab === 2" on:click="drawerTab = 2"><iconify-icon slot="icon" icon="mdi:send"></iconify-icon>已发送</st-nav-item>
                     </st-nav-bar>
                   </div>
                 </div>
@@ -169,7 +169,7 @@
                 <summary>示例代码</summary>
                 <pre><code>&lt;!-- 窄 rail：icon 上 / 文字下 --&gt;
 &lt;st-nav-bar vertical style="position: fixed; left: 0; top: 0; bottom: 0;"&gt;
-  &lt;st-nav-item active&gt;&lt;span slot="icon"&gt;📥&lt;/span&gt;收件箱&lt;/st-nav-item&gt;
+  &lt;st-nav-item active&gt;&lt;iconify-icon slot="icon" icon="mdi:inbox-arrow-down"&gt;&lt;/iconify-icon&gt;收件箱&lt;/st-nav-item&gt;
   &lt;st-nav-item&gt;&lt;span slot="icon"&gt;🏷️&lt;/span&gt;标签&lt;/st-nav-item&gt;
 &lt;/st-nav-bar&gt;
 
@@ -185,10 +185,10 @@
                 <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled</code></div>
                 <div class="demo-stage block" style="gap: 12px;">
                   <st-nav-bar style="width: 100%;">
-                    <st-nav-item attr:active="disTab === 0" on:click="disSelect(0)"><span slot="icon">🏠</span>首页</st-nav-item>
-                    <st-nav-item attr:active="disTab === 1" on:click="disSelect(1)"><span slot="icon">🔍</span>发现</st-nav-item>
-                    <st-nav-item disabled><span slot="icon">💬</span>聊天</st-nav-item>
-                    <st-nav-item disabled><span slot="icon">⚙️</span>设置</st-nav-item>
+                    <st-nav-item attr:active="disTab === 0" on:click="disSelect(0)"><iconify-icon slot="icon" icon="mdi:home-outline"></iconify-icon>首页</st-nav-item>
+                    <st-nav-item attr:active="disTab === 1" on:click="disSelect(1)"><iconify-icon slot="icon" icon="mdi:magnify"></iconify-icon>发现</st-nav-item>
+                    <st-nav-item disabled><iconify-icon slot="icon" icon="mdi:message-text"></iconify-icon>聊天</st-nav-item>
+                    <st-nav-item disabled><iconify-icon slot="icon" icon="mdi:cog"></iconify-icon>设置</st-nav-item>
                   </st-nav-bar>
                   <span class="demo-note">当前：{{disName}} · 可用项点击 {{disClicks}} 次（点禁用项不增加）</span>
                 </div>
@@ -196,7 +196,7 @@
               <details class="snippet">
                 <summary>示例代码</summary>
                 <pre><code>&lt;st-nav-item disabled&gt;
-  &lt;span slot="icon"&gt;⚙️&lt;/span&gt;设置
+  &lt;iconify-icon slot="icon" icon="mdi:cog"&gt;&lt;/iconify-icon&gt;设置
 &lt;/st-nav-item&gt;</code></pre>
               </details>
             </section>
@@ -211,8 +211,8 @@
                     <span class="demo-label">跟随文档栏宽度（当前容器）</span>
                     <st-nav-layout style="height: 300px; margin-top: 6px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 16px; overflow: hidden;">
                       <st-nav-bar slot="nav">
-                        <st-nav-item attr:active="layoutTab === 0" on:click="layoutTab = 0"><span slot="icon">🏠</span>首页</st-nav-item>
-                        <st-nav-item attr:active="layoutTab === 1" on:click="layoutTab = 1"><span slot="icon">🔍</span>发现</st-nav-item>
+                        <st-nav-item attr:active="layoutTab === 0" on:click="layoutTab = 0"><iconify-icon slot="icon" icon="mdi:home-outline"></iconify-icon>首页</st-nav-item>
+                        <st-nav-item attr:active="layoutTab === 1" on:click="layoutTab = 1"><iconify-icon slot="icon" icon="mdi:magnify"></iconify-icon>发现</st-nav-item>
                         <st-nav-item attr:active="layoutTab === 2" on:click="layoutTab = 2"><span slot="icon">👤</span>我的</st-nav-item>
                       </st-nav-bar>
                       <div style="padding: 18px; height: 100%; box-sizing: border-box; overflow: auto;">
@@ -228,9 +228,9 @@
                       <div style="width: 1040px;">
                         <st-nav-layout style="height: 300px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 16px; overflow: hidden;">
                           <st-nav-bar slot="nav">
-                            <st-nav-item attr:active="wideTab === 0" on:click="wideTab = 0"><span slot="icon">📥</span>收件箱</st-nav-item>
+                            <st-nav-item attr:active="wideTab === 0" on:click="wideTab = 0"><iconify-icon slot="icon" icon="mdi:inbox-arrow-down"></iconify-icon>收件箱</st-nav-item>
                             <st-nav-item attr:active="wideTab === 1" on:click="wideTab = 1"><span slot="icon">🏷️</span>标签</st-nav-item>
-                            <st-nav-item attr:active="wideTab === 2" on:click="wideTab = 2"><span slot="icon">📤</span>已发送</st-nav-item>
+                            <st-nav-item attr:active="wideTab === 2" on:click="wideTab = 2"><iconify-icon slot="icon" icon="mdi:send"></iconify-icon>已发送</st-nav-item>
                           </st-nav-bar>
                           <div style="padding: 18px; height: 100%; box-sizing: border-box; overflow: auto;">
                             <span class="demo-label">容器宽度 ≥ 1024px</span>
@@ -249,8 +249,8 @@
                 <summary>示例代码</summary>
                 <pre><code>&lt;st-nav-layout style="height: 100vh;"&gt;
   &lt;st-nav-bar slot="nav"&gt;
-    &lt;st-nav-item active&gt;&lt;span slot="icon"&gt;🏠&lt;/span&gt;首页&lt;/st-nav-item&gt;
-    &lt;st-nav-item&gt;&lt;span slot="icon"&gt;🔍&lt;/span&gt;发现&lt;/st-nav-item&gt;
+    &lt;st-nav-item active&gt;&lt;iconify-icon slot="icon" icon="mdi:home-outline"&gt;&lt;/iconify-icon&gt;首页&lt;/st-nav-item&gt;
+    &lt;st-nav-item&gt;&lt;iconify-icon slot="icon" icon="mdi:magnify"&gt;&lt;/iconify-icon&gt;发现&lt;/st-nav-item&gt;
   &lt;/st-nav-bar&gt;
 
   &lt;main&gt;内容区（默认插槽，自动 overflow: auto）&lt;/main&gt;
@@ -271,9 +271,9 @@
                       <p style="margin: 8px 0 0; color: var(--md-sys-color-on-surface-variant); font-size: 12.5px; line-height: 1.75;">{{appText}}</p>
                     </div>
                     <st-nav-bar style="position: absolute; left: 0; right: 0; bottom: 0;">
-                      <st-nav-item attr:active="appTab === 0" on:click="appTab = 0"><span slot="icon">🏠</span>首页</st-nav-item>
-                      <st-nav-item attr:active="appTab === 1" on:click="appTab = 1"><span slot="icon">🔍</span>发现</st-nav-item>
-                      <st-nav-item attr:active="appTab === 2" on:click="appTab = 2"><span slot="icon">🔔</span>消息</st-nav-item>
+                      <st-nav-item attr:active="appTab === 0" on:click="appTab = 0"><iconify-icon slot="icon" icon="mdi:home-outline"></iconify-icon>首页</st-nav-item>
+                      <st-nav-item attr:active="appTab === 1" on:click="appTab = 1"><iconify-icon slot="icon" icon="mdi:magnify"></iconify-icon>发现</st-nav-item>
+                      <st-nav-item attr:active="appTab === 2" on:click="appTab = 2"><iconify-icon slot="icon" icon="mdi:bell-outline"></iconify-icon>消息</st-nav-item>
                       <st-nav-item attr:active="appTab === 3" on:click="appTab = 3"><span slot="icon">👤</span>我的</st-nav-item>
                     </st-nav-bar>
                   </div>
@@ -285,7 +285,7 @@
                 <pre><code>&lt;main style="padding-bottom: 84px;"&gt;页面内容&lt;/main&gt;
 
 &lt;st-nav-bar style="position: fixed; left: 0; right: 0; bottom: 0;"&gt;
-  &lt;st-nav-item active&gt;&lt;span slot="icon"&gt;🏠&lt;/span&gt;首页&lt;/st-nav-item&gt;
+  &lt;st-nav-item active&gt;&lt;iconify-icon slot="icon" icon="mdi:home-outline"&gt;&lt;/iconify-icon&gt;首页&lt;/st-nav-item&gt;
   &lt;st-nav-item&gt;&lt;span slot="icon"&gt;👤&lt;/span&gt;我的&lt;/st-nav-item&gt;
 &lt;/st-nav-bar&gt;</code></pre>
               </details>
@@ -320,7 +320,7 @@
             </div>
 
             <nav class="doc-pager" aria-label="上下篇">
-              <a class="pager-link" olink href="./tabs.html"><span>上一页</span>← Tabs</a><a class="pager-link pager-next" olink href="./collapse.html"><span>下一页</span>Collapse →</a>
+              <a class="pager-link" olink href="./tabs.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Tabs</a><a class="pager-link pager-next" olink href="./collapse.html"><span>下一页</span>Collapse <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
             </nav>
           </article>
       <script>

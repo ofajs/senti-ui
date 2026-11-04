@@ -71,7 +71,7 @@
               <p class="doc-lead">只做一件事：把 hide 变成高度 0，展开时高度跟随内容（ResizeObserver）。没有内置标题、箭头或折叠组，触发源与内容排版全部由你组合；默认展开，写 hide 才收起。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
-                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/collapse/README.md" target="_blank" rel="noreferrer">GitHub README ↗</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/collapse/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
               </div>
             </header>
 
@@ -241,12 +241,12 @@
                     <st-collapse attr:hide="!advanced">
                       <st-list style="width: 100%; padding: 4px 8px 8px;">
                         <st-list-item button on:click="saved += 1">
-                          <span slot="prefix">⚡</span>
+                          <iconify-icon slot="prefix" icon="mdi:flash"></iconify-icon>
                           <div>性能模式<span secondary style="display: block;">关闭部分动效与阴影</span></div>
                           <span slot="suffix">开启</span>
                         </st-list-item>
                         <st-list-item button on:click="saved += 1">
-                          <span slot="prefix">🔔</span>通知<span slot="suffix">全部</span>
+                          <iconify-icon slot="prefix" icon="mdi:bell-outline"></iconify-icon>通知<span slot="suffix">全部</span>
                         </st-list-item>
                         <hr>
                         <st-list-item collapsible>
@@ -303,7 +303,7 @@
             </div>
 
             <nav class="doc-pager" aria-label="上下篇">
-              <a class="pager-link" olink href="./navigation.html"><span>上一页</span>← Navigation</a><a class="pager-link pager-next" olink href="./tooltip.html"><span>下一页</span>Tooltip →</a>
+              <a class="pager-link" olink href="./navigation.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Navigation</a><a class="pager-link pager-next" olink href="./tooltip.html"><span>下一页</span>Tooltip <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
             </nav>
           </article>
       <script>

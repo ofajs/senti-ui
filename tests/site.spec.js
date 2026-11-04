@@ -1446,9 +1446,11 @@ test("官网环境光：Apple 毛玻璃下增强，M3/windows/shadcn 保持低�
   await page.locator("#skin-menu st-icon-button").click();
   await page.locator("#skin-menu st-menu-item").filter({ hasText: "Apple 毛玻璃" }).click();
   await expect.poll(async () => (await ambient()).strong, { timeout: 5_000 }).toBe(true);
+  // 环境光切换有 0.35s 的 opacity 过渡：必须等过渡走完再读终值，
+  // 直接读会拿到中间帧（CI 上曾因此拿到 0.826 / 0.895 的假失败）。
   await expect
     .poll(async () => parseFloat((await ambient()).opacity), { timeout: 5_000 })
-    .toBeGreaterThan(0.6);
+    .toBeGreaterThan(0.95);
   const strongAmbient = await ambient();
   expect(strongAmbient.animation).toBe("st-ambient-drift");
   expect(parseFloat(strongAmbient.opacity)).toBeGreaterThan(0.95);

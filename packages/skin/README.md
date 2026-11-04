@@ -75,7 +75,7 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 切换时只需要改 `<html data-skin>`。
 
 **焦点材质不要在自己的复合 token 里引用 `--st-accent`**：`--st-accent` 是组件按 `color` 属性写在宿主上的，
-而皮肤 token 在 `<html data-skin>` 上声明时就会解析 `var()`，拿到的永远是空值（见 CONTEXT 坑 #59）。
+而皮肤 token 在 `<html data-skin>` 上声明时就会解析 `var()`，拿到的永远是空值（见 [pitfall #59a](../../pitfall/59a-skin-token-var-resolution.md)）。
 皮肤只提供上面这些几何 / 透明度 token，颜色由组件在 `:host` 规则里用 `var(--st-accent)` 组合，
 这样 `color="error"` 在 M3 / Apple / Windows / shadcn 下都会变成对应语义色。
 

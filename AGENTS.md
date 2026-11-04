@@ -4,7 +4,7 @@
 
 ## 入场必读
 
-**第一次进入本仓库开发前，先加载 ofajs-docs 技能（Skill）阅读 ofa.js 框架文档**，才能开始开发；之后**开始任何工作前，先阅读 [CONTEXT.md](./CONTEXT.md)** 了解项目背景、核心理念、组件清单与当前状态；修改组件代码前，务必读 CONTEXT.md 中的「ofa.js 已知坑」。
+**第一次进入本仓库开发前，先加载 ofajs-docs 技能（Skill）阅读 ofa.js 框架文档**，才能开始开发；之后**开始任何工作前，先阅读 [CONTEXT.md](./CONTEXT.md)** 了解项目背景、核心理念、组件清单与当前状态；修改组件代码前，务必先读 [pitfall/README.md](./pitfall/README.md)（踩坑索引，一条一文件）。
 
 ## 核心设计原则
 
@@ -35,8 +35,8 @@
 ## 皮肤（材质层）规则
 
 - 皮肤只改材质（圆角、密度、边框、阴影、毛玻璃、焦点环、动效、波纹），**不改颜色**；所有皮肤消费同一套 `--md-sys-color-*`，种子色 / error / success / 深浅色必须继续生效
-- 皮肤 CSS **只声明 `[data-skin="名称"]` 作用域下的 token**，不写 `st-button { ... }` 宿主选择器、不依赖 `::part`：组件常见于 `o-page` / `o-app` 的 shadow 内，文档树选择器与 part 都跨不进去，CSS 变量才是可靠通道（详见 CONTEXT 坑 #43/#47）
-- 皮肤规则不要用 `@layer` 包裹（会输给 shadow 内未分层的 `:host`，见坑 #44）
+- 皮肤 CSS **只声明 `[data-skin="名称"]` 作用域下的 token**，不写 `st-button { ... }` 宿主选择器、不依赖 `::part`：组件常见于 `o-page` / `o-app` 的 shadow 内，文档树选择器与 part 都跨不进去，CSS 变量才是可靠通道（详见 [pitfall #43](./pitfall/43-shadow-css-vars.md) / [#47](./pitfall/47-part-cross-shadow.md)）
+- 皮肤规则不要用 `@layer` 包裹（会输给 shadow 内未分层的 `:host`，见 [pitfall #44](./pitfall/44-skin-no-layer.md)）
 - 新增/修改组件视觉时：可换肤的属性一律加 token 回退（不加载皮肤必须与当前外观完全一致）；token 命名遵循 `packages/skin/README.md` 的分组，补文档并在验收页展示至少一套非 M3 皮肤
 - 需要暴露内部元素时用 `part="kebab-case"` 并在 README 登记；但不要把 part 当作换肤的必要机制
 
@@ -48,7 +48,9 @@ packages/{name}/
   README.md      # AI 友好文档（自包含）
   index.html     # 验收页加载器（引入 ofa.js + st-color-init.js + l-m 组件 + o-page）
   page.html      # ofa.js 页面模块（验收页内容与逻辑，由 index.html 的 <o-page> 加载）
-CONTEXT.md       # 项目全景 + 组件总索引 + ofa.js 已知坑（新组件必须登记）
+CONTEXT.md       # 项目全景 + 组件总索引（踩坑正文已拆到 pitfall/）
+pitfall/         # 踩坑索引：一条一文件（{ID}-{slug}.md，新坑必须登记）
+tests/           # Playwright 端到端测试（含官网 SCSR 用例）
 packages/color/  # M3 体系生成器 + st-color-init.js（颜色唯一来源）
 packages/boot/    # st-boot.js 项目同步引导（可选增强：首帧缓存/兜底注入 + 自动加载 color init）
 packages/skin/    # 皮肤系统（材质 token + st-skin.js；颜色仍只来自 color 模块）
@@ -67,7 +69,7 @@ packages/skin/    # 皮肤系统（材质 token + st-skin.js；颜色仍只来�
 
 ## 坑的沉淀规则
 
-开发中踩到 ofa.js / CDN / 缓存 / 浏览器兼容等任何坑并解决后，**必须**在解决当时就把这条经验沉淀到 [CONTEXT.md](./CONTEXT.md) 的「ofa.js 已知坑」章节（保持一条一坑：现象 + 原因 + 正确写法），防止下次重复踩坑、重复排查。非 ofa.js 类的坑（如部署、测试工具）可在该章节后另起小节存放。
+开发中踩到 ofa.js / CDN / 缓存 / 浏览器兼容 / 测试时序等任何坑并解决后，**必须**在解决当时就把这条经验沉淀到 [pitfall/](./pitfall/README.md)（保持一条一坑：现象 + 原因 + 正确写法），并在索引里登记、分配稳定编号；代码注释与文档用 `坑 #N` 引用。**不要再把正文追加回 CONTEXT.md**——CONTEXT 只保留踩坑索引指引。
 
 ## senti-ui 技能（.agents/skills/senti-ui/）维护规则
 

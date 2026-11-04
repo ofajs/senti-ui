@@ -73,7 +73,7 @@
     <div class="nojs">
       <h1>Senti-UI</h1>
       <p>语义组件，任意材质。官网的实时换肤与组件演示需要 JavaScript；文档与源码无需脚本即可查看。</p>
-      <p><a href="./docs/index.html">打开组件文档</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+      <p><a href="./docs/index.html">打开组件文档</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a> · <a href="https://raw.githubusercontent.com/ofajs/senti-ui/main/.agents/skills/senti-ui-skill.zip">下载 AI Skill</a></p>
     </div>
   </noscript>
 
@@ -1433,6 +1433,7 @@
         <div class="cta">
           <st-button on:click="jump('components')">浏览组件 <iconify-icon slot="suffix" icon="mdi:arrow-down"></iconify-icon></st-button>
           <st-button variant="outlined" on:click="goDocs">组件文档 <iconify-icon slot="suffix" icon="mdi:arrow-top-right"></iconify-icon></st-button>
+          <st-button variant="outlined" on:click="downloadSkill">下载 AI Skill <iconify-icon slot="suffix" icon="mdi:download"></iconify-icon></st-button>
         </div>
         <p class="intro-hint">颜色仍来自 M3 · 材质由 data-skin 与皮肤 CSS 决定</p>
       </div>
@@ -2000,6 +2001,13 @@
               },
               openRepo() {
                 window.open("https://github.com/ofajs/senti-ui", "_blank", "noopener");
+              },
+              downloadSkill() {
+                window.open(
+                  "https://raw.githubusercontent.com/ofajs/senti-ui/main/.agents/skills/senti-ui-skill.zip",
+                  "_blank",
+                  "noopener"
+                );
               },
               fakeLogin() {
                 this.toast("登录成功（演示）");

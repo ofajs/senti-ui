@@ -88,14 +88,14 @@ site/
 
 采用 shadcn 式的组件目录首页：
 
-- 共享 header（来自 `layout.html`）：文档 / 皮肤 / 手记文字切换（组件目录即首页，点品牌回首页）、自动 / 浅色 / 深色（`st-button-group`）、GitHub
+- 共享 header（来自 `layout.html`）：文档 / 皮肤 / 手记文字切换（组件目录即首页，点品牌回首页）、自动 / 浅色 / 深色（`st-select`）、GitHub
 - 紧凑 intro：标题、一句话说明、统计数据、组件文档 / 源码入口
 - **25 张组件卡片**（`CATALOG / 25 CARDS`）：每张卡片 = 真实组件预览 + 名称 + 标签 + 站内文档 ↗
   - 预览区可交互：按钮、输入、选择、开关、滑块、标签栏、导航、折叠、对话框、菜单、Toast 等都能直接操作
   - 覆盖 20 个模块、29 个 `st-*` 标签，以及 toast / alert / confirm / prompt / contextMenu 命令式工具
 - 三张局部 `data-skin` 系统 UI 卡：Android Material 3 / Apple 毛玻璃 / Windows 11 同页对比；每张卡用 `previewThemes` 写入平台默认 `--md-sys-color-*`，不跟随站点当前主题色；shadcn 与 Cyberpunk 仍在独立的 `skins.html` 选用
 - 快速开始：安装代码、复制、文档入口
-- 深浅色切换（`st-button-group` → `setThemeMode`）、皮肤切换（`setSkin`）
+- 深浅色切换（`st-select` → `setThemeMode`）、皮肤切换（`setSkin`）
 
 卡片右下角的 ↗ 会打开对应组件的独立文档页（如 `./docs/button.html`）；卡片本身不是链接，所以预览可以放心交互。
 

@@ -196,14 +196,11 @@
             height: 34px;
             font-size: 15px;
           }
-          .theme-group {
-            font-size: 11px;
-          }
-          .theme-group st-button {
+          .theme-select {
+            width: 92px;
+            min-width: 92px;
             height: 32px;
-            padding: 0 10px;
-            font-size: 11.5px;
-            font-weight: 500;
+            font-size: 11px;
           }
           /* body overflow:hidden 后，整站唯一的滚动容器在这里；
              overscroll-behavior 阻断滚动链，避免到底部再触发根节点弹性。 */
@@ -293,7 +290,7 @@
             .layout-nav { display: none; }
             .top-inner { gap: 8px; }
             .top-actions { gap: 4px; }
-            .theme-group st-button { padding: 0 8px; font-size: 11px; }
+            .theme-select { width: 84px; min-width: 84px; }
             .github-btn { display: none; }
             .footer { flex-direction: column; align-items: flex-start; }
           }
@@ -340,11 +337,16 @@
                 </st-menu-item>
               </st-menu>
 
-              <st-button-group class="theme-group" connected role="group" aria-label="深浅色主题">
-                <st-button attr:variant="themeMode === 'auto' ? 'filled' : 'text'" on:click="setThemeMode('auto')">自动</st-button>
-                <st-button attr:variant="themeMode === 'light' ? 'filled' : 'text'" on:click="setThemeMode('light')">浅色</st-button>
-                <st-button attr:variant="themeMode === 'dark' ? 'filled' : 'text'" on:click="setThemeMode('dark')">深色</st-button>
-              </st-button-group>
+              <st-select
+                class="theme-select"
+                :value="themeMode"
+                aria-label="深浅色模式"
+                on:change="setThemeMode($event.target.value)"
+              >
+                <option value="auto">自动</option>
+                <option value="light">浅色</option>
+                <option value="dark">深色</option>
+              </st-select>
 
               <st-tooltip content="GitHub 仓库">
                 <st-icon-button class="github-btn" title="GitHub" on:click="openRepo">↗</st-icon-button>
@@ -390,6 +392,7 @@
             ready() {
               this.detectPage();
               this.syncChrome();
+              this.syncThemeSelect(0);
               this.initSiteApi();
               this._onPop = () => this.detectPage();
               this._onScroll = () => this.updateProgress();
@@ -397,11 +400,15 @@
                 if (e.key === "st-skin") this.syncChrome();
               };
               this._onModeStorage = (e) => {
-                if (e.key === "st-theme-mode") this.themeMode = e.newValue || "auto";
+                if (e.key === "st-theme-mode") {
+                  this.themeMode = e.newValue || "auto";
+                  this.syncThemeSelect();
+                }
               };
               this._onPresetChange = (e) => {
                 if (e.detail?.mode) this.themeMode = e.detail.mode;
                 if (e.detail?.skin) this.skin = e.detail.skin;
+                this.syncThemeSelect();
               };
               window.addEventListener("storage", this._onSkinStorage);
               window.addEventListener("storage", this._onModeStorage);
@@ -474,6 +481,15 @@
                 if (this.goto) this.goto(path);
                 else location.href = path;
               },
+              syncThemeSelect(attempt = 0) {
+                const select = this.ele?.shadowRoot?.querySelector(".theme-select");
+                if (!select) return;
+                if (!select.shadowRoot) {
+                  if (attempt < 20) setTimeout(() => this.syncThemeSelect(attempt + 1), 50);
+                  return;
+                }
+                if (select.value !== this.themeMode) select.value = this.themeMode;
+              },
               syncChrome() {
                 if (window.__site) {
                   this.themeMode = window.__site.getThemeMode();
@@ -489,6 +505,7 @@
                     this.skin = "m3";
                   }
                 }
+                this.syncThemeSelect();
               },
               async pickSkin(id) {
                 // 官网把“材质”当作完整主题：换肤同时套用该材质的官方配色。
@@ -583,6 +600,7 @@
               setThemeMode(mode) {
                 const next = ["auto", "light", "dark"].includes(mode) ? mode : "auto";
                 this.themeMode = next;
+                this.syncThemeSelect();
                 if (window.__site?.setThemeMode) {
                   window.__site.setThemeMode(next);
                   return;

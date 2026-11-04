@@ -236,15 +236,11 @@ test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
   ]);
   expect(chrome.nav[0].color).toBe(chrome.nav[1].color);
 
-  // 主题切换是 st-button-group（自动 / 浅色 / 深色），点哪个模式立即生效
-  const clickThemeMode = (label) =>
-    page.evaluate((text) => {
-      const layout = [...document.querySelectorAll("o-page")].find(
-        (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
-      );
-      const buttons = [...layout.shadowRoot.querySelectorAll(".theme-group st-button")];
-      buttons.find((btn) => btn.textContent.trim() === text).click();
-    }, label);
+  // 主题切换是 st-select（自动 / 浅色 / 深色），选中即生效
+  const clickThemeMode = async (label) => {
+    await page.locator("st-select.theme-select").click();
+    await page.locator("st-select.theme-select .opt").filter({ hasText: label }).click();
+  };
 
   await clickThemeMode("深色");
   await page.waitForFunction(() => document.documentElement.classList.contains("st-dark"));
@@ -944,18 +940,15 @@ test("Cyberpunk 主题：荧光绿配色在浅色/深色下都成立，进入时
   expect(state.contrast).toBe(1);
   expect(state.contrastTone).toBe("bright");
 
-  // header 的模式组跟随预设切到「深色」
+  // header 的模式 select 跟随预设切到 dark
   expect(
     await page.evaluate(() => {
       const layout = [...document.querySelectorAll("o-page")].find(
         (op) => op.shadowRoot?.querySelector(".layout-nav")
       );
-      const active = [...layout.shadowRoot.querySelectorAll(".theme-group st-button")].find(
-        (btn) => btn.getAttribute("variant") === "filled"
-      );
-      return active?.textContent.trim();
+      return layout.shadowRoot.querySelector(".theme-select")?.value;
     })
-  ).toBe("深色");
+  ).toBe("dark");
 
   // 皮肤不改变颜色：filled 按钮仍然消费 M3 primary / on-primary
   const colors = await page.evaluate(() => {

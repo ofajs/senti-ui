@@ -250,6 +250,25 @@ setSkin("my-skin");
 4. 深浅色无需单独写：M3 角色变量本身已随主题切换；半透明表面用
    `color-mix(in srgb, var(--md-sys-color-surface) 58%, transparent)` 即可自动适配。
 
+## 用“主题预设”打包材质与配色（含对比度）
+
+皮肤文件只改材质；颜色配置（种子色 / 角色覆盖 / 自定义变量 / 对比度）属于主题。想让一套材质固定搭配一套“更冲”的配色时，不要写进皮肤 CSS，而是把两者一起作为**主题预设**切换：
+
+```js
+import { applyTheme } from "/packages/color/m3-theme.js";
+import { setThemeMode } from "/packages/color/st-theme-mode.js";
+import { setSkin } from "/packages/skin/st-skin.js";
+
+setSkin("cyberpunk");
+setThemeMode("dark");
+applyTheme("#FF2E97", { tertiary: "#00E5FF" }, {}, {
+  // 对比度 0–1：加深提纯角色色、压暗/提亮表面、拉开 on-* 与描边
+  contrast: 1,
+});
+```
+
+`contrast` 是颜色体系的能力（详见 [../color/README.md](../color/README.md)），不是皮肤 token：霓虹 / 游戏类材质靠它得到近黑表面、更纯的角色色与更亮的描边，而不必另造一套颜色变量。官网 `site/theme-presets.js` 的 Cyberpunk 就是“材质 + 配色 + 模式”的打包：Cyberpunk 默认 `contrast: 1`，其余材质默认 `0`；**切换材质时对比度回到该主题的默认值**，不跨材质记忆（种子色 / 角色覆盖仍按材质槽位记忆）。
+
 ## 注意事项与使用技巧
 
 - **颜色是身份，材质是衣服**：皮肤不得引入第二套配色。`color="error"` / `success` /

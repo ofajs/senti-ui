@@ -162,7 +162,7 @@ scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的�
 
 - 包内皮肤：`html[data-skin]` + `st-skin.js`（五套 CSS 已在 `index.html` 与页面 shadow 内预载，切换零等待）；皮肤仍只改材质，颜色来自 M3。
 - 官网「主题」= 材质 + 官方配色：M3 蓝 `#0061A4` / Apple iOS 蓝 `#007AFF` / Windows 蓝 `#0078D4` / shadcn zinc `#18181B` / Cyberpunk 洋红 `#FF2E97` + 青 `#00E5FF`（深色）。切换主题时由 `site/theme-presets.js` 一起套用。
-- 每个主题的颜色与深浅模式按材质存进 `st-theme-palettes`；M3 槽位承接用户原本的品牌色，所以从 Cyberpunk 回到 M3 会恢复进入前的配色。
+- 每个主题的颜色（含对比度）与深浅模式按材质存进 `st-theme-palettes`；Cyberpunk 预设的 `contrast` 为 `1`（满档），其余材质为 `0`，切换材质时对比度回到该主题默认值；M3 槽位承接用户原本的品牌色，所以从 Cyberpunk 回到 M3 会恢复进入前的配色。
 - 局部预览：`.skin-preview[data-skin="..."]` 会在元素上写入该主题官方配色的 `--md-sys-color-*` 局部变量，所以五张卡能同页展示不同颜色；这只影响预览，不改全站。
 - 文档树的 `[data-skin]` 选择器进不了 `o-page` 的 shadow，因此 `template[page]` 顶部额外 `<link>` 了五套 CSS 到 shadow 内；这是本页能「同页多种材质」的关键。
 - `setSkin()` 仍然只换材质；header 菜单和 skins 页的切换走主题预设，才会同时换色。
@@ -171,7 +171,8 @@ scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的�
 
 `skins.html` 底部是 `COLOR / M3` 区块，直接调用 `packages/color/m3-theme.js`（Google Material Color Utilities / HCT）：
 
-- **改色**：种子色选择器或 HEX 输入框，实时 `applyTheme(seed, overrides, customs)`，整套 primary / secondary / tertiary / surface 中性色一起重算
+- **改色**：种子色选择器或 HEX 输入框，实时 `applyTheme(seed, overrides, customs, { contrast })`，整套 primary / secondary / tertiary / surface 中性色一起重算
+- **对比度**：种子色下方「对比度」滑杆（0–100%）传给 `applyTheme` 的 `options.contrast`；Cyberpunk 预设默认 100%（近黑表面 + 更纯的霓虹角色色），其余材质 0%；切换材质时滑杆回到目标主题的默认值。分角色精细调节在 `packages/color/index.html`
 - **改色（单角色）**：primary / secondary / tertiary / error / success 五个角色可单独覆盖，on-* 与 container 配对仍按 M3 tone 规则推导；可随时复位回自动生成
 - **加色**：添加任意数量自定义变量（如 `brand`），自动生成 `--brand` / `--on-brand` / `--brand-container` / `--on-brand-container` 四配对 token；组件直接 `color="brand"` 使用
 - **可用色块变量**：工具下方分「白天 / 黑夜」两块面板，各用该模式的 `surface-container` 铺底；按 Primary / Secondary / Tertiary / Error / Success + 自定义颜色分组，每组 4 个堆叠色块（角色色 / on / container / on-container），色块底色与文字色使用该模式配对 token，下方标注变量名；角色组下方再按三段布局补 Surface / Surface Variant、五层 Surface Container、On Surface / On Surface Variant / Outline / Outline Variant（当前 M3 生成器未提供 Surface Dim / Surface Bright，故未列），同样可点击复制；改种子色、覆盖角色或增删自定义色时实时重算；`<code>` 内的动态文本要用 `:text`（见 CONTEXT 坑 #54）

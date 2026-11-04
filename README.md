@@ -105,7 +105,7 @@ Full docs (attribute tables, slots, events, default value lists) live in each pa
 
 ## Theming
 
-The [M3 color generator](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) generates a full light/dark M3 system (`--md-sys-color-*`) from a seed color, with overrides for the core four roles + the extended `success` role, plus custom variables (auto-expanded into paired tokens like `--brand` / `--on-brand`). The configuration is stored in localStorage — once set in the tool, every page on the same origin that includes `st-color-init.js` follows automatically (one-click re-theming).
+The [M3 color generator](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) generates a full light/dark M3 system (`--md-sys-color-*`) from a seed color, with overrides for the core four roles + the extended `success` role, custom variables (auto-expanded into paired tokens like `--brand` / `--on-brand`), and a **contrast boost** (0–1, globally or per role) for neon/game themes. The configuration is stored in localStorage — once set in the tool, every page on the same origin that includes `st-color-init.js` follows automatically (one-click re-theming).
 
 For manual control:
 
@@ -125,7 +125,7 @@ The same components can switch **material** without changing colors: `m3` (defau
 
 Switch at runtime with `setSkin("windows")` from `packages/skin/st-skin.js` (persists and syncs across same-origin windows). All interactive and surface components consume the skin tokens; the full token / `part` contract and how to author a custom skin are in [packages/skin/README.md](./packages/skin/README.md).
 
-The website adds a **theme preset** layer on top (only in `site/theme-presets.js`, not part of the package API): each material ships with an official palette (M3 blue / Apple iOS blue / Windows blue / shadcn zinc / Cyberpunk magenta + cyan), applied together on switch and remembered per material (color + light/dark mode). `setSkin()` itself still changes material only.
+The website adds a **theme preset** layer on top (only in `site/theme-presets.js`, not part of the package API): each material ships with an official palette (M3 blue / Apple iOS blue / Windows blue / shadcn zinc / Cyberpunk magenta + cyan) and, for Cyberpunk, a contrast boost, applied together on switch and remembered per material (color + light/dark mode). `setSkin()` itself still changes material only.
 
 ## Website
 

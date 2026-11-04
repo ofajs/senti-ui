@@ -17,7 +17,7 @@ CDN 前缀：`https://cdn.jsdelivr.net/gh/ofajs/senti-ui`（下称 `{cdn}`）。
 
 ## 颜色体系从哪来
 
-`{cdn}/packages/color/st-color-init.js` 读取 localStorage 中 color 工具保存的配置（key 为 `st-color-config`：`{ seed, overrides, customs }`），无配置时用默认种子色 `#0061A4`。所有 senti-ui 组件加载时自动 import 它，**正常使用无需手动引入**；要消除刷新闪色或独立使用时，在 `<head>` 内尽早引入一行（boot 会自动加载 st-color-init.js）：
+`{cdn}/packages/color/st-color-init.js` 读取 localStorage 中 color 工具保存的配置（key 为 `st-color-config`：`{ seed, overrides, customs, contrast }`），无配置时用默认种子色 `#0061A4`。所有 senti-ui 组件加载时自动 import 它，**正常使用无需手动引入**；要消除刷新闪色或独立使用时，在 `<head>` 内尽早引入一行（boot 会自动加载 st-color-init.js）：
 
 ```html
 <script src="{cdn}/packages/boot/st-boot.js"></script>
@@ -27,7 +27,7 @@ CDN 前缀：`https://cdn.jsdelivr.net/gh/ofajs/senti-ui`（下称 `{cdn}`）。
 
 ## 可用颜色 token 完整清单
 
-每套主题 32 个 token，浅色/深色同名自动换值。**变量名规则**：camelCase → kebab-case（`onPrimary` → `--md-sys-color-on-primary`）。下表省略 `--md-sys-color-` 前缀。
+每套主题 34 个 token，浅色/深色同名自动换值。**变量名规则**：camelCase → kebab-case（`onPrimary` → `--md-sys-color-on-primary`）。下表省略 `--md-sys-color-` 前缀。
 
 ### 角色色（每个角色 4 个配对 token）
 
@@ -92,6 +92,7 @@ localStorage.setItem("st-color-config", JSON.stringify({
   seed: "#0061A4",                    // 种子色
   overrides: { primary: "#B3261E" },  // 可选键：primary/secondary/tertiary/error/success
   customs: [{ name: "brand", color: "#FF0000" }],  // 自定义变量，name 自动 kebab-case
+  contrast: 0,                        // 对比度增强 0–1（数字）或按角色对象，见下
 }));
 ```
 
@@ -102,6 +103,7 @@ import { applyTheme, themeToCss, generateM3Theme, expandCustoms, generateTonalPa
 
 applyTheme("#6750A4");                               // 生成并注入当前文档，即时生效
 applyTheme("#6750A4", { primary: "#B3261E" }, { brand: "#FF0000" });
+applyTheme("#FF2E97", {}, {}, { contrast: 1 });      // 高对比 / 霓虹主题
 const css = themeToCss("#6750A4");                   // 完整 CSS 文本（浅色+深色两块），可存静态文件
 const { light, dark } = generateM3Theme("#6750A4");  // 结构化数据
 expandCustoms({ brand: "#FF0000" });                 // 只展开自定义变量的四配对 token
@@ -111,6 +113,23 @@ generateTonalPalettes({ brand: "#FF0000" });          // 自定义变量也可�
 ```
 
 自定义变量按 M3 tone 规则推导四配对：浅色 tone `[40, 100, 90, 10]`（角色/on/容器/on容器），深色 `[80, 20, 30, 90]`。
+
+### 对比度增强（contrast）
+
+M3 标准 tone 偏和谐，深色角色色落在 tone 80 往往发粉彩；霓虹 / 游戏 / 赛博朋克主题需要更冲。`contrast`（0–1）在不改色相的前提下加深提纯角色色、把表面推向极端、拉开 on-* 与描边：
+
+```js
+// 数字：统一作用于全部角色 / 中性色 / 自定义变量
+applyTheme("#FF2E97", {}, {}, { contrast: 1 });
+
+// 对象：按角色精细控制；未指定键回退 default（缺省 0）
+applyTheme("#FF2E97", { tertiary: "#00E5FF" }, {}, { contrast: 1 });
+applyTheme("#FF2E97", {}, {}, { contrast: { default: 0.55, primary: 1, neutral: 1 } });
+```
+
+对象键：`primary` / `secondary` / `tertiary` / `error` / `success`（角色四配对）、`neutral`（surface / outline / on-*）、`custom`（全部自定义变量）、`default`（回退值）。`generateM3Theme(seed, overrides, { contrast })`、`themeToCss(seed, overrides, customs, { contrast })`、`expandCustoms(customs, { contrast })` 同样支持。
+
+**对比度是配色属性，不是皮肤 token**：皮肤 CSS 只改材质；需要“材质 + 配色”打包时，把 `setSkin()` + `applyTheme(..., { contrast })` + `setThemeMode()` 一起调用（官网 `site/theme-presets.js` 的 Cyberpunk 即此模式，默认 `contrast: 1`；切换材质时对比度回到该主题默认值）。
 
 ## 在页面/组件中使用
 

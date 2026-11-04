@@ -10,7 +10,7 @@
  * - 每个材质的配色存在 `st-theme-palettes`，M3 的槽位承接用户原本的颜色
  */
 
-import { applyTheme, themeToCss } from "../packages/color/m3-theme.js";
+import { applyTheme, normalizeContrast, themeToCss } from "../packages/color/m3-theme.js";
 import { applyThemeMode, getThemeMode, setThemeMode } from "../packages/color/st-theme-mode.js";
 import { getSkin, setSkin } from "../packages/skin/st-skin.js";
 
@@ -42,12 +42,27 @@ export const THEME_PRESETS = Object.freeze({
     seed: "#FF2E97",
     overrides: Object.freeze({ tertiary: "#00E5FF" }),
     customs: [],
+    // 对比度增强拉满：近黑表面 + 更纯的霓虹角色色，Cyberpunk 才有“夜城”的强度
+    contrast: 1,
     mode: "dark",
   }),
 });
 
 const isHex = (value) => /^#[0-9a-f]{6}$/i.test(String(value || ""));
 const isMode = (value) => MODES.includes(value);
+
+/** 对比度配置收敛为 m3-theme 的形状；全相等时压成数字，读起来更短 */
+const compactContrast = (value) => {
+  const normalized = normalizeContrast(value);
+  if (!normalized) return 0;
+  const values = Object.values(normalized);
+  if (values.every((v) => v === values[0])) return values[0];
+  // 保留 default，UI 的“整体对比度”滑杆才有值可显示（normalizeContrast 已把它展开到各键）
+  if (value && typeof value === "object" && value.default != null) {
+    normalized.default = Math.max(0, Math.min(1, Number(value.default) || 0));
+  }
+  return normalized;
+};
 
 /** 把任意来源的颜色配置收敛成 m3-theme 能消费的形状 */
 export function normalizeColorConfig(raw) {
@@ -66,6 +81,7 @@ export function normalizeColorConfig(raw) {
     seed: isHex(source.seed) ? String(source.seed).toLowerCase() : DEFAULT_SEED,
     overrides,
     customs,
+    contrast: compactContrast(source.contrast),
   };
 }
 
@@ -106,10 +122,14 @@ const activeSkin = () => {
 const writeActiveConfig = (config) => {
   const normalized = normalizeColorConfig(config);
   const customs = Object.fromEntries(normalized.customs.map((c) => [c.name, c.color]));
-  applyTheme(normalized.seed, normalized.overrides, customs);
+  const options = { contrast: normalized.contrast };
+  applyTheme(normalized.seed, normalized.overrides, customs, options);
   try {
     localStorage.setItem(COLOR_KEY, JSON.stringify(normalized));
-    localStorage.setItem(CSS_KEY, themeToCss(normalized.seed, normalized.overrides, customs));
+    localStorage.setItem(
+      CSS_KEY,
+      themeToCss(normalized.seed, normalized.overrides, customs, options)
+    );
   } catch {}
   return normalized;
 };
@@ -156,9 +176,16 @@ export function applyThemePreset(name) {
   const currentMode = getThemeMode();
   const slots = migrateLegacyBackup(readSlots());
 
-  // 重复点击当前主题：不重置用户已经调过的颜色
+  const preset = presetConfig(id);
+  // 对比度不跨材质记忆：切到/点回某套主题时，始终回到该主题的默认对比度。
+  // 种子色、角色覆盖与自定义颜色仍按材质槽位记忆。
+  const withPresetContrast = (config) => ({ ...(config || preset), contrast: preset.contrast });
+
+  // 重复点击当前主题：保留用户调过的种子色/角色色，但对比度回默认
   if (current === id && currentConfig) {
-    return { skin: id, config: currentConfig, mode: currentMode };
+    const applied = writeActiveConfig(withPresetContrast(currentConfig));
+    applyMode(currentMode);
+    return { skin: id, config: applied, mode: currentMode };
   }
 
   if (current !== id) {
@@ -169,7 +196,8 @@ export function applyThemePreset(name) {
   }
 
   const slot = slots[id];
-  const config = slot?.config ? normalizeColorConfig(slot.config) : presetConfig(id);
+  const base = slot?.config ? normalizeColorConfig(slot.config) : preset;
+  const config = withPresetContrast(base);
   const mode = isMode(slot?.mode) ? slot.mode : THEME_PRESETS[id].mode || currentMode;
 
   if (current !== id) writeSlots(slots);

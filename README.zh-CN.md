@@ -105,7 +105,7 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 
 ## 主题定制
 
-[M3 颜色体系生成器](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），支持核心四角色 + 扩展角色 success 覆盖与自定义变量（自动展开 `--brand` / `--on-brand` 等配对 token）。配置存 localStorage——在工具里调好配色，同域所有引入 `st-color-init.js` 的页面自动跟随（一键换色）。
+[M3 颜色体系生成器](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），支持核心四角色 + 扩展角色 success 覆盖、自定义变量（自动展开 `--brand` / `--on-brand` 等配对 token），以及**对比度增强**（0–1，可整体或按角色设置，用于霓虹 / 游戏类主题）。配置存 localStorage——在工具里调好配色，同域所有引入 `st-color-init.js` 的页面自动跟随（一键换色）。
 
 需要手动控制时：
 
@@ -125,7 +125,7 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 
 运行时用 `packages/skin/st-skin.js` 的 `setSkin("windows")` 切换（持久化并跨同源窗口同步）。全部交互与表面组件都已接入；完整 token / `part` 契约与自定义皮肤写法见 [packages/skin/README.md](./packages/skin/README.md)。
 
-官网另有一层**主题预设**（只存在于 `site/theme-presets.js`，不属于包 API）：每套材质配一套官方配色（M3 蓝 / Apple iOS 蓝 / Windows 蓝 / shadcn zinc / Cyberpunk 洋红+青），切换时一并套用，并按材质记住各自的颜色与深浅模式；`setSkin()` 本身仍然只换材质。
+官网另有一层**主题预设**（只存在于 `site/theme-presets.js`，不属于包 API）：每套材质配一套官方配色（M3 蓝 / Apple iOS 蓝 / Windows 蓝 / shadcn zinc / Cyberpunk 洋红+青，并带对比度增强），切换时一并套用，并按材质记住各自的颜色与深浅模式；`setSkin()` 本身仍然只换材质。
 
 ## 官网首页
 

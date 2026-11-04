@@ -857,12 +857,15 @@ test("Cyberpunk 主题：套用深色 + 霓虹配色，颜色仍走 M3", async (
       mode: localStorage.getItem("st-theme-mode"),
       seed: saved.seed,
       tertiary: saved.overrides?.tertiary,
+      contrast: saved.contrast,
     };
   });
   expect(state.dark).toBe(true);
   expect(state.mode).toBe("dark");
   expect(state.seed).toBe("#ff2e97");
   expect(state.tertiary).toBe("#00e5ff");
+  // Cyberpunk 预设带满档对比度增强
+  expect(state.contrast).toBe(1);
 
   // 皮肤不改变颜色：filled 按钮仍然消费 M3 primary / on-primary
   const colors = await page.evaluate(() => {
@@ -896,6 +899,45 @@ test("Cyberpunk 主题：套用深色 + 霓虹配色，颜色仍走 M3", async (
   });
   expect(colors.bg).toEqual(colors.primary);
   expect(colors.color).toEqual(colors.onPrimary);
+});
+
+test("切换材质时对比度回到该主题的默认值", async ({ page }) => {
+  await page.goto("/site/skins.html");
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.locator(".skin-card").first().waitFor({ state: "visible" });
+
+  const useTheme = async (name) => {
+    await page
+      .locator(".skin-card")
+      .filter({ hasText: name })
+      .locator(".skin-actions st-button")
+      .click();
+  };
+  const storedContrast = () =>
+    page.evaluate(() => JSON.parse(localStorage.getItem("st-color-config") || "{}").contrast);
+
+  // Cyberpunk 默认满档
+  await useTheme("Cyberpunk · 霓虹终端");
+  await expect.poll(storedContrast).toBe(1);
+  await expect(page.locator(".contrast-value")).toHaveText("100%");
+
+  // 用户在当前主题把对比度调到 40%
+  await page.locator(".contrast-range").evaluate((el) => {
+    el.value = "40";
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  await expect.poll(storedContrast).toBe(0.4);
+
+  // 切到 M3：对比度回到 M3 默认 0
+  await useTheme("Android · Material 3");
+  await expect.poll(storedContrast).toBe(0);
+  await expect(page.locator(".contrast-value")).toHaveText("0%");
+
+  // 再切回 Cyberpunk：不沿用之前调过的 40%，仍是主题默认 100%
+  await useTheme("Cyberpunk · 霓虹终端");
+  await expect.poll(storedContrast).toBe(1);
+  await expect(page.locator(".contrast-value")).toHaveText("100%");
 });
 
 test("主题预设：每套材质带官方配色，并按主题记住各自颜色", async ({ page }) => {

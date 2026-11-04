@@ -12,7 +12,7 @@ Senti-UI 全库**唯一颜色来源**：从种子色按 Material Design 3（HCT 
 <script src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/boot/st-boot.js"></script>
 ```
 
-`st-color-init.js` 读取 localStorage 中 color 工具保存的配置（key 为 `st-color-config`：`{ seed, overrides, customs }`），无配置时用默认种子色 `#0061A4`。**同域所有引入它的页面共享配置**——工具里调好配色，全站自动跟随（一键换色）。
+`st-color-init.js` 读取 localStorage 中 color 工具保存的配置（key 为 `st-color-config`：`{ seed, overrides, customs, contrast }`），无配置时用默认种子色 `#0061A4`。**同域所有引入它的页面共享配置**——工具里调好配色，全站自动跟随（一键换色）。
 
 ### 刷新闪色的治理（st-boot.js 同步引导）
 
@@ -41,7 +41,7 @@ setThemeMode("dark"); // "auto" | "light" | "dark"
 
 ## 可用颜色 token 完整清单
 
-每套主题 32 个 token，浅色/深色同名自动换值。**变量名规则**：camelCase → kebab-case，如 `onPrimary` → `--md-sys-color-on-primary`。
+每套主题 34 个 token，浅色/深色同名自动换值。**变量名规则**：camelCase → kebab-case，如 `onPrimary` → `--md-sys-color-on-primary`。
 
 ### 角色色（每个角色 4 个配对 token）
 
@@ -83,6 +83,51 @@ M3 的 token 天生成对，**永远用配对 token，不要自己调透明度�
 - **强制浅色**：`<html class="st-light">`；**强制深色**：`<html class="st-dark">`（优先级高于系统）
 - 自定义 CSS 只要消费 `--md-sys-color-*`，深浅色**零成本自动适配**——这就是"颜色只走 M3 角色"的原因
 
+## 对比度增强（contrast）
+
+M3 的标准 tone 以"和谐"为先：深色主题的角色色落在 tone 80，容易偏粉彩；做霓虹 / 游戏 / 赛博朋克这类"要冲"的主题时，只换种子色解决不了。`contrast` 是颜色体系内的第二个算法旋钮——**保持色相不变，把角色色加深提纯，同时把表面推向极端、把 on-* 与描边拉向两端**。官网 Cyberpunk 主题预设就用了它。
+
+- `0`：标准 M3（默认，输出与旧版逐字节一致）
+- `1`：最强。角色 tone 下移（浅色 40→30、深色 80→66 附近），深色表面压到近黑、描边提亮；角色色对表面的对比度仍保持在 4.5:1 以上
+- 中间值线性插值；`contrast` 是**配色属性**，不放进皮肤 CSS（皮肤只改材质）
+
+### 配置
+
+```json
+{
+  "seed": "#FF2E97",
+  "overrides": { "tertiary": "#00E5FF" },
+  "customs": [],
+  "contrast": 1
+}
+```
+
+`contrast` 可以是一个数字（`0.6`，统一作用于全部角色 / 中性色 / 自定义变量），也可以是对象：
+
+| 键 | 作用 |
+|------|------|
+| `primary` / `secondary` / `tertiary` / `error` / `success` | 该角色的四配对 token（角色 / on / container / on-container） |
+| `neutral` | `surface`、五层 `surface-container`、`on-surface`、`surface-variant`、`outline` 等中性色 |
+| `custom` | 全部自定义颜色变量（`--brand` 四配对） |
+| `default` | 未指定键的回退值（缺省 0，因此 `{ "primary": 1 }` 只增强主色） |
+
+### API
+
+`generateM3Theme(seed, overrides, options)`、`themeToCss(seed, overrides, customs, options)`、`applyTheme(seed, overrides, customs, options)`、`expandCustoms(customs, options)` 的 `options` 都接受 `{ contrast }`：
+
+```js
+applyTheme("#FF2E97", { tertiary: "#00E5FF" }, {}, { contrast: 1 });
+
+// 需要分角色控制时用对象（未指定键回退 default）
+applyTheme("#FF2E97", {}, {}, { contrast: { default: 0.55, primary: 1, neutral: 1 } });
+
+generateM3Theme("#0061A4", {}, { contrast: { primary: 1 } }); // 只加强主色
+themeToCss("#0061A4", {}, {}, { contrast: 1 });               // 静态 CSS 也带增强后的值
+expandCustoms({ brand: "#FF0000" }, { contrast: 1 });          // 自定义变量同样可增强
+```
+
+实现要点：角色色必须从**色盘 / 源色**按目标 tone 重新取色，不能把已生成的 token 直接平移 tone——深色角色色在 tone 80 时色度已被 sRGB 色域裁到很低，平移后只会得到发灰的同色，恢复不了霓虹感。
+
 ## 自定义配色（三种方式）
 
 ### 1. color 可视化工具（推荐）
@@ -98,6 +143,7 @@ localStorage.setItem("st-color-config", JSON.stringify({
   customs: [                    // 自定义变量，name 自动 kebab-case
     { name: "brand", color: "#FF0000" },
   ],
+  contrast: 0,                  // 对比度增强 0–1，或按角色对象（见「对比度增强」）
 }));
 // 刷新页面后 st-color-init.js 读取生效（写入须在 st-color-init.js 执行前）
 ```
@@ -109,6 +155,7 @@ import { generateM3Theme, themeToCss, applyTheme, expandCustoms, generateTonalPa
 
 applyTheme("#6750A4");                        // 生成并注入当前文档，即时生效
 applyTheme("#6750A4", { primary: "#B3261E" }, { brand: "#FF0000" });
+applyTheme("#FF2E97", {}, {}, { contrast: 1 });      // 高对比 / 霓虹主题
 const css = themeToCss("#6750A4");            // 生成完整 CSS 文本（浅色+深色两块），可存为静态主题文件
 const { light, dark } = generateM3Theme("#6750A4");  // 结构化数据 { light: {...}, dark: {...} }
 const pair = expandCustoms({ brand: "#FF0000" });    // 只展开自定义变量的四配对 token
@@ -124,10 +171,10 @@ API 签名：
 
 | API | 说明 |
 |------|------|
-| `generateM3Theme(seedHex, overrides?)` | 种子色 → `{ light, dark }` 两套 token 表 |
-| `themeToCss(seedHex, overrides?, customs?)` | → CSS 文本（`:root` + `html.st-dark` 两个块，可保存为静态 CSS） |
-| `applyTheme(seedHex, overrides?, customs?)` | 生成并动态注入当前文档（含媒体查询深色跟随） |
-| `expandCustoms(customs)` | `{ brand: "#FF0000" }` → 四配对 token 的 `{ light, dark }` |
+| `generateM3Theme(seedHex, overrides?, options?)` | 种子色 → `{ light, dark }` 两套 token 表；`options.contrast` 见上 |
+| `themeToCss(seedHex, overrides?, customs?, options?)` | → CSS 文本（`:root` + `html.st-dark` 两个块，可保存为静态 CSS） |
+| `applyTheme(seedHex, overrides?, customs?, options?)` | 生成并动态注入当前文档（含媒体查询深色跟随） |
+| `expandCustoms(customs, options?)` | `{ brand: "#FF0000" }` → 四配对 token 的 `{ light, dark }` |
 | `generateTonalPalettes(seedHex \| roleColors)` | 种子色 → 标准五条音调盘（Primary / Secondary / Tertiary / Neutral / Neutral variant）；传角色色对象 → 当前实际角色色（含覆盖）及自定义变量的音调盘（标准角色用 Primary / Secondary / Tertiary / Error / Success 标签，自定义键用变量名作标签）；每条含 0–100 的 14 个 tone |
 
 `overrides` 可选键：`primary` / `secondary` / `tertiary` / `error` / `success`。自定义变量按 M3 tone 规则推导：浅色 tone `[40, 100, 90, 10]`，深色 `[80, 20, 30, 90]`（角色/on/容器/on容器）。

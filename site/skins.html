@@ -300,6 +300,19 @@
         }
         .color-picker::-webkit-color-swatch-wrapper { padding: 3px; }
         .color-picker::-webkit-color-swatch { border: 0; border-radius: 8px; }
+        .contrast-range {
+          flex: 1;
+          min-width: 120px;
+          max-width: 220px;
+          accent-color: var(--md-sys-color-primary);
+          cursor: pointer;
+        }
+        .contrast-value {
+          min-width: 3.2em;
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 12px;
+          color: var(--md-sys-color-on-surface-variant);
+        }
         .hex-input {
           width: 112px;
           height: 40px;
@@ -1016,6 +1029,7 @@
         <p class="note">
           每套主题 = 材质 + 官方配色。切换时会保存当前主题的颜色与深浅模式，切回来时恢复；
           M3 的槽位承接你原本的品牌色，所以从 Cyberpunk 回到 M3 会得到进入前的配色。
+          对比度不跨材质记忆：切到某套主题时始终回到它的默认值（Cyberpunk 100%，其余 0%）。
           皮肤 CSS 本身仍然只写 token、不写颜色，<code>setSkin()</code> 也只换材质；
           这套主题预设只存在于官网演示层。
         </p>
@@ -1043,6 +1057,13 @@
                 <st-button variant="text" class="color-reset" on:click="resetAll">恢复默认</st-button>
               </div>
               <p class="color-help">种子色驱动 primary / secondary / tertiary 与全部 surface 中性色；on-* 与 container 配对由色相和 M3 tone 规则自动推导。</p>
+
+              <div class="color-seed-row" style="margin-top: 10px;">
+                <span class="color-label">对比度</span>
+                <input class="contrast-range" type="range" min="0" max="100" step="5" :value="contrastPct" aria-label="对比度增强" on:input="setContrast($event.target.value)" />
+                <span class="contrast-value">{{contrastPct}}%</span>
+              </div>
+              <p class="color-help">对比度增强会加深提纯角色色、压暗/提亮表面与描边，霓虹与游戏类主题用它拉到 80–100%；分角色精细调节在 <a href="../packages/color/index.html" target="_blank" rel="noreferrer">完整颜色工具</a>。</p>
 
               <div class="role-list">
                 <div class="role-row">
@@ -1278,6 +1299,8 @@
             seed: "#0061A4",
             overrides: {},
             customs: [],
+            contrast: 0,
+            contrastPct: 0,
             roleColors: {
               primary: "#0061A4",
               secondary: "#565E71",
@@ -1381,6 +1404,7 @@
                 if (saved && /^#[0-9a-fA-F]{6}$/.test(saved.seed || "")) {
                   this.seed = saved.seed.toLowerCase();
                   this.overrides = saved.overrides || {};
+                  this.contrast = saved.contrast ?? 0;
                   this.customs = Array.isArray(saved.customs)
                     ? saved.customs.map((c) => ({
                         name: String(c.name || ""),
@@ -1419,8 +1443,11 @@
                   .map((c) => [c.name, c.color])
               );
 
-              const generated = api.generateM3Theme(seed, overrides);
-              api.applyTheme(seed, overrides, customsObj);
+              const options = { contrast: this.contrast };
+              const generated = api.generateM3Theme(seed, overrides, options);
+              api.applyTheme(seed, overrides, customsObj, options);
+              this.syncContrastPct();
+              this.refreshToneGuides();
               const auto = generated.light;
               this.roleColors = {
                 primary: (overrides.primary || auto.primary).toLowerCase(),
@@ -1429,7 +1456,7 @@
                 error: (overrides.error || auto.error).toLowerCase(),
                 success: (overrides.success || auto.success).toLowerCase(),
               };
-              const expanded = api.expandCustoms(customsObj);
+              const expanded = api.expandCustoms(customsObj, options);
               this.customTokens = Object.entries(expanded.light).map(
                 ([name, hex]) => ({ name, hex: String(hex).toLowerCase() })
               );
@@ -1591,11 +1618,11 @@
               if (persist) {
                 localStorage.setItem(
                   "st-color-config",
-                  JSON.stringify({ seed, overrides, customs })
+                  JSON.stringify({ seed, overrides, customs, contrast: this.contrast })
                 );
                 localStorage.setItem(
                   "st-theme-css",
-                  api.themeToCss(seed, overrides, customsObj)
+                  api.themeToCss(seed, overrides, customsObj, options)
                 );
                 this.colorStatus = "已应用，并保存到本域配色。";
               }
@@ -1626,7 +1653,8 @@
               this.toneGuideHint =
                 (dark ? "深色" : "浅色") +
                 "：" +
-                definitions.map((item) => item.label + " " + item.tone).join(" · ");
+                definitions.map((item) => item.label + " " + item.tone).join(" · ") +
+                (this.contrastPct > 0 ? "（对比度开启：实际 token 的 tone 已偏移，标记仅表示标准 M3 位置）" : "");
             },
             async copyToken(event) {
               const button = event.currentTarget;
@@ -1667,6 +1695,18 @@
                 button.classList.remove("copied");
                 if (mark) mark.textContent = "⧉";
               }, 1200);
+            },
+            syncContrastPct() {
+              const raw = this.contrast;
+              const fallback =
+                raw && typeof raw === "object" ? Number(raw.default) || 0 : Number(raw) || 0;
+              this.contrastPct = Math.round(Math.min(1, Math.max(0, fallback)) * 100);
+            },
+            setContrast(value) {
+              const pct = Math.min(100, Math.max(0, Number(value) || 0));
+              this.contrast = pct / 100;
+              this.contrastPct = pct;
+              this.applyColor();
             },
             setSeed(value) {
               const next = String(value || "").trim().toLowerCase();
@@ -1733,11 +1773,13 @@
               this.seed = "#0061A4";
               this.overrides = {};
               this.customs = [];
+              this.contrast = 0;
+              this.contrastPct = 0;
               this.applyColor(false);
               localStorage.removeItem("st-color-config");
               const api = window.__site;
               if (api?.themeToCss) {
-                localStorage.setItem("st-theme-css", api.themeToCss("#0061A4", {}, {}));
+                localStorage.setItem("st-theme-css", api.themeToCss("#0061A4", {}, {}, { contrast: 0 }));
               }
               this.colorStatus = "已恢复默认 M3 配色。";
             },
@@ -1749,6 +1791,7 @@
                 this.seed = result.config.seed;
                 this.overrides = result.config.overrides;
                 this.customs = result.config.customs;
+                this.contrast = result.config.contrast ?? 0;
                 this.applyColor(false);
                 this.colorStatus = "已切换到 " + this.skinLabel + " 主题。";
                 return;

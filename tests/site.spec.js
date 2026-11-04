@@ -858,14 +858,16 @@ test("Cyberpunk 主题：套用深色 + 霓虹配色，颜色仍走 M3", async (
       seed: saved.seed,
       tertiary: saved.overrides?.tertiary,
       contrast: saved.contrast,
+      contrastTone: saved.contrastTone,
     };
   });
   expect(state.dark).toBe(true);
   expect(state.mode).toBe("dark");
-  expect(state.seed).toBe("#ff2e97");
-  expect(state.tertiary).toBe("#00e5ff");
-  // Cyberpunk 预设带满档对比度增强
+  expect(state.seed).toBe("#d6fe78");
+  expect(state.tertiary).toBeUndefined();
+  // Cyberpunk 预设：满档对比度 + 提亮方向（荧光绿）
   expect(state.contrast).toBe(1);
+  expect(state.contrastTone).toBe("bright");
 
   // 皮肤不改变颜色：filled 按钮仍然消费 M3 primary / on-primary
   const colors = await page.evaluate(() => {
@@ -914,12 +916,15 @@ test("切换材质时对比度回到该主题的默认值", async ({ page }) => 
       .locator(".skin-actions st-button")
       .click();
   };
-  const storedContrast = () =>
-    page.evaluate(() => JSON.parse(localStorage.getItem("st-color-config") || "{}").contrast);
+  const stored = () =>
+    page.evaluate(() => {
+      const saved = JSON.parse(localStorage.getItem("st-color-config") || "{}");
+      return { contrast: saved.contrast, tone: saved.contrastTone };
+    });
 
-  // Cyberpunk 默认满档
+  // Cyberpunk 默认满档 + 提亮
   await useTheme("Cyberpunk · 霓虹终端");
-  await expect.poll(storedContrast).toBe(1);
+  await expect.poll(stored).toEqual({ contrast: 1, tone: "bright" });
   await expect(page.locator(".contrast-value")).toHaveText("100%");
 
   // 用户在当前主题把对比度调到 40%
@@ -927,16 +932,16 @@ test("切换材质时对比度回到该主题的默认值", async ({ page }) => 
     el.value = "40";
     el.dispatchEvent(new Event("input", { bubbles: true }));
   });
-  await expect.poll(storedContrast).toBe(0.4);
+  await expect.poll(stored).toEqual({ contrast: 0.4, tone: "bright" });
 
-  // 切到 M3：对比度回到 M3 默认 0
+  // 切到 M3：对比度与方向都回到 M3 默认（0 / deep）
   await useTheme("Android · Material 3");
-  await expect.poll(storedContrast).toBe(0);
+  await expect.poll(stored).toEqual({ contrast: 0, tone: "deep" });
   await expect(page.locator(".contrast-value")).toHaveText("0%");
 
-  // 再切回 Cyberpunk：不沿用之前调过的 40%，仍是主题默认 100%
+  // 再切回 Cyberpunk：不沿用之前调过的 40%，仍是主题默认 100% / bright
   await useTheme("Cyberpunk · 霓虹终端");
-  await expect.poll(storedContrast).toBe(1);
+  await expect.poll(stored).toEqual({ contrast: 1, tone: "bright" });
   await expect(page.locator(".contrast-value")).toHaveText("100%");
 });
 
@@ -1066,7 +1071,7 @@ test("离开 Cyberpunk：恢复进入前的配色与主题模式", async ({ page
   const cyberpunk = page.locator(".skin-card").filter({ hasText: "Cyberpunk · 霓虹终端" });
   const m3 = page.locator(".skin-card").filter({ hasText: "Android · Material 3" });
 
-  // 进入 Cyberpunk：深色 + 洋红/青
+  // 进入 Cyberpunk：深色 + 荧光绿
   await cyberpunk.locator(".skin-actions st-button").filter({ hasText: "使用此主题" }).click();
   await expect
     .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })

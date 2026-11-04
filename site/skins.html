@@ -6,7 +6,7 @@
   <title>皮肤 — Senti-UI</title>
   <meta
     name="description"
-    content="Senti-UI 主题页：同一批组件，在 Android Material 3、Apple 毛玻璃、Microsoft Windows 11、shadcn 扁平与 Cyberpunk 霓虹终端之间切换；每套主题带官方配色（M3 蓝 / iOS 蓝 / Windows 蓝 / zinc 灰阶 / 洋红青），并按主题记住各自的颜色；页面底部可用 Google Material Color Utilities 改种子色、覆盖角色与添加自定义颜色。"
+    content="Senti-UI 主题页：同一批组件，在 Android Material 3、Apple 毛玻璃、Microsoft Windows 11、shadcn 扁平与 Cyberpunk 霓虹终端之间切换；每套主题带官方配色（M3 蓝 / iOS 蓝 / Windows 蓝 / zinc 灰阶 / 荧光绿），并按主题记住各自的颜色；页面底部可用 Google Material Color Utilities 改种子色、覆盖角色与添加自定义颜色。"
   />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="皮肤 — Senti-UI" />
@@ -885,7 +885,7 @@
           <h1>选择主题</h1>
           <p class="lead">
             每套材质都有各自的官方配色：M3 蓝、Apple iOS 蓝、Windows 11 蓝、shadcn zinc 灰阶、
-            Cyberpunk 洋红/青。点选会同时切换材质与配色，并按主题记住各自的颜色；页面底部
+            Cyberpunk 荧光绿。点选会同时切换材质与配色，并按主题记住各自的颜色；页面底部
             仍然可以改种子色、覆盖单个角色，或添加自己的颜色变量。
           </p>
           <div class="current">
@@ -1003,7 +1003,7 @@
             <div class="skin-head">
               <div>
                 <h2>Cyberpunk · 霓虹终端</h2>
-                <p>零圆角、等宽字、霓虹描边与外发光、方形开关 / 滑块拇指；选中时会一并套用深色 + 洋红/青配色。</p>
+                <p>零圆角、等宽字、霓虹描边与外发光、方形开关 / 滑块拇指；选中时会一并套用深色 + 荧光绿配色。</p>
               </div>
               <span class="skin-chip">cyberpunk</span>
             </div>
@@ -1021,7 +1021,7 @@
                 on:click="useCyberpunk">
                 {{skin === 'cyberpunk' ? '当前主题' : '使用此主题'}}
               </st-button>
-              <span class="hint">深色 + 洋红 / 青</span>
+              <span class="hint">深色 + 荧光绿</span>
             </div>
           </article>
         </section>
@@ -1063,7 +1063,12 @@
                 <input class="contrast-range" type="range" min="0" max="100" step="5" :value="contrastPct" aria-label="对比度增强" on:input="setContrast($event.target.value)" />
                 <span class="contrast-value">{{contrastPct}}%</span>
               </div>
-              <p class="color-help">对比度增强会加深提纯角色色、压暗/提亮表面与描边，霓虹与游戏类主题用它拉到 80–100%；分角色精细调节在 <a href="../packages/color/index.html" target="_blank" rel="noreferrer">完整颜色工具</a>。</p>
+              <div class="color-seed-row" style="margin-top: 8px;">
+                <span class="color-label">暗色方向</span>
+                <st-button attr:variant="contrastTone === 'deep' ? 'filled' : 'text'" on:click="setContrastTone('deep')">加深 · 霓虹</st-button>
+                <st-button attr:variant="contrastTone === 'bright' ? 'filled' : 'text'" on:click="setContrastTone('bright')">提亮 · 荧光</st-button>
+              </div>
+              <p class="color-help">对比度增强会加深提纯角色色、压暗/提亮表面与描边，霓虹与游戏类主题用它拉到 80–100%；“加深”适合洋红/紫，“提亮”适合荧光绿/黄。分角色精细调节在 <a href="../packages/color/index.html" target="_blank" rel="noreferrer">完整颜色工具</a>。</p>
 
               <div class="role-list">
                 <div class="role-row">
@@ -1300,6 +1305,7 @@
             overrides: {},
             customs: [],
             contrast: 0,
+            contrastTone: "deep",
             contrastPct: 0,
             roleColors: {
               primary: "#0061A4",
@@ -1405,6 +1411,7 @@
                   this.seed = saved.seed.toLowerCase();
                   this.overrides = saved.overrides || {};
                   this.contrast = saved.contrast ?? 0;
+                  this.contrastTone = saved.contrastTone === "bright" ? "bright" : "deep";
                   this.customs = Array.isArray(saved.customs)
                     ? saved.customs.map((c) => ({
                         name: String(c.name || ""),
@@ -1443,7 +1450,10 @@
                   .map((c) => [c.name, c.color])
               );
 
-              const options = { contrast: this.contrast };
+              const options = {
+                contrast: this.contrast,
+                contrastTone: this.contrastTone,
+              };
               const generated = api.generateM3Theme(seed, overrides, options);
               api.applyTheme(seed, overrides, customsObj, options);
               this.syncContrastPct();
@@ -1618,7 +1628,13 @@
               if (persist) {
                 localStorage.setItem(
                   "st-color-config",
-                  JSON.stringify({ seed, overrides, customs, contrast: this.contrast })
+                  JSON.stringify({
+                    seed,
+                    overrides,
+                    customs,
+                    contrast: this.contrast,
+                    contrastTone: this.contrastTone,
+                  })
                 );
                 localStorage.setItem(
                   "st-theme-css",
@@ -1708,6 +1724,10 @@
               this.contrastPct = pct;
               this.applyColor();
             },
+            setContrastTone(tone) {
+              this.contrastTone = tone === "bright" ? "bright" : "deep";
+              this.applyColor();
+            },
             setSeed(value) {
               const next = String(value || "").trim().toLowerCase();
               if (!/^#[0-9a-f]{6}$/.test(next)) {
@@ -1774,6 +1794,7 @@
               this.overrides = {};
               this.customs = [];
               this.contrast = 0;
+              this.contrastTone = "deep";
               this.contrastPct = 0;
               this.applyColor(false);
               localStorage.removeItem("st-color-config");
@@ -1792,6 +1813,7 @@
                 this.overrides = result.config.overrides;
                 this.customs = result.config.customs;
                 this.contrast = result.config.contrast ?? 0;
+                this.contrastTone = result.config.contrastTone === "bright" ? "bright" : "deep";
                 this.applyColor(false);
                 this.colorStatus = "已切换到 " + this.skinLabel + " 主题。";
                 return;
@@ -1806,7 +1828,7 @@
               this.skin = id;
             },
             useCyberpunk() {
-              // Cyberpunk 的官方配色（深色 + 洋红/青）由主题预设统一提供；
+              // Cyberpunk 的官方配色（深色 + 荧光绿）由主题预设统一提供；
               // 皮肤 CSS 本身仍然不写任何颜色。
               this.use("cyberpunk");
             },

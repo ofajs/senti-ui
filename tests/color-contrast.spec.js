@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { generateM3Theme } from "../packages/color/m3-theme.js";
 
 const luminance = (hex) => {
   const value = parseInt(hex.slice(1), 16);
@@ -123,13 +124,48 @@ test("自定义颜色变量也支持对比度（custom / 整体数字）", async
   expect(result.role.light["--brand"]).toBe(result.base.light["--brand"]);
 });
 
+test("contrastTone: bright 提亮深色角色色，浅色与中性色不变", async ({ page }) => {
+  const result = await page.evaluate(() => {
+    const { generateM3Theme, expandCustoms } = window.__m3;
+    const base = { contrast: 1 };
+    return {
+      deep: generateM3Theme("#D6FE78", {}, { ...base, contrastTone: "deep" }),
+      bright: generateM3Theme("#D6FE78", {}, { ...base, contrastTone: "bright" }),
+      deepCustom: expandCustoms({ brand: "#D6FE78" }, { ...base, contrastTone: "deep" }),
+      brightCustom: expandCustoms({ brand: "#D6FE78" }, { ...base, contrastTone: "bright" }),
+    };
+  });
+  // 深色角色更亮、on-角色更暗；表面与容器不受方向影响
+  expect(luminance(result.bright.dark.primary)).toBeGreaterThan(
+    luminance(result.deep.dark.primary)
+  );
+  expect(luminance(result.bright.dark.onPrimary)).toBeLessThan(
+    luminance(result.deep.dark.onPrimary)
+  );
+  expect(result.bright.dark.surface).toBe(result.deep.dark.surface);
+  expect(result.bright.dark.primaryContainer).toBe(result.deep.dark.primaryContainer);
+  // 浅色模式不受影响
+  expect(result.bright.light.primary).toBe(result.deep.light.primary);
+  // 自定义变量同样跟随方向
+  expect(luminance(result.brightCustom.dark["--brand"])).toBeGreaterThan(
+    luminance(result.deepCustom.dark["--brand"])
+  );
+  expect(result.brightCustom.light["--brand"]).toBe(result.deepCustom.light["--brand"]);
+});
+
 test("st-color-init 读取配置里的 contrast 并注入增强后的 token", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "dark" });
   await page.goto("/tests/fixtures/color-scheme.html");
   await page.evaluate(() => {
     localStorage.setItem(
       "st-color-config",
-      JSON.stringify({ seed: "#0061A4", overrides: {}, customs: [], contrast: 1 })
+      JSON.stringify({
+        seed: "#0061A4",
+        overrides: {},
+        customs: [],
+        contrast: 1,
+        contrastTone: "bright",
+      })
     );
     localStorage.removeItem("st-theme-css");
   });
@@ -142,7 +178,11 @@ test("st-color-init 读取配置里的 contrast 并注入增强后的 token", as
       surface: style.getPropertyValue("--md-sys-color-surface").trim(),
     };
   });
-  expect(vars.primary).not.toBe("#9fcaff");
+  const expected = generateM3Theme("#0061A4", {}, {
+    contrast: 1,
+    contrastTone: "bright",
+  }).dark.primary;
+  expect(vars.primary).toBe(expected);
   expect(vars.surface).not.toBe("#1a1c1e");
   expect(contrastRatio(vars.primary, vars.surface)).toBeGreaterThan(4.5);
 });

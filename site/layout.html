@@ -518,6 +518,7 @@
                   for (const [id, preset] of Object.entries(presets.THEME_PRESETS)) {
                     const theme = m3.generateM3Theme(preset.seed, preset.overrides || {}, {
                       contrast: preset.contrast,
+                      contrastTone: preset.contrastTone,
                     });
                     previewThemes[id] = {
                       light: toVars(theme.light),

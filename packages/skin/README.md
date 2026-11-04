@@ -35,9 +35,9 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 
 `windows` 的材质分工：常驻表面（卡片 / 对话框 / 输入框）用 Mica——高不透明度的着色底，不预先模糊正文；菜单 / 下拉 / 气泡等浮层用 Acrylic——半透明底 + `blur(30px)`。控件圆角 4px、表面圆角 8px，图标按钮是 4px 方形而不是圆形。
 
-`cyberpunk` 的霓虹来自 M3 角色：描边与外发光全部用 `color-mix(primary …)` 组合，所以 `color="error"`、换种子色、深浅色切换都会跟着变。皮肤本身不提供“深色”或“洋红”，那属于配色和主题模式（`setThemeMode("dark")` + 种子色）。
+`cyberpunk` 的霓虹来自 M3 角色：描边与外发光全部用 `color-mix(primary …)` 组合，所以 `color="error"`、换种子色、深浅色切换都会跟着变。皮肤本身不提供“深色”或具体颜色（洋红 / 荧光绿），那属于配色和主题模式（`setThemeMode("dark")` + 种子色）。
 
-官网的皮肤页把“材质”当成完整主题：每套材质带官方配色（M3 蓝 `#0061A4` / Apple iOS 蓝 `#007AFF` / Windows 蓝 `#0078D4` / shadcn zinc `#18181B` / Cyberpunk 洋红 `#FF2E97` + 青 `#00E5FF`），由页面层的 `site/theme-presets.js` 在切换时一起套用，并按材质把颜色与深浅模式存进 `st-theme-palettes`，切回来时恢复。卡片里的官方配色预览是局部 CSS 变量，不影响全站。包内的 `setSkin("cyberpunk")` 仍然只换材质。
+官网的皮肤页把“材质”当成完整主题：每套材质带官方配色（M3 蓝 `#0061A4` / Apple iOS 蓝 `#007AFF` / Windows 蓝 `#0078D4` / shadcn zinc `#18181B` / Cyberpunk 荧光绿 `#D6FE78`），由页面层的 `site/theme-presets.js` 在切换时一起套用，并按材质把颜色与深浅模式存进 `st-theme-palettes`，切回来时恢复。卡片里的官方配色预览是局部 CSS 变量，不影响全站。包内的 `setSkin("cyberpunk")` 仍然只换材质。
 
 ## API
 
@@ -261,13 +261,14 @@ import { setSkin } from "/packages/skin/st-skin.js";
 
 setSkin("cyberpunk");
 setThemeMode("dark");
-applyTheme("#FF2E97", { tertiary: "#00E5FF" }, {}, {
-  // 对比度 0–1：加深提纯角色色、压暗/提亮表面、拉开 on-* 与描边
+applyTheme("#D6FE78", {}, {}, {
+  // 对比度 0–1 + 方向：bright 让深色角色色提亮（荧光绿/黄），deep 则加深（洋红/紫）
   contrast: 1,
+  contrastTone: "bright",
 });
 ```
 
-`contrast` 是颜色体系的能力（详见 [../color/README.md](../color/README.md)），不是皮肤 token：霓虹 / 游戏类材质靠它得到近黑表面、更纯的角色色与更亮的描边，而不必另造一套颜色变量。官网 `site/theme-presets.js` 的 Cyberpunk 就是“材质 + 配色 + 模式”的打包：Cyberpunk 默认 `contrast: 1`，其余材质默认 `0`；**切换材质时对比度回到该主题的默认值**，不跨材质记忆（种子色 / 角色覆盖仍按材质槽位记忆）。
+`contrast` 是颜色体系的能力（详见 [../color/README.md](../color/README.md)），不是皮肤 token：霓虹 / 游戏类材质靠它得到近黑表面、更纯的角色色与更亮的描边，而不必另造一套颜色变量。官网 `site/theme-presets.js` 的 Cyberpunk 就是“材质 + 配色 + 模式”的打包：荧光绿 `#D6FE78` + `contrast: 1` + `contrastTone: "bright"`，其余材质默认 `0` / `deep`；**切换材质时对比度与方向回到该主题的默认值**，不跨材质记忆（种子色 / 角色覆盖仍按材质槽位记忆）。
 
 ## 注意事项与使用技巧
 

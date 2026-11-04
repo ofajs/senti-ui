@@ -17,7 +17,7 @@ CDN 前缀：`https://cdn.jsdelivr.net/gh/ofajs/senti-ui`（下称 `{cdn}`）。
 
 ## 颜色体系从哪来
 
-`{cdn}/packages/color/st-color-init.js` 读取 localStorage 中 color 工具保存的配置（key 为 `st-color-config`：`{ seed, overrides, customs, contrast }`），无配置时用默认种子色 `#0061A4`。所有 senti-ui 组件加载时自动 import 它，**正常使用无需手动引入**；要消除刷新闪色或独立使用时，在 `<head>` 内尽早引入一行（boot 会自动加载 st-color-init.js）：
+`{cdn}/packages/color/st-color-init.js` 读取 localStorage 中 color 工具保存的配置（key 为 `st-color-config`：`{ seed, overrides, customs, contrast, contrastTone }`），无配置时用默认种子色 `#0061A4`。所有 senti-ui 组件加载时自动 import 它，**正常使用无需手动引入**；要消除刷新闪色或独立使用时，在 `<head>` 内尽早引入一行（boot 会自动加载 st-color-init.js）：
 
 ```html
 <script src="{cdn}/packages/boot/st-boot.js"></script>
@@ -103,7 +103,7 @@ import { applyTheme, themeToCss, generateM3Theme, expandCustoms, generateTonalPa
 
 applyTheme("#6750A4");                               // 生成并注入当前文档，即时生效
 applyTheme("#6750A4", { primary: "#B3261E" }, { brand: "#FF0000" });
-applyTheme("#FF2E97", {}, {}, { contrast: 1 });      // 高对比 / 霓虹主题
+applyTheme("#D6FE78", {}, {}, { contrast: 1, contrastTone: "bright" }); // 荧光绿高对比
 const css = themeToCss("#6750A4");                   // 完整 CSS 文本（浅色+深色两块），可存静态文件
 const { light, dark } = generateM3Theme("#6750A4");  // 结构化数据
 expandCustoms({ brand: "#FF0000" });                 // 只展开自定义变量的四配对 token
@@ -116,20 +116,22 @@ generateTonalPalettes({ brand: "#FF0000" });          // 自定义变量也可�
 
 ### 对比度增强（contrast）
 
-M3 标准 tone 偏和谐，深色角色色落在 tone 80 往往发粉彩；霓虹 / 游戏 / 赛博朋克主题需要更冲。`contrast`（0–1）在不改色相的前提下加深提纯角色色、把表面推向极端、拉开 on-* 与描边：
+M3 标准 tone 偏和谐，深色角色色落在 tone 80 往往发粉彩；霓虹 / 游戏 / 赛博朋克主题需要更冲。`contrast`（0–1）在不改色相的前提下加深或提亮角色色、把表面推向极端、拉开 on-* 与描边；`contrastTone` 选择深色角色的方向：`deep`（默认，tone 下移，适合洋红/紫）或 `bright`（tone 上移，适合荧光绿/黄/青）：
 
 ```js
-// 数字：统一作用于全部角色 / 中性色 / 自定义变量
+// bright：荧光绿 / 黄等浅色种子（深色角色 tone 上移）
+applyTheme("#D6FE78", {}, {}, { contrast: 1, contrastTone: "bright" });
+
+// deep（默认）：洋红 / 紫等靠饱和度出效果的种子
 applyTheme("#FF2E97", {}, {}, { contrast: 1 });
 
-// 对象：按角色精细控制；未指定键回退 default（缺省 0）
-applyTheme("#FF2E97", { tertiary: "#00E5FF" }, {}, { contrast: 1 });
+// 按角色精细控制；未指定键回退 default（缺省 0）
 applyTheme("#FF2E97", {}, {}, { contrast: { default: 0.55, primary: 1, neutral: 1 } });
 ```
 
-对象键：`primary` / `secondary` / `tertiary` / `error` / `success`（角色四配对）、`neutral`（surface / outline / on-*）、`custom`（全部自定义变量）、`default`（回退值）。`generateM3Theme(seed, overrides, { contrast })`、`themeToCss(seed, overrides, customs, { contrast })`、`expandCustoms(customs, { contrast })` 同样支持。
+对象键：`primary` / `secondary` / `tertiary` / `error` / `success`（角色四配对）、`neutral`（surface / outline / on-*）、`custom`（全部自定义变量）、`default`（回退值）。`generateM3Theme(seed, overrides, { contrast, contrastTone })`、`themeToCss(seed, overrides, customs, { contrast, contrastTone })`、`expandCustoms(customs, { contrast, contrastTone })` 同样支持。
 
-**对比度是配色属性，不是皮肤 token**：皮肤 CSS 只改材质；需要“材质 + 配色”打包时，把 `setSkin()` + `applyTheme(..., { contrast })` + `setThemeMode()` 一起调用（官网 `site/theme-presets.js` 的 Cyberpunk 即此模式，默认 `contrast: 1`；切换材质时对比度回到该主题默认值）。
+**对比度是配色属性，不是皮肤 token**：皮肤 CSS 只改材质；需要“材质 + 配色”打包时，把 `setSkin()` + `applyTheme(..., { contrast, contrastTone })` + `setThemeMode()` 一起调用（官网 `site/theme-presets.js` 的 Cyberpunk 即此模式：荧光绿 `#D6FE78` + `contrast: 1` + `contrastTone: "bright"`；切换材质时对比度与方向回到该主题默认值）。
 
 ## 在页面/组件中使用
 

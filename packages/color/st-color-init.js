@@ -25,7 +25,13 @@ const STORAGE_KEY = "st-color-config";
 const CSS_CACHE_KEY = "st-theme-css";
 const DEFAULT_SEED = "#0061A4";
 
-let config = { seed: DEFAULT_SEED, overrides: {}, customs: [], contrast: 0 };
+let config = {
+  seed: DEFAULT_SEED,
+  overrides: {},
+  customs: [],
+  contrast: 0,
+  contrastTone: "deep",
+};
 try {
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
   if (saved && /^#[0-9a-fA-F]{6}$/.test(saved.seed || "")) {
@@ -34,6 +40,7 @@ try {
       overrides: saved.overrides || {},
       customs: Array.isArray(saved.customs) ? saved.customs : [],
       contrast: saved.contrast ?? 0,
+      contrastTone: saved.contrastTone === "bright" ? "bright" : "deep",
     };
   }
 } catch {}
@@ -48,6 +55,7 @@ const customsObj = Object.fromEntries(
 export const themeConfig = config;
 export const theme = applyTheme(config.seed, config.overrides, customsObj, {
   contrast: config.contrast,
+  contrastTone: config.contrastTone,
 });
 
 // 缓存生成的主题 CSS（themeToCss 输出含 :root / html.st-light / html.st-dark 完整块），
@@ -55,6 +63,9 @@ export const theme = applyTheme(config.seed, config.overrides, customsObj, {
 try {
   localStorage.setItem(
     CSS_CACHE_KEY,
-    themeToCss(config.seed, config.overrides, customsObj, { contrast: config.contrast })
+    themeToCss(config.seed, config.overrides, customsObj, {
+      contrast: config.contrast,
+      contrastTone: config.contrastTone,
+    })
   );
 } catch {}

@@ -125,7 +125,7 @@ The same components can switch **material** without changing colors: `m3` (defau
 
 Switch at runtime with `setSkin("windows")` from `packages/skin/st-skin.js` (persists and syncs across same-origin windows). All interactive and surface components consume the skin tokens; the full token / `part` contract and how to author a custom skin are in [packages/skin/README.md](./packages/skin/README.md).
 
-The website adds a **theme preset** layer on top (only in `site/theme-presets.js`, not part of the package API): each material ships with an official palette (M3 blue / Apple iOS blue / Windows blue / shadcn zinc / Cyberpunk magenta + cyan) and, for Cyberpunk, a contrast boost, applied together on switch and remembered per material (color + light/dark mode). `setSkin()` itself still changes material only.
+The website adds a **theme preset** layer on top (only in `site/theme-presets.js`, not part of the package API): each material ships with an official palette (M3 blue / Apple iOS blue / Windows blue / shadcn zinc / Cyberpunk neon lime) and, for Cyberpunk, a full contrast boost with `contrastTone: "bright"`, applied together on switch and remembered per material (color + light/dark mode). `setSkin()` itself still changes material only.
 
 ## Website
 

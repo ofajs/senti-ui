@@ -127,12 +127,29 @@ const CONTRAST_DELTAS = {
   },
 };
 
+// 深色模式角色色的两种增强方向：
+// - deep（默认）：tone 下移，角色色更深更纯（洋红/紫等霓虹色需要）
+// - bright：tone 上移，角色色更亮（荧光绿/黄等浅色种子需要，参考“亮绿按钮 + 深底”）
+// 容器与 on-container 在两种方向下都保持“深容器 + 亮文字”，只翻转角色色本身
+const BRIGHT_ROLE_DELTAS = {
+  role: 10,
+  on: -10,
+};
+
 // 对比度可按角色单独设置；neutral 控制 surface / outline 等中性色，custom 控制自定义变量
 export const CONTRAST_ROLES = ["primary", "secondary", "tertiary", "error", "success"];
 const CONTRAST_KEYS = [...CONTRAST_ROLES, "neutral", "custom"];
 
 const clampTone = (tone) => Math.max(0, Math.min(100, tone));
 const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
+
+// 对比度方向只影响深色模式下的角色色 / on-角色色
+function contrastDelta(mode, type, contrastTone) {
+  if (mode === "dark" && contrastTone === "bright" && BRIGHT_ROLE_DELTAS[type] != null) {
+    return BRIGHT_ROLE_DELTAS[type];
+  }
+  return CONTRAST_DELTAS[mode][type];
+}
 
 /**
  * 规范化对比度参数：
@@ -174,7 +191,7 @@ function deriveRoleTokensAtTones(hex, tones) {
   );
 }
 
-function roleTones(mode, role, contrast, applyException = true) {
+function roleTones(mode, role, contrast, applyException = true, contrastTone = "deep") {
   const tones = ROLE_TONES[mode].slice();
   if (applyException) {
     const exception = ROLE_TONE_EXCEPTIONS[role]?.[mode];
@@ -183,7 +200,9 @@ function roleTones(mode, role, contrast, applyException = true) {
     }
   }
   return tones.map((tone, index) =>
-    clampTone(tone + CONTRAST_DELTAS[mode][ROLE_TOKEN_TYPES[index]] * contrast)
+    clampTone(
+      tone + contrastDelta(mode, ROLE_TOKEN_TYPES[index], contrastTone) * contrast
+    )
   );
 }
 
@@ -255,13 +274,15 @@ function toneStrip(hex) {
  * @param {Object<string, string>} [overrides] 手动指定的角色颜色，如 { primary: "#B3261E" }，
  *        可选键：primary / secondary / tertiary / error / success（success 为内置扩展角色，
  *        覆盖其默认绿色）；未指定的角色继续由种子色生成（success 恢复默认种子色）
- * @param {{ contrast?: number|Object }} [options] 对比度增强，见 normalizeContrast；
- *        数字 0–1 统一增强，或按角色对象（{ primary: 1, secondary: .5, neutral: 1 }）
+ * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度增强，见 normalizeContrast；
+ *        数字 0–1 统一增强，或按角色对象（{ primary: 1, secondary: .5, neutral: 1 }）；
+ *        contrastTone 控制深色模式角色色方向：deep 加深（默认）/ bright 提亮
  * @returns {{ light: Object<string, string>, dark: Object<string, string> }}
  */
 export function generateM3Theme(seedHex, overrides = {}, options = {}) {
   const theme = themeFromSourceColor(argbFromHex(seedHex));
   const contrast = normalizeContrast(options.contrast);
+  const contrastTone = options.contrastTone === "bright" ? "bright" : "deep";
   const pick = (mode) => {
     const out = {};
     const neutralContrast = contrast ? contrast.neutral : 0;
@@ -282,13 +303,13 @@ export function generateM3Theme(seedHex, overrides = {}, options = {}) {
       if (overrides[role]) {
         const derived = deriveRoleTokensAtTones(
           overrides[role],
-          roleTones(mode, role, roleContrast, false)
+          roleTones(mode, role, roleContrast, false, contrastTone)
         );
         tokens.forEach((token, i) => (out[token] = derived[i]));
         continue;
       }
       const palette = theme.palettes[role];
-      const tones = roleTones(mode, role, roleContrast);
+      const tones = roleTones(mode, role, roleContrast, true, contrastTone);
       tokens.forEach((token, i) => {
         out[token] = hexFromArgb(palette.tone(tones[i]));
       });
@@ -298,7 +319,7 @@ export function generateM3Theme(seedHex, overrides = {}, options = {}) {
     const successContrast = contrast ? contrast.success : 0;
     const successDerived = deriveRoleTokensAtTones(
       overrides.success || EXTENDED_ROLES.success,
-      roleTones(mode, "success", successContrast, false)
+      roleTones(mode, "success", successContrast, false, contrastTone)
     );
     roleTokenNames("success").forEach((token, i) => (out[token] = successDerived[i]));
 
@@ -321,15 +342,18 @@ function normalizeVarName(name) {
  * 如 brand → --brand / --on-brand / --brand-container / --on-brand-container
  * 浅色 tone [40, 100, 90, 10]，深色 tone [80, 20, 30, 90]
  * @param {Object<string,string>} customs 自定义变量
- * @param {{ contrast?: number|Object }} [options] 对比度增强；custom 键（或整体数字）控制自定义变量
+ * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度增强；custom 键（或整体数字）控制自定义变量
  * @returns {{ light: Object<string,string>, dark: Object<string,string> }}
  */
 export function expandCustoms(customs, options = {}) {
   const contrast = normalizeContrast(options.contrast);
+  const contrastTone = options.contrastTone === "bright" ? "bright" : "deep";
   const customContrast = contrast ? contrast.custom : 0;
   const tonesFor = (mode) =>
     ROLE_TONES[mode].map((tone, i) =>
-      clampTone(tone + CONTRAST_DELTAS[mode][ROLE_TOKEN_TYPES[i]] * customContrast)
+      clampTone(
+        tone + contrastDelta(mode, ROLE_TOKEN_TYPES[i], contrastTone) * customContrast
+      )
     );
   const light = {}, dark = {};
   for (const [name, hex] of Object.entries(customs || {})) {
@@ -357,7 +381,7 @@ const customLines = (expandedScheme) =>
  * @param {Object<string, string>} [overrides] 手动指定的角色颜色（见 generateM3Theme）
  * @param {Object<string, string>} [customs] 自定义颜色变量，如 { brand: "#FF0000" }，
  *        会按 M3 规则展开为 on/container 配对 token（浅色 + 深色）
- * @param {{ contrast?: number|Object }} [options] 对比度增强（见 generateM3Theme）
+ * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度增强（见 generateM3Theme）
  * @returns {string} CSS 文本
  */
 export function themeToCss(seedHex, overrides, customs, options) {
@@ -382,7 +406,7 @@ function darkMediaBlock(decls, indent) {
  * @param {string} seedHex 种子色
  * @param {Object<string, string>} [overrides] 手动指定的角色颜色（见 generateM3Theme）
  * @param {Object<string, string>} [customs] 自定义颜色变量（见 themeToCss）
- * @param {{ contrast?: number|Object }} [options] 对比度增强（见 generateM3Theme）
+ * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度增强（见 generateM3Theme）
  * @returns {{ light: Object, dark: Object }} 生成的体系
  */
 export function applyTheme(seedHex, overrides, customs, options) {

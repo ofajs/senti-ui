@@ -25,7 +25,7 @@ const MODES = ["auto", "light", "dark"];
 
 /**
  * 各材质的官方配色。M3 的槽位会承接用户原本的颜色，这里的蓝色只是首次兜底。
- * Apple / Windows 取各自平台的系统蓝，shadcn 取 zinc 近黑，Cyberpunk 取洋红 + 青。
+ * Apple / Windows 取各自平台的系统蓝，shadcn 取 zinc 近黑，Cyberpunk 取荧光绿 + 提亮方向。
  */
 export const THEME_PRESETS = Object.freeze({
   m3: Object.freeze({ seed: "#0061A4", overrides: {}, customs: [], mode: null }),
@@ -39,11 +39,12 @@ export const THEME_PRESETS = Object.freeze({
     mode: null,
   }),
   cyberpunk: Object.freeze({
-    seed: "#FF2E97",
-    overrides: Object.freeze({ tertiary: "#00E5FF" }),
+    // 荧光绿终端：近黑底 + 亮绿角色色（contrastTone: bright），而非传统的洋红/青
+    seed: "#D6FE78",
+    overrides: Object.freeze({}),
     customs: [],
-    // 对比度增强拉满：近黑表面 + 更纯的霓虹角色色，Cyberpunk 才有“夜城”的强度
     contrast: 1,
+    contrastTone: "bright",
     mode: "dark",
   }),
 });
@@ -82,6 +83,7 @@ export function normalizeColorConfig(raw) {
     overrides,
     customs,
     contrast: compactContrast(source.contrast),
+    contrastTone: source.contrastTone === "bright" ? "bright" : "deep",
   };
 }
 
@@ -179,7 +181,11 @@ export function applyThemePreset(name) {
   const preset = presetConfig(id);
   // 对比度不跨材质记忆：切到/点回某套主题时，始终回到该主题的默认对比度。
   // 种子色、角色覆盖与自定义颜色仍按材质槽位记忆。
-  const withPresetContrast = (config) => ({ ...(config || preset), contrast: preset.contrast });
+  const withPresetContrast = (config) => ({
+    ...(config || preset),
+    contrast: preset.contrast,
+    contrastTone: preset.contrastTone,
+  });
 
   // 重复点击当前主题：保留用户调过的种子色/角色色，但对比度回默认
   if (current === id && currentConfig) {

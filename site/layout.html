@@ -196,6 +196,15 @@
             height: 34px;
             font-size: 15px;
           }
+          .theme-group {
+            font-size: 11px;
+          }
+          .theme-group st-button {
+            height: 32px;
+            padding: 0 10px;
+            font-size: 11.5px;
+            font-weight: 500;
+          }
           /* body overflow:hidden 后，整站唯一的滚动容器在这里；
              overscroll-behavior 阻断滚动链，避免到底部再触发根节点弹性。 */
           .site-scroll {
@@ -284,6 +293,7 @@
             .layout-nav { display: none; }
             .top-inner { gap: 8px; }
             .top-actions { gap: 4px; }
+            .theme-group st-button { padding: 0 8px; font-size: 11px; }
             .github-btn { display: none; }
             .footer { flex-direction: column; align-items: flex-start; }
           }
@@ -330,9 +340,11 @@
                 </st-menu-item>
               </st-menu>
 
-              <st-tooltip content="切换深浅色主题">
-                <st-icon-button title="切换主题" on:click="cycleTheme">◐</st-icon-button>
-              </st-tooltip>
+              <st-button-group class="theme-group" connected role="group" aria-label="深浅色主题">
+                <st-button attr:variant="themeMode === 'auto' ? 'filled' : 'text'" on:click="setThemeMode('auto')">自动</st-button>
+                <st-button attr:variant="themeMode === 'light' ? 'filled' : 'text'" on:click="setThemeMode('light')">浅色</st-button>
+                <st-button attr:variant="themeMode === 'dark' ? 'filled' : 'text'" on:click="setThemeMode('dark')">深色</st-button>
+              </st-button-group>
 
               <st-tooltip content="GitHub 仓库">
                 <st-icon-button class="github-btn" title="GitHub" on:click="openRepo">↗</st-icon-button>
@@ -421,9 +433,6 @@
               this.updateProgress();
             },
             proto: {
-              get themeLabel() {
-                return { auto: "跟随系统", light: "浅色", dark: "深色" }[this.themeMode] || "跟随系统";
-              },
               routePage(path) {
                 if (/\/docs(\/|$)/.test(path)) return "docs";
                 if (/\/skins(\.html)?$/.test(path)) return "skins";
@@ -562,11 +571,19 @@
                   return null;
                 }
               },
-              cycleTheme() {
-                const order = ["auto", "light", "dark"];
-                const next = order[(order.indexOf(this.themeMode) + 1) % order.length];
+              setThemeMode(mode) {
+                const next = ["auto", "light", "dark"].includes(mode) ? mode : "auto";
                 this.themeMode = next;
-                if (window.__site) window.__site.setThemeMode(next);
+                if (window.__site?.setThemeMode) {
+                  window.__site.setThemeMode(next);
+                  return;
+                }
+                // 颜色模块尚未就绪时的兜底：至少先切当前文档的类名
+                try {
+                  localStorage.setItem("st-theme-mode", next);
+                } catch {}
+                document.documentElement.classList.toggle("st-light", next === "light");
+                document.documentElement.classList.toggle("st-dark", next === "dark");
               },
               openRepo() {
                 window.open("https://github.com/ofajs/senti-ui", "_blank", "noopener");

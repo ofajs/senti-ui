@@ -252,7 +252,7 @@ setSkin("my-skin");
 
 ## 用“主题预设”打包材质与配色（含对比度）
 
-皮肤文件只改材质；颜色配置（种子色 / 角色覆盖 / 自定义变量 / 对比度）属于主题。想让一套材质固定搭配一套“更冲”的配色时，不要写进皮肤 CSS，而是把两者一起作为**主题预设**切换：
+皮肤文件只改材质；颜色配置（种子色 / 角色覆盖 / 自定义变量 / 对比度）属于主题。想让一套材质固定搭配一套配色（更冲的霓虹，或更柔的可爱主题）时，不要写进皮肤 CSS，而是把两者一起作为**主题预设**切换：
 
 ```js
 import { applyTheme } from "/packages/color/m3-theme.js";
@@ -262,7 +262,7 @@ import { setSkin } from "/packages/skin/st-skin.js";
 setSkin("cyberpunk");
 setThemeMode("dark");
 applyTheme("#D6FE78", {}, {}, {
-  // 对比度 0–1 + 方向：bright 让深色角色色提亮（荧光绿/黄），deep 则加深（洋红/紫）
+  // 对比度 -1 ~ 1 + 方向：正值提高对比度（bright 荧光绿/黄、deep 洋红/紫），负值降低对比度（可爱/柔和主题）
   contrast: 1,
   contrastTone: "bright",
 });

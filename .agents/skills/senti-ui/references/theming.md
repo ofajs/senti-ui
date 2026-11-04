@@ -92,7 +92,7 @@ localStorage.setItem("st-color-config", JSON.stringify({
   seed: "#0061A4",                    // 种子色
   overrides: { primary: "#B3261E" },  // 可选键：primary/secondary/tertiary/error/success
   customs: [{ name: "brand", color: "#FF0000" }],  // 自定义变量，name 自动 kebab-case
-  contrast: 0,                        // 对比度增强 0–1（数字）或按角色对象，见下
+  contrast: 0,                        // 对比度调整 -1 ~ 1（数字）或按角色对象，见下
 }));
 ```
 
@@ -114,9 +114,9 @@ generateTonalPalettes({ brand: "#FF0000" });          // 自定义变量也可�
 
 自定义变量按 M3 tone 规则推导四配对：浅色 tone `[40, 100, 90, 10]`（角色/on/容器/on容器），深色 `[80, 20, 30, 90]`。
 
-### 对比度增强（contrast）
+### 对比度调整（contrast，-1 ~ 1）
 
-M3 标准 tone 偏和谐，深色角色色落在 tone 80 往往发粉彩；霓虹 / 游戏 / 赛博朋克主题需要更冲。`contrast`（0–1）在不改色相的前提下加深或提亮角色色、把表面推向极端、拉开 on-* 与描边；`contrastTone` 选择深色角色的方向：`deep`（默认，tone 下移，适合洋红/紫）或 `bright`（tone 上移，适合荧光绿/黄/青）：
+M3 标准 tone 偏和谐，深色角色色落在 tone 80 往往发粉彩；霓虹 / 游戏 / 赛博朋克主题需要更冲，可爱 / 柔和主题则需要更平。`contrast`（-1 ~ 1）在不改色相的前提下调整角色色、表面与 on-* / 描边的关系：正值提高对比度，负值降低对比度（表面与文字互相靠拢）。正值时 `contrastTone` 选择深色角色方向：`deep`（默认，tone 下移，适合洋红/紫）或 `bright`（tone 上移，适合荧光绿/黄/青）；负值走柔和表，方向不生效：
 
 ```js
 // bright：荧光绿 / 黄等浅色种子（深色角色 tone 上移）
@@ -124,6 +124,9 @@ applyTheme("#D6FE78", {}, {}, { contrast: 1, contrastTone: "bright" });
 
 // deep（默认）：洋红 / 紫等靠饱和度出效果的种子
 applyTheme("#FF2E97", {}, {}, { contrast: 1 });
+
+// 负值：降低对比度，适合可爱 / 柔和主题
+applyTheme("#F6C6D8", {}, {}, { contrast: -0.6 });
 
 // 按角色精细控制；未指定键回退 default（缺省 0）
 applyTheme("#FF2E97", {}, {}, { contrast: { default: 0.55, primary: 1, neutral: 1 } });

@@ -88,14 +88,14 @@ site/
 
 采用 shadcn 式的组件目录首页：
 
-- 共享 header（来自 `layout.html`）：文档 / 皮肤 / 手记文字切换（组件目录即首页，点品牌回首页）、深浅色、GitHub
+- 共享 header（来自 `layout.html`）：文档 / 皮肤 / 手记文字切换（组件目录即首页，点品牌回首页）、自动 / 浅色 / 深色（`st-button-group`）、GitHub
 - 紧凑 intro：标题、一句话说明、统计数据、组件文档 / 源码入口
 - **25 张组件卡片**（`CATALOG / 25 CARDS`）：每张卡片 = 真实组件预览 + 名称 + 标签 + 站内文档 ↗
   - 预览区可交互：按钮、输入、选择、开关、滑块、标签栏、导航、折叠、对话框、菜单、Toast 等都能直接操作
   - 覆盖 20 个模块、29 个 `st-*` 标签，以及 toast / alert / confirm / prompt / contextMenu 命令式工具
 - 四张局部 `data-skin` 材质卡：M3 / Apple 毛玻璃 / Windows 11 / shadcn 同页对比；应用切换在独立的 `skins.html`
 - 快速开始：安装代码、复制、文档入口
-- 深浅色切换（`setThemeMode`）、皮肤切换（`setSkin`）
+- 深浅色切换（`st-button-group` → `setThemeMode`）、皮肤切换（`setSkin`）
 
 卡片右下角的 ↗ 会打开对应组件的独立文档页（如 `./docs/button.html`）；卡片本身不是链接，所以预览可以放心交互。
 
@@ -172,7 +172,7 @@ scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的�
 `skins.html` 底部是 `COLOR / M3` 区块，直接调用 `packages/color/m3-theme.js`（Google Material Color Utilities / HCT）：
 
 - **改色**：种子色选择器或 HEX 输入框，实时 `applyTheme(seed, overrides, customs, { contrast })`，整套 primary / secondary / tertiary / surface 中性色一起重算
-- **对比度**：种子色下方「对比度」滑杆（0–100%）传给 `applyTheme` 的 `options.contrast`；Cyberpunk 预设默认 100% + 提亮方向（近黑表面 + 明亮荧光绿），其余材质 0% / 加深；切换材质时滑杆与方向回到目标主题的默认值。分角色精细调节在 `packages/color/index.html`
+- **对比度**：种子色下方「对比度」滑杆（-100% ~ 100%）传给 `applyTheme` 的 `options.contrast`；正值提高对比度（Cyberpunk 默认 100%），负值降低对比度（可爱 / 柔和主题），0 为标准 M3。切换材质时滑杆回到目标主题的默认值；主题内部的 `contrastTone`（deep / bright）也随主题重置，但不在滑杆 UI 中暴露。分角色精细调节在 `packages/color/index.html`
 - **改色（单角色）**：primary / secondary / tertiary / error / success 五个角色可单独覆盖，on-* 与 container 配对仍按 M3 tone 规则推导；可随时复位回自动生成
 - **加色**：添加任意数量自定义变量（如 `brand`），自动生成 `--brand` / `--on-brand` / `--brand-container` / `--on-brand-container` 四配对 token；组件直接 `color="brand"` 使用
 - **可用色块变量**：工具下方分「白天 / 黑夜」两块面板，各用该模式的 `surface-container` 铺底；按 Primary / Secondary / Tertiary / Error / Success + 自定义颜色分组，每组 4 个堆叠色块（角色色 / on / container / on-container），色块底色与文字色使用该模式配对 token，下方标注变量名；角色组下方再按三段布局补 Surface / Surface Variant、五层 Surface Container、On Surface / On Surface Variant / Outline / Outline Variant（当前 M3 生成器未提供 Surface Dim / Surface Bright，故未列），同样可点击复制；改种子色、覆盖角色或增删自定义色时实时重算；`<code>` 内的动态文本要用 `:text`（见 CONTEXT 坑 #54）

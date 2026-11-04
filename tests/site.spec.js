@@ -176,18 +176,30 @@ test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
   ]);
   expect(chrome.nav[0].color).toBe(chrome.nav[1].color);
 
-  // 主题（st-icon-button + st-tooltip）auto → light → dark
-  for (let i = 0; i < 2; i++) {
-    await page.evaluate(() => {
+  // 主题切换是 st-button-group（自动 / 浅色 / 深色），点哪个模式立即生效
+  const clickThemeMode = (label) =>
+    page.evaluate((text) => {
       const layout = [...document.querySelectorAll("o-page")].find(
         (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
       );
-      layout.shadowRoot.querySelector('.top-actions st-icon-button[title="切换主题"]').click();
-    });
-    await page.waitForTimeout(180);
-  }
+      const buttons = [...layout.shadowRoot.querySelectorAll(".theme-group st-button")];
+      buttons.find((btn) => btn.textContent.trim() === text).click();
+    }, label);
+
+  await clickThemeMode("深色");
   await page.waitForFunction(() => document.documentElement.classList.contains("st-dark"));
   expect(await page.evaluate(() => localStorage.getItem("st-theme-mode"))).toBe("dark");
+
+  await clickThemeMode("浅色");
+  await page.waitForFunction(() => document.documentElement.classList.contains("st-light"));
+  expect(await page.evaluate(() => localStorage.getItem("st-theme-mode"))).toBe("light");
+
+  await clickThemeMode("自动");
+  await page.waitForFunction(
+    () => !document.documentElement.classList.contains("st-light") &&
+      !document.documentElement.classList.contains("st-dark")
+  );
+  expect(await page.evaluate(() => localStorage.getItem("st-theme-mode"))).toBe("auto");
 
   // 文档是独立 SCSR 页（docs/index.html），布局保持
   await page.evaluate(() => {
@@ -933,6 +945,13 @@ test("切换材质时对比度回到该主题的默认值", async ({ page }) => 
     el.dispatchEvent(new Event("input", { bubbles: true }));
   });
   await expect.poll(stored).toEqual({ contrast: 0.4, tone: "bright" });
+
+  // 滑杆支持负值：降到 -60% 也能持久化（柔和主题）
+  await page.locator(".contrast-range").evaluate((el) => {
+    el.value = "-60";
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  await expect.poll(stored).toEqual({ contrast: -0.6, tone: "bright" });
 
   // 切到 M3：对比度与方向都回到 M3 默认（0 / deep）
   await useTheme("Android · Material 3");

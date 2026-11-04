@@ -89,9 +89,10 @@ const NEUTRAL_TOKEN_TONES = {
   inversePrimary: { palette: "primary", light: 80, dark: 40, type: "inversePrimary" },
 };
 
-// 对比度增强（contrast 0–1）的 tone 偏移：值为对比度 = 1 时相对标准 M3 tone 的增量。
-// 角色色在深浅两种模式下都往“更饱和的深色调”走；深色模式同时压暗表面，
+// 提高对比度（contrast 0 ~ 1）的 tone 偏移：值为对比度 = 1 时相对标准 M3 tone 的增量。
+// 角色色往“更饱和的深色调”走；深色模式同时压暗表面，
 // 于是明度对比基本保持、彩色饱和对比明显增强（霓虹 / 游戏类主题需要的观感）。
+// 降低对比度（负值）使用下方的 SOFT_DELTAS。
 const CONTRAST_DELTAS = {
   light: {
     role: -10,
@@ -127,7 +128,7 @@ const CONTRAST_DELTAS = {
   },
 };
 
-// 深色模式角色色的两种增强方向：
+// 提高对比度时深色模式角色色的两种方向：
 // - deep（默认）：tone 下移，角色色更深更纯（洋红/紫等霓虹色需要）
 // - bright：tone 上移，角色色更亮（荧光绿/黄等浅色种子需要，参考“亮绿按钮 + 深底”）
 // 容器与 on-container 在两种方向下都保持“深容器 + 亮文字”，只翻转角色色本身
@@ -136,15 +137,54 @@ const BRIGHT_ROLE_DELTAS = {
   on: -10,
 };
 
+// 负对比度（柔和 / 可爱主题）：值为 contrast = -1 时的“反向增量”，
+// 实际计算是 tone + SOFT_DELTAS * contrast，所以这里写的是期望方向的反数。
+// 浅色整体变浅、深色整体变亮，文字与描边向中间靠拢，形成低对比的柔和观感。
+const SOFT_DELTAS = {
+  light: {
+    role: -10, // tone +10：角色色变浅，靠近白色表面
+    on: 5, // tone -5：on-角色色略变灰
+    container: -4, // tone +4：容器更浅
+    onContainer: -25, // tone +25：容器文字变柔和
+    surface: 2, // tone -2
+    surfaceContainer: 0,
+    onSurface: -18, // tone +18：正文变柔
+    surfaceVariant: -3,
+    onSurfaceVariant: -22,
+    outline: -18, // tone +18：描边变浅
+    outlineVariant: -8,
+    inverseSurface: -5,
+    inverseOnSurface: 5,
+    inversePrimary: 0,
+  },
+  dark: {
+    role: 10, // tone -10：角色色变暗，靠近深色表面
+    on: -10, // tone +10：on-角色色变亮
+    container: -6, // tone +6：容器变亮
+    onContainer: 12, // tone -12：容器文字变柔
+    surface: -8, // tone +8：深色表面变亮
+    surfaceContainer: -8,
+    onSurface: 12, // tone -12：正文变柔
+    surfaceVariant: -6,
+    onSurfaceVariant: 14,
+    outline: 15, // tone -15：描边变暗
+    outlineVariant: 8,
+    inverseSurface: 5,
+    inverseOnSurface: -5,
+    inversePrimary: 0,
+  },
+};
+
 // 对比度可按角色单独设置；neutral 控制 surface / outline 等中性色，custom 控制自定义变量
 export const CONTRAST_ROLES = ["primary", "secondary", "tertiary", "error", "success"];
 const CONTRAST_KEYS = [...CONTRAST_ROLES, "neutral", "custom"];
 
 const clampTone = (tone) => Math.max(0, Math.min(100, tone));
-const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
+const clampContrast = (value) => Math.max(-1, Math.min(1, Number(value) || 0));
 
-// 对比度方向只影响深色模式下的角色色 / on-角色色
-function contrastDelta(mode, type, contrastTone) {
+// 对比度方向只影响“提高对比度”（正值）的深色角色色；负值统一走柔和表
+function contrastDelta(mode, type, contrast, contrastTone) {
+  if (contrast < 0) return SOFT_DELTAS[mode][type];
   if (mode === "dark" && contrastTone === "bright" && BRIGHT_ROLE_DELTAS[type] != null) {
     return BRIGHT_ROLE_DELTAS[type];
   }
@@ -152,8 +192,10 @@ function contrastDelta(mode, type, contrastTone) {
 }
 
 /**
- * 规范化对比度参数：
- * - 数字：0–1，统一作用于全部角色 / 中性色 / 自定义变量
+ * 规范化对比度参数：范围 -1 ~ 1
+ * - 正数：提高对比度（角色色更鲜明、表面更极端）
+ * - 负数：降低对比度（表面与文字互相靠拢，适合柔和 / 可爱主题）
+ * - 数字：统一作用于全部角色 / 中性色 / 自定义变量
  * - 对象：{ default?, primary?, secondary?, tertiary?, error?, success?, neutral?, custom? }
  *   未指定的键回退到 default（缺省 0）；因此 { primary: 1 } 只增强主色
  * @returns {Object<string, number>|null}
@@ -164,15 +206,15 @@ export function normalizeContrast(contrast) {
       ? Number(contrast)
       : contrast;
   if (typeof numeric === "number") {
-    const value = clamp01(numeric);
+    const value = clampContrast(numeric);
     return Object.fromEntries(CONTRAST_KEYS.map((key) => [key, value]));
   }
   if (contrast && typeof contrast === "object") {
-    const fallback = clamp01(contrast.default);
+    const fallback = clampContrast(contrast.default);
     return Object.fromEntries(
       CONTRAST_KEYS.map((key) => [
         key,
-        contrast[key] == null ? fallback : clamp01(contrast[key]),
+        contrast[key] == null ? fallback : clampContrast(contrast[key]),
       ])
     );
   }
@@ -201,7 +243,7 @@ function roleTones(mode, role, contrast, applyException = true, contrastTone = "
   }
   return tones.map((tone, index) =>
     clampTone(
-      tone + contrastDelta(mode, ROLE_TOKEN_TYPES[index], contrastTone) * contrast
+      tone + contrastDelta(mode, ROLE_TOKEN_TYPES[index], contrast, contrastTone) * contrast
     )
   );
 }
@@ -274,9 +316,9 @@ function toneStrip(hex) {
  * @param {Object<string, string>} [overrides] 手动指定的角色颜色，如 { primary: "#B3261E" }，
  *        可选键：primary / secondary / tertiary / error / success（success 为内置扩展角色，
  *        覆盖其默认绿色）；未指定的角色继续由种子色生成（success 恢复默认种子色）
- * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度增强，见 normalizeContrast；
- *        数字 0–1 统一增强，或按角色对象（{ primary: 1, secondary: .5, neutral: 1 }）；
- *        contrastTone 控制深色模式角色色方向：deep 加深（默认）/ bright 提亮
+ * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度调整，见 normalizeContrast；
+ *        数字 -1–1（负数降低对比度），或按角色对象（{ primary: 1, secondary: .5, neutral: 1 }）；
+ *        contrastTone 控制正值时深色模式角色色方向：deep 加深（默认）/ bright 提亮
  * @returns {{ light: Object<string, string>, dark: Object<string, string> }}
  */
 export function generateM3Theme(seedHex, overrides = {}, options = {}) {
@@ -342,7 +384,7 @@ function normalizeVarName(name) {
  * 如 brand → --brand / --on-brand / --brand-container / --on-brand-container
  * 浅色 tone [40, 100, 90, 10]，深色 tone [80, 20, 30, 90]
  * @param {Object<string,string>} customs 自定义变量
- * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度增强；custom 键（或整体数字）控制自定义变量
+ * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度调整；custom 键（或整体数字）控制自定义变量
  * @returns {{ light: Object<string,string>, dark: Object<string,string> }}
  */
 export function expandCustoms(customs, options = {}) {
@@ -352,7 +394,8 @@ export function expandCustoms(customs, options = {}) {
   const tonesFor = (mode) =>
     ROLE_TONES[mode].map((tone, i) =>
       clampTone(
-        tone + contrastDelta(mode, ROLE_TOKEN_TYPES[i], contrastTone) * customContrast
+        tone +
+          contrastDelta(mode, ROLE_TOKEN_TYPES[i], customContrast, contrastTone) * customContrast
       )
     );
   const light = {}, dark = {};
@@ -381,7 +424,7 @@ const customLines = (expandedScheme) =>
  * @param {Object<string, string>} [overrides] 手动指定的角色颜色（见 generateM3Theme）
  * @param {Object<string, string>} [customs] 自定义颜色变量，如 { brand: "#FF0000" }，
  *        会按 M3 规则展开为 on/container 配对 token（浅色 + 深色）
- * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度增强（见 generateM3Theme）
+ * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度调整（见 generateM3Theme）
  * @returns {string} CSS 文本
  */
 export function themeToCss(seedHex, overrides, customs, options) {
@@ -406,7 +449,7 @@ function darkMediaBlock(decls, indent) {
  * @param {string} seedHex 种子色
  * @param {Object<string, string>} [overrides] 手动指定的角色颜色（见 generateM3Theme）
  * @param {Object<string, string>} [customs] 自定义颜色变量（见 themeToCss）
- * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度增强（见 generateM3Theme）
+ * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度调整（见 generateM3Theme）
  * @returns {{ light: Object, dark: Object }} 生成的体系
  */
 export function applyTheme(seedHex, overrides, customs, options) {

@@ -1060,15 +1060,10 @@
 
               <div class="color-seed-row" style="margin-top: 10px;">
                 <span class="color-label">对比度</span>
-                <input class="contrast-range" type="range" min="0" max="100" step="5" :value="contrastPct" aria-label="对比度增强" on:input="setContrast($event.target.value)" />
+                <input class="contrast-range" type="range" min="-100" max="100" step="5" :value="contrastPct" aria-label="对比度调整" on:input="setContrast($event.target.value)" />
                 <span class="contrast-value">{{contrastPct}}%</span>
               </div>
-              <div class="color-seed-row" style="margin-top: 8px;">
-                <span class="color-label">暗色方向</span>
-                <st-button attr:variant="contrastTone === 'deep' ? 'filled' : 'text'" on:click="setContrastTone('deep')">加深 · 霓虹</st-button>
-                <st-button attr:variant="contrastTone === 'bright' ? 'filled' : 'text'" on:click="setContrastTone('bright')">提亮 · 荧光</st-button>
-              </div>
-              <p class="color-help">对比度增强会加深提纯角色色、压暗/提亮表面与描边，霓虹与游戏类主题用它拉到 80–100%；“加深”适合洋红/紫，“提亮”适合荧光绿/黄。分角色精细调节在 <a href="../packages/color/index.html" target="_blank" rel="noreferrer">完整颜色工具</a>。</p>
+              <p class="color-help">对比度调整：正值提高对比度（角色色更鲜明、表面更极端，霓虹 / 游戏主题拉到 80–100%）；0 为标准 M3；负值降低对比度（表面与文字互相靠拢，适合柔和的可爱主题）。分角色精细调节在 <a href="../packages/color/index.html" target="_blank" rel="noreferrer">完整颜色工具</a>。</p>
 
               <div class="role-list">
                 <div class="role-row">
@@ -1716,16 +1711,12 @@
               const raw = this.contrast;
               const fallback =
                 raw && typeof raw === "object" ? Number(raw.default) || 0 : Number(raw) || 0;
-              this.contrastPct = Math.round(Math.min(1, Math.max(0, fallback)) * 100);
+              this.contrastPct = Math.round(Math.min(1, Math.max(-1, fallback)) * 100);
             },
             setContrast(value) {
-              const pct = Math.min(100, Math.max(0, Number(value) || 0));
+              const pct = Math.min(100, Math.max(-100, Number(value) || 0));
               this.contrast = pct / 100;
               this.contrastPct = pct;
-              this.applyColor();
-            },
-            setContrastTone(tone) {
-              this.contrastTone = tone === "bright" ? "bright" : "deep";
               this.applyColor();
             },
             setSeed(value) {

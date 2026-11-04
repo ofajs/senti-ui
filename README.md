@@ -105,7 +105,7 @@ Full docs (attribute tables, slots, events, default value lists) live in each pa
 
 ## Theming
 
-The [M3 color generator](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) generates a full light/dark M3 system (`--md-sys-color-*`) from a seed color, with overrides for the core four roles + the extended `success` role, custom variables (auto-expanded into paired tokens like `--brand` / `--on-brand`), and a **contrast boost** (0–1, globally or per role) for neon/game themes. The configuration is stored in localStorage — once set in the tool, every page on the same origin that includes `st-color-init.js` follows automatically (one-click re-theming).
+The [M3 color generator](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) generates a full light/dark M3 system (`--md-sys-color-*`) from a seed color, with overrides for the core four roles + the extended `success` role, custom variables (auto-expanded into paired tokens like `--brand` / `--on-brand`), and a **contrast adjustment** (-1 to 1, globally or per role; positive for neon/game themes, negative for soft/cute themes). The configuration is stored in localStorage — once set in the tool, every page on the same origin that includes `st-color-init.js` follows automatically (one-click re-theming).
 
 For manual control:
 

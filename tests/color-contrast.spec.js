@@ -86,6 +86,40 @@ test("neutral 只影响中性色，不改变角色色", async ({ page }) => {
   expect(boosted.dark.primary).toBe(base.dark.primary);
 });
 
+test("负对比度降低明暗对比（柔和主题），负值下方向参数不生效", async ({ page }) => {
+  const result = await page.evaluate(() => {
+    const { generateM3Theme } = window.__m3;
+    return {
+      base: generateM3Theme("#D6FE78"),
+      soft: generateM3Theme("#D6FE78", {}, { contrast: -1 }),
+      softBright: generateM3Theme("#D6FE78", {}, {
+        contrast: -1,
+        contrastTone: "bright",
+      }),
+      softPrimary: generateM3Theme("#D6FE78", {}, { contrast: { primary: -1 } }),
+    };
+  });
+  // 浅色 / 深色的正文对表面都更“灰”，对比度下降
+  expect(contrastRatio(result.soft.light.onSurface, result.soft.light.surface)).toBeLessThan(
+    contrastRatio(result.base.light.onSurface, result.base.light.surface)
+  );
+  expect(contrastRatio(result.soft.dark.onSurface, result.soft.dark.surface)).toBeLessThan(
+    contrastRatio(result.base.dark.onSurface, result.base.dark.surface)
+  );
+  // 深色表面变亮、浅色角色变浅
+  expect(luminance(result.soft.dark.surface)).toBeGreaterThan(
+    luminance(result.base.dark.surface)
+  );
+  expect(luminance(result.soft.light.primary)).toBeGreaterThan(
+    luminance(result.base.light.primary)
+  );
+  // 负值走柔和表，contrastTone 不改变结果
+  expect(result.softBright.dark.primary).toBe(result.soft.dark.primary);
+  // 分角色负值只影响该角色
+  expect(result.softPrimary.light.primary).not.toBe(result.base.light.primary);
+  expect(result.softPrimary.light.secondary).toBe(result.base.light.secondary);
+});
+
 test("themeToCss / applyTheme 与 generateM3Theme 的对比度结果一致", async ({ page }) => {
   const result = await page.evaluate(() => {
     const { generateM3Theme, themeToCss, applyTheme } = window.__m3;

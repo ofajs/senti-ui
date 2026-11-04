@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>form association fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <l-m src="/packages/input/input.html"></l-m>
+  <l-m src="/packages/textarea/textarea.html"></l-m>
+  <l-m src="/packages/select/select.html"></l-m>
+  <l-m src="/packages/checkbox/checkbox.html"></l-m>
+  <l-m src="/packages/switch/switch.html"></l-m>
+  <l-m src="/packages/radio/radio.html"></l-m>
+  <l-m src="/packages/button/button.html"></l-m>
+</head>
+<body>
+  <form id="form">
+    <st-input id="f-input" name="username" required default-value="guest" placeholder="用户名"></st-input>
+    <st-textarea id="f-textarea" name="bio" maxlength="20" default-value="initial"></st-textarea>
+    <st-select id="f-select" name="city" required default-value="bj">
+      <option value="sh">上海</option>
+      <option value="bj">北京</option>
+    </st-select>
+    <st-checkbox id="f-agree" name="agree" value="yes" checked>同意</st-checkbox>
+    <st-switch id="f-notify" name="notify" value="on">通知</st-switch>
+    <st-radio id="f-radio-m" name="gender" value="m" checked>男</st-radio>
+    <st-radio id="f-radio-f" name="gender" value="f">女</st-radio>
+    <st-button id="f-submit" type="submit">提交</st-button>
+    <st-button id="f-reset" type="reset">重置</st-button>
+  </form>
+
+  <script>
+    window.events = [];
+    const form = document.querySelector("#form");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      window.events.push("submit");
+      window.lastFormData = Object.fromEntries(new FormData(form).entries());
+    });
+    document.querySelectorAll("#form st-input, #form st-textarea, #form st-select, #form st-checkbox, #form st-switch, #form st-radio").forEach((el) => {
+      el.addEventListener("invalid", () => window.events.push("invalid:" + el.id));
+      el.addEventListener("change", () => window.events.push("change:" + el.id));
+    });
+  </script>
+</body>
+</html>

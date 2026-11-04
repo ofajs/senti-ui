@@ -23,6 +23,12 @@
 | `placeholder` | string | 无 | 未选中时显示的占位文本 |
 | `color` | M3 角色名 / 自定义变量名 | 无 | 语义色：控制 focus 描边/底线色（如 `color="error"` 用于校验错误态） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互、关闭弹层 |
+| `name` | string | 无 | 表单字段名；设置后参与原生 `<form>` 提交 |
+| `required` | boolean | 无 | 必填；未选中时阻断提交并派发 `invalid` |
+
+## 表单（原生 form）
+
+支持 `name` / `required`，可放进原生 `<form>` 提交；`value` 为空时 `required` 会阻断提交，组件派发 `invalid`。`reset` 会回到 `default-value`。原生校验气泡不会锚定到组件上，建议监听 `invalid` 自行提示。
 
 选项写法（`value` 缺省时取 `label` 属性，再取文本）：
 
@@ -40,11 +46,11 @@
 <option value="relay" label="邀请码">...</option>
 ```
 
-**富内容选项**：选项内可以嵌套自定义元素/HTML（span 等内联元素、任意自定义组件），子节点会被克隆渲染到下拉项中。原生 `<option>` 受浏览器解析限制，富内容场景推荐用 **`<st-option>`** 组件（随 `select.html` 自动加载，无需单独引入）：
+**富内容选项**：选项内可以嵌套自定义元素/HTML（span 等内联元素、任意自定义组件），子节点会被克隆渲染到下拉项中；其中**图标元素**（`svg` / `img` / `iconify-icon`，或带 `slot="icon"` 的元素）还会同步显示在闭合态，闭合态文字仍由 `label` 决定。原生 `<option>` 受浏览器解析限制，富内容场景推荐用 **`<st-option>`** 组件（随 `select.html` 自动加载，无需单独引入）：
 
 ```html
 <st-select placeholder="选择部署方式">
-  <st-option value="direct" label="直连"><span style="margin-right:8px;">⚡</span><b>直连</b> Direct</st-option>
+  <st-option value="direct" label="直连"><svg viewBox="0 0 16 16" width="1em" height="1em"><circle cx="8" cy="8" r="6" fill="currentColor" /></svg><b>直连</b> Direct</st-option>
   <st-option value="relay" label="邀请码">
     <span lang="cn">邀请码</span><span lang="en">Invite code</span>
   </st-option>
@@ -57,7 +63,7 @@ st-option 语义属性：
 |------|------|--------|------|
 | `value` | string | 取 `label` 属性，再取插槽文本 | 选中值 |
 | `label` | string | 取插槽文本 | 闭合状态显示文本 |
-| 默认插槽 | — | — | 富内容：克隆渲染到下拉项（闭合态不显示，闭合态显示 label） |
+| 默认插槽 | — | — | 富内容：克隆渲染到下拉项；图标元素（svg / img / iconify-icon / `[slot="icon"]`）会同步到闭合态，文字仍显示 `label` |
 
 选项内只放纯文本时（无元素、无实际文本的空白节点不算富内容），下拉项直接显示 label/文本。
 
@@ -156,7 +162,8 @@ document.querySelector("st-select").addEventListener("change", (e) => {
 - **弹层方向自适应**：打开时按视口剩余空间判定——下方放不下且上方更宽裕时自动向上弹（drop-up）
 - **开合动画**（同 st-menu）：缩放淡入 0.2s（M3 emphasized），关闭先播 150ms 退出过渡再隐藏
 - 弹层：`surface-container` 底色 + 阴影 + 圆角，选中项 `secondary-container` 底色 + 对勾，键盘激活项 `surface-container-high` 高亮；最高 `15em` 内滚动
-- disabled：0.38 透明度、`not-allowed` 光标、阻断聚焦与展开
+- disabled：0.38 透明度、`not-allowed` 光标、移出 Tab 顺序（`tabindex="-1"` + `aria-disabled`）、阻断展开
+- 无障碍：焦点落在 shadow 内真正的 combobox（`role="combobox"` + `aria-expanded` / `aria-controls` / `aria-activedescendant`，与 listbox 同一棵树）；弹层 `role="listbox"`、选项 `role="option"` + `aria-selected`；名称取宿主 `aria-label` / `aria-labelledby` / `title`，当前值通过 `aria-describedby` 暴露
 
 **注意**：下拉弹层渲染在组件 shadow 内（绝对定位于宿主下方），若组件被 `overflow: hidden` 的祖先裁剪，弹层会被截断——该场景请确保祖先可溢出或调整布局。
 

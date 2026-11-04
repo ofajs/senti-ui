@@ -40,6 +40,7 @@
 - `value` 是普通标签属性（外部配置驱动），改 `setAttribute("value", "80")` 即时更新（确定态有线形 0.3s 平滑过渡）
 - 不定模式：`indeterminate` 属性，或不写 `value`
 - `prefers-reduced-motion` 下动画趋零
+- 无障碍：宿主 `role="progressbar"` + `aria-valuemin/max`；确定态写 `aria-valuenow`，不定态改写 `aria-busy="true"`
 
 ## 验证页面
 

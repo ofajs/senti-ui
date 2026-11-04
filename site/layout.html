@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Senti-UI</title>
+    <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); }
+  </style>
+</head>
+  <body>
+    <!-- SCSR 共享布局父页：子页 export const parent = "./layout.html"。
+         本文件只作为页面模块被引用；header / footer / 主题与材质控制都收在这里。 -->
+    <o-app src="./app-config.js">
+      <template page>
+        <style>
+          :host {
+            --site-max: 1240px;
+            --gutter: clamp(20px, 4vw, 40px);
+            display: block;
+            overflow: hidden;
+            background: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
+              system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+          }
+          *, *::before, *::after { box-sizing: border-box; }
+          button { font: inherit; }
+          a { color: inherit; }
+
+          /* o-page 的宿主尺寸由 scsr 的 ::slotted(*) 控制，不能只靠 :host 撑满；
+             用内部 shell 固定 100dvh，滚动只发生在 .site-scroll。 */
+          .shell {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            position: relative;
+          }
+
+          /* 环境光背景：给半透明材质（Apple 毛玻璃）提供可见的层次。
+             M3 / windows / shadcn 表面不透明，只会从页面留白处透出一点氛围色。 */
+          .ambient {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0.22;
+            transition: opacity 0.35s ease;
+            background:
+              radial-gradient(60% 80% at 15% -10%, color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent), transparent 62%),
+              radial-gradient(55% 75% at 88% 18%, color-mix(in srgb, var(--md-sys-color-tertiary) 26%, transparent), transparent 62%),
+              radial-gradient(75% 85% at 50% 108%, color-mix(in srgb, var(--md-sys-color-secondary) 28%, transparent), transparent 66%),
+              radial-gradient(70% 70% at 50% 72%, color-mix(in srgb, var(--md-sys-color-primary) 26%, transparent), transparent 68%);
+          }
+          .ambient.ambient-strong { opacity: 1; }
+          .orb {
+            position: absolute;
+            width: 46vmax;
+            height: 46vmax;
+            border-radius: 50%;
+            filter: blur(72px);
+            will-change: transform;
+            animation: st-ambient-drift var(--orb-duration, 22s) ease-in-out infinite alternate;
+          }
+          .orb-a {
+            left: -12vmax;
+            top: -14vmax;
+            background: color-mix(in srgb, var(--md-sys-color-primary) 38%, transparent);
+          }
+          .orb-b {
+            right: -16vmax;
+            top: 8vmax;
+            background: color-mix(in srgb, var(--md-sys-color-tertiary) 34%, transparent);
+            animation-delay: -7s;
+            --orb-duration: 26s;
+          }
+          .orb-c {
+            left: 16vmax;
+            bottom: -24vmax;
+            background: color-mix(in srgb, var(--md-sys-color-secondary) 34%, transparent);
+            animation-delay: -14s;
+            --orb-duration: 30s;
+          }
+          /* Apple 毛玻璃：颜色更深、漂移更快，玻璃后面才有可读的色彩层次；
+             M3 / windows / shadcn 表面不透明，保持原来的低对比氛围。 */
+          .ambient-strong .orb-a {
+            background: color-mix(in srgb, var(--md-sys-color-primary) 58%, transparent);
+            --orb-duration: 13s;
+          }
+          .ambient-strong .orb-b {
+            background: color-mix(in srgb, var(--md-sys-color-tertiary) 52%, transparent);
+            --orb-duration: 15s;
+          }
+          .ambient-strong .orb-c {
+            background: color-mix(in srgb, var(--md-sys-color-secondary) 50%, transparent);
+            --orb-duration: 17s;
+          }
+          .ambient-strong {
+            background:
+              radial-gradient(60% 80% at 15% -10%, color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent), transparent 62%),
+              radial-gradient(55% 75% at 88% 18%, color-mix(in srgb, var(--md-sys-color-tertiary) 34%, transparent), transparent 62%),
+              radial-gradient(75% 85% at 50% 108%, color-mix(in srgb, var(--md-sys-color-secondary) 38%, transparent), transparent 66%),
+              radial-gradient(70% 70% at 50% 72%, color-mix(in srgb, var(--md-sys-color-primary) 34%, transparent), transparent 68%);
+          }
+          @keyframes st-ambient-drift {
+            0% { transform: translate3d(0, 0, 0) scale(1); }
+            50% { transform: translate3d(6vmax, 3vmax, 0) scale(1.08); }
+            100% { transform: translate3d(-4vmax, 7vmax, 0) scale(0.96); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .orb { animation: none; }
+          }
+          .top {
+            position: relative;
+            flex: none;
+            z-index: 60;
+            /* 毛玻璃放在 ::before 上，不放在 header 自身：
+               header 上的 backdrop-filter 会成为后代菜单的 backdrop root，
+               菜单就只能模糊 header 内部，模糊不到底下的页面内容。 */
+            background: transparent;
+            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+          }
+          .top::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: rgb(from var(--md-sys-color-surface) r g b / 0.72);
+            -webkit-backdrop-filter: var(--st-backdrop-filter, none);
+            backdrop-filter: var(--st-backdrop-filter, none);
+            pointer-events: none;
+          }
+          .top-inner {
+            max-width: var(--site-max);
+            margin: 0 auto;
+            padding: 10px var(--gutter);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+          }
+
+          .brand-btn {
+            height: 38px;
+            padding: 0 10px;
+            gap: 8px;
+            border-radius: 11px;
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: var(--md-sys-color-on-surface);
+          }
+          /* 与站点 favicon 同一枚标记：圆角方块 + 白色圆点 */
+          .brand-mark {
+            display: block;
+            width: 22px;
+            height: 22px;
+            color: var(--md-sys-color-primary);
+          }
+          .brand-mark svg { display: block; width: 100%; height: 100%; }
+          .brand-accent { color: var(--md-sys-color-primary); }
+
+          .layout-nav {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-left: 8px;
+            font-size: 12px;
+          }
+          .layout-nav st-button {
+            height: 32px;
+            padding: 0 12px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface-variant);
+          }
+          .layout-nav st-button.active {
+            color: var(--md-sys-color-primary);
+            font-weight: 600;
+          }
+
+          .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-left: auto;
+          }
+          .top-actions st-icon-button {
+            width: 34px;
+            height: 34px;
+            font-size: 15px;
+          }
+          .theme-select {
+            width: 84px;
+            min-width: 84px;
+            height: 32px;
+            font-size: 11px;
+          }
+          .menu-check {
+            display: inline-flex;
+            visibility: hidden;
+          }
+          .menu-check.show { visibility: visible; }
+          /* body overflow:hidden 后，整站唯一的滚动容器在这里；
+             overscroll-behavior 阻断滚动链，避免到底部再触发根节点弹性。 */
+          .site-scroll {
+            flex: 1 1 auto;
+            min-height: 0;
+            position: relative;
+            z-index: 1;
+            overflow-y: auto;
+            overflow-x: clip;
+            overscroll-behavior-y: none;
+            -webkit-overflow-scrolling: touch;
+          }
+          .site-main {
+            display: block;
+            min-height: calc(100vh - 190px);
+            position: relative;
+          }
+          ::slotted(o-page) {
+            display: block;
+            min-height: calc(100vh - 59px);
+            /* 页面本身透明，环境光才能从卡片/面板后面透出来 */
+            background: transparent;
+            /* 切页动画（淡入 + 上移）统一在 app-config.js 的 pageAnime 里配置 */
+          }
+
+          .read-progress {
+            display: none;
+            /* 绝对定位浮在 header 下边框外侧（内容区顶部），不参与布局：
+               以前是 .shell 的 flex 项，home ↔ docs 切换时这条 3px 进度条一显一隐，
+               会把整页（连同正在淡出的上一页）挤动 3px，看起来像“先偏一下再动画”。 */
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -4px;
+            z-index: 30;
+            height: 3px;
+            pointer-events: none;
+          }
+          .read-progress.show { display: block; }
+          .read-progress st-progress {
+            display: block;
+            width: 100%;
+            font-size: 10px;
+          }
+
+          .to-top {
+            display: none;
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 35;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--md-sys-color-surface-container-high);
+            box-shadow: 0 6px 20px -10px rgb(0 0 0 / 0.5);
+          }
+          .to-top.show { display: grid; place-items: center; }
+
+          .footer {
+            max-width: var(--site-max);
+            margin: 0 auto;
+            padding: 26px var(--gutter) 38px;
+            border-top: 1px solid var(--md-sys-color-outline-variant);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 11.5px;
+          }
+          .footer-links { display: flex; gap: 3px; flex-wrap: wrap; }
+          .footer-links a {
+            padding: 5px 9px;
+            border-radius: 999px;
+            color: inherit;
+            text-decoration: none;
+          }
+          .footer-links a:hover {
+            background: var(--md-sys-color-surface-container-low);
+            color: var(--md-sys-color-on-surface);
+          }
+
+          @media (max-width: 760px) {
+            .layout-nav { display: none; }
+            .top-inner { gap: 8px; }
+            .top-actions { gap: 4px; }
+            .theme-select { width: 76px; min-width: 76px; }
+            .github-btn { display: none; }
+            .footer { flex-direction: column; align-items: flex-start; }
+          }
+        </style>
+
+        <div class="shell">
+        <div class="ambient" class:ambient-strong="skin === 'apple'" aria-hidden="true">
+          <span class="orb orb-a"></span>
+          <span class="orb orb-b"></span>
+          <span class="orb orb-c"></span>
+        </div>
+        <header class="top">
+          <div class="top-inner">
+            <st-button class="brand-btn" variant="text" on:click="go('./index.html')">
+              <span slot="prefix" class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="64" height="64" rx="18" fill="currentColor" />
+                  <circle cx="32" cy="32" r="13" fill="var(--md-sys-color-on-primary)" />
+                </svg>
+              </span>
+              <span>Senti<span class="brand-accent">UI</span></span>
+            </st-button>
+
+            <nav class="layout-nav" aria-label="主导航">
+              <st-button variant="text" class:active="page === 'docs'" on:click="go('./docs/index.html')">文档</st-button>
+              <st-button variant="text" class:active="page === 'skins'" on:click="go('./skins.html')">皮肤</st-button>
+              <st-button variant="text" class:active="page === 'notes'" on:click="go('./notes/index.html')">手记</st-button>
+            </nav>
+
+            <div class="top-actions">
+              <st-menu id="skin-menu" align="right">
+                <st-icon-button slot="trigger" title="切换材质"><iconify-icon icon="mdi:palette-swatch"></iconify-icon></st-icon-button>
+                <st-menu-item on:click="pickSkin('m3')">
+                  M3 主题
+                  <span slot="suffix" class="menu-check" class:show="skin === 'm3'"><iconify-icon icon="mdi:check"></iconify-icon></span>
+                </st-menu-item>
+                <st-menu-item on:click="pickSkin('apple')">
+                  Apple 毛玻璃
+                  <span slot="suffix" class="menu-check" class:show="skin === 'apple'"><iconify-icon icon="mdi:check"></iconify-icon></span>
+                </st-menu-item>
+                <st-menu-item on:click="pickSkin('windows')">
+                  Windows 11 风格
+                  <span slot="suffix" class="menu-check" class:show="skin === 'windows'"><iconify-icon icon="mdi:check"></iconify-icon></span>
+                </st-menu-item>
+              </st-menu>
+
+              <st-select
+                class="theme-select"
+                :value="themeMode"
+                aria-label="深浅色模式"
+                on:change="setThemeMode($event.target.value)"
+              >
+                <st-option value="auto" label="自动"><iconify-icon icon="mdi:theme-light-dark"></iconify-icon><span>自动</span></st-option>
+                <st-option value="light" label="浅色"><iconify-icon icon="mdi:white-balance-sunny"></iconify-icon><span>浅色</span></st-option>
+                <st-option value="dark" label="深色"><iconify-icon icon="mdi:weather-night"></iconify-icon><span>深色</span></st-option>
+              </st-select>
+
+              <st-tooltip content="GitHub 仓库">
+                <st-icon-button class="github-btn" title="GitHub" on:click="openRepo"><iconify-icon icon="mdi:github"></iconify-icon></st-icon-button>
+              </st-tooltip>
+            </div>
+          </div>
+
+          <div class="read-progress" class:show="page === 'docs'">
+            <st-progress attr:value="readProgress"></st-progress>
+          </div>
+        </header>
+
+        <div class="site-scroll" id="site-scroll">
+          <main class="site-main"><slot></slot></main>
+
+          <footer class="footer">
+            <span>Senti-UI · 语义组件，任意材质。</span>
+            <nav class="footer-links" aria-label="页脚导航">
+              <a href="./index.html">组件目录</a>
+              <a href="./docs/index.html">组件文档</a>
+              <a href="./notes/index.html">设计手记</a>
+              <a href="./skins.html">皮肤材质</a>
+              <a href="./index.html#start">快速开始</a>
+              <a href="https://github.com/ofajs/senti-ui" target="_blank" rel="noreferrer">GitHub</a>
+            </nav>
+            <span>ofa.js v5 · Material Design 3 · SCSR</span>
+          </footer>
+        </div>
+
+        <st-tooltip content="回到顶部">
+          <st-icon-button class="to-top" class:show="page === 'docs'" title="回到顶部" on:click="toTop"><iconify-icon icon="mdi:arrow-up"></iconify-icon></st-icon-button>
+        </st-tooltip>
+        </div>
+
+        <script>
+          // 图标统一走 Iconify Web Component（共享布局注入一次，全站页面可用）
+          if (!customElements.get("iconify-icon") && !document.querySelector("script[data-iconify]")) {
+            const iconifyScript = document.createElement("script");
+            iconifyScript.src = "https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js";
+            iconifyScript.async = true;
+            iconifyScript.dataset.iconify = "";
+            document.head.appendChild(iconifyScript);
+          }
+
+          export default async () => ({
+            data: {
+              page: "home",
+              readProgress: 0,
+              themeMode: "auto",
+              skin: "m3",
+            },
+            ready() {
+              this.detectPage();
+              this.syncChrome();
+              this.syncThemeSelect(0);
+              this.initSiteApi();
+              this._onPop = () => this.detectPage();
+              this._onScroll = () => this.updateProgress();
+              this._onSkinStorage = (e) => {
+                if (e.key === "st-skin") this.syncChrome();
+              };
+              this._onModeStorage = (e) => {
+                if (e.key === "st-theme-mode") {
+                  this.themeMode = e.newValue || "auto";
+                  this.syncThemeSelect();
+                }
+              };
+              this._onPresetChange = (e) => {
+                if (e.detail?.mode) this.themeMode = e.detail.mode;
+                if (e.detail?.skin) this.skin = e.detail.skin;
+                this.syncThemeSelect();
+              };
+              window.addEventListener("storage", this._onSkinStorage);
+              window.addEventListener("storage", this._onModeStorage);
+              window.addEventListener("st-theme-preset-change", this._onPresetChange);
+              // setSkin() 只改 <html data-skin>，不一定走 storage；观察它同步 header / 环境光
+              this._skinAttrObserver = new MutationObserver(() => {
+                this.skin = document.documentElement.dataset.skin || "m3";
+              });
+              this._skinAttrObserver.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ["data-skin"],
+              });
+              this._scrollHost = this.ele.shadowRoot?.querySelector(".site-scroll");
+              this._scrollHost?.addEventListener("scroll", this._onScroll, { passive: true });
+              window.addEventListener("popstate", this._onPop);
+              this.updateProgress();
+              if (!window.__site) {
+                this._poll = setInterval(() => {
+                  if (window.__site) {
+                    this.syncChrome();
+                    clearInterval(this._poll);
+                  }
+                }, 60);
+                setTimeout(() => clearInterval(this._poll), 4000);
+              }
+            },
+            detached() {
+              window.removeEventListener("popstate", this._onPop);
+              window.removeEventListener("storage", this._onSkinStorage);
+              window.removeEventListener("storage", this._onModeStorage);
+              window.removeEventListener("st-theme-preset-change", this._onPresetChange);
+              this._skinAttrObserver?.disconnect();
+              this._scrollHost?.removeEventListener("scroll", this._onScroll);
+              clearInterval(this._poll);
+            },
+            routerChange() {
+              this.detectPage();
+              this.syncChrome();
+              if (this._scrollHost) this._scrollHost.scrollTop = 0;
+              this.updateProgress();
+            },
+            proto: {
+              routePage(path) {
+                if (/\/docs(\/|$)/.test(path)) return "docs";
+                if (/\/skins(\.html)?$/.test(path)) return "skins";
+                if (/\/notes(\/|$)/.test(path)) return "notes";
+                return "home";
+              },
+              detectPage() {
+                this.page = this.routePage(location.pathname);
+              },
+              updateProgress() {
+                if (this.page !== "docs") {
+                  this.readProgress = 0;
+                  return;
+                }
+                const scroller = this._scrollHost;
+                if (!scroller) {
+                  this.readProgress = 0;
+                  return;
+                }
+                const max = scroller.scrollHeight - scroller.clientHeight;
+                this.readProgress = max > 0 ? Math.min(100, Math.max(0, Math.round((scroller.scrollTop / max) * 100))) : 0;
+              },
+              toTop() {
+                this._scrollHost?.scrollTo({ top: 0, behavior: "smooth" });
+              },
+              go(path) {
+                this.page = this.routePage(path);
+                if (this.goto) this.goto(path);
+                else location.href = path;
+              },
+              syncThemeSelect(attempt = 0) {
+                const select = this.ele?.shadowRoot?.querySelector(".theme-select");
+                if (!select) return;
+                if (!select.shadowRoot) {
+                  if (attempt < 20) setTimeout(() => this.syncThemeSelect(attempt + 1), 50);
+                  return;
+                }
+                if (select.value !== this.themeMode) select.value = this.themeMode;
+              },
+              syncChrome() {
+                if (window.__site) {
+                  this.themeMode = window.__site.getThemeMode();
+                  this.skin = window.__site.getSkin
+                    ? window.__site.getSkin()
+                    : localStorage.getItem("st-skin") || "m3";
+                } else {
+                  try {
+                    this.themeMode = localStorage.getItem("st-theme-mode") || "auto";
+                    this.skin = localStorage.getItem("st-skin") || "m3";
+                  } catch {
+                    this.themeMode = "auto";
+                    this.skin = "m3";
+                  }
+                }
+                this.syncThemeSelect();
+              },
+              async pickSkin(id) {
+                // 官网把“材质”当作完整主题：换肤同时套用该材质的官方配色。
+                const theme = await this.themeApi();
+                if (theme?.applyThemePreset) {
+                  const result = theme.applyThemePreset(id);
+                  this.skin = result.skin;
+                  return;
+                }
+                if (window.__site) window.__site.setSkin(id);
+                else {
+                  try {
+                    localStorage.setItem("st-skin", id);
+                  } catch {}
+                  document.documentElement.dataset.skin = id;
+                }
+                this.skin = id;
+              },
+              async initSiteApi() {
+                // SCSR 站内跳转不会执行目标页 body 里的 module，所以把全站命令式 API
+                // 收敛到持久存在的 layout 里初始化一次；各页面仍可用 window.__site。
+                const sitePrefix = /\/(docs|notes)(\/|$)/.test(location.pathname) ? "../" : "./";
+                const pkgPrefix = sitePrefix === "../" ? "../../packages/" : "../packages/";
+                const load = (path) => import(new URL(path, location.href).href);
+                try {
+                  const [themeMode, skin, m3, alertMod, confirmMod, promptMod, toastMod, contextMod, presets] =
+                    await Promise.all([
+                      load(pkgPrefix + "color/st-theme-mode.js"),
+                      load(pkgPrefix + "skin/st-skin.js"),
+                      load(pkgPrefix + "color/m3-theme.js"),
+                      load(pkgPrefix + "dialog/alert.js"),
+                      load(pkgPrefix + "dialog/confirm.js"),
+                      load(pkgPrefix + "dialog/prompt.js"),
+                      load(pkgPrefix + "snackbar/toast.js"),
+                      load(pkgPrefix + "menu/context-menu.js"),
+                      load(sitePrefix + "theme-presets.js"),
+                    ]);
+                  const toVars = (scheme) =>
+                    Object.fromEntries(
+                      Object.entries(scheme).map(([name, value]) => [
+                        "--md-sys-color-" + name.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase()),
+                        value,
+                      ])
+                    );
+                  const previewThemes = {};
+                  for (const [id, preset] of Object.entries(presets.THEME_PRESETS)) {
+                    const theme = m3.generateM3Theme(preset.seed, preset.overrides || {}, {
+                      contrast: preset.contrast,
+                      contrastTone: preset.contrastTone,
+                    });
+                    previewThemes[id] = {
+                      light: toVars(theme.light),
+                      dark: toVars(theme.dark),
+                    };
+                  }
+                  window.__site = Object.assign(window.__site || {}, {
+                    setThemeMode: themeMode.setThemeMode,
+                    getThemeMode: themeMode.getThemeMode,
+                    setSkin: skin.setSkin,
+                    getSkin: skin.getSkin,
+                    applyTheme: m3.applyTheme,
+                    themeToCss: m3.themeToCss,
+                    generateM3Theme: m3.generateM3Theme,
+                    generateTonalPalettes: m3.generateTonalPalettes,
+                    expandCustoms: m3.expandCustoms,
+                    alert: alertMod.default,
+                    confirm: confirmMod.default,
+                    prompt: promptMod.default,
+                    toast: toastMod.default,
+                    contextMenu: contextMod.default,
+                    previewThemes,
+                  });
+                  window.__siteTheme = Object.assign(window.__siteTheme || {}, presets);
+                  window.__siteReady = true;
+                } catch (error) {
+                  console.error("site API init failed", error);
+                }
+              },
+              async themeApi() {
+                if (window.__siteTheme?.applyThemePreset) return window.__siteTheme;
+                // 布局的 <body> 脚本在 SCSR 子页里不会执行，所以这里按当前文档深度
+                // 动态定位 /site/theme-presets.js（docs/ 与 notes/ 比 layout 深一层）。
+                const prefix = /\/(docs|notes)(\/|$)/.test(location.pathname) ? "../" : "./";
+                try {
+                  const mod = await import(new URL(prefix + "theme-presets.js", location.href).href);
+                  window.__siteTheme = { ...(window.__siteTheme || {}), ...mod };
+                  return window.__siteTheme;
+                } catch {
+                  return null;
+                }
+              },
+              setThemeMode(mode) {
+                const next = ["auto", "light", "dark"].includes(mode) ? mode : "auto";
+                this.themeMode = next;
+                this.syncThemeSelect();
+                if (window.__site?.setThemeMode) {
+                  window.__site.setThemeMode(next);
+                  return;
+                }
+                // 颜色模块尚未就绪时的兜底：至少先切当前文档的类名
+                try {
+                  localStorage.setItem("st-theme-mode", next);
+                } catch {}
+                document.documentElement.classList.toggle("st-light", next === "light");
+                document.documentElement.classList.toggle("st-dark", next === "dark");
+              },
+              openRepo() {
+                window.open("https://github.com/ofajs/senti-ui", "_blank", "noopener");
+              },
+            },
+          });
+        </script>
+      </template>
+    </o-app>
+
+    <script type="module">
+      import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+      import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+    </script>
+  </body>
+</html>

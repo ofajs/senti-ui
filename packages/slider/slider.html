@@ -12,14 +12,14 @@
       position: relative;
       width: 13.571em; /* 190px */
       height: 2.857em; /* 40px 触控高度 */
-      font-size: 14px;
-      font-family: inherit;
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
     }
     :host([disabled]) {
       cursor: not-allowed;
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
     }
     :host([disabled]) .native { pointer-events: none; }
 
@@ -28,8 +28,8 @@
     .fill {
       position: absolute;
       top: 50%;
-      height: 0.286em; /* 4px */
-      border-radius: 0.286em;
+      height: var(--st-slider-track-height, 0.286em);
+      border-radius: var(--st-slider-track-radius, 0.286em);
       transform: translateY(-50%);
     }
     .track {
@@ -40,7 +40,13 @@
     .fill {
       left: 0.714em;
       width: 50%;
-      background: var(--st-slider-main, var(--md-sys-color-primary));
+      background: color-mix(
+        in srgb,
+        var(--st-slider-main, var(--md-sys-color-primary)) var(--st-slider-fill-alpha, 100%),
+        transparent
+      );
+      -webkit-backdrop-filter: var(--st-slider-backdrop-filter, none);
+      backdrop-filter: var(--st-slider-backdrop-filter, none);
     }
 
     /* M3 拇指：20px 角色色圆点，轨道端点间移动；拖动/聚焦时显示数值气泡 */
@@ -49,8 +55,15 @@
       top: 50%;
       width: 1.429em; /* 20px */
       height: 1.429em;
-      border-radius: 50%;
-      background: var(--st-slider-main, var(--md-sys-color-primary));
+      border-radius: var(--st-slider-thumb-radius, 50%);
+      background: color-mix(
+        in srgb,
+        var(--st-slider-main, var(--md-sys-color-primary)) var(--st-slider-fill-alpha, 100%),
+        transparent
+      );
+      -webkit-backdrop-filter: var(--st-slider-backdrop-filter, none);
+      backdrop-filter: var(--st-slider-backdrop-filter, none);
+      box-shadow: var(--st-slider-thumb-shadow, none);
       transform: translate(-50%, -50%);
       left: 50%;
     }
@@ -64,7 +77,7 @@
       box-sizing: border-box;
       min-width: 1.714em;
       padding: 0.143em 0.429em;
-      border-radius: 0.286em;
+      border-radius: var(--st-slider-tip-radius, 0.286em);
       font-size: 0.786em; /* 11px */
       line-height: 1.5;
       text-align: center;
@@ -73,7 +86,7 @@
       color: var(--md-sys-color-on-primary);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.15s ease;
+      transition: opacity var(--st-motion-duration, 0.15s) ease;
     }
     .value-tip::after {
       /* 气泡小三角 */
@@ -106,8 +119,9 @@
       border: none;
     }
     .native:focus-visible ~ .thumb {
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: 2px;
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
     }
 
     l-m { display: none; }
@@ -121,6 +135,7 @@
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-slider",
       attrs: {
@@ -139,6 +154,9 @@
         value() { this.applyVisual(); },
         color() { this.applyColor(); },
         disabled() { this.applyState(); },
+        min() { this.applyState(); },
+        max() { this.applyState(); },
+        step() { this.applyState(); },
       },
       ready() {
         const ele = this.ele;
@@ -171,8 +189,17 @@
 
         this.applyState();
         this.applyColor();
+        // 内部 range 的可访问名称来自宿主 aria-label / title
+        this._a11yCleanup = syncAccessibleName(ele, input);
+        // 宿主尺寸变化（隐藏→显示、窗口缩放、容器变宽）时重算几何
+        this._resizeObserver = new ResizeObserver(() => this.applyVisual());
+        this._resizeObserver.observe(ele);
         // setAttribute 的 watch 异步（坑 #18），初始同步一次
         requestAnimationFrame(() => { this.applyState(); this.applyVisual(); });
+      },
+      detached() {
+        this._resizeObserver?.disconnect();
+        this._a11yCleanup?.();
       },
       proto: {
         applyState() {
@@ -196,11 +223,16 @@
           const min = Number(input.min || 0);
           const max = Number(input.max || 100);
           const v = Math.min(Math.max(Number(input.value || min), min), max);
+          // max/min 变化后把越界值夹回范围（同时回写 data，el.value 不残留旧值）
+          if (this.value !== null && Number(this.value) !== v) this.value = String(v);
           const pct = max > min ? ((v - min) / (max - min)) * 100 : 0;
 
-          // 轨道内缩区宽 = 100% - 2×拇指半径(0.714em→占宿主宽的比例需换算)
-          const hostW = this.ele.getBoundingClientRect().width || 1;
-          const padPx = (0.714 * 14) * (parseFloat(getComputedStyle(this.ele).fontSize) / 14);
+          // 用布局宽度而不是 getBoundingClientRect：后者含祖先 transform，
+          // 且在 display:none 时量到 0；隐藏时直接跳过，等 ResizeObserver 再算
+          const hostW = this.ele.clientWidth;
+          if (!hostW) return;
+          const fontSize = parseFloat(getComputedStyle(this.ele).fontSize) || 14;
+          const padPx = 0.714 * fontSize;
           // M3：激活段从轨道左端延伸到拇指中心（fill 有 left 内缩起点，宽度要减去起点）
           const thumbLeft = padPx + (pct / 100) * (hostW - padPx * 2);
           sr.querySelector(".fill").style.width = ((thumbLeft - padPx) / hostW) * 100 + "%";

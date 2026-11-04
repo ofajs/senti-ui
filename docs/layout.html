@@ -67,6 +67,7 @@
 
       <div class="group-title">开始</div>
       <a class="nav-item" href="#/docs/pages/home.html" attr:active="activeHome">介绍</a>
+      <a class="nav-item" href="../site/index.html" target="_blank">官网首页 ↗</a>
 
       <div class="group-title">组件</div>
       <o-fill :value="components">
@@ -75,6 +76,13 @@
           <span style="color: var(--md-sys-color-on-surface-variant); font-size: 12px; margin-left: 4px;">{{$data.name}}</span>
         </a>
       </o-fill>
+
+      <div class="group-title">设计</div>
+      <a class="nav-item" href="#/docs/pages/skin.html" attr:active="activeFile === 'skin'">
+        皮肤系统
+        <span style="color: var(--md-sys-color-on-surface-variant); font-size: 12px; margin-left: 4px;">st-skin</span>
+      </a>
+      <a class="nav-item" href="../color/index.html" target="_blank">M3 颜色工具</a>
     </aside>
     <main>
       <slot></slot>

@@ -48,3 +48,5 @@
 - 媒体区直接 `<img>` + `style="margin: -1em -1em 1em; width: calc(100% + 2em); display:block;"` 铺满
 
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/card/`）。
+
+- 无障碍：interactive 卡片宿主自身是 `role="button"` / `tabindex="0"`，名称取卡片文字或 `aria-label`；卡内按钮/链接不再被覆盖层挡住（若不需要整卡可点，优先去掉 interactive，避免 button 嵌套）

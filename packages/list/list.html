@@ -7,9 +7,9 @@
     :host {
       display: flex;
       flex-direction: column;
-      gap: 0.143em; /* 2px */
-      font-size: 14px;
-      font-family: inherit;
+      gap: var(--st-list-gap, 0.143em);
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
       color: var(--md-sys-color-on-surface);
     }
     ::slotted(hr) {

@@ -10,16 +10,19 @@
 
 1. **语义用属性，外观用原生 CSS**
    - 属性只表达语义（状态、行为、类型），如 `disabled` / `loading` / `variant`
-   - 禁止添加 `size` 类预设枚举属性，也**如无必要，不要添加自定义样式代理变量**（如 `--st-btn-height`）
+   - 禁止添加 `size` 类预设枚举属性，也**不要添加给使用者的自定义样式代理变量**（如 `--st-btn-height`）
+   - **例外：皮肤 token**——`packages/skin/` 的 `--st-*` 是**皮肤作者 API**，不是使用者预设。新组件必须把自己的材质视觉写成 `var(--st-xxx, 旧默认值)`（圆角/密度/描边/阴影/焦点环/动效等），并暴露必要的 `part`；使用者仍然只写原生 CSS。颜色永远不放进皮肤 token，继续消费 `--md-sys-color-*`
    - 视觉样式必须全部定义在 `:host` 上，让外部 `style="height: ...; border-radius: ..."` 直接覆盖原生属性生效；交互语义（点击/键盘/焦点）由内部一个透明的原生元素承载（`.native` 模式，见 st-button）
    - 例外一：M3 规范内明确定义的类型（如按钮的 filled/outlined/text）可作为属性
    - 例外二：**`color` 属性**——值是 M3 角色名或 color 模块的自定义变量名（语义引用，不是样式预设），组件配对消费 `--md-sys-color-{name}/on-{name}` 或 `--{name}/--on-{name}`，实现与 color 工具的一键换色联动
    - **尺寸类默认值用 em**（height / padding / border-radius / gap 等）——AI 只改 `font-size` 即可整体等比缩放，需要精确值时也可单独覆写任一属性
+   - **表单语义**：交互控件需要参与原生 `<form>` 时，用 `packages/form/form-proxy.js` 的 light DOM 代理控件承载 `name` / value / required / 校验；ofa 生成的类没有 formAssociated，不要假设内部 shadow 控件能提交表单。代理会破坏 `:host(:empty)`，标签显隐改用 `has-label` 属性
+   - **无障碍是交付的一部分**：内部 `.native` 原生控件与 slot 文本是兄弟节点，必须用 `packages/a11y/a11y.js` 的 `syncAccessibleName(host, control, { fromSlot })` 同步可访问名称，并把宿主 `aria-label` / `title` 转发给内部控件；自绘弹层补 `role` 与展开/选中状态（select 的 combobox/listbox、menu 的 menu/menuitem），模态层补焦点陷阱/焦点归还/滚动锁。可点击容器的点击语义放宿主，不要用覆盖全卡的绝对定位 button（会挡住卡内按钮/链接）
 
 2. **颜色只走 M3 角色**
    - 组件内禁止写死任何颜色值，一律消费 `--md-sys-color-*` 变量
    - 全局 token 由 `packages/color/st-color-init.js`（初始化模块）动态注入，页面统一引入它，不使用静态 CSS
-   - hover/active 用 state layer（currentColor 半透明叠加 8%/12%），disabled 用 0.38 透明度——自动与任意配色协调，无需变量
+   - hover/active 用 state layer（currentColor 半透明叠加，默认 8%/12%，可由 `--st-state-hover/press` 覆盖），disabled 默认 0.38 透明度（`--st-disabled-opacity`）——自动与任意配色协调，无需按组件发明变量
 
 3. **文档即 API**
    - 每个组件的 README.md 必须自包含：依赖引入、属性表、插槽、事件、默认值清单、可运行示例
@@ -28,6 +31,14 @@
 4. **无构建**
    - 纯静态：CDN 引入 ofa.js + `<l-m>` 按需加载组件，可直接部署
    - 不引入 Node/打包工具链
+
+## 皮肤（材质层）规则
+
+- 皮肤只改材质（圆角、密度、边框、阴影、毛玻璃、焦点环、动效、波纹），**不改颜色**；所有皮肤消费同一套 `--md-sys-color-*`，种子色 / error / success / 深浅色必须继续生效
+- 皮肤 CSS **只声明 `[data-skin="名称"]` 作用域下的 token**，不写 `st-button { ... }` 宿主选择器、不依赖 `::part`：组件常见于 `o-page` / `o-app` 的 shadow 内，文档树选择器与 part 都跨不进去，CSS 变量才是可靠通道（详见 CONTEXT 坑 #43/#47）
+- 皮肤规则不要用 `@layer` 包裹（会输给 shadow 内未分层的 `:host`，见坑 #44）
+- 新增/修改组件视觉时：可换肤的属性一律加 token 回退（不加载皮肤必须与当前外观完全一致）；token 命名遵循 `packages/skin/README.md` 的分组，补文档并在验收页展示至少一套非 M3 皮肤
+- 需要暴露内部元素时用 `part="kebab-case"` 并在 README 登记；但不要把 part 当作换肤的必要机制
 
 ## 目录与命名约定
 
@@ -40,6 +51,7 @@ packages/{name}/
 CONTEXT.md       # 项目全景 + 组件总索引 + ofa.js 已知坑（新组件必须登记）
 packages/color/  # M3 体系生成器 + st-color-init.js（颜色唯一来源）
 packages/boot/    # st-boot.js 项目同步引导（可选增强：首帧缓存/兜底注入 + 自动加载 color init）
+packages/skin/    # 皮肤系统（材质 token + st-skin.js；颜色仍只来自 color 模块）
 ```
 
 - 组件标签：`st-` 前缀（`st-button`）
@@ -48,8 +60,10 @@ packages/boot/    # st-boot.js 项目同步引导（可选增强：首帧缓存/
 ## 新增组件流程
 
 1. 在 `packages/{name}/` 创建组件、README、index.html、page.html 四件套
-2. 在 `CONTEXT.md` 组件清单表中登记（标签、引入语句、文档链接）
-3. 用 `npm run dev` 起服务（禁缓存），浏览器验证验收页，确认无误才算完成
+2. 组件视觉按皮肤 token 约定书写（`var(--st-*, 旧默认值)`），颜色只走 M3 角色；需要外部定制的内部元素加 `part`
+3. 在 `CONTEXT.md` 组件清单表中登记（标签、引入语句、文档链接），并在 `packages/skin/README.md` 补本组件消费的 token / part 行
+4. 在验收页展示至少一套非 M3 皮肤（`data-skin="apple"` / `windows` / `shadcn`）下的样子
+5. 用 `npm run dev` 起服务（禁缓存），浏览器验证验收页（含换肤与深浅色），确认无误才算完成
 
 ## 坑的沉淀规则
 

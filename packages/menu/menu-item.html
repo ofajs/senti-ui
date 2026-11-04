@@ -20,8 +20,8 @@
       position: relative;
       display: flex;
       align-items: center;
-      padding: 0.714em 0.857em; /* 10px 12px */
-      border-radius: 0.571em; /* 8px */
+      padding: var(--st-menu-item-padding, 0.714em 0.857em);
+      border-radius: var(--st-menu-item-radius, 0.571em);
       box-sizing: border-box;
       white-space: nowrap;
     }
@@ -34,16 +34,16 @@
       background: currentColor;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.15s ease;
+      transition: opacity var(--st-motion-duration, 0.15s) ease;
     }
-    :host(:hover) .layer { opacity: 0.08; }
-    :host(:active) .layer { opacity: 0.12; }
+    :host(:hover) .layer { opacity: var(--st-state-hover, 0.08); }
+    :host(:active) .layer { opacity: var(--st-state-press, 0.12); }
 
     :host([disabled]) {
       cursor: not-allowed;
     }
     :host([disabled]) .item {
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
       pointer-events: none;
     }
 
@@ -96,8 +96,9 @@
       border-radius: inherit;
     }
     .native:focus-visible ~ .item {
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: -2px;
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: calc(-1 * var(--st-focus-ring-width, 2px));
     }
 
     l-m { display: none; }
@@ -106,7 +107,7 @@
   <l-m src="../ripple/ripple.html"></l-m>
   <l-m src="./menu.html"></l-m>
 
-  <button class="native" type="button"></button>
+  <button class="native" type="button" role="menuitem"></button>
   <div class="item">
     <span class="layer"></span>
     <div class="prefix"><slot name="prefix"></slot></div>
@@ -127,6 +128,7 @@
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-menu-item",
       attrs: {
@@ -140,10 +142,16 @@
         const sr = ele.shadowRoot;
         // disabled 同步到内部原生 button：原生 disabled 天然阻断点击/键盘/焦点；
         // 其余 click 天然冒泡 + composed 到宿主，menu 面板监听后自动关闭
+        const native = sr.querySelector(".native");
         this.applyDisabled = () => {
-          sr.querySelector(".native").disabled = this.disabled !== null;
+          native.disabled = this.disabled !== null;
+          native.setAttribute("aria-disabled", this.disabled !== null ? "true" : "false");
         };
         this.applyDisabled();
+        this._a11yCleanup = syncAccessibleName(ele, native, {
+          fromSlot: true,
+          excludeSlots: ["sub-menu"],
+        });
 
         // sub-menu 插槽内放了 st-menu 则成为"子菜单触发项"：
         // 自动挂 has-sub（显示 ▸ 箭头），hover 展开/移出收起（带延时缓冲），
@@ -184,6 +192,7 @@
       detached() {
         clearTimeout(this._subOpenTimer);
         clearTimeout(this._subCloseTimer);
+        this._a11yCleanup?.();
       },
       proto: {},
     });

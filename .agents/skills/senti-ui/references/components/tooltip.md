@@ -43,3 +43,7 @@
 - 提示不要承载关键信息（触屏设备无悬停）
 
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tooltip/`）。
+
+- 无障碍：气泡 `role="tooltip"` + `aria-hidden` 随开合切换；`setAttribute("open","")` 现在会同步定位，打开期间滚动/缩放跟随
+
+- 提示文本通过 `aria-description` 挂到触发元素（组件触发器挂内部原生控件）。

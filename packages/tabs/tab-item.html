@@ -9,7 +9,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 3.429em; /* 48px */
+      height: var(--st-tab-height, 3.429em);
       cursor: pointer;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
@@ -20,14 +20,14 @@
     .layer {
       position: absolute;
       inset: 0;
-      border-radius: 0.571em;
+      border-radius: var(--st-tab-layer-radius, 0.571em);
       background: currentColor;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.15s ease;
+      transition: opacity var(--st-motion-duration, 0.15s) ease;
     }
-    :host(:hover) .layer { opacity: 0.08; }
-    :host(:active) .layer { opacity: 0.12; }
+    :host(:hover) .layer { opacity: var(--st-state-hover, 0.08); }
+    :host(:active) .layer { opacity: var(--st-state-press, 0.12); }
 
     .container {
       position: relative;
@@ -51,7 +51,7 @@
       font-weight: 500;
       white-space: nowrap;
       color: var(--md-sys-color-on-surface-variant);
-      transition: color 0.2s ease;
+      transition: color var(--st-motion-duration-base, 0.2s) ease;
     }
     :host([active]) .label,
     :host([active]:hover) .label {
@@ -61,7 +61,7 @@
 
     :host([disabled]) {
       cursor: not-allowed;
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
     }
 
     /* 内部透明原生 button：承载点击/键盘/焦点语义 */
@@ -71,11 +71,12 @@
       inset: 0;
       z-index: 2; /* 盖住 position:relative 的兄弟元素，保证点击/键盘都落在语义元素上 */
       cursor: pointer;
-      border-radius: 0.571em;
+      border-radius: var(--st-tab-layer-radius, 0.571em);
     }
     .native:focus-visible ~ .layer {
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: 2px;
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
     }
 
     l-m { display: none; }
@@ -83,7 +84,7 @@
 
   <l-m src="../ripple/ripple.html"></l-m>
 
-  <button class="native" type="button"></button>
+  <button class="native" type="button" role="tab"></button>
   <span class="layer"></span>
   <div class="container">
     <div class="icon"><slot name="icon"></slot></div>
@@ -92,6 +93,7 @@
   <st-ripple></st-ripple>
 <script>
   import "../color/st-color-init.js";
+  import { syncAccessibleName } from "../a11y/a11y.js";
   export default async () => ({
     tag: "st-tab-item",
     attrs: {
@@ -100,14 +102,25 @@
     },
     watch: {
       disabled() { this.applyDisabled(); },
+      active() { this.applyState?.(); },
     },
     ready() {
       const sr = this.ele.shadowRoot;
+      const native = sr.querySelector(".native");
       // disabled 同步到内部原生 button：原生 disabled 天然阻断点击/键盘/焦点
       this.applyDisabled = () => {
-        sr.querySelector(".native").disabled = this.disabled !== null;
+        native.disabled = this.disabled !== null;
+        native.setAttribute("aria-disabled", this.disabled !== null ? "true" : "false");
+      };
+      this.applyState = () => {
+        native.setAttribute("aria-selected", this.active !== null ? "true" : "false");
       };
       this.applyDisabled();
+      this.applyState();
+      this._a11yCleanup = syncAccessibleName(this.ele, native, { fromSlot: true });
+    },
+    detached() {
+      this._a11yCleanup?.();
     },
     proto: {},
   });

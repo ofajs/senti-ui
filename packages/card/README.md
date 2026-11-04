@@ -14,7 +14,7 @@
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `variant` | `"elevated" \| "filled" \| "outlined"` | `"elevated"` | M3 三类型（阴影 / 容器底色 / 描边） |
-| `interactive` | boolean | 无 | 可点击：hover 抬升 + 波纹 + click 冒泡（内部原生 button 承载键盘/焦点） |
+| `interactive` | boolean | 无 | 可点击：hover 抬升 + 波纹 + click 冒泡（宿主获得 `role="button"` / `tabindex="0"`，Enter/Space 激活） |
 
 ## 插槽
 
@@ -44,7 +44,7 @@
 ## 注意事项与使用技巧
 
 - `interactive` 时整卡可点、Tab 聚焦有焦圈、Enter/Space 激活；非 interactive 是纯容器
-- 卡内放按钮等交互元素时避免包 interactive（点击内部按钮会同时冒泡出卡片 click）
+- 可访问名称取卡片文字；文字不理想时用 `aria-label` 覆盖。卡片内放按钮/链接不再被覆盖层挡住（可以正常点击），但 click 仍会冒泡到卡片宿主，需要时在内部元素上 `stopPropagation`；若卡片本身不需要整卡可点，优先去掉 interactive（避免 button 嵌套 button 的语义问题）
 - 媒体区直接 `<img>` + `style="margin: -1em -1em 1em; width: calc(100% + 2em); display:block;"` 铺满
 
 ## 验证页面

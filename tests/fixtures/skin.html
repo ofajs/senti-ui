@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>st-skin test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <l-m src="/packages/button/button.html"></l-m>
+  <l-m src="/packages/button/icon-button.html"></l-m>
+  <l-m src="/packages/input/input.html"></l-m>
+  <l-m src="/packages/textarea/textarea.html"></l-m>
+  <l-m src="/packages/select/select.html"></l-m>
+  <l-m src="/packages/card/card.html"></l-m>
+  <l-m src="/packages/dialog/dialog.html"></l-m>
+  <l-m src="/packages/menu/menu.html"></l-m>
+  <l-m src="/packages/list/list.html"></l-m>
+  <l-m src="/packages/checkbox/checkbox.html"></l-m>
+  <l-m src="/packages/switch/switch.html"></l-m>
+  <l-m src="/packages/slider/slider.html"></l-m>
+  <l-m src="/packages/progress/progress.html"></l-m>
+  <l-m src="/packages/tabs/tab-bar.html"></l-m>
+  <l-m src="/packages/navigation/nav-bar.html"></l-m>
+  <l-m src="/packages/tooltip/tooltip.html"></l-m>
+  <l-m src="/packages/snackbar/snackbar.html"></l-m>
+  <l-m src="/packages/badges/badges.html"></l-m>
+  <script type="module" src="/packages/skin/st-skin.js"></script>
+</head>
+<body>
+  <st-button id="btn-filled">Filled</st-button>
+  <st-button id="btn-error" color="error">Error</st-button>
+  <st-button id="btn-outlined" variant="outlined">Outlined</st-button>
+  <st-icon-button id="icon-skin" aria-label="设置">⚙</st-icon-button>
+  <st-input id="input-basic" placeholder="hello"></st-input>
+  <st-textarea id="textarea-skin" placeholder="textarea"></st-textarea>
+  <st-select id="select-skin" aria-label="城市">
+    <option value="a">选项 A</option>
+    <option value="b">选项 B</option>
+  </st-select>
+
+  <st-card id="card-elev">Elevated</st-card>
+  <st-card id="card-outlined" variant="outlined">Outlined</st-card>
+
+  <st-menu id="menu-skin">
+    <st-button slot="trigger" variant="outlined">打开菜单</st-button>
+    <st-menu-item>选项 A</st-menu-item>
+    <st-menu-item>选项 B</st-menu-item>
+  </st-menu>
+
+  <st-list id="list-skin">
+    <st-list-item id="list-item-skin">列表项</st-list-item>
+  </st-list>
+
+  <st-checkbox id="cb-skin" checked>勾选</st-checkbox>
+  <st-switch id="sw-skin" checked>开关</st-switch>
+  <st-slider id="slider-skin" default-value="40"></st-slider>
+  <st-progress id="progress-skin" value="50"></st-progress>
+
+  <st-tab-bar id="tabbar-skin">
+    <st-tab-item active>标签一</st-tab-item>
+    <st-tab-item>标签二</st-tab-item>
+  </st-tab-bar>
+  <st-nav-bar id="navbar-skin">
+    <st-nav-item active><span slot="icon">★</span>首页</st-nav-item>
+    <st-nav-item><span slot="icon">☆</span>我的</st-nav-item>
+  </st-nav-bar>
+
+  <st-tooltip id="tip-skin" content="提示文本">
+    <st-button variant="outlined">悬停</st-button>
+  </st-tooltip>
+
+  <st-snackbar id="snackbar-skin">消息条</st-snackbar>
+  <st-badges id="badge-skin" value="8"><st-icon-button aria-label="通知">🔔</st-icon-button></st-badges>
+
+  <st-dialog id="dialog-skin" auto-close>
+    <h2 slot="headline">对话框</h2>
+    <p>正文</p>
+  </st-dialog>
+</body>
+</html>

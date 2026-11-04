@@ -4,8 +4,8 @@ async function ready(page, selector) {
   await page.waitForFunction(
     (sel) => {
       const el = document.querySelector(sel);
-      // select 在 ready 里设置 ele.tabIndex = 0（宿主可聚焦），以此作为升级完成标志
-      return el && el.shadowRoot && el.tabIndex === 0;
+      // 内部 combobox 可聚焦，以此作为升级完成标志
+      return el && el.shadowRoot && el.shadowRoot.querySelector("#st-control")?.tabIndex === 0;
     },
     selector,
     { timeout: 15_000 }
@@ -45,7 +45,7 @@ test("点击打开弹层并选择：value 更新、change 事件触发", async (
 });
 
 test("键盘交互：Enter 打开、↓ 移动、Enter 选中", async ({ page }) => {
-  await page.locator("#sel-basic").focus();
+  await page.locator("#sel-basic #st-control").focus();
   await page.keyboard.press("Enter"); // 打开列表，键盘激活项初始在第一项（apple）
   await page.keyboard.press("ArrowDown"); // 移动到第二项（banana）
   await page.keyboard.press("Enter"); // 选中
@@ -94,6 +94,35 @@ test("st-option：default-value 初始化 + label 属性控制闭合态文本", 
   );
   // 闭合态显示 label 属性（"邀请码"），不拼接插槽内多语言富内容
   expect(label).toBe("邀请码");
+});
+
+test("st-option：闭合态显示选项图标，label 仍控制文本", async ({ page }) => {
+  const labelState = () =>
+    page.evaluate(() => {
+      const label = document
+        .querySelector("#sel-icon-option")
+        .shadowRoot.querySelector("#st-label");
+      return {
+        html: label.innerHTML,
+        text: label.textContent,
+        svg: label.querySelectorAll("svg").length,
+        hasIcon: label.classList.contains("has-icon"),
+      };
+    });
+
+  let state = await labelState();
+  expect(state.hasIcon).toBe(true);
+  expect(state.svg).toBe(1);
+  // 图标没有文字，label.textContent 仍是 label 属性
+  expect(state.text).toBe("通知");
+
+  // 切到没有图标的选项，图标移除
+  await page.locator("#sel-icon-option").click();
+  await page.locator("#sel-icon-option .opt").filter({ hasText: "首页" }).click();
+  state = await labelState();
+  expect(state.hasIcon).toBe(false);
+  expect(state.svg).toBe(0);
+  expect(state.text).toBe("首页");
 });
 
 test("st-option：点击选中富内容项，value 与 change 正常", async ({ page }) => {

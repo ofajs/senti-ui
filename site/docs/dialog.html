@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dialog — 组件文档 — Senti-UI</title>
+  <meta name="description" content="Dialog（st-dialog）用法：模态对话框：headline / 默认 / actions 三插槽，auto-close 支持遮罩与 Escape。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../../packages/skin/cyberpunk.css" />
+  <link rel="stylesheet" href="../../packages/skin/windows.css" />
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+    .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
+    .nojs h1 { margin: 0 0 12px; font-size: 32px; }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>Dialog</h1>
+      <p>组件文档的示例与目录需要 JavaScript；也可以回到首页或查看 GitHub 源码。</p>
+      <p><a href="../index.html">组件目录</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+    </div>
+  </noscript>
+
+  <o-app src="../app-config.js">
+    <template page>
+      <!-- 依赖放在 template 内：SCSR 切页时目标页 body 里的 <l-m> 不会执行 -->
+      <l-m src="../../packages/button/button.html"></l-m>
+      <l-m src="../../packages/button/button-group.html"></l-m>
+      <l-m src="../../packages/button/split-button.html"></l-m>
+      <l-m src="../../packages/button/icon-button.html"></l-m>
+      <l-m src="../../packages/input/input.html"></l-m>
+      <l-m src="../../packages/textarea/textarea.html"></l-m>
+      <l-m src="../../packages/select/select.html"></l-m>
+      <l-m src="../../packages/dialog/dialog.html"></l-m>
+      <l-m src="../../packages/checkbox/checkbox.html"></l-m>
+      <l-m src="../../packages/switch/switch.html"></l-m>
+      <l-m src="../../packages/radio/radio.html"></l-m>
+      <l-m src="../../packages/snackbar/snackbar.html"></l-m>
+      <l-m src="../../packages/slider/slider.html"></l-m>
+      <l-m src="../../packages/progress/progress.html"></l-m>
+      <l-m src="../../packages/tooltip/tooltip.html"></l-m>
+      <l-m src="../../packages/card/card.html"></l-m>
+      <l-m src="../../packages/badges/badges.html"></l-m>
+      <l-m src="../../packages/collapse/collapse.html"></l-m>
+      <l-m src="../../packages/list/list.html"></l-m>
+      <l-m src="../../packages/menu/menu.html"></l-m>
+      <l-m src="../../packages/tabs/tab-bar.html"></l-m>
+      <l-m src="../../packages/navigation/nav-bar.html"></l-m>
+      <l-m src="../../packages/navigation/nav-layout.html"></l-m>
+      <l-m src="../../packages/ripple/ripple.html"></l-m>
+
+      <link rel="stylesheet" href="../docs.css" />
+
+          <article class="doc-page">
+            <!-- 页面内局部样式：只作用于本页 shadow 内的对话框面板，不写进 docs.css -->
+            <style>
+              .doc-dialog-wide::part(panel) {
+                width: min(46em, 100%);
+                border-radius: 1em;
+              }
+              .doc-dialog-full::part(panel) {
+                width: 100%;
+                height: 100%;
+                /* 减去宿主上下各 1.43em 的留白，等效于视口内全屏 */
+                max-height: calc(100vh - 2.86em);
+                border-radius: 0;
+                background: var(--md-sys-color-surface);
+              }
+            </style>
+
+            <header class="doc-hero">
+              <p class="doc-kicker">反馈 · 9 / 21</p>
+              <h1>Dialog <code>st-dialog</code></h1>
+              <p class="doc-lead">模态对话框：headline / 默认 / actions 三插槽，open 是运行时状态，页面里用 sync:open 双向绑定。auto-close 允许点击遮罩或 Escape 关闭并派发 close；面板用原生 ::part(panel) 定制。</p>
+              <div class="doc-links">
+                <a href="../index.html">组件目录</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/dialog/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
+              </div>
+            </header>
+
+            <section class="doc-section">
+              <h2>基础用法与 sync:open</h2>
+              <p class="doc-section-lead">用一个布尔 data 控制开合：按钮把 dlgBasic 置 true，对话框内部按钮置 false。没有 auto-close 时，点击遮罩与 Escape 都不会关闭，只能由外部状态或按钮关闭。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>sync:open</code></div>
+                <div class="demo-stage">
+                  <st-button variant="outlined" on:click="dlgBasic = true">打开基础对话框</st-button>
+                  <st-button variant="text" on:click="dlgBasic = true">从按钮再次打开</st-button>
+                  <span class="demo-note">dlgBasic = {{dlgBasic}}（关闭后自动回写 false）</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-button on:click="dlgOpen = true"&gt;打开对话框&lt;/st-button&gt;
+
+&lt;st-dialog sync:open="dlgOpen"&gt;
+  &lt;h2 slot="headline"&gt;基础对话框&lt;/h2&gt;
+  &lt;p&gt;没有 auto-close：点遮罩与 Escape 都不会关闭。&lt;/p&gt;
+  &lt;div slot="actions"&gt;
+    &lt;st-button variant="text" on:click="dlgOpen = false"&gt;关闭&lt;/st-button&gt;
+  &lt;/div&gt;
+&lt;/st-dialog&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { dlgOpen: false },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>auto-close 与 close 事件</h2>
+              <p class="doc-section-lead">设置 auto-close 后，点击遮罩或按 Escape 会关闭对话框、把 sync:open 绑定的数据回写为 false，并派发 close 事件。close 只在交互关闭时派发；用按钮改数据关闭不会触发。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>auto-close / on:close</code></div>
+                <div class="demo-stage">
+                  <st-button variant="outlined" on:click="dlgAuto = true">打开 auto-close 对话框</st-button>
+                  <span class="demo-note">close 触发 {{closeCount}} 次 · 最近关闭：{{lastClose}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（关闭计数）</summary>
+                <pre><code>&lt;st-dialog sync:open="dlgAuto" auto-close on:close="onAutoClose"&gt;
+  &lt;h2 slot="headline"&gt;auto-close&lt;/h2&gt;
+  &lt;p&gt;点击遮罩或按 Escape 关闭，close 事件会冒泡到页面。&lt;/p&gt;
+&lt;/st-dialog&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { dlgAuto: false, closeCount: 0 },
+    proto: {
+      onAutoClose() {
+        this.closeCount += 1;
+      },
+    },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>用 ::part(panel) 定制面板</h2>
+              <p class="doc-section-lead">遮罩宿主铺满视口，面板在 shadow 内，用浏览器原生的 ::part(panel) 覆盖宽度、圆角、高度与底色；字号类属性可直接写在宿主 style 上，面板会等比缩放。下面的样式只写在本页 shadow 内。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>::part(panel)</code></div>
+                <div class="demo-stage">
+                  <st-button variant="outlined" on:click="dlgWide = true">Wide · 46em</st-button>
+                  <st-button variant="outlined" on:click="dlgFull = true">Fullscreen</st-button>
+                  <st-button variant="outlined" on:click="dlgSmall = true">font-size: 12px</st-button>
+                  <span class="demo-note">wide 加宽并改圆角；fullscreen 铺满视口；12px 让 padding、圆角、宽度一起缩小。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;style&gt;
+  st-dialog.wide::part(panel) {
+    width: min(46em, 100%);
+    border-radius: 1em;
+  }
+  st-dialog.full::part(panel) {
+    width: 100%; height: 100%; max-height: 100%;
+    border-radius: 0; background: var(--md-sys-color-surface);
+  }
+&lt;/style&gt;
+
+&lt;st-dialog class="wide" sync:open="dlgWide" auto-close&gt;...&lt;/st-dialog&gt;
+&lt;st-dialog class="full" sync:open="dlgFull" auto-close&gt;...&lt;/st-dialog&gt;
+&lt;st-dialog sync:open="dlgSmall" auto-close style="font-size: 12px;"&gt;...&lt;/st-dialog&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>headline / actions 插槽</h2>
+              <p class="doc-section-lead">三个插槽各自独立：headline 放标题、默认插槽放正文、actions 放按钮。哪个插槽没有内容，对应区块就自动隐藏——不需要写空 div 占位。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>slots</code></div>
+                <div class="demo-stage">
+                  <st-button variant="outlined" on:click="dlgSlotPlain = true">只有标题与正文</st-button>
+                  <st-button variant="outlined" on:click="dlgSlotNoHead = true">无标题，带操作区</st-button>
+                  <span class="demo-note">第一个没有 actions 区块，第二个没有 headline 区块。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-dialog sync:open="dlgSlotPlain" auto-close&gt;
+  &lt;h2 slot="headline"&gt;只有标题与正文&lt;/h2&gt;
+  &lt;p&gt;没有 actions 插槽内容，底部操作区不会出现。&lt;/p&gt;
+&lt;/st-dialog&gt;
+
+&lt;st-dialog sync:open="dlgSlotNoHead" auto-close&gt;
+  &lt;p&gt;没有 headline，标题区块自动隐藏。&lt;/p&gt;
+  &lt;div slot="actions"&gt;
+    &lt;st-button variant="text" on:click="dlgSlotNoHead = false"&gt;知道了&lt;/st-button&gt;
+  &lt;/div&gt;
+&lt;/st-dialog&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>命令式 alert / confirm / prompt</h2>
+              <p class="doc-section-lead">基于 st-dialog 的即用即毁工具，返回 Promise：alert 确认 true / 关闭 null；confirm 确认 true / 取消 false / 关闭 null；prompt 确认返回字符串 / 其余 null。遮罩与 Escape 都按取消处理，文本自动转义。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>window.__site.alert / confirm / prompt</code></div>
+                <div class="demo-stage">
+                  <st-button variant="outlined" on:click="runAlert">alert</st-button>
+                  <st-button variant="outlined" on:click="runConfirm">confirm（危险色）</st-button>
+                  <st-button variant="outlined" on:click="runPrompt">prompt</st-button>
+                  <span class="demo-note">返回值：{{commandResult}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>import alert from "/packages/dialog/alert.js";
+import confirm from "/packages/dialog/confirm.js";
+import prompt from "/packages/dialog/prompt.js";
+
+const ok = await alert({ title: "操作成功", message: "密码已重置。", ok: "知道了" });
+const sure = await confirm({ title: "确认删除", message: "不可撤销", yes: "删除", cancel: "取消", color: "error" });
+const name = await prompt({ title: "重命名", message: "输入新的名称", placeholder: "新名称" });</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>对话框里的表单与焦点</h2>
+              <p class="doc-section-lead">打开时焦点自动移入面板容器，Tab 可逐个进入内部控件。下面把 st-input 放进正文并用 sync:value 绑定，保存时把值写回页面数据；关闭后数据仍保留。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>form + sync:value</code></div>
+                <div class="demo-stage">
+                  <st-button variant="outlined" on:click="dlgForm = true">打开表单对话框</st-button>
+                  <span class="demo-note">最近保存：{{savedName}} · dlgForm = {{dlgForm}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-dialog sync:open="dlgForm" auto-close&gt;
+  &lt;h2 slot="headline"&gt;新建项目&lt;/h2&gt;
+  &lt;st-input sync:value="projectName" placeholder="项目名称"&gt;&lt;/st-input&gt;
+  &lt;div slot="actions"&gt;
+    &lt;st-button variant="text" on:click="dlgForm = false"&gt;取消&lt;/st-button&gt;
+    &lt;st-button on:click="saveProject"&gt;保存&lt;/st-button&gt;
+  &lt;/div&gt;
+&lt;/st-dialog&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { dlgForm: false, projectName: "", savedName: "（无）" },
+    proto: {
+      saveProject() {
+        this.savedName = this.projectName || "（空）";
+        this.dlgForm = false;
+      },
+    },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <div class="doc-cols">
+              <div class="doc-block">
+                <h3>属性</h3>
+                <table class="api">
+                  <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>open</code></td><td>运行时状态（ofa data）</td><td>false</td><td>显示状态；页面里用 <code>sync:open="key"</code> 双向绑定</td></tr>
+                    <tr><td><code>auto-close</code></td><td>boolean</td><td>无</td><td>允许点击遮罩 / Escape 关闭，并派发 close</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="doc-block">
+                <h3>插槽 / 事件 / 注意</h3>
+                <ul class="api-list">
+                  <li>插槽：<code>headline</code>（建议放 h2）、默认（正文，超高时内部滚动）、<code>actions</code>（右对齐横排）；空区块自动隐藏。</li>
+                  <li>事件：<code>close</code>（bubbles + composed），只在遮罩 / Escape 交互关闭时派发；外部改数据关闭不派发。</li>
+                  <li>面板：<code>::part(panel)</code> 覆盖宽度 / 圆角 / 底色；默认宽 <code>min(34.29em, 100%)</code>、padding <code>1.43em</code>、圆角 <code>1.714em</code>。</li>
+                  <li>焦点：打开时移入面板容器并在内部循环（焦点陷阱），关闭后归还打开元素；Escape / 遮罩仅在 auto-close 时生效，多个对话框叠加时 Escape 只关最上层；打开期间锁定背景滚动。</li>
+                  <li>注意：对话框别放进设置过 transform / filter 的祖先，否则 fixed 遮罩会错位；宿主的 z-index 是 1000。</li>
+                </ul>
+              </div>
+            </div>
+
+            <nav class="doc-pager" aria-label="上下篇">
+              <a class="pager-link" olink href="./slider.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Slider</a><a class="pager-link pager-next" olink href="./menu.html"><span>下一页</span>Menu <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
+            </nav>
+          </article>
+
+          <!-- 本页真实的 st-dialog 实例：由上方按钮通过 sync:open 控制 -->
+          <st-dialog sync:open="dlgBasic">
+            <h2 slot="headline">基础对话框</h2>
+            <p>这是文档页里的真实 <code>st-dialog</code>。没有 auto-close：点击遮罩或按 Escape 都不会关闭，请用下面的按钮。</p>
+            <div slot="actions">
+              <st-button variant="text" on:click="dlgBasic = false">关闭</st-button>
+              <st-button on:click="dlgBasic = false">知道了</st-button>
+            </div>
+          </st-dialog>
+
+          <st-dialog sync:open="dlgAuto" auto-close on:close="onAutoClose">
+            <h2 slot="headline">auto-close 对话框</h2>
+            <p>点击遮罩或按 Escape 试试：关闭时 sync:open 回写 false，并派发 close 事件。</p>
+            <div slot="actions">
+              <st-button variant="text" on:click="dlgAuto = false">取消</st-button>
+              <st-button on:click="dlgAuto = false">确定</st-button>
+            </div>
+          </st-dialog>
+
+          <st-dialog class="doc-dialog-wide" sync:open="dlgWide" auto-close>
+            <h2 slot="headline">Wide 面板</h2>
+            <p>这张面板通过 <code>::part(panel)</code> 覆盖了 width: min(46em, 100%) 与 border-radius: 1em。</p>
+            <div slot="actions">
+              <st-button on:click="dlgWide = false">知道了</st-button>
+            </div>
+          </st-dialog>
+
+          <st-dialog class="doc-dialog-full" sync:open="dlgFull" auto-close>
+            <h2 slot="headline">Fullscreen 面板</h2>
+            <p>width / height 100%、无圆角，铺满视口；正文超高时在正文区内部滚动。</p>
+            <p style="margin-top: 12px; color: var(--md-sys-color-on-surface-variant);">用宿主的 font-size 可以整体缩放面板，但 fullscreen 的宽高是百分比，不受字号影响。</p>
+            <div slot="actions">
+              <st-button variant="text" on:click="dlgFull = false">关闭</st-button>
+            </div>
+          </st-dialog>
+
+          <st-dialog sync:open="dlgSmall" auto-close style="font-size: 12px;">
+            <h2 slot="headline">12px 缩放</h2>
+            <p>宿主 font-size: 12px，面板的 padding、圆角、宽度全部按 em 等比缩小。</p>
+            <div slot="actions">
+              <st-button variant="text" on:click="dlgSmall = false">关闭</st-button>
+            </div>
+          </st-dialog>
+
+          <st-dialog sync:open="dlgSlotPlain" auto-close>
+            <h2 slot="headline">只有标题与正文</h2>
+            <p>没有 actions 插槽内容，底部操作区不会渲染。</p>
+          </st-dialog>
+
+          <st-dialog sync:open="dlgSlotNoHead" auto-close>
+            <p>没有 headline，标题区块自动隐藏；正文与 actions 保留。</p>
+            <div slot="actions">
+              <st-button variant="text" on:click="dlgSlotNoHead = false">知道了</st-button>
+            </div>
+          </st-dialog>
+
+          <st-dialog sync:open="dlgForm" auto-close>
+            <h2 slot="headline">新建项目</h2>
+            <st-input sync:value="projectName" placeholder="项目名称" style="width: 100%;"></st-input>
+            <div slot="actions">
+              <st-button variant="text" on:click="dlgForm = false">取消</st-button>
+              <st-button on:click="saveProject">保存</st-button>
+            </div>
+          </st-dialog>
+      <script>
+        export const parent = "./layout.html";
+
+        export default async () => ({
+          data: {
+            dlgBasic: false,
+            dlgAuto: false,
+            dlgWide: false,
+            dlgFull: false,
+            dlgSmall: false,
+            dlgSlotPlain: false,
+            dlgSlotNoHead: false,
+            dlgForm: false,
+            closeCount: 0,
+            lastClose: "（无）",
+            commandResult: "（未调用）",
+            projectName: "",
+            savedName: "（无）",
+          },
+          proto: {
+            onAutoClose() {
+              this.closeCount += 1;
+              this.lastClose = "auto-close 对话框";
+            },
+            async runAlert() {
+              if (!window.__site) return;
+              const ok = await window.__site.alert({ title: "操作成功", message: "密码已重置，请使用新密码登录。", ok: "知道了" });
+              this.commandResult = "alert → " + ok;
+            },
+            async runConfirm() {
+              if (!window.__site) return;
+              const ok = await window.__site.confirm({ title: "确认删除", message: "确定要删除这条记录吗？此操作不可撤销。", yes: "删除", cancel: "取消", color: "error" });
+              this.commandResult = "confirm → " + ok;
+            },
+            async runPrompt() {
+              if (!window.__site) return;
+              const value = await window.__site.prompt({ title: "重命名", message: "输入新的名称", placeholder: "新名称" });
+              this.commandResult = "prompt → " + JSON.stringify(value);
+            },
+            saveProject() {
+              this.savedName = this.projectName || "（空）";
+              this.dlgForm = false;
+            },
+          },
+        });
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin, getSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = Object.assign(window.__site || {}, { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu });
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

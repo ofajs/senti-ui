@@ -1,6 +1,6 @@
 # st-input 单行输入框组件
 
-基于 ofa.js 的单行输入框组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设，也不需要自定义 CSS 变量）。
+基于 ofa.js 的单行输入框组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设；使用者不需要写自定义变量，皮肤作者使用 `--st-*` 皮肤 token，见 [packages/skin/README.md](../skin/README.md)）。
 
 组件的视觉样式全部定义在宿主元素（`:host`）上，`st-input` 本身就是一个普通的可样式化元素。内部有一个透明的原生 `<input>` 负责语义（输入/键盘/焦点/disabled/readonly）。
 
@@ -25,6 +25,12 @@
 | `color` | M3 角色名 / 自定义变量名 | 无 | 语义色：控制 caret 颜色与 focus 边框色（如 `color="error"` 用于校验错误态） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互、无 focus 态 |
 | `readonly` | boolean | 无 | 只读：可聚焦、不可修改 |
+| `name` | string | 无 | 表单字段名；设置后参与原生 `<form>` 提交 |
+| `required` | boolean | 无 | 必填；无效时阻断提交并派发 `invalid` |
+| `maxlength` / `minlength` | number | 无 | 长度约束，同步到内部 input 与表单代理 |
+| `pattern` | string | 无 | 原生正则校验（提交时生效） |
+| `autocomplete` / `inputmode` | string | 无 | 转发内部 input |
+| `min` / `max` / `step` | number | 无 | number/range 类型的取值约束 |
 
 设置/取消布尔属性示例：`<st-input disabled>`；JS 中请用 attribute 方式（直接改 property 不触发更新）。改值用 `el.value = "..."`：
 
@@ -33,6 +39,23 @@ input.setAttribute("disabled", "");
 input.removeAttribute("disabled");
 input.value = "新的值"; // 运行时读写值
 ```
+
+## 表单（原生 form）
+
+组件会在 light DOM 放一个不可见的原生代理控件，因此可以直接放进 `<form>`：
+
+```html
+<form>
+  <st-input name="username" required placeholder="用户名"></st-input>
+  <st-button type="submit">提交</st-button>
+</form>
+```
+
+- 提交时 `FormData` 会包含 `name` / 当前 `value`；`reset` 会回到 `default-value`
+- `required` / `pattern` / `min` / `max` / `step` / `maxlength` 等由代理控件参与原生约束校验
+- 校验失败会阻止提交，组件派发 `invalid` 事件，并给内部 input 加 `aria-invalid="true"`
+- 因为代理控件不可见，浏览器原生校验气泡不会锚定到组件上；需要展示错误请监听 `invalid` 并配合 `color="error"`
+- 原生 `<label for>` 不适用于自定义元素；请用 `aria-label` / `aria-labelledby`
 
 ## 插槽
 
@@ -64,7 +87,7 @@ document.querySelector("st-input").addEventListener("input", (e) => {
 `color` 接受 **M3 角色名**（`primary` / `error` / `success` 等）或 **color 工具里定义的自定义变量名**，控制 caret 与 focus 边框颜色。典型用法是校验错误态：
 
 ```html
-<st-input color="error" value="非法输入"></st-input>
+<st-input color="error" default-value="非法输入"></st-input>
 ```
 
 未定义的名称回退到 primary。不设 `color` 时 focus 边框/caret 为 primary。
@@ -85,6 +108,8 @@ document.querySelector("st-input").addEventListener("input", (e) => {
 ```
 
 ### 默认值（直接覆盖即可）
+
+> 下列默认值都以皮肤 token 的形式声明（`var(--st-*, 默认值)`），不加载皮肤时与旧版完全一致。
 
 | 属性 | 默认值 |
 |------|--------|
@@ -110,6 +135,23 @@ document.querySelector("st-input").addEventListener("input", (e) => {
 
 `st-color-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
 
+## 皮肤（材质）
+
+`st-input` 已接入皮肤 token：高度、圆角、内边距、字号/字体、描边、背景、底边线、阴影、毛玻璃、
+焦点环形态、disabled 透明度。颜色仍由 M3 角色与 `color` 属性决定。
+
+```html
+<html data-skin="shadcn">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/shadcn.css">
+<st-input color="error" placeholder="校验错误态"></st-input>
+```
+
+- 运行时切换：`import { setSkin } from ".../packages/skin/st-skin.js"; setSkin("shadcn")`
+- 本组件消费的主要 token：`--st-height` / `--st-font-size` / `--st-font` / `--st-letter-spacing` / `--st-field-radius` / `--st-field-padding` / `--st-border-width` / `--st-field-bg` / `--st-field-filled-bg` / `--st-field-border` / `--st-field-underline` / `--st-field-shadow` / `--st-backdrop-filter` / `--st-field-focus-ring-opacity` / `--st-field-focus-shadow` / `--st-field-focus-color` / `--st-field-focus-gap` / `--st-field-focus-gap-color` / `--st-field-focus-glow-spread` / `--st-field-focus-glow-alpha` / `--st-field-focus-underline-height` / `--st-field-focus-underline-alpha` / `--st-field-underline-color` / `--st-disabled-opacity`
+- `color` 属性在宿主上写入 `--st-accent`：caret、focus 描边、filled 底线都消费它，皮肤可在此基础上换形态（如外侧光圈）
+- 暴露的 part（组件在 light DOM 时可用）：`part="focus-ring"` / `part="underline"` / `part="control"`
+- 皮肤不改变结构与交互范式（如浮动标签仍由组件自身决定，皮肤只管材质）
+
 ## 注意事项与使用技巧
 
 - `value` 是运行时状态（ofa data）：JS 读写用 `el.value`，`setAttribute("value")` 无效；初始值用标签属性 `default-value`
@@ -117,6 +159,7 @@ document.querySelector("st-input").addEventListener("input", (e) => {
 - 事件回调里读 `e.target.value` 安全（value 已反射到宿主 property）
 - 布尔属性 readonly 的 watch 同步是异步的，setAttribute 后稍等再断言
 - 宿主本身不可聚焦（无 tabindex），焦点在内部 `.native` input 上；自动化测试用真实点击聚焦
+- 无障碍：宿主上的 `aria-label` / `aria-labelledby` / `title` 会同步到内部 input（`st-input` 没有文字标签插槽）
 ## 验证页面
 
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `/packages/input/`）。

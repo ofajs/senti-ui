@@ -16,9 +16,10 @@
       position: absolute;
       border-radius: 50%;
       background-color: currentColor;
-      opacity: 0.28;
+      /* 皮肤可设 --st-ripple-opacity: 0 关掉波纹（Apple/windows/shadcn 皮肤即如此） */
+      opacity: var(--st-ripple-opacity, 0.28);
       transform: scale(0);
-      animation: st-ripple-spread 0.35s ease-out forwards;
+      animation: st-ripple-spread var(--st-ripple-duration, 0.35s) ease-out forwards;
     }
     @keyframes st-ripple-spread {
       to {
@@ -33,9 +34,14 @@
     export default async () => ({
       tag: "st-ripple",
       ready() {
-        // 监听目标：优先取 shadow 宿主（组件被嵌入其他组件 shadow 时），否则取父元素
+        // 监听目标：
+        // - 在组件 shadow 内（st-button / st-list-item 等）→ 监听组件宿主；
+        // - 在 o-page / o-app 的 shadow 内 → 监听最近的父元素。
+        //   页面只是渲染容器，直接监听 o-page 会让页面上所有并列 ripple 一起响应。
         const root = this.ele.getRootNode();
-        const target = root.host || this.ele.parentElement;
+        const host = root.host;
+        const pageHost = host && (host.tagName === "O-PAGE" || host.tagName === "O-APP");
+        const target = pageHost ? this.ele.parentElement || host : host || this.ele.parentElement;
         if (!target) return;
 
         // 事件若源自嵌套的自定义组件（如子列表项、项内套的 st-button），
@@ -48,14 +54,17 @@
           return false;
         };
 
+        const enabled = () =>
+          !target.hasAttribute("disabled") && this.ele.getClientRects().length > 0;
+
         target.addEventListener("pointerdown", (e) => {
-          if (fromNested(e)) return;
+          if (!enabled() || fromNested(e)) return;
           const rect = this.ele.getBoundingClientRect();
           this.spawn(e.clientX - rect.left, e.clientY - rect.top, rect);
         });
         // 键盘激活（Enter/Space 产生的 click 无坐标，detail 为 0）：从中心扩散
         target.addEventListener("click", (e) => {
-          if (e.detail !== 0 || fromNested(e)) return;
+          if (!enabled() || e.detail !== 0 || fromNested(e)) return;
           const rect = this.ele.getBoundingClientRect();
           this.spawn(rect.width / 2, rect.height / 2, rect);
         });

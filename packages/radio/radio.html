@@ -10,7 +10,8 @@
       display: inline-flex;
       align-items: center;
       position: relative;
-      font-size: 14px;
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
       vertical-align: middle;
       cursor: pointer;
       user-select: none;
@@ -19,7 +20,7 @@
 
     :host([disabled]) {
       cursor: not-allowed;
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
     }
 
     .circle {
@@ -28,14 +29,14 @@
       width: 1.571em; /* 22px */
       height: 1.571em;
       flex-shrink: 0;
-      border: 0.143em solid var(--md-sys-color-on-surface-variant);
-      border-radius: 50%;
+      border: var(--st-radio-border-width, 0.143em) solid var(--md-sys-color-on-surface-variant);
+      border-radius: var(--st-radio-radius, 50%);
       display: grid;
       place-items: center;
-      transition: border-color 0.16s ease;
+      transition: border-color var(--st-motion-duration, 0.16s) ease;
     }
     :host([checked]) .circle {
-      border-color: var(--md-sys-color-primary);
+      border-color: var(--st-radio-dot-bg, var(--md-sys-color-primary));
     }
 
     /* 选中圆点：宽度弹性入场（M3 emphasized 曲线） */
@@ -43,8 +44,15 @@
       width: 0;
       height: 0;
       border-radius: 50%;
-      background: var(--md-sys-color-primary);
-      transition: width 0.2s cubic-bezier(0.2, 0, 0, 1), height 0.2s cubic-bezier(0.2, 0, 0, 1);
+      background: color-mix(
+        in srgb,
+        var(--st-radio-dot-bg, var(--md-sys-color-primary)) var(--st-radio-fill-alpha, 100%),
+        transparent
+      );
+      -webkit-backdrop-filter: var(--st-radio-backdrop-filter, none);
+      backdrop-filter: var(--st-radio-backdrop-filter, none);
+      transition: width var(--st-motion-duration-base, 0.2s) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1)),
+        height var(--st-motion-duration-base, 0.2s) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
     :host([checked]) .dot {
       width: 0.714em; /* 10px */
@@ -52,9 +60,10 @@
     }
 
     .label {
+      display: none;
       margin-left: 0.857em;
     }
-    :host(:empty) .label { display: none; }
+    :host([has-label]) .label { display: inline; }
 
     /* 内部透明原生 radio：承载点击/键盘/焦点语义，覆盖整个组件（点文字也能选中） */
     .native {
@@ -65,8 +74,9 @@
       cursor: inherit;
     }
     .native:focus-visible ~ .circle {
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: 2px;
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
     }
 
     l-m { display: none; }
@@ -78,6 +88,8 @@
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
+    import { createFormProxy, syncFormProxy, bindFormReset } from "../form/form-proxy.js";
     export default async () => ({
       tag: "st-radio",
       attrs: {
@@ -85,30 +97,88 @@
         checked: null,
         disabled: null,
         color: null,
+        value: "on",
+        form: null,
+        required: null,
       },
       watch: {
         checked() { this.applyState(); },
         disabled() { this.applyState(); },
         color() { this.applyState(); },
+        name() { this.syncForm?.(); },
+        form() { this.syncForm?.(); },
+        value() { this.syncForm?.(); },
+        required() { this.syncForm?.(); },
       },
       ready() {
         const ele = this.ele;
-        const input = ele.shadowRoot.querySelector(".native");
+        const sr = ele.shadowRoot;
+        const input = sr.querySelector(".native");
 
         // 交互：选中 → 同组互斥（原生 radio 分组不跨 shadow root，手动取消兄弟）
         input.addEventListener("change", () => {
           if (!input.checked) return;
           ele.setAttribute("checked", "");
           if (this.name) {
-            const scope = ele.closest("st-list, st-menu, fieldset, form, div, section") || document;
-            scope.querySelectorAll(`st-radio[name="${this.name}"]`).forEach((sib) => {
-              if (sib !== ele && sib.hasAttribute("checked")) sib.removeAttribute("checked");
+            // 同组互斥按“树作用域”查找：document 里的同名 radio、或同一个
+            // o-page/o-app shadow root 里的同名 radio（closest(div) 会漏掉兄弟容器）
+            const scope = ele.getRootNode();
+            const selector = `st-radio[name="${CSS.escape(this.name)}"]`;
+            scope.querySelectorAll(selector).forEach((sib) => {
+              if (sib !== ele && sib.hasAttribute("checked")) {
+                sib.removeAttribute("checked");
+                if (sib._proxy) sib._proxy.checked = false;
+              }
             });
           }
+          input.removeAttribute("aria-invalid");
           ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
         });
 
+        // 标签文字是 slot 内容、与原生 input 是兄弟节点，必须同步为可访问名称
+        this._a11yCleanup = syncAccessibleName(ele, input, { fromSlot: true });
+
+        // 表单代理是 light DOM 子节点，会破坏 :host(:empty)；用 has-label 显式判断
+        const labelSlot = sr.querySelector(".label slot");
+        const syncLabel = () => {
+          const has = labelSlot
+            .assignedNodes()
+            .some((node) => node.nodeType === 1 || (node.nodeType === 3 && node.textContent.trim()));
+          ele.toggleAttribute("has-label", has);
+        };
+        labelSlot.addEventListener("slotchange", syncLabel);
+        syncLabel();
+
+        const proxy = createFormProxy(ele, "radio");
+        this._proxy = proxy;
+        this.syncForm = () => {
+          syncFormProxy(proxy, {
+            name: this.name,
+            form: ele.getAttribute("form"),
+            value: this.value ?? "on",
+            checked: this.checked !== null,
+            disabled: this.disabled !== null,
+            required: this.required !== null,
+          });
+        };
+        this.syncForm();
+        proxy.addEventListener("invalid", (e) => {
+          e.preventDefault();
+          input.setAttribute("aria-invalid", "true");
+          ele.dispatchEvent(new Event("invalid", { bubbles: true, composed: true }));
+        });
+        const initialChecked = this.checked !== null;
+        this._resetCleanup = bindFormReset(ele, () => {
+          if (initialChecked) ele.setAttribute("checked", "");
+          else ele.removeAttribute("checked");
+          this.applyState();
+        });
+
         this.applyState();
+      },
+      detached() {
+        this._a11yCleanup?.();
+        this._resetCleanup?.();
       },
       proto: {
         // watch 初始化也会触发一次（坑 #27），applyState 无副作用，天然安全
@@ -120,15 +190,14 @@
 
           input.checked = this.checked !== null;
           input.disabled = this.disabled !== null;
+          this.syncForm?.();
 
           const name = this.color;
           if (this.checked !== null && name) {
             const main = `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`;
-            circle.style.borderColor = main;
-            dot.style.background = main;
+            circle.style.setProperty("--st-radio-dot-bg", main);
           } else {
-            circle.style.borderColor = "";
-            dot.style.background = "";
+            circle.style.removeProperty("--st-radio-dot-bg");
           }
         },
       },

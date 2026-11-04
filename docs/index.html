@@ -19,6 +19,10 @@
     import toast from "../packages/snackbar/toast.js";
     window.toast = toast;
     window.__toastReady = true;
+
+    import { setSkin, getSkin, registerSkin } from "../packages/skin/st-skin.js";
+    window.__stSkin = { setSkin, getSkin, registerSkin };
+    window.__stSkinReady = true;
   </script>
   <style>
     html, body {

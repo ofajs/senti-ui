@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>皮肤 — Senti-UI</title>
+  <meta
+    name="description"
+    content="Senti-UI 主题页：同一批组件，在 Android Material 3、Apple 毛玻璃、Microsoft Windows 11、shadcn 扁平与 Cyberpunk 霓虹终端之间切换；每套主题带官方配色（M3 蓝 / iOS 蓝 / Windows 蓝 / zinc 灰阶 / 荧光绿），并按主题记住各自的颜色；页面底部可用 Google Material Color Utilities 改种子色、覆盖角色与添加自定义颜色。"
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="皮肤 — Senti-UI" />
+  <meta
+    property="og:description"
+    content="主题同页对比：Android Material 3 / Apple 毛玻璃 / Microsoft Windows 11 / shadcn 扁平 / Cyberpunk 霓虹终端，每套带官方配色与独立颜色记忆。"
+  />
+  <meta name="theme-color" content="#0061A4" />
+  <link
+    rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E"
+  />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../packages/skin/cyberpunk.css" />
+  <link rel="stylesheet" href="../packages/skin/windows.css" />
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+    }
+    body {
+      font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .nojs {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 12vh 24px;
+      line-height: 1.7;
+    }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>皮肤</h1>
+      <p>皮肤页的实时预览需要 JavaScript；也可以直接查看 <a href="./index.html">组件目录</a>。</p>
+    </div>
+  </noscript>
+
+  <o-app src="./app-config.js">
+    <template page>
+      <l-m src="../packages/button/button.html"></l-m>
+      <l-m src="../packages/button/button-group.html"></l-m>
+      <l-m src="../packages/button/icon-button.html"></l-m>
+      <l-m src="../packages/input/input.html"></l-m>
+      <l-m src="../packages/select/select.html"></l-m>
+      <l-m src="../packages/menu/menu.html"></l-m>
+      <l-m src="../packages/tooltip/tooltip.html"></l-m>
+      <l-m src="../packages/progress/progress.html"></l-m>
+
+      <!-- 局部 data-skin 预览需要页面 shadow 内的样式表 -->
+      <link rel="stylesheet" href="../packages/skin/m3.css" />
+      <link rel="stylesheet" href="../packages/skin/apple.css" />
+      <link rel="stylesheet" href="../packages/skin/shadcn.css" />
+      <link rel="stylesheet" href="../packages/skin/cyberpunk.css" />
+      <link rel="stylesheet" href="../packages/skin/windows.css" />
+
+      <style>
+        :host {
+          --site-max: 1100px;
+          --gutter: clamp(20px, 4vw, 40px);
+          display: block;
+          background: transparent;
+          color: var(--md-sys-color-on-surface);
+          font-size: 15px;
+          line-height: 1.55;
+        }
+        *,
+        *::before,
+        *::after { box-sizing: border-box; }
+        h1,
+        h2,
+        p { margin: 0; }
+        a { color: inherit; }
+
+        .skins-page {
+          max-width: var(--site-max);
+          margin: 0 auto;
+          padding: clamp(40px, 6vw, 72px) var(--gutter) 88px;
+        }
+        .kicker {
+          color: var(--md-sys-color-primary);
+          font-size: 10.5px;
+          font-weight: 700;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+        }
+        h1 {
+          margin-top: 10px;
+          font-size: clamp(34px, 5vw, 52px);
+          line-height: 1.08;
+          letter-spacing: -0.035em;
+          font-weight: 700;
+        }
+        .lead {
+          max-width: 720px;
+          margin-top: 14px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 14px;
+          line-height: 1.8;
+        }
+        .current {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          margin-top: 22px;
+          padding: 7px 12px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 999px;
+          background: var(--md-sys-color-surface-container-low);
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 12px;
+        }
+        .current strong { color: var(--md-sys-color-on-surface); }
+        .mono {
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 11px;
+        }
+
+        .skin-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 16px;
+          margin-top: 30px;
+        }
+        .skin-card {
+          display: grid;
+          align-content: start;
+          gap: 14px;
+          padding: 18px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 20px;
+          background: var(--md-sys-color-surface-container-low);
+        }
+        .skin-head {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 12px;
+        }
+        .skin-head h2 {
+          font-size: 17px;
+          letter-spacing: -0.015em;
+        }
+        .skin-head p {
+          margin-top: 5px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 12px;
+          line-height: 1.65;
+        }
+        .skin-chip {
+          flex: none;
+          padding: 3px 9px;
+          border-radius: 999px;
+          background: var(--md-sys-color-surface-container-high);
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
+        }
+        .skin-preview {
+          display: grid;
+          gap: 10px;
+          padding: 18px;
+          border: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 80%, transparent);
+          border-radius: 14px;
+          background:
+            radial-gradient(120% 130% at 8% 0%, color-mix(in srgb, var(--md-sys-color-primary-container) 75%, transparent), transparent 60%),
+            radial-gradient(120% 130% at 96% 100%, color-mix(in srgb, var(--md-sys-color-tertiary-container) 65%, transparent), transparent 62%),
+            var(--md-sys-color-surface-container-lowest);
+        }
+        .preview-row {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 8px;
+        }
+        .skin-preview st-input { width: 100%; }
+        .skin-actions {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+        }
+        .skin-actions .hint {
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 11px;
+        }
+        .note {
+          margin-top: 26px;
+          padding: 14px 16px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 14px;
+          background: var(--md-sys-color-surface-container-low);
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 12.5px;
+          line-height: 1.75;
+        }
+        .note code {
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 11px;
+          color: var(--md-sys-color-on-surface);
+        }
+
+        /* ---------- 颜色体系：改色 / 加色 ---------- */
+        .color-lab {
+          margin-top: 44px;
+          padding-top: 32px;
+          border-top: 1px solid var(--md-sys-color-outline-variant);
+        }
+        .color-lab-head {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 28px;
+        }
+        .color-lab-head h2 {
+          margin-top: 7px;
+          font-size: clamp(24px, 3.2vw, 34px);
+          line-height: 1.1;
+          letter-spacing: -0.035em;
+          font-weight: 700;
+        }
+        .color-lab-desc {
+          max-width: 520px;
+          padding-bottom: 3px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 12.5px;
+          line-height: 1.75;
+          text-align: right;
+        }
+        .color-lab-desc code {
+          color: var(--md-sys-color-on-surface);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 11px;
+        }
+        .color-lab-desc a {
+          color: var(--md-sys-color-primary);
+          text-decoration: none;
+          white-space: nowrap;
+        }
+        .color-lab-desc a:hover { text-decoration: underline; }
+        .color-lab-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+          gap: 16px;
+          align-items: start;
+          margin-top: 20px;
+        }
+        .color-panel,
+        .color-preview {
+          border: 1px solid var(--st-card-border, var(--md-sys-color-outline-variant));
+          border-radius: 20px;
+          /* 复用皮肤卡片材质：Apple 下自动变半透明 + backdrop blur */
+          background: var(--st-card-bg, var(--md-sys-color-surface-container-low));
+          -webkit-backdrop-filter: var(--st-card-backdrop-filter, none);
+          backdrop-filter: var(--st-card-backdrop-filter, none);
+          padding: 18px;
+        }
+        .color-seed-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+        .color-label {
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 12px;
+        }
+        .color-picker {
+          width: 44px;
+          height: 40px;
+          padding: 0;
+          border: 1px solid var(--md-sys-color-outline);
+          border-radius: 11px;
+          background: transparent;
+          cursor: pointer;
+        }
+        .color-picker::-webkit-color-swatch-wrapper { padding: 3px; }
+        .color-picker::-webkit-color-swatch { border: 0; border-radius: 8px; }
+        .contrast-range {
+          flex: 1;
+          min-width: 120px;
+          max-width: 220px;
+          accent-color: var(--md-sys-color-primary);
+          cursor: pointer;
+        }
+        .contrast-value {
+          min-width: 3.2em;
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 12px;
+          color: var(--md-sys-color-on-surface-variant);
+        }
+        .hex-input {
+          width: 112px;
+          height: 40px;
+          padding: 0 11px;
+          border: 1px solid var(--md-sys-color-outline);
+          border-radius: 10px;
+          background: var(--md-sys-color-surface);
+          color: var(--md-sys-color-on-surface);
+          font: inherit;
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 12px;
+          letter-spacing: 0.02em;
+        }
+        .color-reset {
+          margin-left: auto;
+          height: 32px;
+          padding: 0 10px;
+          font-size: 11px;
+        }
+        .color-help {
+          margin-top: 9px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 11px;
+          line-height: 1.65;
+        }
+        .role-list {
+          display: grid;
+          gap: 6px;
+          margin-top: 16px;
+        }
+        .role-row {
+          display: grid;
+          grid-template-columns: 38px minmax(0, 1fr) auto auto;
+          gap: 10px;
+          align-items: center;
+          padding: 8px 10px;
+          border-radius: 12px;
+          background: var(--st-card-outlined-bg, var(--md-sys-color-surface));
+        }
+        .role-color {
+          width: 38px;
+          height: 32px;
+          padding: 2px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 8px;
+          background: transparent;
+          cursor: pointer;
+        }
+        .role-color::-webkit-color-swatch-wrapper { padding: 1px; }
+        .role-color::-webkit-color-swatch { border: 0; border-radius: 6px; }
+        .role-meta {
+          min-width: 0;
+          display: grid;
+          gap: 1px;
+        }
+        .role-meta strong {
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.01em;
+        }
+        .role-meta span {
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 10px;
+        }
+        .role-row code {
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
+          white-space: nowrap;
+        }
+        .role-reset {
+          height: 28px;
+          padding: 0 8px;
+          font-size: 10px;
+        }
+        .custom-head {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 12px;
+          margin-top: 20px;
+          padding-top: 16px;
+          border-top: 1px solid var(--md-sys-color-outline-variant);
+        }
+        .custom-head strong {
+          display: block;
+          font-size: 13px;
+          font-weight: 600;
+        }
+        .custom-head span {
+          display: block;
+          margin-top: 3px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 10.5px;
+          line-height: 1.5;
+        }
+        .custom-add {
+          flex: none;
+          height: 32px;
+          padding: 0 10px;
+          font-size: 11px;
+        }
+        .custom-list {
+          display: grid;
+          gap: 6px;
+          margin-top: 10px;
+        }
+        .custom-row {
+          display: grid;
+          grid-template-columns: 38px minmax(0, 1fr) auto auto;
+          gap: 10px;
+          align-items: center;
+          padding: 8px 10px;
+          border-radius: 12px;
+          background: var(--st-card-outlined-bg, var(--md-sys-color-surface));
+        }
+        .name-input {
+          width: 100%;
+          height: 32px;
+          padding: 0 9px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 8px;
+          background: var(--md-sys-color-surface-container-low);
+          color: var(--md-sys-color-on-surface);
+          font: inherit;
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 11px;
+        }
+        .custom-row code {
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
+          white-space: nowrap;
+        }
+        .custom-empty {
+          padding: 12px 10px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 11px;
+          line-height: 1.6;
+        }
+        .color-actions {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-height: 20px;
+          margin-top: 14px;
+        }
+        .color-status {
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 10.5px;
+          line-height: 1.5;
+        }
+        .preview-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+        }
+        .preview-head span {
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 9.5px;
+          font-weight: 700;
+          letter-spacing: 0.14em;
+        }
+        .preview-head code {
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
+        }
+        .preview-controls {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-top: 14px;
+        }
+        .preview-controls st-input { width: 100%; }
+        .token-list {
+          display: grid;
+          gap: 5px;
+          margin-top: 16px;
+          padding-top: 14px;
+          border-top: 1px solid var(--md-sys-color-outline-variant);
+        }
+        .token {
+          display: grid;
+          grid-template-columns: 14px minmax(0, 1fr) auto;
+          gap: 8px;
+          align-items: center;
+          min-width: 0;
+        }
+        .token i {
+          width: 14px;
+          height: 14px;
+          border-radius: 4px;
+          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline) 55%, transparent);
+        }
+        .token code {
+          overflow: hidden;
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .token span {
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
+        }
+        .custom-buttons {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-top: 14px;
+        }
+        .custom-buttons st-button {
+          height: 30px;
+          padding: 0 10px;
+          font-size: 10.5px;
+        }
+        .preview-note {
+          margin-top: 16px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 10.5px;
+          line-height: 1.65;
+        }
+        /* ---------- 可用色块变量：白天 / 黑夜各自铺对应 surface，避免串背景 ---------- */
+        .swatch-library {
+          margin-top: 26px;
+          padding-top: 24px;
+          border-top: 1px solid var(--md-sys-color-outline-variant);
+        }
+        .swatch-head {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 24px;
+        }
+        .swatch-head h3 {
+          margin-top: 6px;
+          font-size: clamp(19px, 2.3vw, 26px);
+          line-height: 1.15;
+          letter-spacing: -0.03em;
+          font-weight: 700;
+        }
+        .swatch-head-side {
+          display: grid;
+          justify-items: end;
+          gap: 8px;
+        }
+        .swatch-switch {
+          font-size: 11px;
+        }
+        .swatch-desc {
+          max-width: 560px;
+          padding-bottom: 2px;
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 11.5px;
+          line-height: 1.7;
+          text-align: right;
+        }
+        .swatch-panels {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr);
+          align-items: start;
+          gap: 12px;
+          margin-top: 16px;
+        }
+        .swatch-panel {
+          min-width: 0;
+          padding: 14px;
+          border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+          border-radius: 16px;
+          background: var(--md-sys-color-surface-container);
+          color: var(--md-sys-color-on-surface);
+        }
+        .swatch-panel-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+        }
+        .swatch-panel-head span {
+          color: inherit;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+        }
+        .swatch-panel-head code {
+          color: inherit;
+          opacity: 0.65;
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 9.5px;
+        }
+        .color-groups {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 10px;
+          margin-top: 12px;
+        }
+        .color-group {
+          overflow: hidden;
+          border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+          border-radius: 12px;
+        }
+        .color-block,
+        .surface-block {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+          gap: 3px;
+          width: 100%;
+          min-height: 66px;
+          padding: 10px 12px;
+          border: 0;
+          border-radius: 0;
+          background: transparent;
+          font: inherit;
+          text-align: left;
+          cursor: pointer;
+        }
+        .color-block:hover,
+        .surface-block:hover {
+          box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 38%, transparent);
+        }
+        .color-block.copied,
+        .surface-block.copied {
+          box-shadow: inset 0 0 0 3px currentColor;
+        }
+        .color-block:focus-visible,
+        .surface-block:focus-visible {
+          outline: 2px solid currentColor;
+          outline-offset: -3px;
+        }
+        .surface-groups {
+          display: grid;
+          gap: 8px;
+          margin-top: 10px;
+        }
+        .surface-row {
+          display: grid;
+          gap: 8px;
+        }
+        .surface-row:nth-child(1) {
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+        .surface-row:nth-child(2) {
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        }
+        .surface-row:nth-child(3) {
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+        .surface-block {
+          min-height: 58px;
+          border-radius: 8px;
+        }
+        .block-label {
+          font-size: 11.5px;
+          font-weight: 600;
+          line-height: 1.3;
+        }
+        .block-token {
+          display: block;
+          max-width: 100%;
+          opacity: 0.7;
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 8.5px;
+          line-height: 1.35;
+          overflow-wrap: anywhere;
+        }
+        .tone-palettes {
+          position: relative;
+          overflow: visible;
+          display: grid;
+          gap: 13px;
+          margin-top: 16px;
+          padding: 18px;
+          border: 1px solid var(--md-sys-color-outline-variant);
+          border-radius: 16px;
+          background: var(--md-sys-color-surface-container-low);
+        }
+        .tone-guides {
+          position: absolute;
+          inset: 18px;
+          z-index: 2;
+          overflow: visible;
+          display: grid;
+          grid-template-columns: 190px 26px minmax(0, 1fr);
+          gap: 12px;
+          pointer-events: none;
+        }
+        .tone-guides-track {
+          grid-column: 3;
+          display: grid;
+          grid-template-columns: repeat(14, minmax(0, 1fr));
+          gap: 2px;
+        }
+        .tone-guide {
+          display: none;
+          grid-row: 1;
+          height: 100%;
+          border: 2px solid var(--md-sys-color-primary);
+          border-radius: 6px;
+          background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
+        }
+        .tone-palettes.light-guide .tone-guide:nth-child(2),
+        .tone-palettes.light-guide .tone-guide:nth-child(5),
+        .tone-palettes.light-guide .tone-guide:nth-child(10),
+        .tone-palettes.light-guide .tone-guide:nth-child(14),
+        .tone-palettes.dark-guide .tone-guide:nth-child(3),
+        .tone-palettes.dark-guide .tone-guide:nth-child(4),
+        .tone-palettes.dark-guide .tone-guide:nth-child(9),
+        .tone-palettes.dark-guide .tone-guide:nth-child(10) {
+          display: block;
+        }
+        .tone-guides-bar {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 7px 14px;
+          margin-top: 12px;
+          font-size: 11px;
+        }
+        .tone-guides-title {
+          color: var(--md-sys-color-on-surface);
+        }
+        .tone-guides-option {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          color: var(--md-sys-color-on-surface-variant);
+          cursor: pointer;
+          user-select: none;
+        }
+        .tone-guides-option input {
+          width: 14px;
+          height: 14px;
+          margin: 0;
+          accent-color: var(--md-sys-color-primary);
+          cursor: pointer;
+        }
+        .tone-guides-hint {
+          color: var(--md-sys-color-on-surface-variant);
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 10px;
+        }
+        .tone-row {
+          display: grid;
+          grid-template-columns: 190px 26px minmax(0, 1fr);
+          align-items: center;
+          gap: 12px;
+        }
+        .tone-name {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          min-width: 0;
+        }
+        .tone-dot {
+          flex: none;
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--md-sys-color-outline) 45%, transparent);
+        }
+        .tone-name span:last-child {
+          overflow: hidden;
+          font-size: 12px;
+          font-weight: 600;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .tone-arrow {
+          color: var(--md-sys-color-on-surface-variant);
+          font-size: 13px;
+          text-align: center;
+        }
+        .tone-strip {
+          display: grid;
+          grid-template-columns: repeat(14, minmax(0, 1fr));
+          gap: 2px;
+          min-width: 0;
+        }
+        .tone-chip {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 0;
+          height: 48px;
+          padding: 0;
+          border: 0;
+          border-radius: 5px;
+          font-family: ui-monospace, Menlo, monospace;
+          font-size: 9.5px;
+          line-height: 1;
+          cursor: pointer;
+        }
+        .tone-chip.copied {
+          outline: 2px solid var(--md-sys-color-on-surface);
+          outline-offset: -2px;
+        }
+        .tone-chip:focus-visible {
+          outline: 2px solid var(--md-sys-color-primary);
+          outline-offset: -2px;
+        }
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip-path: inset(50%);
+          white-space: nowrap;
+        }
+        .swatch-copy-status {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip-path: inset(50%);
+          white-space: nowrap;
+        }
+        @media (max-width: 900px) {
+          .color-lab-head,
+          .swatch-head { display: grid; gap: 9px; }
+          .color-lab-desc,
+          .swatch-desc { max-width: none; text-align: left; }
+          .color-lab-grid,
+          .swatch-panels { grid-template-columns: minmax(0, 1fr); }
+          .swatch-head-side { justify-items: start; }
+          .swatch-desc { text-align: left; }
+          .tone-row { grid-template-columns: 140px 20px minmax(0, 1fr); }
+          .tone-guides { grid-template-columns: 140px 20px minmax(0, 1fr); }
+        }
+        @media (max-width: 700px) {
+          .tone-row { grid-template-columns: minmax(0, 1fr); gap: 7px; }
+          .tone-arrow { display: none; }
+          .tone-strip { gap: 1px; }
+          .tone-chip { height: 42px; font-size: 9px; }
+          .tone-guides { display: none; }
+          .tone-palettes.light-guide .tone-strip .tone-chip:nth-child(2),
+          .tone-palettes.light-guide .tone-strip .tone-chip:nth-child(5),
+          .tone-palettes.light-guide .tone-strip .tone-chip:nth-child(10),
+          .tone-palettes.light-guide .tone-strip .tone-chip:nth-child(14),
+          .tone-palettes.dark-guide .tone-strip .tone-chip:nth-child(3),
+          .tone-palettes.dark-guide .tone-strip .tone-chip:nth-child(4),
+          .tone-palettes.dark-guide .tone-strip .tone-chip:nth-child(9),
+          .tone-palettes.dark-guide .tone-strip .tone-chip:nth-child(10) {
+            outline: 2px solid color-mix(in srgb, var(--md-sys-color-primary) 78%, transparent);
+            outline-offset: -2px;
+          }
+        }
+        @media (max-width: 620px) {
+          .role-row,
+          .custom-row { grid-template-columns: 38px minmax(0, 1fr) auto; }
+          .role-row code,
+          .custom-row code { display: none; }
+          .color-reset { margin-left: 0; }
+        }
+
+        @media (max-width: 860px) {
+          .skin-grid { grid-template-columns: minmax(0, 1fr); }
+        }
+      </style>
+
+      <main class="skins-page">
+        <header>
+          <p class="kicker">MATERIALS</p>
+          <h1>选择主题</h1>
+          <p class="lead">
+            每套材质都有各自的官方配色：M3 蓝、Apple iOS 蓝、Windows 11 蓝、shadcn zinc 灰阶、
+            Cyberpunk 荧光绿。点选会同时切换材质与配色，并按主题记住各自的颜色；页面底部
+            仍然可以改种子色、覆盖单个角色，或添加自己的颜色变量。
+          </p>
+          <div class="current">
+            当前主题 <strong>{{skinLabel}}</strong>
+            <span class="mono">data-skin="{{skin}}"</span>
+          </div>
+        </header>
+
+        <section class="skin-grid" aria-label="可选主题">
+          <article class="skin-card">
+            <div class="skin-head">
+              <div>
+                <h2>Android · Material 3</h2>
+                <p>全圆角、state layer、波纹；Material Design 3 的默认触感。官方色：Senti 蓝。</p>
+              </div>
+              <span class="skin-chip">m3</span>
+            </div>
+            <div class="skin-preview" data-skin="m3">
+              <div class="preview-row">
+                <st-button>按钮</st-button>
+                <st-button variant="outlined">描边</st-button>
+                <st-icon-button title="设置"><iconify-icon icon="mdi:cog"></iconify-icon></st-icon-button>
+              </div>
+              <st-input placeholder="输入内容"></st-input>
+            </div>
+            <div class="skin-actions">
+              <st-button
+                attr:variant="skin === 'm3' ? 'filled' : 'outlined'"
+                on:click="use('m3')">
+                {{skin === 'm3' ? '当前主题' : '使用此主题'}}
+              </st-button>
+              <span class="hint">Material Design 3</span>
+            </div>
+          </article>
+
+          <article class="skin-card">
+            <div class="skin-head">
+              <div>
+                <h2>Apple · 毛玻璃</h2>
+                <p>半透明表面 + backdrop blur、连续圆角、外侧柔光焦点环，无波纹。官方色：iOS 蓝。</p>
+              </div>
+              <span class="skin-chip">apple</span>
+            </div>
+            <div class="skin-preview" data-skin="apple">
+              <div class="preview-row">
+                <st-button>按钮</st-button>
+                <st-button variant="outlined">描边</st-button>
+                <st-icon-button title="设置"><iconify-icon icon="mdi:cog"></iconify-icon></st-icon-button>
+              </div>
+              <st-input placeholder="输入内容"></st-input>
+            </div>
+            <div class="skin-actions">
+              <st-button
+                attr:variant="skin === 'apple' ? 'filled' : 'outlined'"
+                on:click="use('apple')">
+                {{skin === 'apple' ? '当前主题' : '使用此主题'}}
+              </st-button>
+              <span class="hint">glassmorphism</span>
+            </div>
+          </article>
+
+          <article class="skin-card">
+            <div class="skin-head">
+              <div>
+                <h2>Microsoft · Windows 11</h2>
+                <p>4px 控件 / 8px 表面、Segoe UI、Mica 表面与 Acrylic 浮层。官方色：Windows 蓝。</p>
+              </div>
+              <span class="skin-chip">windows</span>
+            </div>
+            <div class="skin-preview" data-skin="windows">
+              <div class="preview-row">
+                <st-button>按钮</st-button>
+                <st-button variant="outlined">描边</st-button>
+                <st-icon-button title="设置"><iconify-icon icon="mdi:cog"></iconify-icon></st-icon-button>
+              </div>
+              <st-input placeholder="输入内容"></st-input>
+            </div>
+            <div class="skin-actions">
+              <st-button
+                attr:variant="skin === 'windows' ? 'filled' : 'outlined'"
+                on:click="use('windows')">
+                {{skin === 'windows' ? '当前主题' : '使用此主题'}}
+              </st-button>
+              <span class="hint">Fluent / Mica</span>
+            </div>
+          </article>
+
+          <article class="skin-card">
+            <div class="skin-head">
+              <div>
+                <h2>shadcn · 扁平</h2>
+                <p>6px 圆角、1px 细描边、极轻阴影、外扩 focus ring。官方色：zinc 灰阶。</p>
+              </div>
+              <span class="skin-chip">shadcn</span>
+            </div>
+            <div class="skin-preview" data-skin="shadcn">
+              <div class="preview-row">
+                <st-button>按钮</st-button>
+                <st-button variant="outlined">描边</st-button>
+                <st-icon-button title="设置"><iconify-icon icon="mdi:cog"></iconify-icon></st-icon-button>
+              </div>
+              <st-input placeholder="输入内容"></st-input>
+            </div>
+            <div class="skin-actions">
+              <st-button
+                attr:variant="skin === 'shadcn' ? 'filled' : 'outlined'"
+                on:click="use('shadcn')">
+                {{skin === 'shadcn' ? '当前主题' : '使用此主题'}}
+              </st-button>
+              <span class="hint">额外的扁平选项</span>
+            </div>
+          </article>
+
+          <article class="skin-card">
+            <div class="skin-head">
+              <div>
+                <h2>Cyberpunk · 霓虹终端</h2>
+                <p>零圆角、等宽字、霓虹描边与外发光、方形开关 / 滑块拇指；选中时会一并套用荧光绿配色；深色优先，浅色模式可手动切回。</p>
+              </div>
+              <span class="skin-chip">cyberpunk</span>
+            </div>
+            <div class="skin-preview" data-skin="cyberpunk">
+              <div class="preview-row">
+                <st-button>按钮</st-button>
+                <st-button variant="outlined">描边</st-button>
+                <st-icon-button title="设置"><iconify-icon icon="mdi:cog"></iconify-icon></st-icon-button>
+              </div>
+              <st-input placeholder="输入内容"></st-input>
+            </div>
+            <div class="skin-actions">
+              <st-button
+                attr:variant="skin === 'cyberpunk' ? 'filled' : 'outlined'"
+                on:click="useCyberpunk">
+                {{skin === 'cyberpunk' ? '当前主题' : '使用此主题'}}
+              </st-button>
+              <span class="hint">荧光绿</span>
+            </div>
+          </article>
+        </section>
+
+        <p class="note">
+          每套主题 = 材质 + 官方配色。切换时会保存当前主题的颜色，切回来时恢复；
+          M3 的槽位承接你原本的品牌色，所以从 Cyberpunk 回到 M3 会得到进入前的配色。
+          深浅模式（自动 / 浅色 / 深色）是全局设置，切换主题默认不会改变它；唯一例外是 Cyberpunk（深色优先）：
+          从浅色 / 自动+系统浅色进入时会切到深色（自动+系统已是深色则保持自动），之后切到其他主题也继续保持深色。
+          Cyberpunk 也有自己的浅色模式，可手动切回。
+          对比度不跨材质记忆：切到某套主题时始终回到它的默认值（Cyberpunk 100%，其余 0%）。
+          皮肤 CSS 本身仍然只写 token、不写颜色，<code>setSkin()</code> 也只换材质；
+          这套主题预设只存在于官网演示层。
+        </p>
+
+        <section class="color-lab" id="color" aria-labelledby="color-title">
+          <header class="color-lab-head">
+            <div>
+              <p class="kicker">COLOR / M3</p>
+              <h2 id="color-title">改色与加色</h2>
+            </div>
+            <p class="color-lab-desc">
+              颜色不归皮肤管。这里调用 Google Material Color Utilities 的 HCT 算法：
+              改种子色会重算整套 M3 角色；也可以单独覆盖某个角色，或添加
+              <code>brand</code> 这样的自定义颜色变量。
+              <a href="../packages/color/index.html" target="_blank" rel="noreferrer">完整颜色工具 <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
+            </p>
+          </header>
+
+          <div class="color-lab-grid">
+            <div class="color-panel">
+              <div class="color-seed-row">
+                <span class="color-label">种子色</span>
+                <input class="color-picker" type="color" :value="seed" aria-label="种子色" on:input="setSeed($event.target.value)" />
+                <input class="hex-input" type="text" :value="seed" spellcheck="false" aria-label="种子色 HEX" on:change="setSeed($event.target.value)" />
+                <st-button variant="text" class="color-reset" on:click="resetAll">恢复默认</st-button>
+              </div>
+              <p class="color-help">种子色驱动 primary / secondary / tertiary 与全部 surface 中性色；on-* 与 container 配对由色相和 M3 tone 规则自动推导。</p>
+
+              <div class="color-seed-row" style="margin-top: 10px;">
+                <span class="color-label">对比度</span>
+                <input class="contrast-range" type="range" min="-100" max="100" step="5" :value="contrastPct" aria-label="对比度调整" on:input="setContrast($event.target.value)" />
+                <span class="contrast-value">{{contrastPct}}%</span>
+              </div>
+              <p class="color-help">对比度调整：正值提高对比度（角色色更鲜明、表面更极端，霓虹 / 游戏主题拉到 80–100%）；0 为标准 M3；负值降低对比度（表面与文字互相靠拢，适合柔和的可爱主题）。分角色精细调节在 <a href="../packages/color/index.html" target="_blank" rel="noreferrer">完整颜色工具</a>。</p>
+
+              <div class="role-list">
+                <div class="role-row">
+                  <input class="role-color" type="color" :value="roleColors.primary" aria-label="primary 颜色" on:input="setRole('primary', $event.target.value)" />
+                  <div class="role-meta"><strong>primary</strong><span>{{overrides.primary ? '手动覆盖' : '由种子色生成'}}</span></div>
+                  <code>--md-sys-color-primary</code>
+                  <st-button variant="text" class="role-reset" on:click="resetRole('primary')">复位</st-button>
+                </div>
+                <div class="role-row">
+                  <input class="role-color" type="color" :value="roleColors.secondary" aria-label="secondary 颜色" on:input="setRole('secondary', $event.target.value)" />
+                  <div class="role-meta"><strong>secondary</strong><span>{{overrides.secondary ? '手动覆盖' : '由种子色生成'}}</span></div>
+                  <code>--md-sys-color-secondary</code>
+                  <st-button variant="text" class="role-reset" on:click="resetRole('secondary')">复位</st-button>
+                </div>
+                <div class="role-row">
+                  <input class="role-color" type="color" :value="roleColors.tertiary" aria-label="tertiary 颜色" on:input="setRole('tertiary', $event.target.value)" />
+                  <div class="role-meta"><strong>tertiary</strong><span>{{overrides.tertiary ? '手动覆盖' : '由种子色生成'}}</span></div>
+                  <code>--md-sys-color-tertiary</code>
+                  <st-button variant="text" class="role-reset" on:click="resetRole('tertiary')">复位</st-button>
+                </div>
+                <div class="role-row">
+                  <input class="role-color" type="color" :value="roleColors.error" aria-label="error 颜色" on:input="setRole('error', $event.target.value)" />
+                  <div class="role-meta"><strong>error</strong><span>{{overrides.error ? '手动覆盖' : '由种子色生成'}}</span></div>
+                  <code>--md-sys-color-error</code>
+                  <st-button variant="text" class="role-reset" on:click="resetRole('error')">复位</st-button>
+                </div>
+                <div class="role-row">
+                  <input class="role-color" type="color" :value="roleColors.success" aria-label="success 颜色" on:input="setRole('success', $event.target.value)" />
+                  <div class="role-meta"><strong>success</strong><span>{{overrides.success ? '手动覆盖' : '内置扩展绿色'}}</span></div>
+                  <code>--md-sys-color-success</code>
+                  <st-button variant="text" class="role-reset" on:click="resetRole('success')">复位</st-button>
+                </div>
+              </div>
+
+              <div class="custom-head">
+                <div>
+                  <strong>自定义颜色</strong>
+                  <span>追加 --name / --on-name / --name-container / --on-name-container，组件用 color="name" 消费。</span>
+                </div>
+                <st-button variant="outlined" class="custom-add" on:click="addCustom"><iconify-icon slot="prefix" icon="mdi:plus"></iconify-icon>添加颜色</st-button>
+              </div>
+              <div class="custom-list">
+                <o-fill :value="customs" fill-key="name">
+                  <div class="custom-row">
+                    <input class="role-color" type="color" :value="$data.color" aria-label="自定义颜色" on:input="$host.setCustomColor($index, $event.target.value)" />
+                    <input class="name-input" type="text" :value="$data.name" placeholder="brand" maxlength="32" spellcheck="false" aria-label="颜色变量名" on:change="$host.setCustomName($index, $event.target.value)" />
+                    <code :text="'--' + $data.name"></code>
+                    <st-button variant="text" class="role-reset" on:click="$host.removeCustom($index)">移除</st-button>
+                  </div>
+                </o-fill>
+                <o-if :value="customs.length === 0">
+                  <p class="custom-empty">还没有自定义颜色。添加一个变量，就能在任意组件上写 <code>color="brand"</code>。</p>
+                </o-if>
+              </div>
+
+              <div class="color-actions">
+                <span class="color-status">{{colorStatus}}</span>
+              </div>
+            </div>
+
+            <aside class="color-preview">
+              <div class="preview-head"><span>LIVE PREVIEW</span><code>current theme</code></div>
+              <div class="preview-controls">
+                <st-button>Primary</st-button>
+                <st-button color="error">Error</st-button>
+                <st-button color="success">Success</st-button>
+                <st-input placeholder="Input"></st-input>
+              </div>
+              <div class="token-list">
+                <div class="token"><i :style.background="'var(--md-sys-color-primary)'"></i><code>--md-sys-color-primary</code><span>{{roleColors.primary}}</span></div>
+                <div class="token"><i :style.background="'var(--md-sys-color-error)'"></i><code>--md-sys-color-error</code><span>{{roleColors.error}}</span></div>
+                <div class="token"><i :style.background="'var(--md-sys-color-success)'"></i><code>--md-sys-color-success</code><span>{{roleColors.success}}</span></div>
+                <o-fill :value="customTokens" fill-key="name">
+                  <div class="token"><i :style.background="$data.hex"></i><code :text="$data.name"></code><span>{{$data.hex}}</span></div>
+                </o-fill>
+              </div>
+              <div class="custom-buttons">
+                <o-fill :value="customs" fill-key="name">
+                  <st-button variant="outlined" attr:color="$data.name">{{$data.name}}</st-button>
+                </o-fill>
+              </div>
+              <p class="preview-note">改动即时生效，并写入 localStorage；同域其他页面刷新后使用同一套配色。</p>
+            </aside>
+          </div>
+
+          <section class="swatch-library" aria-labelledby="swatch-title">
+            <header class="swatch-head">
+              <div>
+                <p class="kicker">TOKENS / LIGHT + DARK</p>
+                <h3 id="swatch-title">可用色块变量</h3>
+              </div>
+              <div class="swatch-head-side">
+                <st-button-group connected class="swatch-switch">
+                  <st-button attr:variant="swatchView === 'tokens' ? 'filled' : 'outlined'" on:click="setSwatchView('tokens')">变量模式</st-button>
+                  <st-button attr:variant="swatchView === 'tones' ? 'filled' : 'outlined'" on:click="setSwatchView('tones')">色块模式</st-button>
+                </st-button-group>
+                <p class="swatch-desc">
+                  左右两块分别用对应模式的 surface-container 铺底，同一套 token 在白天 / 黑夜下的
+                  真实背景与文字对比都按该模式呈现；点击变量名或色块均可复制。种子色、角色覆盖和自定义色改动会实时重算。
+                </p>
+              </div>
+            </header>
+            <p class="swatch-copy-status" role="status" aria-live="polite" :text="copyStatus"></p>
+
+            <o-if :value="swatchView === 'tokens'">
+              <div class="swatch-panels">
+                <section class="swatch-panel" id="swatch-light" aria-label="白天模式颜色变量" :style.background="lightPanel.surfaceContainer" :style.color="lightPanel.onSurface">
+                  <div class="swatch-panel-head">
+                    <span>白天 · LIGHT</span>
+                    <code>color-scheme: light</code>
+                  </div>
+                  <div class="color-groups">
+                    <o-fill :value="lightGroups" fill-key="key">
+                      <div class="color-group">
+                        <o-fill :value="$data.blocks" fill-key="token">
+                          <button class="color-block" type="button" attr:aria-label="'点击复制 ' + $data.token" :style.background="$data.hex" :style.color="$data.text" on:click="$host.copyToken($event)">
+                            <span class="block-label" :text="$data.label"></span>
+                            <code class="block-token" :text="$data.token"></code>
+                          </button>
+                        </o-fill>
+                      </div>
+                    </o-fill>
+                  </div>
+                  <div class="surface-groups" aria-label="Surface 与 Outline 变量">
+                    <o-fill :value="lightSurfaceRows" fill-key="key">
+                      <div class="surface-row">
+                        <o-fill :value="$data.blocks" fill-key="token">
+                          <button class="surface-block" type="button" attr:aria-label="'点击复制 ' + $data.token" :style.background="$data.hex" :style.color="$data.text" on:click="$host.copyToken($event)">
+                            <span class="block-label" :text="$data.label"></span>
+                            <code class="block-token" :text="$data.token"></code>
+                          </button>
+                        </o-fill>
+                      </div>
+                    </o-fill>
+                  </div>
+                </section>
+
+                <section class="swatch-panel" id="swatch-dark" aria-label="黑夜模式颜色变量" :style.background="darkPanel.surfaceContainer" :style.color="darkPanel.onSurface">
+                  <div class="swatch-panel-head">
+                    <span>黑夜 · DARK</span>
+                    <code>color-scheme: dark</code>
+                  </div>
+                  <div class="color-groups">
+                    <o-fill :value="darkGroups" fill-key="key">
+                      <div class="color-group">
+                        <o-fill :value="$data.blocks" fill-key="token">
+                          <button class="color-block" type="button" attr:aria-label="'点击复制 ' + $data.token" :style.background="$data.hex" :style.color="$data.text" on:click="$host.copyToken($event)">
+                            <span class="block-label" :text="$data.label"></span>
+                            <code class="block-token" :text="$data.token"></code>
+                          </button>
+                        </o-fill>
+                      </div>
+                    </o-fill>
+                  </div>
+                  <div class="surface-groups" aria-label="Surface 与 Outline 变量">
+                    <o-fill :value="darkSurfaceRows" fill-key="key">
+                      <div class="surface-row">
+                        <o-fill :value="$data.blocks" fill-key="token">
+                          <button class="surface-block" type="button" attr:aria-label="'点击复制 ' + $data.token" :style.background="$data.hex" :style.color="$data.text" on:click="$host.copyToken($event)">
+                            <span class="block-label" :text="$data.label"></span>
+                            <code class="block-token" :text="$data.token"></code>
+                          </button>
+                        </o-fill>
+                      </div>
+                    </o-fill>
+                  </div>
+                </section>
+              </div>
+            </o-if>
+
+            <o-if :value="swatchView === 'tones'">
+              <div class="tone-palettes" class:light-guide="toneGuideMode === 'light'" class:dark-guide="toneGuideMode === 'dark'">
+                <o-fill :value="tonePalettes" fill-key="key">
+                  <div class="tone-row">
+                    <div class="tone-name">
+                      <span class="tone-dot" :style.background="$data.dot"></span>
+                      <span :text="$data.label"></span>
+                    </div>
+                    <span class="tone-arrow" aria-hidden="true"><iconify-icon icon="mdi:arrow-right"></iconify-icon></span>
+                    <div class="tone-strip">
+                      <o-fill :value="$data.tones" fill-key="tone">
+                        <button class="tone-chip" type="button" attr:aria-label="'Tone ' + $data.tone + '，点击复制 ' + $data.varName" attr:title="'Tone ' + $data.tone + ' · ' + $data.hex + ' · 点击复制 ' + $data.varName" on:click="$host.copyToken($event)" :style.background="$data.hex" :style.color="$data.text">
+                          <span :text="$data.tone"></span>
+                          <code class="sr-only" aria-hidden="true" :text="$data.varName"></code>
+                        </button>
+                      </o-fill>
+                    </div>
+                  </div>
+                </o-fill>
+                <div class="tone-guides" aria-hidden="true">
+                  <div class="tone-guides-track">
+                      <span class="tone-guide" style="grid-column: 1"></span>
+                      <span class="tone-guide" style="grid-column: 2"></span>
+                      <span class="tone-guide" style="grid-column: 3"></span>
+                      <span class="tone-guide" style="grid-column: 4"></span>
+                      <span class="tone-guide" style="grid-column: 5"></span>
+                      <span class="tone-guide" style="grid-column: 6"></span>
+                      <span class="tone-guide" style="grid-column: 7"></span>
+                      <span class="tone-guide" style="grid-column: 8"></span>
+                      <span class="tone-guide" style="grid-column: 9"></span>
+                      <span class="tone-guide" style="grid-column: 10"></span>
+                      <span class="tone-guide" style="grid-column: 11"></span>
+                      <span class="tone-guide" style="grid-column: 12"></span>
+                      <span class="tone-guide" style="grid-column: 13"></span>
+                      <span class="tone-guide" style="grid-column: 14"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="tone-guides-bar">
+                <span class="tone-guides-title">标出变量位置</span>
+                <label class="tone-guides-option">
+                  <input type="radio" name="tone-guide-mode" value="light" attr:checked="toneGuideMode === 'light'" on:change="setToneGuides('light')" />
+                  白天
+                </label>
+                <label class="tone-guides-option">
+                  <input type="radio" name="tone-guide-mode" value="dark" attr:checked="toneGuideMode === 'dark'" on:change="setToneGuides('dark')" />
+                  黑夜
+                </label>
+                <span class="tone-guides-hint" :text="toneGuideHint"></span>
+              </div>
+            </o-if>
+          </section>
+        </section>
+
+      </main>
+
+      <script>
+        export const parent = "./layout.html";
+
+        export default async () => ({
+          data: {
+            skin: "m3",
+            seed: "#0061A4",
+            overrides: {},
+            customs: [],
+            contrast: 0,
+            contrastTone: "deep",
+            contrastPct: 0,
+            roleColors: {
+              primary: "#0061A4",
+              secondary: "#565E71",
+              tertiary: "#725572",
+              error: "#B3261E",
+              success: "#006E1C",
+            },
+            customTokens: [],
+            lightGroups: [],
+            darkGroups: [],
+            lightSurfaceRows: [],
+            darkSurfaceRows: [],
+            lightPanel: {},
+            darkPanel: {},
+            tonePalettes: [],
+            toneGuideMode: "light",
+            toneGuideHint: "浅色：色值 40 · on 100 · container 90 · on-container 10",
+            swatchView: "tokens",
+            copyStatus: "",
+            colorStatus: "",
+          },
+          ready() {
+            this.syncSkin();
+            this.initColorLab();
+            this.initPreviewPalettes();
+            this._observer = new MutationObserver(() => this.syncSkin());
+            this._observer.observe(document.documentElement, {
+              attributes: true,
+              attributeFilter: ["data-skin"],
+            });
+          },
+          detached() {
+            this._observer?.disconnect();
+            this._previewObserver?.disconnect();
+            if (this._previewMedia && this._onPreviewScheme) {
+              this._previewMedia.removeEventListener("change", this._onPreviewScheme);
+            }
+          },
+          proto: {
+            get skinLabel() {
+              return (
+                {
+                  m3: "Android · Material 3",
+                  apple: "Apple · 毛玻璃",
+                  windows: "Microsoft · Windows 11",
+                  shadcn: "shadcn · 扁平",
+                  cyberpunk: "Cyberpunk · 霓虹终端",
+                }[this.skin] || this.skin
+              );
+            },
+            syncSkin() {
+              this.skin =
+                document.documentElement.dataset.skin ||
+                localStorage.getItem("st-skin") ||
+                "m3";
+            },
+            async initPreviewPalettes() {
+              let tries = 0;
+              while (!window.__site?.previewThemes && tries++ < 300) {
+                await new Promise((resolve) => setTimeout(resolve, 20));
+              }
+              if (!window.__site?.previewThemes) return;
+              this.applyPreviewPalettes();
+              this._previewObserver = new MutationObserver(() => this.applyPreviewPalettes());
+              this._previewObserver.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ["class"],
+              });
+              this._previewMedia = window.matchMedia("(prefers-color-scheme: dark)");
+              this._onPreviewScheme = () => this.applyPreviewPalettes();
+              this._previewMedia.addEventListener("change", this._onPreviewScheme);
+            },
+            applyPreviewPalettes() {
+              const themes = window.__site?.previewThemes;
+              const root = this.ele?.shadowRoot;
+              if (!themes || !root) return;
+              const dark =
+                document.documentElement.classList.contains("st-dark") ||
+                (!document.documentElement.classList.contains("st-light") &&
+                  window.matchMedia("(prefers-color-scheme: dark)").matches);
+              for (const el of root.querySelectorAll(".skin-preview[data-skin]")) {
+                const theme = themes[el.dataset.skin];
+                if (!theme) continue;
+                const vars = dark ? theme.dark : theme.light;
+                for (const [name, value] of Object.entries(vars)) {
+                  el.style.setProperty(name, value);
+                }
+              }
+            },
+            async initColorLab() {
+              let tries = 0;
+              while (!window.__site?.applyTheme && tries++ < 300) {
+                await new Promise((resolve) => setTimeout(resolve, 20));
+              }
+              if (!window.__site?.applyTheme) {
+                this.colorStatus = "颜色模块加载失败，请刷新重试。";
+                return;
+              }
+              try {
+                const saved = JSON.parse(localStorage.getItem("st-color-config") || "null");
+                if (saved && /^#[0-9a-fA-F]{6}$/.test(saved.seed || "")) {
+                  this.seed = saved.seed.toLowerCase();
+                  this.overrides = saved.overrides || {};
+                  this.contrast = saved.contrast ?? 0;
+                  this.contrastTone = saved.contrastTone === "bright" ? "bright" : "deep";
+                  this.customs = Array.isArray(saved.customs)
+                    ? saved.customs.map((c) => ({
+                        name: String(c.name || ""),
+                        color: String(c.color || "#7FDBFF").toLowerCase(),
+                      }))
+                    : [];
+                }
+              } catch {}
+              this.applyColor(false);
+              if (!this.colorStatus) this.colorStatus = "已载入本域配色，修改会即时保存。";
+            },
+            applyColor(persist = true) {
+              const api = window.__site;
+              if (!api?.applyTheme) return;
+              const seed = String(this.seed || "").trim().toLowerCase();
+              if (!/^#[0-9a-f]{6}$/.test(seed)) {
+                this.colorStatus = "种子色格式应为 #RRGGBB";
+                return;
+              }
+              this.seed = seed;
+
+              const overrides = {};
+              for (const role of ["primary", "secondary", "tertiary", "error", "success"]) {
+                const value = String(this.overrides?.[role] || "").toLowerCase();
+                if (/^#[0-9a-f]{6}$/.test(value)) overrides[role] = value;
+              }
+              this.overrides = overrides;
+
+              const customs = this.customs.map((c) => ({
+                name: String(c.name || "").trim(),
+                color: String(c.color || "").toLowerCase(),
+              }));
+              const customsObj = Object.fromEntries(
+                customs
+                  .filter((c) => c.name && /^#[0-9a-f]{6}$/.test(c.color))
+                  .map((c) => [c.name, c.color])
+              );
+
+              const options = {
+                contrast: this.contrast,
+                contrastTone: this.contrastTone,
+              };
+              const generated = api.generateM3Theme(seed, overrides, options);
+              api.applyTheme(seed, overrides, customsObj, options);
+              this.syncContrastPct();
+              this.refreshToneGuides();
+              const auto = generated.light;
+              this.roleColors = {
+                primary: (overrides.primary || auto.primary).toLowerCase(),
+                secondary: (overrides.secondary || auto.secondary).toLowerCase(),
+                tertiary: (overrides.tertiary || auto.tertiary).toLowerCase(),
+                error: (overrides.error || auto.error).toLowerCase(),
+                success: (overrides.success || auto.success).toLowerCase(),
+              };
+              const expanded = api.expandCustoms(customsObj, options);
+              this.customTokens = Object.entries(expanded.light).map(
+                ([name, hex]) => ({ name, hex: String(hex).toLowerCase() })
+              );
+
+              const contrastColor = (hex) => {
+                const n = parseInt(hex.slice(1), 16);
+                const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+                return (r * 299 + g * 587 + b * 114) / 1000 > 128 ? "#000000" : "#ffffff";
+              };
+              const normalizeName = (name) => {
+                let key = String(name).trim().replace(/[A-Z]/g, (char) => "-" + char.toLowerCase());
+                if (!key.startsWith("--")) key = "--" + key.replace(/^-+/, "");
+                return key;
+              };
+              const makeGroups = (scheme, extra) => {
+                const groups = [
+                  ["primary", "Primary"],
+                  ["secondary", "Secondary"],
+                  ["tertiary", "Tertiary"],
+                  ["error", "Error"],
+                  ["success", "Success"],
+                ].map(([key, label]) => {
+                  const cap = key[0].toUpperCase() + key.slice(1);
+                  return {
+                    key,
+                    label,
+                    blocks: [
+                      {
+                        label,
+                        token: "--md-sys-color-" + key,
+                        hex: scheme[key],
+                        text: scheme["on" + cap],
+                      },
+                      {
+                        label: "On " + label,
+                        token: "--md-sys-color-on-" + key,
+                        hex: scheme["on" + cap],
+                        text: scheme[key],
+                      },
+                      {
+                        label: label + " Container",
+                        token: "--md-sys-color-" + key + "-container",
+                        hex: scheme[key + "Container"],
+                        text: scheme["on" + cap + "Container"],
+                      },
+                      {
+                        label: "On " + label + " Container",
+                        token: "--md-sys-color-on-" + key + "-container",
+                        hex: scheme["on" + cap + "Container"],
+                        text: scheme[key + "Container"],
+                      },
+                    ],
+                  };
+                });
+                for (const custom of customs) {
+                  const base = normalizeName(custom.name);
+                  if (!extra[base]) continue;
+                  const on = base.replace(/^--/, "--on-");
+                  const container = base + "-container";
+                  const onContainer = on + "-container";
+                  if (!extra[on] || !extra[container] || !extra[onContainer]) continue;
+                  const label = base.replace(/^--/, "");
+                  groups.push({
+                    key: "custom-" + label,
+                    label,
+                    blocks: [
+                      { label, token: base, hex: extra[base], text: extra[on] },
+                      { label: "On " + label, token: on, hex: extra[on], text: extra[base] },
+                      { label: label + " Container", token: container, hex: extra[container], text: extra[onContainer] },
+                      { label: "On " + label + " Container", token: onContainer, hex: extra[onContainer], text: extra[container] },
+                    ],
+                  });
+                }
+                return groups;
+              };
+              this.lightGroups = makeGroups(generated.light, expanded.light);
+              this.darkGroups = makeGroups(generated.dark, expanded.dark);
+
+              const makeSurfaceRows = (scheme) => {
+                const block = (key, label) => ({
+                  token: "--md-sys-color-" + key.replace(/[A-Z]/g, (char) => "-" + char.toLowerCase()),
+                  label,
+                  hex: scheme[key],
+                  text: contrastColor(scheme[key]),
+                });
+                return [
+                  {
+                    key: "base",
+                    blocks: [
+                      block("surface", "Surface"),
+                      block("surfaceVariant", "Surface Variant"),
+                    ],
+                  },
+                  {
+                    key: "containers",
+                    blocks: [
+                      block("surfaceContainerLowest", "Surface Container Lowest"),
+                      block("surfaceContainerLow", "Surface Container Low"),
+                      block("surfaceContainer", "Surface Container"),
+                      block("surfaceContainerHigh", "Surface Container High"),
+                      block("surfaceContainerHighest", "Surface Container Highest"),
+                    ],
+                  },
+                  {
+                    key: "content",
+                    blocks: [
+                      block("onSurface", "On Surface"),
+                      block("onSurfaceVariant", "On Surface Variant"),
+                      block("outline", "Outline"),
+                      block("outlineVariant", "Outline Variant"),
+                    ],
+                  },
+                ];
+              };
+              this.lightSurfaceRows = makeSurfaceRows(generated.light);
+              this.darkSurfaceRows = makeSurfaceRows(generated.dark);
+
+              const rolePalettes = api
+                .generateTonalPalettes({
+                  primary: this.roleColors.primary,
+                  secondary: this.roleColors.secondary,
+                  tertiary: this.roleColors.tertiary,
+                  error: this.roleColors.error,
+                  success: this.roleColors.success,
+                })
+                .map((palette) => ({
+                  key: palette.key,
+                  label: palette.label,
+                  varName: "--md-sys-color-" + palette.key,
+                  dot: palette.color,
+                  tones: palette.tones,
+                }));
+              const customPalettes = api.generateTonalPalettes(customsObj).map((palette) => ({
+                key: palette.key,
+                label: palette.label,
+                varName: "--" + palette.key,
+                dot: palette.color,
+                tones: palette.tones,
+              }));
+              this.tonePalettes = [...rolePalettes, ...customPalettes].map((palette) => ({
+                ...palette,
+                tones: palette.tones.map((tone) => ({
+                  ...tone,
+                  varName: palette.varName,
+                  text: contrastColor(tone.hex),
+                })),
+              }));
+
+              // 两块面板各自铺该模式的 surface / 文字色；色块自身仍用内联配对色。
+              this.lightPanel = {
+                surfaceContainer: generated.light.surfaceContainer,
+                onSurface: generated.light.onSurface,
+              };
+              this.darkPanel = {
+                surfaceContainer: generated.dark.surfaceContainer,
+                onSurface: generated.dark.onSurface,
+              };
+
+              if (persist) {
+                localStorage.setItem(
+                  "st-color-config",
+                  JSON.stringify({
+                    seed,
+                    overrides,
+                    customs,
+                    contrast: this.contrast,
+                    contrastTone: this.contrastTone,
+                  })
+                );
+                localStorage.setItem(
+                  "st-theme-css",
+                  api.themeToCss(seed, overrides, customsObj, options)
+                );
+                this.colorStatus = "已应用，并保存到本域配色。";
+              }
+            },
+            setSwatchView(view) {
+              this.swatchView = view;
+            },
+            setToneGuides(mode) {
+              this.toneGuideMode = mode === "dark" ? "dark" : "light";
+              this.refreshToneGuides();
+            },
+            refreshToneGuides() {
+              const dark = this.toneGuideMode === "dark";
+              const definitions = dark
+                ? [
+                    { label: "色值", tone: 80 },
+                    { label: "on", tone: 20 },
+                    { label: "container", tone: 30 },
+                    { label: "on-container", tone: 90 },
+                  ]
+                : [
+                    { label: "色值", tone: 40 },
+                    { label: "on", tone: 100 },
+                    { label: "container", tone: 90 },
+                    { label: "on-container", tone: 10 },
+                  ];
+              this.toneGuideMode = dark ? "dark" : "light";
+              this.toneGuideHint =
+                (dark ? "深色" : "浅色") +
+                "：" +
+                definitions.map((item) => item.label + " " + item.tone).join(" · ") +
+                (this.contrastPct > 0 ? "（对比度开启：实际 token 的 tone 已偏移，标记仅表示标准 M3 位置）" : "");
+            },
+            async copyToken(event) {
+              const button = event.currentTarget;
+              const token = button?.querySelector("code")?.textContent.trim();
+              if (!token) return;
+
+              let copied = false;
+              try {
+                await navigator.clipboard.writeText(token);
+                copied = true;
+              } catch {}
+              if (!copied) {
+                // 非安全上下文 / 剪贴板权限被拒时的兜底
+                const area = document.createElement("textarea");
+                area.value = token;
+                area.setAttribute("readonly", "");
+                area.style.position = "fixed";
+                area.style.top = "-1000px";
+                document.body.appendChild(area);
+                area.select();
+                try {
+                  copied = document.execCommand("copy");
+                } finally {
+                  area.remove();
+                }
+              }
+
+              if (!copied) {
+                this.copyStatus = "复制失败，请手动选择变量名";
+                return;
+              }
+              this.copyStatus = "已复制 " + token;
+              button.classList.add("copied");
+              const mark = button.querySelector(".copy-mark");
+              if (mark) mark.innerHTML = '<iconify-icon icon="mdi:check"></iconify-icon>';
+              clearTimeout(button._copyTimer);
+              button._copyTimer = setTimeout(() => {
+                button.classList.remove("copied");
+                if (mark) mark.textContent = "⧉";
+              }, 1200);
+            },
+            syncContrastPct() {
+              const raw = this.contrast;
+              const fallback =
+                raw && typeof raw === "object" ? Number(raw.default) || 0 : Number(raw) || 0;
+              this.contrastPct = Math.round(Math.min(1, Math.max(-1, fallback)) * 100);
+            },
+            setContrast(value) {
+              const pct = Math.min(100, Math.max(-100, Number(value) || 0));
+              this.contrast = pct / 100;
+              this.contrastPct = pct;
+              this.applyColor();
+            },
+            setSeed(value) {
+              const next = String(value || "").trim().toLowerCase();
+              if (!/^#[0-9a-f]{6}$/.test(next)) {
+                this.colorStatus = "种子色格式应为 #RRGGBB";
+                return;
+              }
+              this.seed = next;
+              this.applyColor();
+            },
+            setRole(role, color) {
+              const next = String(color || "").toLowerCase();
+              if (!/^#[0-9a-f]{6}$/.test(next)) return;
+              this.overrides = { ...this.overrides, [role]: next };
+              this.applyColor();
+            },
+            resetRole(role) {
+              const next = { ...this.overrides };
+              delete next[role];
+              this.overrides = next;
+              this.applyColor();
+            },
+            addCustom() {
+              let index = 1;
+              let name = "brand";
+              while (this.customs.some((c) => c.name === name)) {
+                index += 1;
+                name = "brand-" + index;
+              }
+              this.customs = [...this.customs, { name, color: "#ff7a59" }];
+              this.applyColor();
+            },
+            setCustomName(index, name) {
+              let next = String(name || "")
+                .trim()
+                .replace(/[A-Z]/g, (c) => "-" + c.toLowerCase())
+                .replace(/[^a-z0-9-]/g, "-")
+                .replace(/-+/g, "-")
+                .replace(/^-|-$/g, "");
+              if (!next) next = "custom";
+              const base = next;
+              let n = 2;
+              while (this.customs.some((c, i) => i !== index && c.name === next)) {
+                next = base + "-" + n++;
+              }
+              this.customs = this.customs.map((c, i) =>
+                i === index ? { ...c, name: next } : c
+              );
+              this.applyColor();
+            },
+            setCustomColor(index, color) {
+              const next = String(color || "").toLowerCase();
+              if (!/^#[0-9a-f]{6}$/.test(next)) return;
+              this.customs = this.customs.map((c, i) =>
+                i === index ? { ...c, color: next } : c
+              );
+              this.applyColor();
+            },
+            removeCustom(index) {
+              this.customs = this.customs.filter((_, i) => i !== index);
+              this.applyColor();
+            },
+            resetAll() {
+              this.seed = "#0061A4";
+              this.overrides = {};
+              this.customs = [];
+              this.contrast = 0;
+              this.contrastTone = "deep";
+              this.contrastPct = 0;
+              this.applyColor(false);
+              localStorage.removeItem("st-color-config");
+              const api = window.__site;
+              if (api?.themeToCss) {
+                localStorage.setItem("st-theme-css", api.themeToCss("#0061A4", {}, {}, { contrast: 0 }));
+              }
+              this.colorStatus = "已恢复默认 M3 配色。";
+            },
+            use(id) {
+              const theme = window.__siteTheme;
+              if (theme?.applyThemePreset) {
+                const result = theme.applyThemePreset(id);
+                this.skin = result.skin;
+                this.seed = result.config.seed;
+                this.overrides = result.config.overrides;
+                this.customs = result.config.customs;
+                this.contrast = result.config.contrast ?? 0;
+                this.contrastTone = result.config.contrastTone === "bright" ? "bright" : "deep";
+                this.applyColor(false);
+                this.colorStatus = "已切换到 " + this.skinLabel + " 主题。";
+                return;
+              }
+              if (window.__site) window.__site.setSkin(id);
+              else {
+                try {
+                  localStorage.setItem("st-skin", id);
+                } catch {}
+                document.documentElement.dataset.skin = id;
+              }
+              this.skin = id;
+            },
+            useCyberpunk() {
+              // Cyberpunk 的官方配色（荧光绿，深浅模式跟随全局）由主题预设统一提供；
+              // 皮肤 CSS 本身仍然不写任何颜色。
+              this.use("cyberpunk");
+            },
+          },
+        });
+      </script>
+
+    </template>
+  </o-app>
+
+</body>
+</html>

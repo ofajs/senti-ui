@@ -39,3 +39,5 @@ $("st-collapse").attr("hide", null);  // 展开
 - 不要给 collapse 内内容的 margin 依赖外层高度（内容用 absolute 量高，顶部留 0.1px 防 margin 折叠）
 - 配合 st-list-item 的 sublist 使用时无需手动管理
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/collapse/`）。
+
+- 收起时宿主自动 `inert` + `aria-hidden="true"`，内容不会留在 Tab 顺序/无障碍树

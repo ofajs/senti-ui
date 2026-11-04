@@ -1,0 +1,194 @@
+/**
+ * cyberpunk.css — Cyberpunk（霓虹终端 / 夜城）皮肤
+ *
+ * 只改材质：零圆角、等宽字、细描边、霓虹外发光、方形开关/滑块拇指、
+ * 快速动效与 CRT 扫描线高光；颜色仍然全部来自 M3 角色变量
+ * （--md-sys-color-*），所以种子色、error、success、深浅色主题继续生效。
+ *
+ * 赛博朋克的“霓虹”来自配色，不来自皮肤：换成荧光绿/洋红等种子色并配深色主题，
+ * 这套材质才会发光；默认蓝色种子色下它是冷峻的终端风。
+ *
+ * 重要：皮肤文件只声明 token，不写 st-* 宿主选择器。组件经常位于
+ * o-page / o-app 的 shadow 内，文档树选择器跨不进去；而 CSS 变量可以
+ * 正常继承穿透 shadow，因此 token 是唯一可靠的换肤通道。
+ *
+ * 使用：<html data-skin="cyberpunk"> + 引入本文件（或 setSkin("cyberpunk")）。
+ */
+[data-skin="cyberpunk"] {
+  /* 尺寸：34px 高，13px 等宽字，零圆角 */
+  --st-height: 2.615em;
+  --st-font-size: 13px;
+  --st-font: ui-monospace, "SFMono-Regular", "Cascadia Code", "Roboto Mono", Menlo,
+    Consolas, monospace;
+  --st-letter-spacing: 0.04em;
+  --st-control-radius: 0;
+  --st-field-radius: 0;
+  --st-split-min-width: 9em;
+  --st-split-padding: 0 1.286em;
+  --st-control-padding: 0 1.154em;
+  --st-textarea-padding: .692em .846em;
+  --st-field-padding: 0 .846em;
+  --st-border-width: 1px;
+
+  /* 通用形状：全部直角 */
+  --st-radius-xs: 0;
+  --st-radius-sm: 0;
+  --st-radius-md: 0;
+  --st-radius-lg: 0;
+  --st-radius-xl: 0;
+  --st-radius-pill: 0;
+
+  /* 表面：深/浅底 + 霓虹描边；描边颜色由 primary 混合 outline，跟随种子色 */
+  --st-outlined-bg: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 82%, transparent);
+  --st-outlined-border: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 58%,
+    var(--md-sys-color-outline)
+  );
+  --st-field-bg: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 76%, transparent);
+  --st-field-filled-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 90%, transparent);
+  --st-field-border: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 42%,
+    var(--md-sys-color-outline)
+  );
+  --st-field-underline: var(--md-sys-color-primary);
+  --st-fill-alpha: 100%;
+
+  /* 霓虹发光：阴影颜色消费 M3 角色，所以 color="error" / 换种子色都会跟着变 */
+  --st-shadow: 0 0 0 1px color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent),
+    0 0 18px -6px color-mix(in srgb, var(--md-sys-color-primary) 70%, transparent);
+  --st-field-shadow: 0 0 0 1px color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent);
+  --st-shadow-1: 0 0 0 1px color-mix(in srgb, var(--md-sys-color-primary) 26%, transparent),
+    0 0 22px -10px color-mix(in srgb, var(--md-sys-color-primary) 60%, transparent);
+  --st-shadow-2: 0 0 0 1px color-mix(in srgb, var(--md-sys-color-primary) 34%, transparent),
+    0 0 28px -10px color-mix(in srgb, var(--md-sys-color-primary) 70%, transparent);
+  --st-shadow-3: 0 0 0 1px color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent),
+    0 0 30px -12px color-mix(in srgb, var(--md-sys-color-primary) 65%, transparent);
+  --st-shadow-4: 0 0 0 1px color-mix(in srgb, var(--md-sys-color-primary) 38%, transparent),
+    0 0 48px -14px color-mix(in srgb, var(--md-sys-color-primary) 75%, transparent);
+  --st-shadow-overlay: 0 0 0 1px color-mix(in srgb, var(--md-sys-color-primary) 28%, transparent),
+    0 0 26px -10px color-mix(in srgb, var(--md-sys-color-primary) 60%, transparent);
+  --st-shadow-thumb: 0 0 0 1px color-mix(in srgb, var(--md-sys-color-primary) 55%, transparent);
+  --st-backdrop-filter: none;
+  /* CRT 扫描线：只作用在 filled / outlined 控件的表面 */
+  --st-sheen: repeating-linear-gradient(
+    0deg,
+    color-mix(in srgb, var(--md-sys-color-on-primary) 7%, transparent) 0 1px,
+    transparent 1px 4px
+  );
+
+  /* 焦点：1px 外扩霓虹环 + 5px 外发光 */
+  --st-focus-ring-width: 1px;
+  --st-focus-ring-offset: 3px;
+  --st-focus-ring-color: var(--md-sys-color-primary);
+  --st-focus-ring-style: solid;
+  --st-field-focus-color: var(--md-sys-color-primary);
+  --st-field-focus-shadow: 0 0 0 1px var(--md-sys-color-primary);
+  --st-field-focus-gap: 0px;
+  --st-field-focus-glow-spread: 5px;
+  --st-field-focus-glow-alpha: 38%;
+  --st-field-focus-ring-opacity: 0;
+  --st-field-underline-color: var(--md-sys-color-primary);
+
+  /* 浮层：直角 + 霓虹描边 */
+  --st-badge-radius: 0;
+  --st-badge-font-size: .769em;
+  --st-badge-shadow: var(--st-shadow-1);
+  --st-dialog-radius: 0;
+  --st-card-radius: 0;
+  --st-nav-gap: .154em;
+  --st-nav-gap-vertical: .077em;
+  --st-nav-padding-vertical: .154em;
+  --st-nav-item-padding: .692em .846em;
+  --st-tooltip-fg: var(--md-sys-color-inverse-on-surface);
+  --st-tab-height: 3.154em;
+  --st-tab-layer-radius: 0;
+  --st-tabs-indicator-height: .154em;
+  --st-tabs-indicator-radius: 0;
+  --st-tabs-border: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 30%,
+    var(--md-sys-color-outline-variant)
+  );
+  --st-nav-pill-radius: 0;
+  --st-nav-bar-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 92%, transparent);
+  --st-nav-bar-backdrop-filter: none;
+  --st-progress-size: 2.615em;
+  --st-progress-thickness: .231em;
+  --st-progress-radius: 0;
+  --st-progress-duration: .18s;
+  --st-slider-track-radius: 0;
+  --st-slider-thumb-radius: 0;
+  --st-slider-tip-radius: 0;
+  --st-slider-thumb-shadow: var(--st-shadow-thumb);
+  --st-checkbox-radius: 0;
+  --st-checkbox-border-width: 1px;
+  --st-switch-radius: 0;
+  --st-switch-border-width: 1px;
+  --st-radio-radius: 0;
+  --st-radio-border-width: 1px;
+  --st-icon-radius: 0;
+  --st-menu-radius: 0;
+  --st-menu-item-radius: 0;
+  --st-select-popup-radius: 0;
+  --st-select-option-radius: 0;
+  --st-list-gap: 0;
+  --st-list-item-radius: 0;
+  --st-list-item-radius-outer: 0;
+  --st-list-item-height: 2.769em;
+  --st-list-item-padding: .462em .769em;
+  --st-dialog-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 96%, transparent);
+  --st-dialog-border: color-mix(in srgb, var(--md-sys-color-primary) 55%, transparent);
+  --st-dialog-backdrop-filter: none;
+  --st-dialog-scrim: rgb(0 0 0 / 0.72);
+  --st-dialog-scrim-filter: blur(2px);
+  --st-dialog-enter-duration: 160ms;
+  --st-dialog-exit-duration: 120ms;
+  --st-dialog-scrim-duration: 140ms;
+  --st-menu-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 96%, transparent);
+  --st-menu-border: color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
+  --st-menu-backdrop-filter: none;
+  --st-card-bg: color-mix(in srgb, var(--md-sys-color-surface-container-low) 92%, transparent);
+  --st-card-filled-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 92%, transparent);
+  --st-card-outlined-bg: color-mix(in srgb, var(--md-sys-color-surface) 86%, transparent);
+  --st-card-border: color-mix(in srgb, var(--md-sys-color-primary) 38%, transparent);
+  --st-card-outline: color-mix(in srgb, var(--md-sys-color-primary) 48%, transparent);
+  --st-card-backdrop-filter: none;
+  --st-select-popup-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 96%, transparent);
+  --st-select-popup-border: color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
+  --st-select-popup-backdrop-filter: none;
+  --st-snackbar-radius: 0;
+  --st-snackbar-shadow: var(--st-shadow-1);
+  --st-snackbar-surface: color-mix(in srgb, var(--md-sys-color-secondary) 92%, transparent);
+  --st-snackbar-on-surface: var(--md-sys-color-on-secondary);
+  --st-snackbar-backdrop-filter: none;
+  --st-tooltip-radius: 0;
+  --st-tooltip-shadow: var(--st-shadow-1);
+  --st-tooltip-bg: var(--md-sys-color-inverse-surface);
+  --st-tooltip-backdrop-filter: none;
+
+  /* 密度 */
+  --st-dialog-padding: 1.231em;
+  --st-dialog-gap: .923em;
+  --st-card-padding: .923em;
+  --st-menu-padding: .231em;
+  --st-menu-item-padding: .615em .692em;
+  --st-snackbar-padding: .462em .846em;
+  --st-tooltip-padding: .308em .615em;
+
+  /* 状态与动效：反馈更快、state layer 更亮 */
+  --st-state-hover: 0.1;
+  --st-state-press: 0.18;
+  --st-disabled-opacity: 0.3;
+  --st-ripple-opacity: 0.32;
+  --st-motion-duration: 100ms;
+  --st-motion-duration-fast: 80ms;
+  --st-motion-duration-base: 140ms;
+  --st-motion-duration-slow: 180ms;
+  --st-motion-easing: cubic-bezier(0.2, 0.9, 0.2, 1);
+  --st-overlay-enter-duration: 120ms;
+  --st-overlay-exit-duration: 90ms;
+  --st-tooltip-duration: 80ms;
+  --st-ripple-duration: 240ms;
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-skin="m3">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>st-skin Demo — 皮肤切换</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script src="../boot/st-boot.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+    }
+  </style>
+</head>
+<body>
+  <l-m src="../button/button.html"></l-m>
+  <l-m src="../button/icon-button.html"></l-m>
+  <l-m src="../input/input.html"></l-m>
+  <l-m src="../textarea/textarea.html"></l-m>
+  <l-m src="../select/select.html"></l-m>
+  <l-m src="../card/card.html"></l-m>
+  <l-m src="../dialog/dialog.html"></l-m>
+  <l-m src="../menu/menu.html"></l-m>
+  <l-m src="../list/list.html"></l-m>
+  <l-m src="../checkbox/checkbox.html"></l-m>
+  <l-m src="../radio/radio.html"></l-m>
+  <l-m src="../switch/switch.html"></l-m>
+  <l-m src="../slider/slider.html"></l-m>
+  <l-m src="../progress/progress.html"></l-m>
+  <l-m src="../tabs/tab-bar.html"></l-m>
+  <l-m src="../navigation/nav-bar.html"></l-m>
+  <l-m src="../tooltip/tooltip.html"></l-m>
+  <l-m src="../snackbar/snackbar.html"></l-m>
+  <l-m src="../badges/badges.html"></l-m>
+  <o-page src="./page.html"></o-page>
+
+  <!-- 页面模块内不能相对 import（ofa 页面模块经 eval 执行），
+       在入口脚本里预加载并挂到 window，page.html 轮询就绪后使用 -->
+  <script type="module">
+    import { setSkin, getSkin, registerSkin } from "./st-skin.js";
+    window.__stSkin = { setSkin, getSkin, registerSkin };
+    window.__stSkinReady = true;
+  </script>
+</body>
+</html>

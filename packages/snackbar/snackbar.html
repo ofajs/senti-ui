@@ -16,19 +16,21 @@
       max-width: 34.286em; /* 480px */
       /* 高度完全由内容决定；上下边距按内容分档（:has 感知插槽）：
          无按钮 8px 舒适；有按钮 4px（40px 按钮撑出 M3 的 48dp，按钮不再额外撑高） */
-      padding: 0.571em 1em;
-      border-radius: 0.286em; /* 4px */
-      font-size: 14px;
-      font-family: inherit;
+      padding: var(--st-snackbar-padding, 0.571em 1em);
+      border-radius: var(--st-snackbar-radius, 0.286em);
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
       line-height: 1.4;
-      background: var(--md-sys-color-secondary);
-      color: var(--md-sys-color-on-secondary);
-      box-shadow: 0 0.143em 0.571em rgba(0, 0, 0, 0.2);
+      background: var(--st-snackbar-bg, var(--st-snackbar-surface, var(--md-sys-color-secondary)));
+      color: var(--st-snackbar-fg, var(--st-snackbar-on-surface, var(--md-sys-color-on-secondary)));
+      box-shadow: var(--st-snackbar-shadow, 0 0.143em 0.571em rgba(0, 0, 0, 0.2));
+      backdrop-filter: var(--st-snackbar-backdrop-filter, none);
+      -webkit-backdrop-filter: var(--st-snackbar-backdrop-filter, none);
     }
     /* 有操作按钮时上下边距收紧到 4px（has-action 由 slotchange 探测挂载——
        :host(:has()) 嵌套函数选择器在 ofa 样式作用域下不生效，坑 #20 同类） */
     :host([has-action]) {
-      padding-block: 0.286em;
+      padding-block: var(--st-snackbar-padding-block, 0.286em);
     }
 
 
@@ -76,6 +78,13 @@
       attached() {},
       ready() {
         const ele = this.ele;
+        // 短暂消息需要 live region，否则 screen reader 不会播报。
+        // 延后写宿主属性，避免命令式 createElement 的构造期限制
+        queueMicrotask(() => {
+          ele.setAttribute("role", "status");
+          ele.setAttribute("aria-live", "polite");
+          ele.setAttribute("aria-atomic", "true");
+        });
         // proto 方法挂在 ofa 实例上，原生元素不可见（坑 #24），桥接 hide 到宿主 property
         ele.hide = () => this.hide();
         // action 插槽有无内容 → has-action 属性 → 动态分档上下边距
@@ -93,16 +102,21 @@
       proto: {
         // color 接受 M3 角色名或 color 模块自定义变量名（如 color="error" → error 底 + on-error 字），
         // 未设置时用默认主题次级色（secondary / on-secondary）
+        // 只写自己的变量，不碰宿主 style（否则会清掉使用者的内联背景，坑 #46）
         applyColor() {
           const s = this.ele.style;
+          s.removeProperty("--st-snackbar-bg");
+          s.removeProperty("--st-snackbar-fg");
           const name = this.color;
-          if (!name) {
-            s.background = "";
-            s.color = "";
-            return;
-          }
-          s.background = `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-secondary)))`;
-          s.color = `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-secondary)))`;
+          if (!name) return;
+          s.setProperty(
+            "--st-snackbar-bg",
+            `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-secondary)))`
+          );
+          s.setProperty(
+            "--st-snackbar-fg",
+            `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-secondary)))`
+          );
         },
         // 关闭（自动或 JS 调用）并派发 close 事件；显隐即时切换（组件不自带动画）
         hide() {

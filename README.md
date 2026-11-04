@@ -25,6 +25,7 @@ Traditional component libraries offer lots of "convenience presets" for humans (
 - **Appearance is customized with plain native CSS properties** — component visuals live entirely on `:host`, so `<st-button style="height:32px; border-radius:8px">` just works
 - **Size defaults use em units** — change `font-size` to scale the whole component proportionally
 - **Colors are never hard-coded** — always consume `--md-sys-color-*` M3 role variables, adapting to light/dark themes automatically
+- **Material is swappable, color is not** — skins change shape/material (radius, density, borders, blur, motion) while all M3 roles stay intact; components never change their tags or attributes
 - **The `color` attribute is a semantic reference**: its value is an M3 role name or a custom variable name defined in the color tool (e.g. `color="brand"` consumes `--brand/--on-brand`), enabling one-click re-theming via the color tool
 - **Documentation written for AI**: self-contained, structured, facts only
 
@@ -104,12 +105,35 @@ Full docs (attribute tables, slots, events, default value lists) live in each pa
 
 ## Theming
 
-The [M3 color generator](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) generates a full light/dark M3 system (`--md-sys-color-*`) from a seed color, with overrides for the core four roles + the extended `success` role, plus custom variables (auto-expanded into paired tokens like `--brand` / `--on-brand`). The configuration is stored in localStorage — once set in the tool, every page on the same origin that includes `st-color-init.js` follows automatically (one-click re-theming).
+The [M3 color generator](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) generates a full light/dark M3 system (`--md-sys-color-*`) from a seed color, with overrides for the core four roles + the extended `success` role, custom variables (auto-expanded into paired tokens like `--brand` / `--on-brand`), and a **contrast adjustment** (-1 to 1, globally or per role; positive for neon/game themes, negative for soft/cute themes). The configuration is stored in localStorage — once set in the tool, every page on the same origin that includes `st-color-init.js` follows automatically (one-click re-theming).
 
 For manual control:
 
 ```html
 <script type="module" src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/st-color-init.js"></script>
+```
+
+## Skins (material layer)
+
+The same components can switch **material** without changing colors: `m3` (default), `apple` (glassmorphism), `windows` (Windows 11 / Fluent: Mica + Acrylic), `shadcn` (flat, hairline borders), `cyberpunk` (zero radius, monospace, neon edges and glow). Skins only affect radius, density, borders, shadows, backdrop blur, focus rings, motion and ripple — every skin consumes the same M3 role variables, so seed color, `error`, `success` and light/dark mode keep working.
+
+```html
+<html data-skin="apple">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/apple.css">
+<st-button color="error">Delete</st-button>
+```
+
+Switch at runtime with `setSkin("windows")` from `packages/skin/st-skin.js` (persists and syncs across same-origin windows). All interactive and surface components consume the skin tokens; the full token / `part` contract and how to author a custom skin are in [packages/skin/README.md](./packages/skin/README.md).
+
+The website adds a **theme preset** layer on top (only in `site/theme-presets.js`, not part of the package API): each material ships with an official palette (M3 blue / Apple iOS blue / Windows blue / shadcn zinc / Cyberpunk neon lime) and, for Cyberpunk, a full contrast boost with `contrastTone: "bright"`, applied together on switch and remembered per material (colors only; light/dark mode is a global setting, except that entering the dark-first Cyberpunk theme switches to dark and keeps dark afterwards). `setSkin()` itself still changes material only.
+
+## Website
+
+A single-page showcase lives in [`site/`](./site/index.html), built with **SCSR** (ofa.js v5 real-path documents): every component on one page, live skin + light/dark switching, four side-by-side material previews, and a dedicated skin page at [`site/skins.html`](./site/skins.html). Each URL is a real HTML document; scsr turns it into an o-app page after load. Component docs live under [`site/docs/`](./site/docs/index.html) — one real SCSR page per component, with 4–7 scenario-based live demos, attribute tables and slots/events. The docs sidebar lives in a second-level SCSR layout, so it survives component-to-component navigation.
+
+```bash
+npm run dev
+# http://localhost:8642/site/
 ```
 
 ## AI Usage
@@ -158,7 +182,7 @@ npm test       # Playwright e2e tests (run `npx playwright install chromium` fir
 ```
 
 - Read [AGENTS.md](./AGENTS.md) (development rules) and [CONTEXT.md](./CONTEXT.md) (project overview + component index + known ofa.js pitfalls) before adding or modifying components
-- Component docs site: `docs/` directory, at `http://localhost:8642/docs/`
+- Component docs site: `site/docs/` (nested SCSR layout), at `http://localhost:8642/site/docs/`
 
 ## License
 

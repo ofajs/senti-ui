@@ -15,16 +15,21 @@
       position: relative; /* 聚焦描边/底线浮层与下拉弹层的定位基准 */
       gap: 0.571em;
       box-sizing: border-box;
-      height: 2.857em;
+      height: var(--st-height, 2.857em);
       min-width: 13.571em; /* M3 最小填充宽度 = 190px @ 14px */
-      padding: 0 1em;
-      border: 1px solid var(--md-sys-color-outline);
-      border-radius: 0.5em;
-      font-size: 14px;
-      font-family: inherit;
+      padding: var(--st-field-padding, 0 1em);
+      border: var(--st-border-width, 1px) solid
+        var(--st-field-border, var(--md-sys-color-outline));
+      border-radius: var(--st-field-radius, 0.5em);
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
+      letter-spacing: var(--st-letter-spacing, normal);
       line-height: 1;
       color: var(--md-sys-color-on-surface);
-      background-color: transparent;
+      background-color: var(--st-field-bg, transparent);
+      box-shadow: var(--st-field-shadow, none);
+      -webkit-backdrop-filter: var(--st-backdrop-filter, none);
+      backdrop-filter: var(--st-backdrop-filter, none);
       cursor: pointer;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
@@ -32,23 +37,48 @@
 
     /* M3 filled 变体：无全边框，仅底边分隔线，容器底色 */
     :host([variant="filled"]) {
-      background-color: var(--md-sys-color-surface-container-highest);
+      background-color: var(--st-field-filled-bg, var(--md-sys-color-surface-container-highest));
       border-color: transparent;
-      border-bottom-color: var(--md-sys-color-on-surface-variant);
-      border-radius: 0.5em 0.5em 0 0;
+      border-bottom-color: var(--st-field-underline, var(--md-sys-color-on-surface-variant));
+      border-radius: var(--st-field-radius, 0.5em) var(--st-field-radius, 0.5em) 0 0;
     }
 
     /* focus 描边/底线：绝对定位浮层，不挤占布局，由 CSS 过渡呈现动画 */
     .outline-ring {
       position: absolute;
       inset: -1px; /* 盖在 1px 边框外侧，视觉 = 边框加粗到 2px */
-      border: 2px solid var(--md-sys-color-primary);
+      border: 2px solid
+        var(--st-field-focus-ring-color, var(--st-accent, var(--md-sys-color-primary)));
       border-radius: inherit;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 150ms ease;
+      transition: opacity var(--st-motion-duration, 150ms) ease;
     }
-    :host(:focus-within) .outline-ring { opacity: 1; }
+    :host(:focus-within) .outline-ring {
+      opacity: var(--st-field-focus-ring-opacity, 1);
+    }
+    /* 皮肤焦点材质：用 --st-accent 在组件内组合颜色，避免皮肤 token 在祖先处
+       提前解析 var(--st-accent) 而丢失 color 属性的语义色（坑 #59）。
+       默认所有增量均为 0，保持 M3 原有内嵌描边。 */
+    :host(:focus-within) {
+      box-shadow:
+        0 0 0 var(--st-field-focus-gap, 0px) var(--st-field-focus-gap-color, transparent),
+        0 0 0 calc(var(--st-field-focus-gap, 0px) + var(--st-field-focus-glow-spread, 0px))
+          color-mix(
+            in srgb,
+            var(--st-accent, var(--st-field-focus-color, var(--md-sys-color-primary)))
+              var(--st-field-focus-glow-alpha, 0%),
+            transparent
+          ),
+        inset 0 calc(-1 * var(--st-field-focus-underline-height, 0px)) 0 0
+          color-mix(
+            in srgb,
+            var(--st-accent, var(--st-field-focus-color, var(--md-sys-color-primary)))
+              var(--st-field-focus-underline-alpha, 100%),
+            transparent
+          ),
+        var(--st-field-focus-shadow, 0 0 0 0 transparent);
+    }
     :host([variant="filled"]) .outline-ring { display: none; }
 
     .line-clip {
@@ -66,13 +96,16 @@
       bottom: 0;
       height: 2px;
       width: 0;
-      background-color: var(--md-sys-color-primary);
-      transition: width 200ms cubic-bezier(0.2, 0, 0, 1);
+      background-color: var(
+        --st-field-underline-color,
+        var(--st-accent, var(--md-sys-color-primary))
+      );
+      transition: width var(--st-motion-duration-base, 200ms) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
     :host(:focus-within) .bottom-line { width: 100%; }
 
     :host([disabled]) {
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
       cursor: not-allowed;
     }
     :host([disabled]) .outline-ring,
@@ -87,7 +120,43 @@
       white-space: nowrap;
       text-align: start;
     }
+    /* 闭合态可带选项里的图标：图标不伸缩，文本负责省略 */
+    .label.has-icon { display: inline-flex; align-items: center; gap: 0.5em; }
+    .label.has-icon .label-text {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .label.has-icon > svg,
+    .label.has-icon > img,
+    .label.has-icon > [slot="icon"],
+    .label.has-icon > iconify-icon { flex: none; }
     .label.placeholder { color: var(--md-sys-color-on-surface-variant); }
+
+    /* 真正的 combobox：把焦点与 ARIA 关系放进 shadow，
+       让 aria-controls / aria-activedescendant 与 listbox 处于同一棵树 */
+    .control {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      border-radius: inherit;
+      outline: none;
+      cursor: inherit;
+    }
+    .control:focus-visible { outline: none; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
 
     /* 下拉箭头（CSS chevron），展开时旋转 180° */
     .arrow {
@@ -96,7 +165,7 @@
       border-right: 2px solid currentColor;
       border-bottom: 2px solid currentColor;
       transform: rotate(45deg) translateY(-0.1em);
-      transition: transform 200ms ease;
+      transition: transform var(--st-motion-duration-base, 200ms) var(--st-motion-easing, ease);
       flex-shrink: 0;
       opacity: 0.8;
     }
@@ -113,14 +182,18 @@
       min-width: 100%;
       max-height: 15em;
       overflow-y: auto;
-      padding: 0.286em;
+      padding: var(--st-select-popup-padding, 0.286em);
       box-sizing: border-box;
-      background-color: var(--md-sys-color-surface-container);
-      border-radius: 0.5em;
-      box-shadow: 0 0.2em 0.8em rgb(0 0 0 / 0.2);
+      background-color: var(--st-select-popup-bg, var(--md-sys-color-surface-container));
+      border-radius: var(--st-select-popup-radius, 0.5em);
+      box-shadow: 0 0 0 var(--st-border-width, 1px) var(--st-select-popup-border, transparent),
+        var(--st-select-popup-shadow, var(--st-shadow-overlay, 0 0.2em 0.8em rgb(0 0 0 / 0.2)));
+      backdrop-filter: var(--st-select-popup-backdrop-filter, none);
+      -webkit-backdrop-filter: var(--st-select-popup-backdrop-filter, none);
       z-index: 10;
       transform-origin: 50% 0;
-      animation: st-select-in 0.2s cubic-bezier(0.2, 0, 0, 1);
+      animation: st-select-in var(--st-overlay-enter-duration, 0.2s)
+        var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
     /* 下方空间不足时向上弹（open 时 JS 按视口位置判定挂 drop-up） */
     :host([drop-up]) .listbox {
@@ -136,7 +209,8 @@
       pointer-events: none;
       opacity: 0;
       transform: translateY(-0.429em) scale(0.98);
-      transition: opacity 0.15s ease, transform 0.15s ease;
+      transition: opacity var(--st-overlay-exit-duration, 0.15s) ease,
+        transform var(--st-overlay-exit-duration, 0.15s) ease;
     }
     :host([drop-up]) .listbox.closing,
     :host([drop-up][closing]) .listbox {
@@ -158,15 +232,15 @@
       display: flex;
       align-items: center;
       gap: 0.571em;
-      padding: 0.786em 0.714em; /* 视觉行高 2.286em @ 14px */
-      border-radius: 0.357em;
+      padding: var(--st-select-option-padding, 0.786em 0.714em);
+      border-radius: var(--st-select-option-radius, 0.357em);
       cursor: pointer;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .opt:hover { background-color: var(--md-sys-color-surface-container-high); }
-    .opt[data-active] { background-color: var(--md-sys-color-surface-container-high); }
+    .opt:hover { background-color: var(--st-select-option-hover-bg, var(--md-sys-color-surface-container-high)); }
+    .opt[data-active] { background-color: var(--st-select-option-hover-bg, var(--md-sys-color-surface-container-high)); }
     .opt[data-selected] {
       background-color: var(--md-sys-color-secondary-container);
       color: var(--md-sys-color-on-secondary-container);
@@ -193,12 +267,18 @@
   <span class="line-clip"><span class="bottom-line"></span></span>
   <span class="label" id="st-label"></span>
   <span class="arrow"></span>
-  <div class="listbox" id="st-listbox"></div>
+  <span class="control" id="st-control" role="combobox" tabindex="0"
+    aria-haspopup="listbox" aria-controls="st-listbox"
+    aria-describedby="st-value" aria-expanded="false"></span>
+  <span class="sr-only" id="st-value"></span>
+  <div class="listbox" id="st-listbox" role="listbox"></div>
   <l-m src="./option.html"></l-m>
   <slot id="st-slot"></slot>
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
+    import { createFormProxy, syncFormProxy, bindFormReset } from "../form/form-proxy.js";
     export default async () => ({
       tag: "st-select",
       attrs: {
@@ -206,6 +286,9 @@
         placeholder: null,
         color: null,
         disabled: null,
+        name: null,
+        form: null,
+        required: null,
         options: null, // 动态选项数组入口：:options="[{value,label}]" 绑定或 el.options = [...]，
         // 经宿主 property setter 存入内部 _opts（不走 ofa attr data，避免数组被序列化成字符串）
       },
@@ -227,7 +310,10 @@
           this.buildList();
           this.syncSelected(false);
         },
-        disabled() { this.close(); },
+        disabled() { this.close(); this.syncDisabled?.(); this.syncForm?.(); },
+        name() { this.syncForm?.(); },
+        form() { this.syncForm?.(); },
+        required() { this.syncForm?.(); },
       },
       ready() {
         this.applyColor();
@@ -235,8 +321,50 @@
         const sr = ele.shadowRoot;
         this.labelEl = sr.querySelector("#st-label");
         this.listEl = sr.querySelector("#st-listbox");
+        this.controlEl = sr.querySelector("#st-control");
         this.slotEl = sr.querySelector("#st-slot");
         this.activeIndex = -1;
+
+        // 自绘 listbox 的组合框语义（ARIA 角色 + 展开状态 + 选项选中态）。
+        // 宿主属性延后到构造结束再写，避免命令式 createElement 时抛
+        // "The result must not have attributes"
+        this.listEl.setAttribute("role", "listbox");
+        const proxy = createFormProxy(ele, "text");
+        this.syncForm = () => {
+          syncFormProxy(proxy, {
+            name: this.name,
+            form: ele.getAttribute("form"),
+            value: this.value == null ? "" : this.value,
+            disabled: this.disabled !== null,
+            required: this.required !== null,
+          });
+        };
+        this.syncForm();
+        proxy.addEventListener("invalid", (e) => {
+          e.preventDefault();
+          this.controlEl.setAttribute("aria-invalid", "true");
+          ele.dispatchEvent(new Event("invalid", { bubbles: true, composed: true }));
+        });
+        this._resetCleanup = bindFormReset(ele, () => {
+          const dv = ele.getAttribute("default-value");
+          this.value = dv;
+          this.syncSelected(false);
+          this.close();
+        });
+        this._a11yReady = false;
+        this.syncDisabled = () => {
+          if (!this._a11yReady) return;
+          const disabled = this.disabled !== null;
+          this.controlEl.tabIndex = disabled ? -1 : 0;
+          if (disabled) this.controlEl.setAttribute("aria-disabled", "true");
+          else this.controlEl.removeAttribute("aria-disabled");
+        };
+        queueMicrotask(() => {
+          this._a11yCleanup = syncAccessibleName(ele, this.controlEl);
+          this._a11yReady = true;
+          this.syncDisabled();
+          this.syncForm();
+        });
 
         // 宿主 value 用 getter/setter 反射到 data（ofa 的 data 不在原生属性上）
         Object.defineProperty(ele, "value", {
@@ -322,8 +450,8 @@
           }
         }
 
-        // 键盘可达：宿主本身可聚焦
-        ele.tabIndex = 0;
+        // 键盘可达：宿主本身可聚焦；disabled 状态由上方 queueMicrotask 中的
+        // syncDisabled 应用（构造期不能写宿主属性）
         ele.addEventListener("keydown", (e) => this.onKeydown(e));
         ele.addEventListener("click", () => {
           if (this.disabled === null) this.isOpen() ? this.close() : this.openList();
@@ -336,6 +464,8 @@
       detached() {
         document.removeEventListener("pointerdown", this._onDocDown);
         clearTimeout(this._closeTimer);
+        this._a11yCleanup?.();
+        this._resetCleanup?.();
       },
       proto: {
         isOpen() { return this.ele.hasAttribute("open"); },
@@ -346,6 +476,7 @@
           ele.removeAttribute("closing"); // 重新打开时取消退出过渡、重启进入动画
           ele.removeAttribute("drop-up");
           ele.setAttribute("open", "");
+          this.controlEl.setAttribute("aria-expanded", "true");
           // 按视口剩余空间翻转：下方放不下且上方更宽裕时向上弹
           const rect = ele.getBoundingClientRect();
           const below = window.innerHeight - rect.bottom - 8;
@@ -361,6 +492,8 @@
           const ele = this.ele;
           if (!this.isOpen() && !ele.hasAttribute("closing")) return;
           ele.removeAttribute("open");
+          this.controlEl.setAttribute("aria-expanded", "false");
+          this.controlEl.removeAttribute("aria-activedescendant");
           clearTimeout(this._closeTimer);
           ele.setAttribute("closing", ""); // 播 150ms 退出动画后再隐藏
           this._closeTimer = setTimeout(() => ele.removeAttribute("closing"), 180);
@@ -370,6 +503,8 @@
           this._opts.forEach((opt, i) => {
             const item = document.createElement("div");
             item.className = "opt";
+            item.id = `st-opt-${i}`;
+            item.setAttribute("role", "option");
             // 有实际内容（元素或非空白文本）时克隆渲染（支持富内容），否则退回纯文本 label
             const rich = opt.el && [...opt.el.childNodes].some((n) => n.nodeType === 1 || (n.nodeType === 3 && n.textContent.trim()));
             if (rich) {
@@ -389,16 +524,49 @@
         // 选中态与显示文本同步（change 事件由 select() 派发）
         syncSelected() {
           const opt = this._opts?.find((o) => o.value === this.value);
-          this.labelEl.textContent = opt ? opt.label : (this.placeholder || "");
+          this.labelEl.replaceChildren();
           this.labelEl.classList.toggle("placeholder", !opt);
+          if (!opt) {
+            this.labelEl.textContent = this.placeholder || "";
+            this.labelEl.classList.remove("has-icon");
+          } else {
+            // 闭合态：label 提供文字，选项里的图标元素（svg/img/iconify-icon/[slot=icon]）一并显示
+            const icons =
+              opt.el && opt.el.tagName === "ST-OPTION"
+                ? [...opt.el.childNodes].filter((node) => {
+                    if (!node || node.nodeType !== 1) return false;
+                    if (node.getAttribute("slot") === "icon") return true;
+                    const tag = node.tagName.toLowerCase();
+                    return tag === "svg" || tag === "img" || tag.endsWith("-icon");
+                  })
+                : [];
+            this.labelEl.classList.toggle("has-icon", icons.length > 0);
+            if (icons.length) {
+              icons.forEach((node) => this.labelEl.appendChild(node.cloneNode(true)));
+              const text = document.createElement("span");
+              text.className = "label-text";
+              text.textContent = opt.label;
+              this.labelEl.appendChild(text);
+            } else {
+              this.labelEl.textContent = opt.label;
+            }
+          }
+          const valueEl = this.ele.shadowRoot?.querySelector("#st-value");
+          if (valueEl) {
+            valueEl.textContent = opt ? opt.label : (this.placeholder || "");
+          }
+          this.syncForm?.();
           [...this.listEl.children].forEach((item, i) => {
-            item.toggleAttribute("data-selected", this._opts[i].value === this.value);
+            const selected = this._opts[i].value === this.value;
+            item.toggleAttribute("data-selected", selected);
+            item.setAttribute("aria-selected", selected ? "true" : "false");
           });
         },
         select(i) {
           const opt = this._opts[i];
           if (!opt || opt.value === this.value) { this.close(); return; }
           this.value = opt.value; // ofa data → 触发 watch → syncSelected
+          this.controlEl.removeAttribute("aria-invalid");
           this.close();
           this.ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
         },
@@ -407,6 +575,9 @@
           [...this.listEl.children].forEach((item, j) => {
             item.toggleAttribute("data-active", j === i);
           });
+          if (i >= 0 && this.listEl.children[i]) {
+            this.controlEl.setAttribute("aria-activedescendant", this.listEl.children[i].id);
+          }
           if (scroll && i >= 0) this.listEl.children[i].scrollIntoView({ block: "nearest" });
         },
         onKeydown(e) {
@@ -434,7 +605,15 @@
             case "End":
               if (open) { e.preventDefault(); this.setActive(n - 1, true); }
               break;
-            case "Escape": case "Tab":
+            case "Escape":
+              // 只关下拉：不让 Escape 继续冒泡把外层 dialog 一起关掉
+              if (open) {
+                e.stopPropagation();
+                e.preventDefault();
+              }
+              this.close();
+              break;
+            case "Tab":
               this.close();
               break;
           }
@@ -449,8 +628,8 @@
           sr.querySelector(".outline-ring").style.borderColor = active; // 空串 = 回退 CSS 默认 primary
           sr.querySelector(".bottom-line").style.backgroundColor = active;
         },
-        focus() { this.ele.focus(); },
-        blur() { this.ele.blur(); },
+        focus() { if (this.disabled === null) this.controlEl.focus(); },
+        blur() { this.controlEl.blur(); },
       },
     });
   </script>

@@ -42,3 +42,5 @@
 - `prefers-reduced-motion` 下动画趋零
 
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/progress/`）。
+
+- 无障碍：宿主 `role="progressbar"` + `aria-valuemin/max`，确定态写 `aria-valuenow`，不定态写 `aria-busy="true"`

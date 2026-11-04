@@ -8,20 +8,22 @@
     :host {
       display: block;
       position: relative;
-      font-size: 14px;
+      font-size: var(--st-font-size, 14px);
       line-height: 1.5;
-      border-radius: 0.5em; /* 7px，与 st-input 一致 */
+      border-radius: var(--st-list-item-radius, 0.5em);
       color: var(--md-sys-color-on-surface);
     }
     /* 首尾项外圆角（嵌套子列表同理） */
     :host(:first-child) {
-      border-radius: 1.143em 1.143em 0.5em 0.5em;
+      border-radius: var(--st-list-item-radius-outer, 1.143em) var(--st-list-item-radius-outer, 1.143em)
+        var(--st-list-item-radius, 0.5em) var(--st-list-item-radius, 0.5em);
     }
     :host(:last-child) {
-      border-radius: 0.5em 0.5em 1.143em 1.143em;
+      border-radius: var(--st-list-item-radius, 0.5em) var(--st-list-item-radius, 0.5em)
+        var(--st-list-item-radius-outer, 1.143em) var(--st-list-item-radius-outer, 1.143em);
     }
     :host(:first-child:last-child) {
-      border-radius: 1.143em;
+      border-radius: var(--st-list-item-radius-outer, 1.143em);
     }
 
     .main {
@@ -29,8 +31,8 @@
       display: flex;
       align-items: center;
       box-sizing: border-box;
-      min-height: 3em; /* 42px */
-      padding: 0.5em 1em;
+      min-height: var(--st-list-item-height, 3em);
+      padding: var(--st-list-item-padding, 0.5em 1em);
       border-radius: inherit;
     }
 
@@ -42,16 +44,16 @@
       background: currentColor;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.15s ease;
+      transition: opacity var(--st-motion-duration, 0.15s) ease;
     }
-    :host([button]:hover) .layer { opacity: 0.08; }
-    :host([button]:active) .layer { opacity: 0.12; }
+    :host([button]:hover) .layer { opacity: var(--st-state-hover, 0.08); }
+    :host([button]:active) .layer { opacity: var(--st-state-press, 0.12); }
 
     :host([disabled]) {
       cursor: not-allowed;
     }
     :host([disabled]) .main {
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
     }
     :host([disabled]) .layer { display: none; }
 
@@ -94,7 +96,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.2s ease;
+      transition: transform var(--st-motion-duration-base, 0.2s) var(--st-motion-easing, ease);
     }
     /* 坑 #20：反向逻辑——默认旋转收起态，expanded 正向展开 */
     .expand-icon { transform: rotate(-90deg); }
@@ -117,9 +119,15 @@
     :host([button]) .native,
     :host([collapsible]) .native { display: block; }
     .native:focus-visible {
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: -2px;
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: calc(-1 * var(--st-focus-ring-width, 2px));
     }
+
+    /* 只有 button / collapsible 项才有交互波纹；纯展示项不响应 */
+    st-ripple { display: none; }
+    :host([button]) st-ripple,
+    :host([collapsible]) st-ripple { display: block; }
 
     l-m { display: none; }
   </style>
@@ -152,6 +160,7 @@
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-list-item",
       attrs: {
@@ -198,16 +207,31 @@
         };
         this._syncIcon();
 
+        const native = sr.querySelector(".native");
         // disabled 同步到内部原生 button：原生 disabled 天然阻断点击/键盘/焦点
         this.applyDisabled = () => {
-          sr.querySelector(".native").disabled = this.disabled !== null;
+          native.disabled = this.disabled !== null;
+          native.setAttribute("aria-disabled", this.disabled !== null ? "true" : "false");
+        };
+        // collapsible 项暴露展开状态；普通项不设置
+        this.applyExpanded = () => {
+          if (this.collapsible !== null) {
+            native.setAttribute("aria-expanded", this.expanded !== null ? "true" : "false");
+          } else {
+            native.removeAttribute("aria-expanded");
+          }
         };
         this.applyDisabled();
+        this.applyExpanded();
+        this._a11yCleanup = syncAccessibleName(ele, native, {
+          fromSlot: true,
+          excludeSlots: ["sublist", "prefix", "suffix"],
+        });
 
         // 交互语义由内部 .native button 承载：
         // - 折叠项：点击切换 expanded（不冒泡，避免触发外部点击逻辑）
         // - button 项：click 天然冒泡 + composed 到宿主，无需手动派发
-        sr.querySelector(".native").addEventListener("click", (e) => {
+        native.addEventListener("click", (e) => {
           if (this.disabled !== null || this.collapsible === null) return;
           e.stopPropagation(); // 折叠项点击只切换 expanded，不作为 click 事件传出
           if (this.expanded !== null) ele.removeAttribute("expanded");
@@ -216,8 +240,12 @@
       },
       watch: {
         // watch 初始化也会触发一次（坑 #27），无副作用的同步天然安全
-        collapsible() { this._syncIcon?.(); },
+        collapsible() { this._syncIcon?.(); this.applyExpanded?.(); },
         disabled() { this.applyDisabled?.(); },
+        expanded() { this.applyExpanded?.(); },
+      },
+      detached() {
+        this._a11yCleanup?.();
       },
     });
   </script>

@@ -9,33 +9,36 @@
       display: block;
       position: relative; /* 波纹/state layer 的定位基准（否则绝对定位逃逸到全局） */
       box-sizing: border-box;
-      padding: 1em;
-      border-radius: 0.857em; /* 12px */
+      padding: var(--st-card-padding, 1em);
+      border-radius: var(--st-card-radius, var(--st-radius-md, 0.857em));
       font-size: 14px;
       font-family: inherit;
       color: var(--md-sys-color-on-surface);
-      background: var(--md-sys-color-surface-container-low);
-      border: 1px solid transparent;
+      background: var(--st-card-bg, var(--md-sys-color-surface-container-low));
+      border: var(--st-border-width, 1px) solid var(--st-card-border, transparent);
+      backdrop-filter: var(--st-card-backdrop-filter, none);
+      -webkit-backdrop-filter: var(--st-card-backdrop-filter, none);
       /* M3 elevated：level 1 阴影 */
-      box-shadow: 0 0.107em 0.286em rgba(0, 0, 0, 0.3);
+      box-shadow: var(--st-card-shadow, var(--st-shadow-1, 0 0.107em 0.286em rgba(0, 0, 0, 0.3)));
     }
     :host([variant="filled"]) {
-      background: var(--md-sys-color-surface-container-highest);
+      background: var(--st-card-filled-bg, var(--md-sys-color-surface-container-highest));
       box-shadow: none;
     }
     :host([variant="outlined"]) {
-      background: transparent;
-      border-color: var(--md-sys-color-outline-variant);
+      background: var(--st-card-outlined-bg, transparent);
+      border-color: var(--st-card-outline, var(--md-sys-color-outline-variant));
       box-shadow: none;
     }
 
     :host([interactive]) {
       cursor: pointer;
-      transition: box-shadow 0.2s ease, transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+      transition: box-shadow var(--st-motion-duration-base, 0.2s) ease,
+        transform var(--st-motion-duration-base, 0.2s) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
     :host([interactive]:hover) {
       /* hover 抬升到 level 2 */
-      box-shadow: 0 0.143em 0.5em rgba(0, 0, 0, 0.25), 0 0.071em 0.214em rgba(0, 0, 0, 0.15);
+      box-shadow: var(--st-card-shadow-hover, var(--st-shadow-2, 0 0.143em 0.5em rgba(0, 0, 0, 0.25), 0 0.071em 0.214em rgba(0, 0, 0, 0.15)));
       transform: translateY(-1px);
     }
 
@@ -50,26 +53,18 @@
       display: none;
     }
     :host([interactive]) .layer { display: block; }
-    :host([interactive]:hover) .layer { opacity: 0.04; }
-    :host([interactive]:active) .layer { opacity: 0.08; }
+    :host([interactive]:hover) .layer { opacity: var(--st-card-state-hover, 0.04); }
+    :host([interactive]:active) .layer { opacity: var(--st-card-state-press, 0.08); }
     /* 波纹仅 interactive 显示（默认隐藏，坑 #20 正向逻辑） */
     st-ripple { display: none; }
     :host([interactive]) st-ripple { display: block; }
 
-    /* 内部透明原生 button：承载点击/键盘/焦点（interactive 时） */
-    .native {
-      all: unset;
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      cursor: pointer;
-      border-radius: inherit;
-      display: none;
-    }
-    :host([interactive]) .native { display: block; }
-    .native:focus-visible {
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: 2px;
+    /* interactive 时宿主自身承载点击/键盘/焦点。
+       不再用覆盖全卡的绝对定位 button：那会把卡片内的按钮/链接全部挡住。 */
+    :host([interactive]:focus-visible) {
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
     }
 
     l-m { display: none; }
@@ -79,16 +74,49 @@
   <span class="layer"></span>
   <slot></slot>
   <st-ripple></st-ripple>
-  <button class="native" type="button" tabindex="0"></button>
 <script>
   import "../color/st-color-init.js";
+  import { syncAccessibleName } from "../a11y/a11y.js";
   export default async () => ({
     tag: "st-card",
     attrs: {
       variant: "elevated",
       interactive: null,
     },
-    // 无 JS 逻辑：interactive 的 click 由内部 .native button 天然冒泡（composed）
+    watch: {
+      interactive() { this.applyInteractive?.(); },
+    },
+    ready() {
+      const ele = this.ele;
+      this._a11yReady = false;
+      this.applyInteractive = () => {
+        if (!this._a11yReady) return;
+        if (this.interactive !== null) {
+          ele.tabIndex = 0;
+          ele.setAttribute("role", "button");
+        } else {
+          ele.removeAttribute("tabindex");
+          ele.removeAttribute("role");
+        }
+      };
+      // 构造期不能写宿主属性：延后到微任务统一应用角色与无障碍名称
+      queueMicrotask(() => {
+        this._a11yReady = true;
+        this.applyInteractive();
+        this._a11yCleanup = syncAccessibleName(ele, ele, { fromSlot: true });
+      });
+      // 宿主聚焦时 Enter/Space 激活（原生 button 的等价行为）
+      ele.addEventListener("keydown", (e) => {
+        if (this.interactive === null) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          ele.click();
+        }
+      });
+    },
+    detached() {
+      this._a11yCleanup?.();
+    },
   });
 </script>
 </template>

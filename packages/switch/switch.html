@@ -10,7 +10,8 @@
       display: inline-flex;
       align-items: center;
       position: relative;
-      font-size: 14px;
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
       vertical-align: middle;
       cursor: pointer;
       user-select: none;
@@ -19,7 +20,7 @@
 
     :host([disabled]) {
       cursor: not-allowed;
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
     }
 
     .track {
@@ -28,7 +29,7 @@
       width: 3.714em; /* 52px */
       height: 2.286em; /* 32px */
       flex-shrink: 0;
-      border-radius: 2.286em;
+      border-radius: var(--st-switch-radius, 2.286em);
       background: var(--md-sys-color-surface-container-highest); /* 未选中底色，恒定 */
     }
 
@@ -40,9 +41,21 @@
       inset: 0;
       box-sizing: border-box;
       border-radius: inherit;
-      border: 0.143em solid var(--md-sys-color-outline);
+      border: var(--st-switch-border-width, 0.143em) solid var(--md-sys-color-outline);
       background: transparent;
-      transition: border-color 0.3s ease, background-color 0.3s ease;
+      transition: border-color var(--st-motion-duration-slow, 0.3s) ease,
+        background-color var(--st-motion-duration-slow, 0.3s) ease;
+    }
+    /* 选中轨道：皮肤可给半透明填充 + backdrop blur（Apple 毛玻璃） */
+    :host([checked]) .bg {
+      background: color-mix(
+        in srgb,
+        var(--st-switch-checked-bg, var(--md-sys-color-primary)) var(--st-switch-fill-alpha, 100%),
+        transparent
+      );
+      border-color: var(--st-switch-checked-bg, var(--md-sys-color-primary));
+      -webkit-backdrop-filter: var(--st-switch-backdrop-filter, none);
+      backdrop-filter: var(--st-switch-backdrop-filter, none);
     }
 
     /* 拇指：未选中 outline 灰 + scale(0.6) 收缩，选中复原并滑到右侧 */
@@ -55,8 +68,9 @@
       border-radius: 50%;
       transform: translateY(-50%) scale(0.6);
       background: var(--md-sys-color-outline);
-      box-shadow: 0 0.071em 0.214em rgba(0, 0, 0, 0.25);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+      box-shadow: var(--st-switch-thumb-shadow, var(--st-shadow-thumb, 0 0.071em 0.214em rgba(0, 0, 0, 0.25)));
+      transition: transform var(--st-motion-duration-slow, 0.3s) var(--st-motion-easing, cubic-bezier(0.4, 0, 0.2, 1)),
+        background-color var(--st-motion-duration-slow, 0.3s) ease;
       display: grid;
       place-items: center;
       color: inherit;
@@ -71,7 +85,7 @@
       width: 1.143em;
       height: 1.143em;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity var(--st-motion-duration-slow, 0.3s) ease;
     }
     :host([checked]) .mark { opacity: 1; }
     .mark path {
@@ -79,7 +93,7 @@
       stroke-dashoffset: 26;
     }
     :host([checked]) .mark path {
-      animation: st-sw-draw 0.16s ease-out forwards;
+      animation: st-sw-draw var(--st-motion-duration-base, 0.16s) ease-out forwards;
       animation-delay: 0.16s;
     }
     @keyframes st-sw-draw { to { stroke-dashoffset: 0; } }
@@ -88,9 +102,10 @@
     }
 
     .label {
+      display: none;
       margin-left: 0.857em;
     }
-    :host(:empty) .label { display: none; }
+    :host([has-label]) .label { display: inline; }
 
     /* 内部透明原生 checkbox：承载点击/键盘/焦点语义，覆盖整个组件 */
     .native {
@@ -101,8 +116,9 @@
       z-index: 2; /* 盖住 position 的兄弟元素，保证点击/键盘都落在语义元素上 */
     }
     .native:focus-visible ~ .track {
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: 2px;
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
     }
 
     l-m { display: none; }
@@ -118,30 +134,86 @@
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
+    import { createFormProxy, syncFormProxy, bindFormReset } from "../form/form-proxy.js";
     export default async () => ({
       tag: "st-switch",
       attrs: {
         checked: null,
         disabled: null,
         color: null,
+        name: null,
+        value: "on",
+        form: null,
+        required: null,
       },
       watch: {
         checked() { this.applyState(); },
         disabled() { this.applyState(); },
         color() { this.applyState(); },
+        name() { this.syncForm?.(); },
+        form() { this.syncForm?.(); },
+        value() { this.syncForm?.(); },
+        required() { this.syncForm?.(); },
       },
       ready() {
         const ele = this.ele;
-        const input = ele.shadowRoot.querySelector(".native");
+        const sr = ele.shadowRoot;
+        const input = sr.querySelector(".native");
 
         // 交互：原生 input 承载点击与键盘（Space），变更后反射回宿主属性并派发 change
         input.addEventListener("change", () => {
           if (input.checked) ele.setAttribute("checked", "");
           else ele.removeAttribute("checked");
+          if (this._proxy) this._proxy.checked = input.checked;
+          input.removeAttribute("aria-invalid");
           ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
         });
 
+        // 标签文字是 slot 内容、与原生 input 是兄弟节点，必须同步为可访问名称
+        this._a11yCleanup = syncAccessibleName(ele, input, { fromSlot: true });
+
+        // 表单代理是 light DOM 子节点，会破坏 :host(:empty)；用 has-label 显式判断
+        const labelSlot = sr.querySelector(".label slot");
+        const syncLabel = () => {
+          const has = labelSlot
+            .assignedNodes()
+            .some((node) => node.nodeType === 1 || (node.nodeType === 3 && node.textContent.trim()));
+          ele.toggleAttribute("has-label", has);
+        };
+        labelSlot.addEventListener("slotchange", syncLabel);
+        syncLabel();
+
+        const proxy = createFormProxy(ele, "checkbox");
+        this._proxy = proxy;
+        this.syncForm = () => {
+          syncFormProxy(proxy, {
+            name: this.name,
+            form: ele.getAttribute("form"),
+            value: this.value ?? "on",
+            checked: this.checked !== null,
+            disabled: this.disabled !== null,
+            required: this.required !== null,
+          });
+        };
+        this.syncForm();
+        proxy.addEventListener("invalid", (e) => {
+          e.preventDefault();
+          input.setAttribute("aria-invalid", "true");
+          ele.dispatchEvent(new Event("invalid", { bubbles: true, composed: true }));
+        });
+        const initialChecked = this.checked !== null;
+        this._resetCleanup = bindFormReset(ele, () => {
+          if (initialChecked) ele.setAttribute("checked", "");
+          else ele.removeAttribute("checked");
+          this.applyState();
+        });
+
         this.applyState();
+      },
+      detached() {
+        this._a11yCleanup?.();
+        this._resetCleanup?.();
       },
       proto: {
         // watch 初始化也会触发一次（坑 #27），applyState 无副作用，天然安全。
@@ -154,6 +226,7 @@
 
           input.checked = on;
           input.disabled = this.disabled !== null;
+          this.syncForm?.();
 
           const name = this.color;
           const main = name
@@ -165,13 +238,12 @@
 
           const bg = sr.querySelector(".bg");
           if (on) {
-            bg.style.background = main;
-            bg.style.borderColor = main;
+            // 只写语义色变量，背景由 CSS 按皮肤 token 组合（可以是实色或毛玻璃）
+            bg.style.setProperty("--st-switch-checked-bg", main);
             thumb.style.background = onMain;
             thumb.style.color = main; // 对勾颜色 = 角色色（拇指底为 on-角色色）
           } else {
-            bg.style.background = "";
-            bg.style.borderColor = "";
+            bg.style.removeProperty("--st-switch-checked-bg");
             thumb.style.background = "";
             thumb.style.color = "";
           }

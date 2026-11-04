@@ -1,0 +1,154 @@
+/**
+ * m3.css — 默认皮肤：Material Design 3 材质
+ *
+ * 只声明 token，值等于各组件的内置默认值（未加载任何皮肤时长相一致）。
+ * 颜色全部引用 M3 角色变量，不写死任何色值。
+ *
+ * 重要：皮肤文件只声明 token（CSS 变量），不写 st-* 宿主选择器或 ::part
+ * 作为必要机制——组件可能位于 o-page / o-app 的 shadow 内，文档树的
+ * 选择器跨不进去，而 CSS 变量可以继承穿透。::part 仅作为可选能力保留
+ * （组件在 light DOM 时可用），换肤本身不依赖它。
+ */
+[data-skin="m3"] {
+  /* 尺寸与形状 */
+  --st-height: 2.857em;
+  --st-font-size: 14px;
+  --st-font: inherit;
+  --st-letter-spacing: normal;
+  --st-control-radius: 1.429em;
+  --st-field-radius: 0.5em;
+  --st-split-min-width: 9.5em;
+  --st-split-padding: 0 1.714em;
+  --st-control-padding: 0 1.429em;
+  --st-textarea-padding: .857em 1em;
+  --st-field-padding: 0 1em;
+  --st-border-width: 1px;
+
+  /* 通用形状（em 随组件 font-size 缩放） */
+  --st-radius-xs: 0.286em;
+  --st-radius-sm: 0.5em;
+  --st-radius-md: 0.857em;
+  --st-radius-lg: 1.143em;
+  --st-radius-xl: 1.714em;
+  --st-radius-pill: 999px;
+
+  /* 表面（背景 / 描边） */
+  --st-outlined-bg: transparent;
+  --st-outlined-border: var(--md-sys-color-outline);
+  --st-field-bg: transparent;
+  --st-field-filled-bg: var(--md-sys-color-surface-container-highest);
+  --st-field-border: var(--md-sys-color-outline);
+  --st-field-underline: var(--md-sys-color-on-surface-variant);
+  --st-fill-alpha: 100%;
+
+  /* 材质（阴影 / 毛玻璃 / 高光） */
+  --st-shadow: none;
+  --st-field-shadow: none;
+  --st-shadow-1: 0 0.107em 0.286em rgb(0 0 0 / 0.3);
+  --st-shadow-2: 0 0.143em 0.5em rgb(0 0 0 / 0.25), 0 0.071em 0.214em rgb(0 0 0 / 0.15);
+  --st-shadow-3: 0 0.071em 0.143em rgb(0 0 0 / 0.3), 0 0.143em 0.429em 0.143em rgb(0 0 0 / 0.15);
+  --st-shadow-4: 0 1em 2.857em -0.714em rgb(0 0 0 / 0.3);
+  --st-shadow-overlay: 0 0.2em 0.8em rgb(0 0 0 / 0.2);
+  --st-shadow-thumb: 0 0.071em 0.214em rgb(0 0 0 / 0.25);
+  --st-backdrop-filter: none;
+  --st-sheen: none;
+
+  /* 浮层表面（默认值 = 各组件原来的 M3 角色） */
+  --st-badge-radius: 1.429em;
+  --st-badge-font-size: .786em;
+  --st-badge-shadow: none;
+  --st-dialog-radius: 1.714em;
+  --st-card-radius: .857em;
+  --st-nav-gap: .286em;
+  --st-nav-gap-vertical: .143em;
+  --st-nav-padding-vertical: .286em;
+  --st-nav-item-padding: .857em 1em;
+  --st-tooltip-fg: var(--md-sys-color-inverse-on-surface);
+  --st-tab-height: 3.429em;
+  --st-tab-layer-radius: .571em;
+  --st-tabs-indicator-height: .143em;
+  --st-tabs-indicator-radius: 0;
+  --st-tabs-border: var(--md-sys-color-outline-variant);
+  --st-nav-pill-radius: 2em;
+  --st-nav-bar-bg: var(--md-sys-color-surface-container);
+  --st-nav-bar-backdrop-filter: none;
+  --st-progress-size: 2.857em;
+  --st-progress-thickness: .286em;
+  --st-progress-radius: .286em;
+  --st-progress-duration: .3s;
+  --st-slider-track-radius: .286em;
+  --st-slider-thumb-radius: 50%;
+  --st-slider-tip-radius: .286em;
+  --st-slider-thumb-shadow: none;
+  --st-checkbox-radius: .286em;
+  --st-checkbox-border-width: .143em;
+  --st-switch-border-width: .143em;
+  --st-radio-border-width: .143em;
+  --st-radio-radius: 50%;
+  --st-icon-radius: 50%;
+  --st-menu-radius: .857em;
+  --st-menu-item-radius: .571em;
+  --st-select-popup-radius: .5em;
+  --st-select-option-radius: .357em;
+  --st-list-gap: 0.143em;
+  --st-list-item-radius: .5em;
+  --st-list-item-radius-outer: 1.143em;
+  --st-list-item-height: 3em;
+  --st-list-item-padding: 0.5em 1em;
+  --st-dialog-bg: var(--md-sys-color-surface-container-high);
+  --st-dialog-border: transparent;
+  --st-dialog-backdrop-filter: blur(2px);
+  --st-dialog-scrim: rgb(0 0 0 / 0.28);
+  --st-dialog-scrim-filter: blur(2px);
+  --st-dialog-enter-duration: 300ms;
+  --st-dialog-exit-duration: 200ms;
+  --st-dialog-scrim-duration: 250ms;
+  --st-menu-bg: var(--md-sys-color-surface-container);
+  --st-menu-border: transparent;
+  --st-menu-backdrop-filter: none;
+  --st-card-bg: var(--md-sys-color-surface-container-low);
+  --st-card-border: transparent;
+  --st-card-outline: var(--md-sys-color-outline-variant);
+  --st-card-backdrop-filter: none;
+  --st-select-popup-bg: var(--md-sys-color-surface-container);
+  --st-select-popup-border: transparent;
+  --st-select-popup-backdrop-filter: none;
+  --st-snackbar-radius: .286em;
+  --st-snackbar-shadow: 0 0.143em 0.571em rgba(0, 0, 0, 0.2);
+  --st-snackbar-surface: var(--md-sys-color-secondary);
+  --st-snackbar-on-surface: var(--md-sys-color-on-secondary);
+  --st-snackbar-backdrop-filter: none;
+  --st-tooltip-radius: .286em;
+  --st-tooltip-shadow: none;
+  --st-tooltip-bg: var(--md-sys-color-inverse-surface);
+  --st-tooltip-backdrop-filter: none;
+
+  /* 密度 */
+  --st-dialog-padding: 1.43em;
+  --st-dialog-gap: 1.14em;
+  --st-card-padding: 1em;
+  --st-menu-padding: 0.286em;
+  --st-menu-item-padding: 0.786em 0.714em;
+  --st-snackbar-padding: 0.571em 1em;
+  --st-tooltip-padding: 0.357em 0.643em;
+
+  /* 焦点与状态 */
+  --st-focus-ring-width: 2px;
+  --st-focus-ring-offset: 2px;
+  --st-focus-ring-color: var(--md-sys-color-on-surface);
+  --st-focus-ring-style: solid;
+  --st-field-focus-ring-opacity: 1;
+  --st-state-hover: 0.08;
+  --st-state-press: 0.12;
+  --st-disabled-opacity: 0.38;
+  --st-ripple-opacity: 0.28;
+  --st-motion-duration: 150ms;
+  --st-motion-duration-fast: 120ms;
+  --st-motion-duration-base: 200ms;
+  --st-motion-duration-slow: 300ms;
+  --st-motion-easing: cubic-bezier(0.2, 0, 0, 1);
+  --st-overlay-enter-duration: 200ms;
+  --st-overlay-exit-duration: 150ms;
+  --st-tooltip-duration: 150ms;
+  --st-ripple-duration: 350ms;
+}

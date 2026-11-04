@@ -78,6 +78,7 @@
 - `button` 项的 click 是原生冒泡（composed）；plain 项点击也会自然冒泡（普通 DOM 行为）；`disabled` 项原生阻断无 click；折叠项点击只切换 `expanded` 不派发 click
 - 副文本：子元素加 `secondary` 属性；分隔线直接放 `<hr>`
 - 折叠动画：二级及以上折叠时外层逐帧跟随（瞬时），属正常表现
+- 波纹只在 `button` / `collapsible` 项出现；`collapsible` 项内部 button 暴露 `aria-expanded`，可访问名称取条目文字
 ## 验证页面
 
 `index.html`（直接访问 `/packages/list/`）。

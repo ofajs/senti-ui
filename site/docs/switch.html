@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Switch — 组件文档 — Senti-UI</title>
+  <meta name="description" content="Switch（st-switch）用法：开关：轨道 / 拇指弹性动画，选中态可换语义色。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../../packages/skin/cyberpunk.css" />
+  <link rel="stylesheet" href="../../packages/skin/windows.css" />
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+    .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
+    .nojs h1 { margin: 0 0 12px; font-size: 32px; }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>Switch</h1>
+      <p>组件文档的示例与目录需要 JavaScript；也可以回到首页或查看 GitHub 源码。</p>
+      <p><a href="../index.html">组件目录</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+    </div>
+  </noscript>
+
+  <o-app src="../app-config.js">
+    <template page>
+      <!-- 依赖放在 template 内：SCSR 切页时目标页 body 里的 <l-m> 不会执行 -->
+      <l-m src="../../packages/button/button.html"></l-m>
+      <l-m src="../../packages/button/button-group.html"></l-m>
+      <l-m src="../../packages/button/split-button.html"></l-m>
+      <l-m src="../../packages/button/icon-button.html"></l-m>
+      <l-m src="../../packages/input/input.html"></l-m>
+      <l-m src="../../packages/textarea/textarea.html"></l-m>
+      <l-m src="../../packages/select/select.html"></l-m>
+      <l-m src="../../packages/dialog/dialog.html"></l-m>
+      <l-m src="../../packages/checkbox/checkbox.html"></l-m>
+      <l-m src="../../packages/switch/switch.html"></l-m>
+      <l-m src="../../packages/radio/radio.html"></l-m>
+      <l-m src="../../packages/snackbar/snackbar.html"></l-m>
+      <l-m src="../../packages/slider/slider.html"></l-m>
+      <l-m src="../../packages/progress/progress.html"></l-m>
+      <l-m src="../../packages/tooltip/tooltip.html"></l-m>
+      <l-m src="../../packages/card/card.html"></l-m>
+      <l-m src="../../packages/badges/badges.html"></l-m>
+      <l-m src="../../packages/collapse/collapse.html"></l-m>
+      <l-m src="../../packages/list/list.html"></l-m>
+      <l-m src="../../packages/menu/menu.html"></l-m>
+      <l-m src="../../packages/tabs/tab-bar.html"></l-m>
+      <l-m src="../../packages/navigation/nav-bar.html"></l-m>
+      <l-m src="../../packages/navigation/nav-layout.html"></l-m>
+      <l-m src="../../packages/ripple/ripple.html"></l-m>
+
+      <link rel="stylesheet" href="../docs.css" />
+
+          <article class="doc-page">
+            <header class="doc-hero">
+              <p class="doc-kicker">表单 · 6 / 21</p>
+              <h1>Switch <code>st-switch</code></h1>
+              <p class="doc-lead">开关：轨道、拇指弹性位移与对勾动画共同表达开合。checked / disabled / color 三个语义属性，适合设置项与即时生效的偏好开关。</p>
+              <div class="doc-links">
+                <a href="../index.html">组件目录</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/switch/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
+              </div>
+            </header>
+
+            <section class="doc-section">
+              <h2>基础状态</h2>
+              <p class="doc-section-lead">无属性为关闭，<code>checked</code> 为开启；disabled 阻断交互并降低透明度。它与 checkbox 的区别是语义：开关表示立即生效的设置，不需要再点保存。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-switch</code></div>
+                <div class="demo-stage">
+                  <st-switch>关闭</st-switch>
+                  <st-switch checked>开启</st-switch>
+                  <st-switch disabled>禁用关闭</st-switch>
+                  <st-switch disabled checked>禁用开启</st-switch>
+                  <st-switch></st-switch>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-switch&gt;关闭&lt;/st-switch&gt;
+&lt;st-switch checked&gt;开启&lt;/st-switch&gt;
+&lt;st-switch disabled checked&gt;禁用开启&lt;/st-switch&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>color 语义色</h2>
+              <p class="doc-section-lead"><code>color</code> 只改变开启态的轨道色，拇指自动使用对应的 on-角色色以保证对比度。未选中态始终是 outline / surface 系，不随 color 变化。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>color</code></div>
+                <div class="demo-stage">
+                  <st-switch color="primary" checked>primary</st-switch>
+                  <st-switch color="secondary" checked>secondary</st-switch>
+                  <st-switch color="tertiary" checked>tertiary</st-switch>
+                  <st-switch color="error" checked>error</st-switch>
+                  <st-switch color="success" checked>success</st-switch>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-switch color="primary" checked&gt;primary&lt;/st-switch&gt;
+&lt;st-switch color="error" checked&gt;error&lt;/st-switch&gt;
+&lt;st-switch color="success" checked&gt;success&lt;/st-switch&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>受控绑定与 change 回显</h2>
+              <p class="doc-section-lead">用 <code>attr:checked</code> 把 data 接到开关，点击后组件先同步属性再派发 change；在回调里读 <code>hasAttribute("checked")</code> 就能写回准确状态，不需要自己取反。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>attr:checked / on:change</code></div>
+                <div class="demo-stage block">
+                  <div class="row">
+                    <st-switch attr:checked="notify" on:change="notify = !notify">接收通知</st-switch>
+                    <st-switch attr:checked="autoSync" on:change="onAuto">自动同步</st-switch>
+                  </div>
+                  <span class="demo-note">通知：{{notify ? '开启' : '关闭'}} · 自动同步：{{autoSync ? '开启' : '关闭'}} · change {{changeCount}} 次 · 最近{{lastState}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-switch attr:checked="autoSync" on:change="onAuto"&gt;自动同步&lt;/st-switch&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { autoSync: false, changeCount: 0 },
+    proto: {
+      onAuto(e) {
+        this.autoSync = e.target.hasAttribute("checked");
+        this.changeCount += 1;
+      },
+    },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>设置列表中的用法</h2>
+              <p class="doc-section-lead">设置面板里通常把标题与说明放在左侧，开关放右侧，并且开关本身不写标签。每一项独立绑定 data，点击后立即生效；行与行之间用描边分隔，不需要 card 嵌套。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>设置项列表</code></div>
+                <div class="demo-stage block" style="flex-direction: column;">
+                  <div style="width: 100%; max-width: 440px; padding: 0 16px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--md-sys-color-outline-variant);">
+                      <div style="display: grid; gap: 2px; text-align: left;">
+                        <span style="font-size: 13px;">Wi-Fi</span>
+                        <span style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">连接办公网络</span>
+                      </div>
+                      <st-switch attr:checked="wifi" on:change="wifi = !wifi"></st-switch>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--md-sys-color-outline-variant);">
+                      <div style="display: grid; gap: 2px; text-align: left;">
+                        <span style="font-size: 13px;">蓝牙</span>
+                        <span style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">连接附近的键盘与耳机</span>
+                      </div>
+                      <st-switch attr:checked="bluetooth" on:change="bluetooth = !bluetooth"></st-switch>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--md-sys-color-outline-variant);">
+                      <div style="display: grid; gap: 2px; text-align: left;">
+                        <span style="font-size: 13px;">自动更新</span>
+                        <span style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">仅在 Wi-Fi 下下载</span>
+                      </div>
+                      <st-switch attr:checked="autoUpdate" on:change="autoUpdate = !autoUpdate"></st-switch>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0;">
+                      <div style="display: grid; gap: 2px; text-align: left;">
+                        <span style="font-size: 13px;">省电模式</span>
+                        <span style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">降低后台活动频率</span>
+                      </div>
+                      <st-switch attr:checked="saver" on:change="saver = !saver"></st-switch>
+                    </div>
+                  </div>
+                  <span class="demo-note">Wi-Fi {{wifi ? '开' : '关'}} · 蓝牙 {{bluetooth ? '开' : '关'}} · 自动更新 {{autoUpdate ? '开' : '关'}} · 省电 {{saver ? '开' : '关'}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（设置项）</summary>
+                <pre><code>&lt;div style="display: flex; align-items: center; justify-content: space-between;"&gt;
+  &lt;div&gt;
+    &lt;div&gt;Wi-Fi&lt;/div&gt;
+    &lt;div&gt;连接办公网络&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;st-switch attr:checked="wifi" on:change="wifi = !wifi"&gt;&lt;/st-switch&gt;
+&lt;/div&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>文字、图标与尺寸</h2>
+              <p class="doc-section-lead">默认插槽放在轨道右侧，可以放纯文字或 emoji 图标；没有内容时标签区自动隐藏。尺寸全部用 em，改宿主 <code>font-size</code> 会同时缩放轨道、拇指、间距和圆角。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>slot / font-size</code></div>
+                <div class="demo-stage grid">
+                  <div class="demo-cell">
+                    <span class="demo-label">12px + 图标</span>
+                    <st-switch style="font-size: 12px;" checked><iconify-icon icon="mdi:bell-outline"></iconify-icon> 提醒</st-switch>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">14px（默认）</span>
+                    <st-switch checked><iconify-icon icon="mdi:weather-night"></iconify-icon> 深色模式</st-switch>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">20px + 图标</span>
+                    <st-switch style="font-size: 20px;" checked>✈️ 飞行模式</st-switch>
+                  </div>
+                  <div class="demo-cell">
+                    <span class="demo-label">无标签</span>
+                    <st-switch checked></st-switch>
+                  </div>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-switch style="font-size: 12px;" checked&gt;&lt;iconify-icon icon="mdi:bell-outline"&gt;&lt;/iconify-icon&gt; 提醒&lt;/st-switch&gt;
+&lt;st-switch style="font-size: 20px;" checked&gt;✈️ 飞行模式&lt;/st-switch&gt;
+&lt;st-switch checked&gt;&lt;/st-switch&gt;</code></pre>
+              </details>
+            </section>
+
+            <div class="doc-cols">
+              <div class="doc-block">
+                <h3>属性</h3>
+                <table class="api">
+                  <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>checked</code></td><td>boolean</td><td>无</td><td>开启态；点击自动同步</td></tr>
+                    <tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>0.38 透明度，阻断交互</td></tr>
+                    <tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>开启态轨道色，拇指自动用 on-角色色</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="doc-block">
+                <h3>插槽 / 事件 / 注意</h3>
+                <ul class="api-list">
+                  <li>插槽：默认插槽是标签文字或 emoji；为空时文字区自动隐藏。</li>
+                  <li>事件：<code>change</code>（bubbles + composed），触发时 checked 属性已同步。</li>
+                  <li>布尔属性用 <code>attr:checked="expr"</code>；不要用 <code>:checked</code>。</li>
+                  <li><code>color</code> 只影响开启态，未选中态恒为 outline / surface。</li>
+                  <li>不要用外部 CSS 强改拇指尺寸或边框宽度：实心底靠 border-width 扩展实现。</li>
+                </ul>
+              </div>
+            </div>
+
+            <nav class="doc-pager" aria-label="上下篇">
+              <a class="pager-link" olink href="./checkbox.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Checkbox</a><a class="pager-link pager-next" olink href="./radio.html"><span>下一页</span>Radio <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
+            </nav>
+          </article>
+      <script>
+        export const parent = "./layout.html";
+
+        export default async () => ({
+          data: {
+            notify: false,
+            autoSync: false,
+            changeCount: 0,
+            lastState: "无变更",
+            wifi: true,
+            bluetooth: false,
+            autoUpdate: true,
+            saver: false,
+          },
+          proto: {
+            onAuto(e) {
+              this.autoSync = e.target.hasAttribute("checked");
+              this.changeCount += 1;
+              this.lastState = this.autoSync ? "开启" : "关闭";
+            },
+          },
+        });
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin, getSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = Object.assign(window.__site || {}, { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu });
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

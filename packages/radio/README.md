@@ -2,7 +2,7 @@
 
 基于 ofa.js 的单选按钮组件。语义由属性表达，视觉默认值全用 em，交互由内部透明原生 `<input type="radio">` 承载（点击/键盘/焦点）。
 
-**同组互斥**：原生 radio 的 name 分组不跨 shadow root，组件用 `name` 属性作为分组键，选中时自动取消**同一最近容器**内同 `name` 的其他 `st-radio`。
+**同组互斥**：原生 radio 的 name 分组不跨 shadow root，组件用 `name` 属性作为分组键，选中时自动取消**同一树作用域**（document 或同一个 o-page shadow root）内同 `name` 的其他 `st-radio`。
 
 ## 依赖引入（使用前必须）
 
@@ -15,10 +15,16 @@
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `name` | string | 无 | 分组键：选中时取消同容器内同 name 的其他 st-radio |
+| `name` | string | 无 | 分组键：选中时取消同树作用域内同 name 的其他 st-radio；同时作为表单字段名 |
 | `checked` | boolean | 无 | 选中（圆点放大入场，`color` 属性时为对应角色色） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互 |
 | `color` | M3 角色名 / 自定义变量名 | 无 | 选中态描边/圆点色 |
+| `value` | string | `"on"` | 提交到表单的值 |
+| `required` | boolean | 无 | 同组必选；未选中时阻断表单提交 |
+
+## 表单（原生 form）
+
+支持 `name` / `value` / `required`，可放进原生 `<form>`：同组代理 radio 按 `name` 分组，提交选中项的 `value`。`reset` 回到初始选中态。
 
 ## 插槽
 
@@ -48,7 +54,8 @@
 
 ## 注意事项与使用技巧
 
-- **同组互斥靠 `name` 属性**：原生 radio 分组不跨 shadow root，组件在最近容器内查询同 `name` 兄弟手动互斥——分组项必须写在同一个父容器里
+- **同组互斥靠 `name` 属性**：原生 radio 分组不跨 shadow root，组件在**同一树作用域**（document 或同一个 o-page shadow root）内查询同 `name` 的 `st-radio` 手动互斥——不再要求写在同一个父容器里
+- 无障碍：默认插槽文字会成为内部 radio 的可访问名称；也可用宿主 `aria-label` / `aria-labelledby` 覆盖
 - 被取消选中的兄弟项**不**派发 change，只有被点击的项派发
 - `checked` / `disabled` 用 attribute 方式修改；`color` 只影响选中态描边/圆点色
 - 无标签内容时标签区自动隐藏

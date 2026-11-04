@@ -25,6 +25,7 @@
 - **外观直接用原生 CSS 属性定制**——组件视觉全部定义在 `:host` 上，`<st-button style="height:32px; border-radius:8px">` 直接生效
 - **尺寸默认值全用 em**——只改 `font-size` 即整体等比缩放
 - **颜色永不写死**，一律消费 `--md-sys-color-*` M3 角色变量，自动适配深浅色主题
+- **材质可换，颜色不换**——皮肤只改形状与材质（圆角、密度、描边、毛玻璃、动效），M3 角色色始终生效；组件的标签与属性完全不变
 - **`color` 属性是语义引用**：值是 M3 角色名或 color 工具里定义的自定义变量名（如 `color="brand"` 消费 `--brand/--on-brand`），与 color 工具联动实现一键换色
 - **文档写给 AI 读**：自包含、结构化、只含事实
 
@@ -104,12 +105,35 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 
 ## 主题定制
 
-[M3 颜色体系生成器](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），支持核心四角色 + 扩展角色 success 覆盖与自定义变量（自动展开 `--brand` / `--on-brand` 等配对 token）。配置存 localStorage——在工具里调好配色，同域所有引入 `st-color-init.js` 的页面自动跟随（一键换色）。
+[M3 颜色体系生成器](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），支持核心四角色 + 扩展角色 success 覆盖、自定义变量（自动展开 `--brand` / `--on-brand` 等配对 token），以及**对比度调整**（-1 ~ 1 + deep/bright 方向，可整体或按角色设置；正值用于霓虹 / 游戏类主题，负值用于可爱 / 柔和主题）。配置存 localStorage——在工具里调好配色，同域所有引入 `st-color-init.js` 的页面自动跟随（一键换色）。
 
 需要手动控制时：
 
 ```html
 <script type="module" src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/st-color-init.js"></script>
+```
+
+## 皮肤（材质层）
+
+同一批组件可以只换**材质**、不换颜色：`m3`（默认）/ `apple`（毛玻璃）/ `windows`（Windows 11 / Fluent：Mica + Acrylic）/ `shadcn`（扁平细描边）/ `cyberpunk`（零圆角、等宽字、霓虹描边与发光）。皮肤只影响圆角、密度、描边、阴影、毛玻璃、焦点环、动效与波纹；所有皮肤消费同一套 M3 角色变量，种子色、`error`、`success` 与深浅色主题继续生效。
+
+```html
+<html data-skin="apple">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/apple.css">
+<st-button color="error">删除</st-button>
+```
+
+运行时用 `packages/skin/st-skin.js` 的 `setSkin("windows")` 切换（持久化并跨同源窗口同步）。全部交互与表面组件都已接入；完整 token / `part` 契约与自定义皮肤写法见 [packages/skin/README.md](./packages/skin/README.md)。
+
+官网另有一层**主题预设**（只存在于 `site/theme-presets.js`，不属于包 API）：每套材质配一套官方配色（M3 蓝 / Apple iOS 蓝 / Windows 蓝 / shadcn zinc / Cyberpunk 荧光绿，并带满档对比度 + 提亮方向），切换时一并套用，并按材质记住各自的颜色；深浅模式是全局设置，默认不随主题切换（Cyberpunk 深色优先：从浅色进入时切深色，之后保持深色）；`setSkin()` 本身仍然只换材质。
+
+## 官网首页
+
+单页聚合官网在 [`site/`](./site/index.html)：全部组件摆在一页，支持实时换肤、深浅色切换与多种材质并排对比；独立皮肤页在 [`site/skins.html`](./site/skins.html)，可选 M3 / Apple / Windows / shadcn / Cyberpunk 五套材质，顶部快捷菜单只保留三巨头材质。采用 **ofa.js v5 + scsr**（真实路径文档；加载后由 scsr 收编为 o-app 页面）。组件使用说明在 [`site/docs/`](./site/docs/index.html)：每个组件一个独立 SCSR 页，按场景拆成 4–7 组可交互示例，并附属性表、插槽 / 事件；左侧目录由二级 SCSR 父页共享，组件间切换不销毁。
+
+```bash
+npm run dev
+# http://localhost:8642/site/
 ```
 
 ## AI 使用
@@ -158,7 +182,7 @@ npm test       # Playwright 端到端测试（须先 npx playwright install chro
 ```
 
 - 新增/修改组件请先阅读 [AGENTS.md](./AGENTS.md)（开发规则）与 [CONTEXT.md](./CONTEXT.md)（项目全景 + 组件索引 + ofa.js 已知坑）
-- 组件官网：`docs/` 目录，本地 `http://localhost:8642/docs/`
+- 组件官网：`site/docs/` 二级 SCSR 布局，本地 `http://localhost:8642/site/docs/`
 
 ## License
 

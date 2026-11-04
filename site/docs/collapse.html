@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Collapse — 组件文档 — Senti-UI</title>
+  <meta name="description" content="Collapse（st-collapse）用法：高度过渡折叠容器：hide 收起，展开时高度跟随内容（ResizeObserver）。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../../packages/skin/cyberpunk.css" />
+  <link rel="stylesheet" href="../../packages/skin/windows.css" />
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+    .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
+    .nojs h1 { margin: 0 0 12px; font-size: 32px; }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>Collapse</h1>
+      <p>组件文档的示例与目录需要 JavaScript；也可以回到首页或查看 GitHub 源码。</p>
+      <p><a href="../index.html">组件目录</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+    </div>
+  </noscript>
+
+  <o-app src="../app-config.js">
+    <template page>
+      <!-- 依赖放在 template 内：SCSR 切页时目标页 body 里的 <l-m> 不会执行 -->
+      <l-m src="../../packages/button/button.html"></l-m>
+      <l-m src="../../packages/button/button-group.html"></l-m>
+      <l-m src="../../packages/button/split-button.html"></l-m>
+      <l-m src="../../packages/button/icon-button.html"></l-m>
+      <l-m src="../../packages/input/input.html"></l-m>
+      <l-m src="../../packages/textarea/textarea.html"></l-m>
+      <l-m src="../../packages/select/select.html"></l-m>
+      <l-m src="../../packages/dialog/dialog.html"></l-m>
+      <l-m src="../../packages/checkbox/checkbox.html"></l-m>
+      <l-m src="../../packages/switch/switch.html"></l-m>
+      <l-m src="../../packages/radio/radio.html"></l-m>
+      <l-m src="../../packages/snackbar/snackbar.html"></l-m>
+      <l-m src="../../packages/slider/slider.html"></l-m>
+      <l-m src="../../packages/progress/progress.html"></l-m>
+      <l-m src="../../packages/tooltip/tooltip.html"></l-m>
+      <l-m src="../../packages/card/card.html"></l-m>
+      <l-m src="../../packages/badges/badges.html"></l-m>
+      <l-m src="../../packages/collapse/collapse.html"></l-m>
+      <l-m src="../../packages/list/list.html"></l-m>
+      <l-m src="../../packages/menu/menu.html"></l-m>
+      <l-m src="../../packages/tabs/tab-bar.html"></l-m>
+      <l-m src="../../packages/navigation/nav-bar.html"></l-m>
+      <l-m src="../../packages/navigation/nav-layout.html"></l-m>
+      <l-m src="../../packages/ripple/ripple.html"></l-m>
+
+      <link rel="stylesheet" href="../docs.css" />
+
+          <article class="doc-page">
+            <header class="doc-hero">
+              <p class="doc-kicker">辅助 · 18 / 21</p>
+              <h1>Collapse <code>st-collapse</code></h1>
+              <p class="doc-lead">只做一件事：把 hide 变成高度 0，展开时高度跟随内容（ResizeObserver）。没有内置标题、箭头或折叠组，触发源与内容排版全部由你组合；默认展开，写 hide 才收起。</p>
+              <div class="doc-links">
+                <a href="../index.html">组件目录</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/collapse/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
+              </div>
+            </header>
+
+            <section class="doc-section">
+              <h2>基础展开 / 收起</h2>
+              <p class="doc-section-lead">唯一的语义属性是 hide。模板里用 attr:hide 绑定一个布尔值，点击按钮改 data 即可切换；展开与收起各 0.3s，走 M3 emphasized 高度动画。不写 hide 就是默认展开。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>attr:hide</code></div>
+                <div class="demo-stage block" style="gap: 14px;">
+                  <div class="row">
+                    <st-button on:click="collapsed = !collapsed">{{collapsed ? "展开详情" : "收起详情"}}</st-button>
+                    <st-button variant="outlined" on:click="collapsed = false">全部展开</st-button>
+                  </div>
+                  <st-collapse attr:hide="collapsed" style="width: 100%; max-width: 480px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px;">
+                    <div style="padding: 14px 16px; color: var(--md-sys-color-on-surface-variant); font-size: 12.5px; line-height: 1.75;">
+                      <p style="margin: 0 0 8px; color: var(--md-sys-color-on-surface); font-weight: 600;">折叠容器本身没有外观</p>
+                      <p style="margin: 0;">圆角、描边、内边距都由这段内容自己声明。组件只负责量高与过渡，不会向内容注入任何样式。</p>
+                    </div>
+                  </st-collapse>
+                  <span class="demo-note">当前：{{collapsed ? "已收起（存在 hide）" : "已展开（没有 hide）"}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-collapse attr:hide="collapsed"&gt;
+  &lt;div&gt;折叠内容&lt;/div&gt;
+&lt;/st-collapse&gt;
+
+&lt;st-button on:click="collapsed = !collapsed"&gt;展开 / 收起&lt;/st-button&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>内容高度自动跟随</h2>
+              <p class="doc-section-lead">保持展开时，内容高度变化由 ResizeObserver 捕捉并瞬时更新——这是为了嵌套折叠时外层不会追赶内层动画。图片加载、列表增删、异步文案变长都不需要手动测量。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>ResizeObserver</code></div>
+                <div class="demo-stage block" style="gap: 14px;">
+                  <st-collapse style="width: 100%; max-width: 480px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px;">
+                    <div style="padding: 14px 16px; color: var(--md-sys-color-on-surface-variant); font-size: 12.5px; line-height: 1.75;">
+                      <p style="margin: 0; color: var(--md-sys-color-on-surface); font-weight: 600;">为什么折叠容器里总能显示完整内容？</p>
+                      <p style="margin: 6px 0 0;">内容始终在 DOM 里，高度由里向外测量。下面的补充说明出现时，容器高度已经跟着变高，不需要重新打开。</p>
+                      <p style="margin: 8px 0 0;">{{detailText}}</p>
+                    </div>
+                  </st-collapse>
+                  <st-button variant="outlined" on:click="detail = !detail">{{detail ? "移除补充内容" : "插入一段补充内容"}}</st-button>
+                  <span class="demo-note">内容高度变化是瞬时的（无过渡）；只有切换 hide 才有 0.3s 动画。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（内容动态变化）</summary>
+                <pre><code>&lt;st-collapse&gt;
+  &lt;div&gt;基础说明&lt;/div&gt;
+  &lt;!-- 异步插入的段落：高度由 ResizeObserver 自动跟随 --&gt;
+  &lt;p&gt;补充内容&lt;/p&gt;
+&lt;/st-collapse&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>手风琴：多个 collapse 共享一个索引</h2>
+              <p class="doc-section-lead">组件没有 accordion 或 group API。把多个 st-collapse 的 hide 都绑定到同一个 openSection，点击行头只保留一个展开，就得到单选手风琴；数据结构决定行为，不需要额外的容器组件。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>单选折叠</code></div>
+                <div class="demo-stage block">
+                  <div style="width: 100%; max-width: 520px; display: grid; gap: 10px;">
+                    <div style="border: 1px solid var(--md-sys-color-outline-variant); border-radius: 12px; overflow: hidden;">
+                      <button type="button" on:click="toggleSection(0)" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 12px 16px; border: 0; background: var(--md-sys-color-surface-container-low); color: inherit; font: inherit; font-weight: 600; text-align: left; cursor: pointer;">
+                        <span>ofa.js 需要构建工具吗？</span>
+                        <span style="color: var(--md-sys-color-on-surface-variant);">{{openSection === 0 ? "−" : "+"}}</span>
+                      </button>
+                      <st-collapse attr:hide="openSection !== 0">
+                        <div style="padding: 12px 16px 14px; color: var(--md-sys-color-on-surface-variant); font-size: 12.5px; line-height: 1.75;">不需要。ofa.js 直接加载原生模块，Senti-UI 也是纯静态文件，CDN 引入即可运行。</div>
+                      </st-collapse>
+                    </div>
+                    <div style="border: 1px solid var(--md-sys-color-outline-variant); border-radius: 12px; overflow: hidden;">
+                      <button type="button" on:click="toggleSection(1)" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 12px 16px; border: 0; background: var(--md-sys-color-surface-container-low); color: inherit; font: inherit; font-weight: 600; text-align: left; cursor: pointer;">
+                        <span>为什么展开没有 0.3s 动画？</span>
+                        <span style="color: var(--md-sys-color-on-surface-variant);">{{openSection === 1 ? "−" : "+"}}</span>
+                      </button>
+                      <st-collapse attr:hide="openSection !== 1">
+                        <div style="padding: 12px 16px 14px; color: var(--md-sys-color-on-surface-variant); font-size: 12.5px; line-height: 1.75;">内容尺寸变化走 ResizeObserver 瞬时跟随；只有切换 hide 才临时启用 0.3s 过渡，避免嵌套折叠互相追赶。</div>
+                      </st-collapse>
+                    </div>
+                    <div style="border: 1px solid var(--md-sys-color-outline-variant); border-radius: 12px; overflow: hidden;">
+                      <button type="button" on:click="toggleSection(2)" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 12px 16px; border: 0; background: var(--md-sys-color-surface-container-low); color: inherit; font: inherit; font-weight: 600; text-align: left; cursor: pointer;">
+                        <span>收起后内容会被销毁吗？</span>
+                        <span style="color: var(--md-sys-color-on-surface-variant);">{{openSection === 2 ? "−" : "+"}}</span>
+                      </button>
+                      <st-collapse attr:hide="openSection !== 2">
+                        <div style="padding: 12px 16px 14px; color: var(--md-sys-color-on-surface-variant); font-size: 12.5px; line-height: 1.75;">不会，收起只是高度 0 + overflow hidden。需要条件渲染请在外部用数据控制内容，组件不负责销毁。</div>
+                      </st-collapse>
+                    </div>
+                  </div>
+                  <span class="demo-note">当前展开：{{openSection === -1 ? "全部收起" : "第 " + (openSection + 1) + " 项"}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（单选手风琴）</summary>
+                <pre><code>&lt;st-button variant="text" on:click="toggleSection(0)"&gt;问题一&lt;/st-button&gt;
+&lt;st-collapse attr:hide="openSection !== 0"&gt;答案一&lt;/st-collapse&gt;
+
+&lt;st-button variant="text" on:click="toggleSection(1)"&gt;问题二&lt;/st-button&gt;
+&lt;st-collapse attr:hide="openSection !== 1"&gt;答案二&lt;/st-collapse&gt;
+
+&lt;script&gt;
+  toggleSection(i) {
+    this.openSection = this.openSection === i ? -1 : i;
+  }
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>多区独立展开</h2>
+              <p class="doc-section-lead">把每个区块绑定到各自的布尔值即可多选展开；与手风琴的区别只在 data 结构，组件用法完全一致。每个区块可以单独加边框与标题，形成设置面板。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>独立布尔值</code></div>
+                <div class="demo-stage block">
+                  <div style="width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; align-items: start;">
+                    <div style="border: 1px solid var(--md-sys-color-outline-variant); border-radius: 12px; overflow: hidden;">
+                      <st-button variant="text" style="width: 100%;" on:click="notify = !notify">{{notify ? "收起通知" : "展开通知"}}</st-button>
+                      <st-collapse attr:hide="!notify" style="width: 100%;">
+                        <div style="padding: 0 14px 14px; color: var(--md-sys-color-on-surface-variant); font-size: 12.5px; line-height: 1.75;">邮件、桌面与移动端通知各自独立开关。</div>
+                      </st-collapse>
+                    </div>
+                    <div style="border: 1px solid var(--md-sys-color-outline-variant); border-radius: 12px; overflow: hidden;">
+                      <st-button variant="text" style="width: 100%;" on:click="privacy = !privacy">{{privacy ? "收起隐私" : "展开隐私"}}</st-button>
+                      <st-collapse attr:hide="!privacy" style="width: 100%;">
+                        <div style="padding: 0 14px 14px; color: var(--md-sys-color-on-surface-variant); font-size: 12.5px; line-height: 1.75;">控制谁可以看到你的在线状态与活动记录。</div>
+                      </st-collapse>
+                    </div>
+                    <div style="border: 1px solid var(--md-sys-color-outline-variant); border-radius: 12px; overflow: hidden;">
+                      <st-button variant="text" style="width: 100%;" on:click="beta = !beta">{{beta ? "收起实验特性" : "展开实验特性"}}</st-button>
+                      <st-collapse attr:hide="!beta" style="width: 100%;">
+                        <div style="padding: 0 14px 14px; color: var(--md-sys-color-on-surface-variant); font-size: 12.5px; line-height: 1.75;">提前体验尚未稳定的功能，随时可以关闭。</div>
+                      </st-collapse>
+                    </div>
+                  </div>
+                  <span class="demo-note">通知 {{notify ? "开" : "关"}} · 隐私 {{privacy ? "开" : "关"}} · 实验特性 {{beta ? "开" : "关"}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（多个独立区块）</summary>
+                <pre><code>&lt;st-button variant="text" on:click="notify = !notify"&gt;通知设置&lt;/st-button&gt;
+&lt;st-collapse attr:hide="!notify"&gt;通知内容&lt;/st-collapse&gt;
+
+&lt;st-button variant="text" on:click="privacy = !privacy"&gt;隐私设置&lt;/st-button&gt;
+&lt;st-collapse attr:hide="!privacy"&gt;隐私内容&lt;/st-collapse&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>内容透传：折叠里放列表与按钮</h2>
+              <p class="doc-section-lead">collapse 不解析插槽、不注入样式，内容是完整透传的。可以把 st-list、st-button、表单或另一个 collapse 直接放进去；嵌套折叠时外层高度会逐帧同步内层，不会出现迟缓拖尾。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>组合内容</code></div>
+                <div class="demo-stage block" style="gap: 14px;">
+                  <div style="width: 100%; max-width: 480px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 16px; overflow: hidden;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; background: var(--md-sys-color-surface-container-low);">
+                      <div>
+                        <div style="font-weight: 600;">高级设置</div>
+                        <div style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">内容区可放任意组件</div>
+                      </div>
+                      <st-button variant="text" on:click="advanced = !advanced">{{advanced ? "收起" : "展开"}}</st-button>
+                    </div>
+                    <st-collapse attr:hide="!advanced">
+                      <st-list style="width: 100%; padding: 4px 8px 8px;">
+                        <st-list-item button on:click="saved += 1">
+                          <iconify-icon slot="prefix" icon="mdi:flash"></iconify-icon>
+                          <div>性能模式<span secondary style="display: block;">关闭部分动效与阴影</span></div>
+                          <span slot="suffix">开启</span>
+                        </st-list-item>
+                        <st-list-item button on:click="saved += 1">
+                          <iconify-icon slot="prefix" icon="mdi:bell-outline"></iconify-icon>通知<span slot="suffix">全部</span>
+                        </st-list-item>
+                        <hr>
+                        <st-list-item collapsible>
+                          <span slot="prefix">🧩</span>
+                          <div>实验特性</div>
+                          <st-list slot="sublist">
+                            <st-list-item button on:click="saved += 1">Beta 通道</st-list-item>
+                          </st-list>
+                        </st-list-item>
+                      </st-list>
+                    </st-collapse>
+                  </div>
+                  <span class="demo-note">展开状态：{{advanced ? "已展开" : "已收起"}} · 点击 {{saved}} 次（含嵌套项）</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（列表 + 嵌套折叠）</summary>
+                <pre><code>&lt;st-collapse attr:hide="advanced"&gt;
+  &lt;st-list&gt;
+    &lt;st-list-item button&gt;性能模式&lt;/st-list-item&gt;
+    &lt;st-list-item collapsible&gt;
+      实验特性
+      &lt;st-list slot="sublist"&gt;
+        &lt;st-list-item button&gt;Beta 通道&lt;/st-list-item&gt;
+      &lt;/st-list&gt;
+    &lt;/st-list-item&gt;
+  &lt;/st-list&gt;
+&lt;/st-collapse&gt;</code></pre>
+              </details>
+            </section>
+
+            <div class="doc-cols">
+              <div class="doc-block">
+                <h3>属性</h3>
+                <table class="api">
+                  <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>hide</code></td><td>boolean</td><td>无（展开）</td><td>收起为高度 0 + overflow hidden；移除即展开</td></tr>
+                    <tr><td><code>style</code></td><td>原生 CSS</td><td>无</td><td>圆角/描边/宽度直接写宿主；高度由组件接管</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="doc-block">
+                <h3>插槽 / 事件 / 注意</h3>
+                <ul class="api-list">
+                  <li>插槽：只有默认插槽，内容完全透传；标题、箭头、触发按钮由使用者自备。</li>
+                  <li>事件：无自定义事件；切换 <code>hide</code> 只播放高度动画，不派发 open/close。</li>
+                  <li>动画：切换 <code>hide</code> 为 0.3s <code>cubic-bezier(0.2, 0, 0, 1)</code>；内容尺寸变化瞬时跟随（ResizeObserver）。</li>
+                  <li>没有 <code>disabled</code>、<code>multiple</code>、<code>accordion</code> 等属性；禁用交互请禁用触发源。</li>
+                  <li>收起时内容仍在 DOM 中；需要条件渲染或懒加载，在外部用数据控制内容。</li>
+                  <li>嵌套折叠可直接组合；外层会逐帧跟随内层高度，不需要手动调用刷新。</li>
+                </ul>
+              </div>
+            </div>
+
+            <nav class="doc-pager" aria-label="上下篇">
+              <a class="pager-link" olink href="./navigation.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Navigation</a><a class="pager-link pager-next" olink href="./tooltip.html"><span>下一页</span>Tooltip <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
+            </nav>
+          </article>
+      <script>
+        export const parent = "./layout.html";
+
+        export default async () => ({
+          data: {
+            collapsed: false,
+            detail: false,
+            openSection: 0,
+            notify: true,
+            privacy: false,
+            beta: false,
+            advanced: true,
+            saved: 0,
+          },
+          proto: {
+            get detailText() {
+              return this.detail
+                ? "补充说明：这段文字是异步插入的，容器高度随之增高；收起时不需要重新测量，展开后仍然完整。"
+                : "";
+            },
+            toggleSection(i) {
+              this.openSection = this.openSection === i ? -1 : i;
+            },
+          },
+        });
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin, getSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = Object.assign(window.__site || {}, { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu });
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

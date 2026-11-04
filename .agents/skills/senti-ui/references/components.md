@@ -4,12 +4,19 @@
 每个组件的完整文档（完整属性表、插槽、事件、默认值清单、更多示例）在本目录 [components/](./components/) 下对应文件中，如按钮见 [components/button.md](./components/button.md)。
 通用规则（所有组件）：属性读写遵守 SKILL.md 的「写法优先级」（ofa API 优先，`attr(name, 值/""/null)`）；`color` 属性值是 M3 角色名或自定义变量名；尺寸默认值全 em，改 `font-size` 等比缩放。
 
+## 皮肤 st-skin（材质层）
+
+- `m3`（默认）/ `apple`（毛玻璃）/ `windows`（Windows 11 / Fluent：Mica + Acrylic）/ `shadcn`（扁平）/ `cyberpunk`（零圆角霓虹终端）；只改材质，颜色仍走 M3
+- 切换：`import { setSkin } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js"; setSkin("apple")`；静态：`<html data-skin="apple">` + `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/apple.css">`
+- 已接入全部交互与表面组件；token / part 表与自定义皮肤见 [components/skin.md](./components/skin.md)
+
 ## st-button 按钮
 
 - 属性：`variant`（`filled`(默认)/`outlined`/`text`）、`color`、`disabled`、`loading`（spinner + 自动禁用）、`type`
 - 插槽：默认（文字）、`prefix` / `suffix`
 - 事件：`click` 直接在宿主监听（内部原生 button 转发，Enter/Space/Tab 天然可用）
 - 示例：`<st-button color="error" variant="outlined"><span slot="prefix">🔍</span>Search</st-button>`
+- 皮肤：已 token 化（高度/圆角/阴影/毛玻璃/焦点环等），part：`state-layer` / `loader` / `control`
 
 ## st-button-group 按钮组
 
@@ -19,7 +26,7 @@
 ## st-split-button 分裂按钮
 
 - 主区 click 冒泡做主操作 + 箭头区开合菜单（菜单项用 `st-menu-item`）
-- `open` 为运行时状态，支持 `sync:open`
+- `open` 为运行时状态，支持 `sync:open` / `attr("open", "")`；`menu-label` 可改箭头区可访问名称
 
 ## st-icon-button 图标按钮
 
@@ -33,6 +40,7 @@
 - **`value` 是运行时状态**：JS 用 `el.value` 读写（已反射到宿主 property，`e.target.value` 可用）；`setAttribute("value")` 无效
 - 插槽：`prefix` / `suffix`
 - 事件：`input` / `change`（已转发为 composed）直接在宿主监听；方法 `focus()` / `blur()`
+- 皮肤：已 token 化（圆角/背景/焦点环/外侧光圈等），part：`focus-ring` / `underline` / `control`
 
 ## st-textarea 多行输入框
 
@@ -47,6 +55,7 @@
   - `label` 属性（两者都支持）控制闭合态显示文本；`value` 缺省先取 `label` 再取文本
   - 富内容（内部 span/自定义元素）推荐 `st-option`：`value`/`label` 属性 + 默认插槽克隆渲染到下拉项
 - 弹层：自绘 M3 风格，自动上下弹翻转、键盘 ↑↓/Enter/Escape/Home/End、点外关闭；`change` composed
+- 无障碍：`role="combobox"` + `aria-expanded/controls/activedescendant`，弹层 `listbox` / 选项 `option`；disabled 移出 Tab 顺序
 - 限制：弹层在 shadow 内，被 overflow 祖先裁剪；动态选项支持 `el.options = [...]` / `:options` / o-fill 嵌套（已渲染选项改属性不生效）
 
 ## st-dialog 对话框
@@ -55,7 +64,7 @@
 - 属性：`auto-close`（遮罩点击/Escape 关闭并派发 `close`）
 - **`open` 是运行时状态**：推荐 `sync:open="xxx"` 双向绑定（auto-close 关闭自动回写）；纯 JS 用 `$("st-dialog").attr("open", "") / attr("open", null)`
 - 插槽：`headline` / 默认 / `actions`（空区块自动隐藏）
-- 焦点：打开时自动移入面板；M3 emphasized 动效
+- 焦点：`role="dialog"` + `aria-modal`，打开移入面板、Tab 焦点陷阱、关闭归还焦点、背景滚动锁；M3 emphasized 动效
 - 命令式工具（无需预引入组件）：
 
 ```js

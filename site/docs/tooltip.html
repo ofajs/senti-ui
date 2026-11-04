@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tooltip — 组件文档 — Senti-UI</title>
+  <meta name="description" content="Tooltip（st-tooltip）用法：提示气泡：悬停 / 聚焦显示，fixed 定位自动上下翻转；content 按纯文本渲染。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../../packages/skin/cyberpunk.css" />
+  <link rel="stylesheet" href="../../packages/skin/windows.css" />
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+    .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
+    .nojs h1 { margin: 0 0 12px; font-size: 32px; }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>Tooltip</h1>
+      <p>组件文档的示例与目录需要 JavaScript；也可以回到首页或查看 GitHub 源码。</p>
+      <p><a href="../index.html">组件目录</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+    </div>
+  </noscript>
+
+  <o-app src="../app-config.js">
+    <template page>
+      <!-- 依赖放在 template 内：SCSR 切页时目标页 body 里的 <l-m> 不会执行 -->
+      <l-m src="../../packages/button/button.html"></l-m>
+      <l-m src="../../packages/button/button-group.html"></l-m>
+      <l-m src="../../packages/button/split-button.html"></l-m>
+      <l-m src="../../packages/button/icon-button.html"></l-m>
+      <l-m src="../../packages/input/input.html"></l-m>
+      <l-m src="../../packages/textarea/textarea.html"></l-m>
+      <l-m src="../../packages/select/select.html"></l-m>
+      <l-m src="../../packages/dialog/dialog.html"></l-m>
+      <l-m src="../../packages/checkbox/checkbox.html"></l-m>
+      <l-m src="../../packages/switch/switch.html"></l-m>
+      <l-m src="../../packages/radio/radio.html"></l-m>
+      <l-m src="../../packages/snackbar/snackbar.html"></l-m>
+      <l-m src="../../packages/slider/slider.html"></l-m>
+      <l-m src="../../packages/progress/progress.html"></l-m>
+      <l-m src="../../packages/tooltip/tooltip.html"></l-m>
+      <l-m src="../../packages/card/card.html"></l-m>
+      <l-m src="../../packages/badges/badges.html"></l-m>
+      <l-m src="../../packages/collapse/collapse.html"></l-m>
+      <l-m src="../../packages/list/list.html"></l-m>
+      <l-m src="../../packages/menu/menu.html"></l-m>
+      <l-m src="../../packages/tabs/tab-bar.html"></l-m>
+      <l-m src="../../packages/navigation/nav-bar.html"></l-m>
+      <l-m src="../../packages/navigation/nav-layout.html"></l-m>
+      <l-m src="../../packages/ripple/ripple.html"></l-m>
+
+      <link rel="stylesheet" href="../docs.css" />
+
+          <article class="doc-page">
+            <header class="doc-hero">
+              <p class="doc-kicker">辅助 · 19 / 21</p>
+              <h1>Tooltip <code>st-tooltip</code></h1>
+              <p class="doc-lead">给按钮、图标按钮或任意可聚焦元素挂一条纯文本提示。悬停与键盘聚焦都能触发；气泡 fixed 定位，上方空间不足时自动翻到下方。</p>
+              <div class="doc-links">
+                <a href="../index.html">组件目录</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/tooltip/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
+              </div>
+            </header>
+
+            <section class="doc-section">
+              <h2>基础用法</h2>
+              <p class="doc-section-lead">默认插槽放触发元素，content 写提示文本。气泡使用 inverse-surface 反色底，与触发器相距 7px；触发器可以是按钮、图标按钮或任意元素。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>content + 默认插槽</code></div>
+                <div class="demo-stage">
+                  <st-tooltip content="删除这条记录">
+                    <st-button variant="outlined">悬停 / 聚焦我</st-button>
+                  </st-tooltip>
+                  <st-tooltip content="复制链接">
+                    <st-icon-button title="复制" variant="outlined">⧉</st-icon-button>
+                  </st-tooltip>
+                  <st-tooltip content="保存当前更改">
+                    <st-button>保存</st-button>
+                  </st-tooltip>
+                  <st-tooltip content="这是一段普通文本，鼠标悬停也能看到提示">
+                    <span style="padding: 4px 8px; border-bottom: 1px dashed var(--md-sys-color-outline); cursor: help;">普通文本触发器</span>
+                  </st-tooltip>
+                  <span class="demo-note">普通文本只响应鼠标悬停；需要键盘触发时，把触发元素换成按钮、输入框等可聚焦元素。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-tooltip content="删除这条记录"&gt;
+  &lt;st-button variant="outlined"&gt;悬停 / 聚焦我&lt;/st-button&gt;
+&lt;/st-tooltip&gt;
+
+&lt;st-tooltip content="复制链接"&gt;
+  &lt;st-icon-button title="复制" variant="outlined"&gt;⧉&lt;/st-icon-button&gt;
+&lt;/st-tooltip&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>悬停、聚焦与 Escape</h2>
+              <p class="doc-section-lead">pointerenter / pointerleave 自动开合；focusin / focusout 让键盘用户也能看到提示；按 Escape 立即关闭。气泡 pointer-events: none，不会挡住触发器的点击。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>hover / focusin / Escape</code></div>
+                <div class="demo-stage">
+                  <st-tooltip content="用 Tab 移动到这里会显示提示">
+                    <st-button variant="outlined">Tab 聚焦我</st-button>
+                  </st-tooltip>
+                  <st-tooltip content="提示显示后按 Escape 可以关闭">
+                    <st-button variant="tonal">按 Esc 关闭</st-button>
+                  </st-tooltip>
+                  <st-tooltip content="邮箱用于接收登录验证码" style="width: 100%; max-width: 300px;">
+                    <st-input placeholder="邮箱地址" style="width: 100%;"></st-input>
+                  </st-tooltip>
+                  <span class="demo-note">输入框获得焦点时同样显示；触屏设备没有悬停，不要把关键信息只放在提示里。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（键盘可访问）</summary>
+                <pre><code>&lt;st-tooltip content="用 Tab 移动到这里会显示提示"&gt;
+  &lt;st-button variant="outlined"&gt;Tab 聚焦我&lt;/st-button&gt;
+&lt;/st-tooltip&gt;
+
+&lt;!-- 输入框本身可聚焦，focusin / focusout 自动触发 --&gt;
+&lt;st-tooltip content="邮箱用于接收登录验证码"&gt;
+  &lt;st-input placeholder="邮箱地址"&gt;&lt;/st-input&gt;
+&lt;/st-tooltip&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>长文本与纯文本渲染</h2>
+              <p class="doc-section-lead">content 通过 textContent 写入，HTML 标签会被原样显示而不是解析，天然防注入。气泡最大宽度 20em，超出自动折行；换行符不会生效。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>长文本 / HTML 转义</code></div>
+                <div class="demo-stage">
+                  <st-tooltip content="这是一段刻意写长的提示文本，用来展示气泡在 20em 最大宽度内自动折行；内容按纯文本渲染，不会解析 HTML。">
+                    <st-button variant="outlined">长文本提示</st-button>
+                  </st-tooltip>
+                  <st-tooltip content="&lt;b&gt;这里不会加粗&lt;/b&gt;，标签会原样显示">
+                    <st-button variant="text">HTML 会被转义</st-button>
+                  </st-tooltip>
+                  <st-tooltip content="第一行&#10;第二行：换行符不会产生换行">
+                    <st-button variant="tonal">换行不生效</st-button>
+                  </st-tooltip>
+                  <span class="demo-note">需要富文本或强制换行时，不要用 content，改为扩展组件或直接写 st-dialog / st-menu。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;!-- 纯文本：HTML 标签原样显示；长文本自动折行 --&gt;
+&lt;st-tooltip content="&amp;lt;b&amp;gt;不会加粗&amp;lt;/b&amp;gt;，这段长文本会在 20em 内折行"&gt;
+  &lt;st-button variant="outlined"&gt;长文本提示&lt;/st-button&gt;
+&lt;/st-tooltip&gt;
+
+&lt;!-- 换行符 \n 会被折叠成空格，不要依赖它排版 --&gt;
+&lt;st-tooltip content="第一行 第二行"&gt;...&lt;/st-tooltip&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>自适应定位</h2>
+              <p class="doc-section-lead">气泡默认在触发器上方居中；视口顶部放不下时自动翻到下方，水平方向夹在视口内。组件没有 placement 属性，方向完全由当前视口空间决定。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>fixed 定位 · 自动翻转</code></div>
+                <div class="demo-stage block">
+                  <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; width: 100%;">
+                    <st-tooltip content="靠近页面顶部时，气泡会翻到触发器下方">
+                      <st-button variant="outlined">靠近顶部</st-button>
+                    </st-tooltip>
+                    <st-tooltip content="靠近右侧时，气泡会被夹在视口内">
+                      <st-button variant="outlined">靠近右侧</st-button>
+                    </st-tooltip>
+                  </div>
+                  <div style="display: grid; place-items: center; width: 100%; height: 130px; border-top: 1px dashed var(--md-sys-color-outline-variant);">
+                    <st-tooltip content="视口上方空间充足时默认向上显示">
+                      <st-button variant="tonal">页面中部</st-button>
+                    </st-tooltip>
+                  </div>
+                  <span class="demo-note">滚动页面后再悬停，可以观察气泡在上下方向翻转、在左右边缘被夹取。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;!-- 无需指定方向：气泡按视口空间自动翻转、水平夹取 --&gt;
+&lt;st-tooltip content="靠近页面顶部时，气泡会翻到触发器下方"&gt;
+  &lt;st-button variant="outlined"&gt;靠近顶部&lt;/st-button&gt;
+&lt;/st-tooltip&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>受控 open 与 disabled</h2>
+              <p class="doc-section-lead">open 是运行时状态而非标签属性：用 sync:open 双向绑定后，既能从外部打开，也能拿到悬停 / 聚焦产生的状态。disabled 会彻底关闭提示，悬停和聚焦都不再响应。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>sync:open / disabled</code></div>
+                <div class="demo-stage">
+                  <st-tooltip content="由外部按钮控制显示" sync:open="tipOpen">
+                    <st-button variant="outlined">受控提示</st-button>
+                  </st-tooltip>
+                  <st-button variant="text" on:click="tipOpen = !tipOpen">{{tipOpen ? '关闭提示' : '打开提示'}}</st-button>
+                  <st-tooltip content="禁用后悬停和聚焦都不再显示" disabled>
+                    <st-button variant="outlined">disabled 目标</st-button>
+                  </st-tooltip>
+                  <span class="demo-note">open = {{tipOpen}} · 悬停 / 聚焦也会同步这个状态，外部数据始终是最新值。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（sync:open）</summary>
+                <pre><code>&lt;st-tooltip content="由外部按钮控制显示" sync:open="tipOpen"&gt;
+  &lt;st-button variant="outlined"&gt;受控提示&lt;/st-button&gt;
+&lt;/st-tooltip&gt;
+&lt;st-button variant="text" on:click="tipOpen = !tipOpen"&gt;切换提示&lt;/st-button&gt;
+
+&lt;!-- data --&gt;
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { tipOpen: false },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>字号与外观</h2>
+              <p class="doc-section-lead">气泡字号是宿主 font-size 的 0.857em，最大宽度 20em；只改 font-size 就能整体缩放。气泡配色来自 inverse-surface / inverse-on-surface 角色，切换深浅色时自动跟随。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>font-size</code></div>
+                <div class="demo-stage">
+                  <st-tooltip content="宿主 10px，气泡更紧凑">
+                    <st-button variant="text" style="font-size: 10px;">紧凑</st-button>
+                  </st-tooltip>
+                  <st-tooltip content="宿主 14px，默认大小">
+                    <st-button variant="outlined">默认</st-button>
+                  </st-tooltip>
+                  <st-tooltip content="宿主 18px，气泡同步放大">
+                    <st-button variant="tonal" style="font-size: 18px;">放大</st-button>
+                  </st-tooltip>
+                  <st-tooltip content="气泡最大宽度是 20em，长内容在放大后也更宽" style="font-size: 18px;">
+                    <st-button variant="text">放大气泡</st-button>
+                  </st-tooltip>
+                  <span class="demo-note">气泡没有 part；需要改底色或圆角请通过主题色 token / 原生 CSS 变量调整。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-tooltip content="宿主 18px，气泡同步放大" style="font-size: 18px;"&gt;
+  &lt;st-button variant="tonal"&gt;放大&lt;/st-button&gt;
+&lt;/st-tooltip&gt;</code></pre>
+              </details>
+            </section>
+
+            <div class="doc-cols">
+              <div class="doc-block">
+                <h3>属性</h3>
+                <table class="api">
+                  <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>content</code></td><td>string</td><td>无</td><td>提示文本，纯文本渲染；长文本自动折行</td></tr>
+                    <tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>禁用提示，悬停 / 聚焦都不响应</td></tr>
+                    <tr><td><code>open</code></td><td>data boolean</td><td><code>false</code></td><td>运行时状态，用 <code>sync:open</code> 双向绑定</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="doc-block">
+                <h3>插槽 / 事件 / 注意</h3>
+                <ul class="api-list">
+                  <li>插槽：默认插槽放触发元素，任意元素均可。</li>
+                  <li>触发：<code>pointerenter</code> / <code>focusin</code> 显示，<code>pointerleave</code> / <code>focusout</code> 隐藏。</li>
+                  <li>定位：fixed 定位，上方放不下自动翻到下方，左右夹在视口内；没有 placement 属性。</li>
+                  <li>气泡 <code>pointer-events: none</code>，不会拦截下方交互。</li>
+                  <li>触屏没有悬停；关键信息不要只放在提示里。</li>
+                </ul>
+              </div>
+            </div>
+
+            <nav class="doc-pager" aria-label="上下篇">
+              <a class="pager-link" olink href="./collapse.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Collapse</a><a class="pager-link pager-next" olink href="./ripple.html"><span>下一页</span>Ripple <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
+            </nav>
+          </article>
+      <script>
+        export const parent = "./layout.html";
+
+        export default async () => ({
+          data: {
+            tipOpen: false,
+          },
+          proto: {},
+        });
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin, getSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = Object.assign(window.__site || {}, { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu });
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

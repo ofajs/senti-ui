@@ -12,31 +12,47 @@
       justify-content: center;
       box-sizing: border-box;
       position: relative;
-      width: 2.857em; /* 40px，与 st-button 高度一致 */
-      height: 2.857em;
+      width: var(--st-height, 2.857em); /* 40px，与 st-button 高度一致 */
+      height: var(--st-height, 2.857em);
       padding: 0;
-      border: 1px solid transparent;
-      border-radius: 50%; /* M3 图标按钮为圆形 */
-      font-size: 14px;
-      font-family: inherit;
-      background-color: transparent;
-      color: var(--md-sys-color-on-surface-variant);
+      border: var(--st-border-width, 1px) solid transparent;
+      border-radius: var(--st-icon-radius, 50%); /* M3 图标按钮为圆形 */
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
+      background-color: var(--st-icon-bg, transparent);
+      color: var(--st-icon-fg, var(--md-sys-color-on-surface-variant));
+      border-color: var(--st-icon-border, transparent);
+      box-shadow: var(--st-shadow, none);
+      background-image: var(--st-sheen, none);
+      -webkit-backdrop-filter: var(--st-backdrop-filter, none);
+      backdrop-filter: var(--st-backdrop-filter, none);
+      /* 让图标按按钮自身宽度取比例：只改 width/height 时也能保持视觉平衡 */
+      container-type: inline-size;
+      transition: box-shadow var(--st-motion-duration, 150ms) ease;
       cursor: pointer;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* M3 四种图标按钮类型 */
+    /* M3 四种图标按钮类型（color 属性通过 --st-icon-* 覆盖，不直接写内联样式） */
     :host([variant="filled"]) {
-      background-color: var(--md-sys-color-primary);
-      color: var(--md-sys-color-on-primary);
+      background-color: color-mix(
+        in srgb,
+        var(--st-icon-bg, var(--md-sys-color-primary)) var(--st-fill-alpha, 100%),
+        transparent
+      );
+      color: var(--st-icon-fg, var(--md-sys-color-on-primary));
     }
     :host([variant="tonal"]) {
-      background-color: var(--md-sys-color-secondary-container);
-      color: var(--md-sys-color-on-secondary-container);
+      background-color: color-mix(
+        in srgb,
+        var(--st-icon-bg, var(--md-sys-color-secondary-container)) var(--st-fill-alpha, 100%),
+        transparent
+      );
+      color: var(--st-icon-fg, var(--md-sys-color-on-secondary-container));
     }
     :host([variant="outlined"]) {
-      border-color: var(--md-sys-color-outline);
+      border-color: var(--st-icon-border, var(--md-sys-color-outline));
     }
 
     /* M3 state layer：currentColor 半透明叠加 */
@@ -48,18 +64,29 @@
       opacity: 0;
       pointer-events: none;
     }
-    :host(:hover) .layer { opacity: 0.08; }
-    :host(:active) .layer { opacity: 0.12; }
+    :host(:hover) .layer { opacity: var(--st-state-hover, 0.08); }
+    :host(:active) .layer { opacity: var(--st-state-press, 0.12); }
 
     :host([disabled]) {
       cursor: not-allowed;
-      opacity: 0.38;
+      opacity: var(--st-disabled-opacity, 0.38);
     }
     :host([disabled]) .layer { opacity: 0; }
 
+    /* 文本节点不能被 ::slotted(*) 命中：用一层 wrapper 统一放大图标字形/emoji */
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      /* 图标约按钮宽度的 56%（40px 按钮 ≈ 21px，34px 按钮 ≈ 18px）；
+         跟随按钮尺寸而不是只跟随 font-size，避免自定义大小时图标显得过大 */
+      font-size: 1.429em; /* 不支持容器查询时的回退：20px */
+      font-size: 56cqw;
+      line-height: 1;
+    }
     ::slotted(*) {
       display: inline-flex;
-      font-size: 1.571em; /* 22px 图标建议尺寸，随 font-size 等比 */
+      font-size: inherit;
       line-height: 1;
     }
 
@@ -76,19 +103,21 @@
     }
     .native:focus-visible {
       /* 不用 currentColor：filled 白字按钮的白圈画在浅色页面上不可见（坑 #11） */
-      outline: 2px solid var(--md-sys-color-on-surface);
-      outline-offset: 2px;
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
     }
   </style>
 
   <span class="layer"></span>
   <l-m src="../ripple/ripple.html"></l-m>
   <st-ripple></st-ripple>
-  <slot></slot>
+  <span class="icon"><slot></slot></span>
   <button class="native" type="button" tabindex="0"></button>
 
   <script>
     import "../color/st-color-init.js";
+    import { syncAccessibleName } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-icon-button",
       attrs: {
@@ -108,41 +137,38 @@
           sr.querySelector(".native").disabled = this.disabled !== null;
         };
         this.applyDisabled();
+        // 无文字按钮：把宿主 aria-label / title 转给内部原生 button
+        this._a11yCleanup = syncAccessibleName(this.ele, sr.querySelector(".native"));
         this.applyColor();
       },
+      detached() {
+        this._a11yCleanup?.();
+      },
       proto: {
-        // color 接受 M3 角色名或 color 模块自定义变量名，按 variant 分派（同 st-button；
-        // 内联样式会压过 :host([variant]) 规则，必须先读 variant 再写，坑 #15）
+        // color 接受 M3 角色名或 color 模块自定义变量名，只写自己的 --st-icon-* 变量，
+        // 不碰宿主 style（否则会清掉使用者写在 style="" 上的原生 CSS，见坑 #46）
         applyColor() {
           const s = this.ele.style;
-          const name = this.color;
-          if (!name) {
-            s.background = "";
-            s.color = "";
-            s.borderColor = "";
-            return;
+          for (const prop of ["--st-icon-bg", "--st-icon-fg", "--st-icon-border"]) {
+            s.removeProperty(prop);
           }
+          const name = this.color;
+          if (!name) return;
           const main = `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`;
           const on = `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-primary)))`;
           const container = `var(--md-sys-color-${name}-container, var(--${name}-container, var(--md-sys-color-secondary-container)))`;
           const onContainer = `var(--md-sys-color-on-${name}-container, var(--on-${name}-container, var(--md-sys-color-on-secondary-container)))`;
           if (this.variant === "filled") {
-            s.background = main;
-            s.color = on;
-            s.borderColor = "";
+            s.setProperty("--st-icon-bg", main);
+            s.setProperty("--st-icon-fg", on);
           } else if (this.variant === "tonal") {
-            s.background = container;
-            s.color = onContainer;
-            s.borderColor = "";
+            s.setProperty("--st-icon-bg", container);
+            s.setProperty("--st-icon-fg", onContainer);
           } else if (this.variant === "outlined") {
-            s.background = "";
-            s.color = main;
-            s.borderColor = main;
+            s.setProperty("--st-icon-fg", main);
+            s.setProperty("--st-icon-border", main);
           } else {
-            // standard
-            s.background = "";
-            s.color = main;
-            s.borderColor = "";
+            s.setProperty("--st-icon-fg", main);
           }
         },
       },

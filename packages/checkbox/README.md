@@ -19,8 +19,15 @@
 | `indeterminate` | boolean | 无 | 不确定态（横线），用户点击后自动退出 |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互 |
 | `color` | M3 角色名 / 自定义变量名 | 无 | 选中态底色/描边/对勾色（如 `color="error"`） |
+| `name` | string | 无 | 表单字段名 |
+| `value` | string | `"on"` | 提交到表单的值 |
+| `required` | boolean | 无 | 必填；未选中时阻断表单提交 |
 
 JS 修改状态用 attribute 方式：`el.setAttribute("checked", "")` / `el.removeAttribute("checked")`。
+
+## 表单（原生 form）
+
+支持 `name` / `value` / `required`，可放进原生 `<form>`：提交时按 `checked` 写入 `value`（未选中不提交），`reset` 回到初始选中态。校验失败派发 `invalid`。
 
 ## 插槽
 
@@ -55,6 +62,7 @@ el.addEventListener("change", (e) => {
 - 交互由内部透明原生 checkbox 承载（覆盖整个组件，点文字也能切换），Space 键盘可用
 - 无标签内容时（`:empty`）标签区自动隐藏
 - `color` 属性只影响选中态配色，未选中态边框恒为 on-surface-variant
+- 无障碍：默认插槽文字会成为内部 checkbox 的可访问名称；也可用宿主 `aria-label` / `aria-labelledby` 覆盖
 ## 验证页面
 
 `index.html`（直接访问 `/packages/checkbox/`）。

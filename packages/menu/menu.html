@@ -44,14 +44,17 @@
       min-width: 6em; /* 84px */
       max-height: 80vh;
       overflow-y: auto;
-      padding: 0.286em;
-      border-radius: 0.857em; /* 12px */
-      background: var(--md-sys-color-surface-container);
+      padding: var(--st-menu-padding, 0.286em);
+      border-radius: var(--st-menu-radius, var(--st-radius-md, 0.857em));
+      background: var(--st-menu-bg, var(--md-sys-color-surface-container));
       color: var(--md-sys-color-on-surface);
-      box-shadow: 0 0.071em 0.143em rgba(0, 0, 0, 0.3), 0 0.143em 0.429em 0.143em rgba(0, 0, 0, 0.15);
+      box-shadow: 0 0 0 var(--st-border-width, 1px) var(--st-menu-border, transparent),
+        var(--st-menu-shadow, var(--st-shadow-3, 0 0.071em 0.143em rgba(0, 0, 0, 0.3), 0 0.143em 0.429em 0.143em rgba(0, 0, 0, 0.15)));
+      backdrop-filter: var(--st-menu-backdrop-filter, none);
+      -webkit-backdrop-filter: var(--st-menu-backdrop-filter, none);
       z-index: 1000;
       transform-origin: 50% 0;
-      animation: st-menu-in 0.2s cubic-bezier(0.2, 0, 0, 1);
+      animation: st-menu-in var(--st-overlay-enter-duration, 0.2s) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
 
     /* 关闭过渡 */
@@ -59,7 +62,8 @@
       pointer-events: none;
       opacity: 0;
       transform: translateY(-0.429em) scale(0.98);
-      transition: opacity 0.15s ease, transform 0.15s ease;
+      transition: opacity var(--st-overlay-exit-duration, 0.15s) ease,
+        transform var(--st-overlay-exit-duration, 0.15s) ease;
     }
 
     @keyframes st-menu-in {
@@ -85,10 +89,11 @@
   <l-m src="./menu-item.html"></l-m>
 
   <div class="trigger"><slot name="trigger"></slot></div>
-  <div class="panel"><slot></slot></div>
+  <div class="panel" role="menu"><slot></slot></div>
 
   <script>
     import "../color/st-color-init.js";
+    import { getDeepActiveElement } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-menu",
       attrs: {
@@ -105,6 +110,8 @@
             return;
           }
           const panel = this.ele.shadowRoot.querySelector(".panel");
+          // 触发器（slot 内容）暴露菜单展开状态
+          this._syncTriggerAria?.(val);
           if (val) {
             // 子菜单检测兜底：ofa 升级 light DOM 的时序下 ready 时 parentElement
             // 可能尚未就绪（命令式动态构建时踩到），首次打开时再校验一次
@@ -151,6 +158,21 @@
         this._isSub = !!(ele.parentElement && ele.parentElement.closest("st-menu"));
         if (this._isSub) ele.setAttribute("sub", "");
 
+        // 触发器（slot 内容）的菜单语义。触发器由使用者提供，状态挂在它身上而不是宿主
+        const triggerSlot = sr.querySelector('slot[name="trigger"]');
+        this._syncTriggerAria = (expanded) => {
+          triggerSlot.assignedElements().forEach((el) => {
+            const target = el.shadowRoot?.querySelector("button") || el;
+            for (const node of new Set([el, target])) {
+              node.setAttribute("aria-haspopup", "menu");
+              node.setAttribute("aria-expanded", expanded ? "true" : "false");
+            }
+          });
+        };
+        const syncTrigger = () => this._syncTriggerAria(this.open === true);
+        triggerSlot.addEventListener("slotchange", syncTrigger);
+        syncTrigger();
+
         // 点击触发器切换。子菜单模式下 click 也要停掉冒泡：
         // 否则会冒到父级面板的"点击即关闭"监听，把父菜单一起关掉
         sr.querySelector(".trigger").addEventListener("click", (e) => {
@@ -187,10 +209,39 @@
           this.open = false;
         };
         this._onDocKeydown = (e) => {
-          // Escape 只关最内层：还有打开的子菜单时交由子菜单自己处理
-          if (e.key === "Escape" && this.open && !this._openSubs.size) this.open = false;
+          // Escape 只关最内层：还有打开的子菜单时交由子菜单自己处理。
+          // 捕获阶段消费掉事件，避免同一次 Escape 把外层 dialog 也关掉
+          if (e.key === "Escape" && this.open && !this._openSubs.size) {
+            e.stopPropagation();
+            this.open = false;
+          }
         };
         this._onReposition = () => this.updatePosition();
+
+        // 菜单键盘模型：↑/↓/Home/End 在菜单项之间移动焦点（子菜单自己处理，父级让位）
+        this._onMenuKeydown = (e) => {
+          if (!this.open || this._openSubs.size) return;
+          const items = [...ele.querySelectorAll("st-menu-item")]
+            .filter((item) => !item.hasAttribute("disabled"))
+            .map((item) => item.shadowRoot?.querySelector(".native"))
+            .filter(Boolean);
+          if (!items.length) return;
+          const active = getDeepActiveElement();
+          const index = items.indexOf(active);
+          const step = e.key === "ArrowDown" ? 1 : e.key === "ArrowUp" ? -1 : 0;
+          if (step) {
+            e.preventDefault();
+            const next = index === -1 ? (step > 0 ? 0 : items.length - 1) : (index + step + items.length) % items.length;
+            items[next].focus();
+          } else if (e.key === "Home") {
+            e.preventDefault();
+            items[0].focus();
+          } else if (e.key === "End") {
+            e.preventDefault();
+            items[items.length - 1].focus();
+          }
+        };
+        ele.addEventListener("keydown", this._onMenuKeydown);
       },
       detached() {
         clearTimeout(this._closeTimer);

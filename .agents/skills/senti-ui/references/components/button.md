@@ -1,6 +1,6 @@
 # st-button 按钮组件（含 st-button-group / st-split-button / st-icon-button）
 
-本包包含四个相关组件：`st-button` 按钮、`st-button-group` 按钮组、`st-split-button` 分裂按钮、`st-icon-button` 图标按钮，引入语句共用一个目录。基于 ofa.js。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设，也不需要自定义 CSS 变量；`color` 属性是 M3 角色/自定义变量名的语义引用）。
+本包包含四个相关组件：`st-button` 按钮、`st-button-group` 按钮组、`st-split-button` 分裂按钮、`st-icon-button` 图标按钮，引入语句共用一个目录。基于 ofa.js。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设；使用者不需要自定义 CSS 变量，材质由 `--st-*` 皮肤 token 控制，见 [skin.md](./skin.md)；`color` 属性是 M3 角色/自定义变量名的语义引用）。
 
 组件的视觉样式全部定义在宿主元素（`:host`）上，`st-button` 本身就是一个普通的可样式化元素——`style` 写什么就生效什么。内部有一个透明的原生 `<button>` 负责语义（点击/键盘/焦点/disabled）。
 
@@ -96,7 +96,7 @@ $("st-button").on("click", () => {});
 <st-button style="border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.3); background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container);">Elevated</st-button>
 ```
 
-### 默认值（直接覆盖即可）
+### 默认值（直接覆盖即可；实现为 `var(--st-*, 默认值)`，不加载皮肤与旧版一致）
 
 | 属性 | 默认值 |
 |------|--------|
@@ -130,6 +130,21 @@ $("st-button").on("click", () => {});
 ## 主题
 
 `st-color-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
+
+## 皮肤（材质）
+
+`st-button` 已接入皮肤 token：高度、圆角、内边距、字体、描边、阴影、毛玻璃、高光、焦点环、state layer、disabled 与波纹。颜色不参与换肤。
+
+```html
+<html data-skin="apple">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/apple.css">
+<st-button color="error">Delete</st-button>
+```
+
+- 运行时：`import { setSkin } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js"; setSkin("apple")`
+- 主要 token：`--st-height` / `--st-font-size` / `--st-control-radius` / `--st-control-padding` / `--st-border-width` / `--st-outlined-bg` / `--st-outlined-border` / `--st-fill-alpha` / `--st-shadow` / `--st-backdrop-filter` / `--st-sheen` / `--st-focus-ring-*` / `--st-state-hover` / `--st-state-press` / `--st-disabled-opacity`
+- part（light DOM 时可用）：`state-layer` / `loader` / `control`
+- 完整 token 表见 [skin.md](./skin.md)
 
 ## st-button-group 按钮组
 
@@ -176,7 +191,7 @@ $("st-button").on("click", () => {});
 
 注意：
 
-- 选中态一律用 `attr:variant` / `attr:color` 语义切换，**不要**用 `:style` 改背景/圆角表达选中——`st-button` 的内联色会被组件配色逻辑覆盖，且 group 会内联设置子按钮 `border-radius`（见「注意事项」）
+- 选中态一律用 `attr:variant` / `attr:color` 语义切换，**不要**用 `:style` 改背景/圆角表达选中——group 会内联设置子按钮 `border-radius`，内联样式也会绕过皮肤的材质合成（见「注意事项」）
 - 纯 JS 场景切换选中态用 `$("sel").attr("variant", "filled")` / `attr("color", null)`
 - 状态变量（`range` / `filters`）需在页面 data 中初始化（如 `range = 'day'`、`filters = ['all']`），否则首次渲染无选中态
 
@@ -216,7 +231,7 @@ $("st-button").on("click", () => {});
 
 ## st-icon-button 图标按钮
 
-圆形图标按钮（默认插槽放单个图标，建议 22px 左右的 svg/emoji/图标字体）。四种 M3 类型：
+圆形图标按钮（默认插槽放单个图标，svg/emoji/图标字体均可）。图标自动取按钮宽度的约 56%，不用手动设字号。四种 M3 类型：
 
 | `variant` | 背景 | 图标色 | 边框 |
 |-----------|------|--------|------|
@@ -236,11 +251,11 @@ $("st-button").on("click", () => {});
 
 - `click` 事件直接在宿主监听（内部原生 button 转发），`Tab` 聚焦 / `Enter`/`Space` 激活
 - 记得配 `title` 或 `aria-label` 提供无障碍名称（图标按钮没有文字）
-- 默认值：`2.857em × 2.857em`（40×40px @ 14px）、圆形（`border-radius: 50%`）、图标 `1.571em`（22px）——改宿主 `font-size` 整体等比缩放
+- 默认值：`2.857em × 2.857em`（40×40px @ 14px）、圆形（`border-radius: 50%`）、图标 `56cqw`（40px 按钮约 21px）——改宿主 `font-size`（按钮尺寸按 em 随之变化）或直接改 `width`/`height`，图标都会等比缩放
 
 ## 注意事项与使用技巧
 
-- **给 st-button 换色必须用它的 `color` 属性，不能写内联 `style="color: ..."`**——内联色会被组件自身的配色逻辑（applyColor）覆盖；放在反色/彩色容器（如 snackbar）里时用 `color="inverse-primary"` / `color="on-error"` 这类角色名
+- **换色优先用 `color` 属性**：它写入 `--st-accent` 系列变量，皮肤能据此组合材质（半透明/渐变/毛玻璃）。内联 `style="background/color"` 也有效且不会被清空，但会绕过皮肤材质；放在彩色容器（如 snackbar）里时用 `color="on-secondary"` / `color="on-error"` 这类角色名
 - `variant` 运行时切换用 `attr:variant="expr"` 绑定（ofa 页面内），JS 里用 `setAttribute`（直接改 property 不触发更新）
 - 布尔属性（disabled/loading）在 JS 里用 `setAttribute` / `removeAttribute`，ofa 页面里绑定用 `attr:loading="busy"`（`:prop` 会把 false 序列化成属性字符串导致永远禁用）
 - `setAttribute` 触发组件 watch 是异步的（下一轮微任务），设置后同步读状态会得到旧值
@@ -250,3 +265,9 @@ $("st-button").on("click", () => {});
 - st-split-button 的菜单项来自 `st-menu-item`（split-button 内部已加载，无需额外引入）
 - **st-icon-button 必须配 `title` / `aria-label`**（无文字，缺名称时屏幕阅读器读不出用途）；其 color 分派多了 tonal 分支（container 配对色）
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/`）。
+
+- 无障碍：插槽文字 / `aria-label` 会同步到内部原生 button；`st-icon-button` 的 `title` / `aria-label` 会转发；split-button 新增 `menu-label`（箭头区可访问名称，默认“打开菜单”）
+
+## 表单
+
+`type="submit"` / `type="reset"` 会代理到最近的 `<form>`（内部原生 button 在 shadow 内，无法直接关联表单）：submit 调 `requestSubmit()`，reset 调 `form.reset()`。

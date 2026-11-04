@@ -1,7 +1,7 @@
 ---
 name: "senti-ui"
 description: "Senti-UI component library knowledge base (ofa.js + Material Design 3, no build step). Invoke when the user asks about Senti-UI or st-* components, wants to build a web page/app UI with senti-ui, asks about st-button / st-input / st-dialog / toast etc., theming with M3 color tokens, or developing new components based on senti-ui."
-version: "1.0.11"
+version: "1.1.0"
 ---
 
 # Senti-UI 组件库使用指南
@@ -12,13 +12,13 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 
 传统组件库给人准备了大量枚举预设（`size="small"`）。Senti-UI 认为对 AI 这些是负担：
 
-- **属性只表达语义**（`disabled` / `loading` / M3 规范内的 `variant` / `color` 语义色引用），**没有 size 类预设，也没有 `--st-*` 样式代理变量**
+- **属性只表达语义**（`disabled` / `loading` / M3 规范内的 `variant` / `color` 语义色引用），**没有 size 类预设**；`--st-*` 只属于皮肤系统（材质，见下文），使用者仍然只写原生 CSS
 - **外观定制 = 直接写原生 CSS 属性**。组件视觉全部定义在 `:host` 上，`<st-button style="height:32px; border-radius:8px">` 直接生效
 - **尺寸默认值全用 em**——只改 `font-size` 即整体等比缩放；需要非等比再单独覆写
 - **颜色永不写死**，一律消费 `--md-sys-color-*` M3 角色变量（自动适配深浅色主题）
 - `color` 属性的值是 **M3 角色名**（primary/secondary/tertiary/error/success…）或 **color 工具定义的自定义变量名**（如 `color="brand"` 消费 `--brand/--on-brand`），组件自动配对底色/文字色——这是语义引用，不是样式预设
 
-所以：想改大小 → `style="font-size: 12px"`；想改颜色 → `color="error"` 或 `style="background: var(--md-sys-color-error)"`；**不要找 size/type 枚举，不要发明 CSS 变量**。
+所以：想改大小 → `style="font-size: 12px"`；想改颜色 → `color="error"` 或 `style="background: var(--md-sys-color-error)"`；**不要找 size/type 枚举，不要发明供使用者调参的 CSS 变量**。
 
 ## 快速开始
 
@@ -40,7 +40,19 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 
 - 每个 `l-m` 引入一个组件文件，用哪个引哪个；组件内部会自动 import 颜色初始化模块（`st-color-init.js`）注入 `--md-sys-color-*` 体系，无需额外配置
 - 深浅色主题默认跟随系统；强制用 `<html class="st-light">` / `<html class="st-dark">`
-- **写任何自定义颜色前先读 [references/theming.md](./references/theming.md)**：完整 token 清单（32 个 M3 角色）、文字/背景配对规则（如 `primary` 底配 `on-primary` 字）、深浅色自动适配原理、种子色与自定义变量（`--brand` 四配对）的三种配置方式
+- **写任何自定义颜色前先读 [references/theming.md](./references/theming.md)**：完整 token 清单（34 个 token，含 success 扩展角色）、对比度调整（contrast -1 ~ 1，正值霓虹/游戏、负值可爱/柔和主题）、文字/背景配对规则（如 `primary` 底配 `on-primary` 字）、深浅色自动适配原理、种子色与自定义变量（`--brand` 四配对）的三种配置方式
+
+## 皮肤（材质层）
+
+同一批组件可切换材质而不换颜色：`m3`（默认）/ `apple`（毛玻璃）/ `windows`（Windows 11 / Fluent：Mica + Acrylic）/ `shadcn`（扁平）/ `cyberpunk`（零圆角、等宽字、霓虹发光）。皮肤只改圆角、密度、边框、阴影、毛玻璃、焦点环、动效、波纹；**颜色仍然全部来自 M3 角色**（种子色 / error / success 保留）。全部交互与表面组件均已接入（按钮/输入/选择/卡片/对话框/菜单/列表/选择控件/滑块/进度/标签/导航/提示/消息条/徽标）。
+
+```html
+<html data-skin="apple">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/apple.css">
+```
+
+运行时切换：`import { setSkin } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js"; setSkin("windows")`。
+完整 token / part 表、自定义皮肤写法与注意事项见 [references/components/skin.md](./references/components/skin.md)。
 
 ## 组件清单
 
@@ -92,4 +104,4 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 1. **运行时状态不是标签属性**——`st-input`/`st-textarea`/`st-select`/`st-slider` 的 `value`，`st-dialog`/`st-tooltip` 的 `open` 等是运行时状态：JS 用 `el.value` / `el.open` 读写，`setAttribute("value")` 无效（初始值用 `default-value` 标签属性）
 2. 每个组件的完整属性表、插槽、事件、默认值与特有坑，见 [references/components.md](./references/components.md)
 
-深入阅读顺序建议：写页面前读 [references/usage-patterns.md](./references/usage-patterns.md)（ofa.js 数据绑定语法 + 消费方常见坑）；改主题读 [references/theming.md](./references/theming.md)；用具体组件前查 [references/components.md](./references/components.md) 的对应章节速查，需要完整属性表、默认值清单与更多示例时再读 [references/components/](./references/components/) 下该组件的详细文档（如 button.md、dialog.md——button.md 同时覆盖 button-group / split-button / icon-button）。
+深入阅读顺序建议：写页面前读 [references/usage-patterns.md](./references/usage-patterns.md)（ofa.js 数据绑定语法 + 消费方常见坑）；改主题读 [references/theming.md](./references/theming.md)；换材质读 [references/components/skin.md](./references/components/skin.md)；用具体组件前查 [references/components.md](./references/components.md) 的对应章节速查，需要完整属性表、默认值清单与更多示例时再读 [references/components/](./references/components/) 下该组件的详细文档（如 button.md、dialog.md——button.md 同时覆盖 button-group / split-button / icon-button）。

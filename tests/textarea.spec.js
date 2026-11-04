@@ -107,3 +107,31 @@ test("点击聚焦内部 textarea，点击外部失焦（focusin/focusout 冒泡
   expect(types).toContain("focusin");
   expect(types).toContain("focusout");
 });
+
+test("textarea：color 改内部 caret，退出 autosize 清掉内联高度", async ({ page }) => {
+  await page.goto("/tests/fixtures/textarea.html");
+  await page.waitForFunction(() => document.querySelector("#ta-basic")?.shadowRoot);
+
+  const state = await page.evaluate(async () => {
+    const el = document.querySelector("#ta-basic");
+    el.setAttribute("color", "error");
+    el.setAttribute("autosize", "");
+    await new Promise((r) => setTimeout(r, 150));
+    const ta = el.shadowRoot.querySelector(".native");
+    ta.value = "第一行\n第二行\n第三行\n第四行";
+    ta.dispatchEvent(new Event("input", { bubbles: true, composed: true }));
+    await new Promise((r) => setTimeout(r, 150));
+    const autoHeight = ta.style.height;
+    el.removeAttribute("autosize");
+    await new Promise((r) => setTimeout(r, 150));
+    return {
+      caret: getComputedStyle(ta).caretColor,
+      autoHeight,
+      afterHeight: ta.style.height,
+    };
+  });
+
+  expect(state.caret).not.toBe("rgb(0, 97, 164)");
+  expect(state.autoHeight).not.toBe("");
+  expect(state.afterHeight).toBe("");
+});

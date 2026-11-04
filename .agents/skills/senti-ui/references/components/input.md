@@ -1,6 +1,6 @@
 # st-input 单行输入框组件
 
-基于 ofa.js 的单行输入框组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设，也不需要自定义 CSS 变量）。
+基于 ofa.js 的单行输入框组件。语义由属性表达，外观直接用**原生 CSS 属性**定制（没有 size 类预设；使用者不需要自定义 CSS 变量，材质由 `--st-*` 皮肤 token 控制，见 [skin.md](./skin.md)）。
 
 组件的视觉样式全部定义在宿主元素（`:host`）上，`st-input` 本身就是一个普通的可样式化元素。内部有一个透明的原生 `<input>` 负责语义（输入/键盘/焦点/disabled/readonly）。
 
@@ -25,6 +25,12 @@
 | `color` | M3 角色名 / 自定义变量名 | 无 | 语义色：控制 caret 颜色与 focus 边框色（如 `color="error"` 用于校验错误态） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互、无 focus 态 |
 | `readonly` | boolean | 无 | 只读：可聚焦、不可修改 |
+| `name` | string | 无 | 表单字段名 |
+| `required` | boolean | 无 | 必填，参与原生表单校验 |
+| `maxlength` / `minlength` | number | 无 | 长度约束 |
+| `pattern` | string | 无 | 原生正则校验 |
+| `autocomplete` / `inputmode` | string | 无 | 转发内部 input |
+| `min` / `max` / `step` | number | 无 | number/range 约束 |
 
 在 ofa 页面中优先用绑定语法（**布尔属性必须用 `attr:`**，`:disabled` 会把 false 序列化成字符串属性导致永远禁用）；JS 读写值用 `el.value`：
 
@@ -76,7 +82,7 @@ $("st-input").on("input", (e) => {
 `color` 接受 **M3 角色名**（`primary` / `error` / `success` 等）或 **color 工具里定义的自定义变量名**，控制 caret 与 focus 边框颜色。典型用法是校验错误态：
 
 ```html
-<st-input color="error" value="非法输入"></st-input>
+<st-input color="error" default-value="非法输入"></st-input>
 ```
 
 未定义的名称回退到 primary。不设 `color` 时 focus 边框/caret 为 primary。
@@ -96,7 +102,7 @@ $("st-input").on("input", (e) => {
 <st-input variant="filled" style="border-radius: 999px; border-bottom: 1px solid var(--md-sys-color-on-surface-variant);"></st-input>
 ```
 
-### 默认值（直接覆盖即可）
+### 默认值（直接覆盖即可；实现为 `var(--st-*, 默认值)`，不加载皮肤与旧版一致）
 
 | 属性 | 默认值 |
 |------|--------|
@@ -122,6 +128,21 @@ $("st-input").on("input", (e) => {
 
 `st-color-init.js` 注入的颜色体系默认跟随系统深浅色；强制指定：`<html class="st-light">` 或 `<html class="st-dark">`。
 
+## 皮肤（材质）
+
+`st-input` 已接入皮肤 token：高度、圆角、内边距、字体、描边、背景、底边线、阴影、毛玻璃、焦点环形态、disabled。颜色仍由 M3 与 `color` 属性决定。
+
+```html
+<html data-skin="shadcn">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/shadcn.css">
+<st-input color="error" placeholder="校验错误态"></st-input>
+```
+
+- 运行时：`import { setSkin } from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skin/st-skin.js"; setSkin("shadcn")`
+- 主要 token：`--st-height` / `--st-field-radius` / `--st-field-padding` / `--st-field-bg` / `--st-field-filled-bg` / `--st-field-border` / `--st-field-underline` / `--st-field-shadow` / `--st-backdrop-filter` / `--st-field-focus-ring-opacity` / `--st-field-focus-shadow` / `--st-field-focus-color` / `--st-field-focus-gap` / `--st-field-focus-gap-color` / `--st-field-focus-glow-spread` / `--st-field-focus-glow-alpha` / `--st-field-focus-underline-height` / `--st-field-focus-underline-alpha` / `--st-field-underline-color`
+- part（light DOM 时可用）：`focus-ring` / `underline` / `control`
+- 完整 token 表见 [skin.md](./skin.md)
+
 ## 注意事项与使用技巧
 
 - `value` 是运行时状态（ofa data）：JS 读写用 `el.value`，`setAttribute("value")` 无效；初始值用标签属性 `default-value`
@@ -130,3 +151,9 @@ $("st-input").on("input", (e) => {
 - 布尔属性 readonly 的 watch 同步是异步的，setAttribute 后稍等再断言
 - 宿主本身不可聚焦（无 tabindex），焦点在内部 `.native` input 上；自动化测试用真实点击聚焦
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/input/`）。
+
+- 无障碍：宿主 `aria-label` / `aria-labelledby` / `title` 会同步到内部 input
+
+## 表单
+
+支持 `name` / `required` / `maxlength` / `minlength` / `pattern` / `autocomplete` / `inputmode` / `min` / `max` / `step`。组件在 light DOM 用不可见原生代理控件参与 `<form>` 提交与约束校验；无效时阻止提交、派发 `invalid` 并给内部 input 加 `aria-invalid`，`reset` 回到 `default-value`。原生 `<label for>` 不适用，请用 `aria-label` / `aria-labelledby`。

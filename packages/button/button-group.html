@@ -57,8 +57,8 @@
         this._applyRadii = () => {
           const btns = slot.assignedElements().filter((el) => el.tagName === "ST-BUTTON");
           const n = btns.length;
-          const full = "1.429em";
-          const inner = this.connected !== null ? "0" : "0.5em";
+          const full = "var(--st-control-radius, 1.429em)";
+          const inner = this.connected !== null ? "0" : "var(--st-radius-sm, 0.5em)";
           btns.forEach((btn, i) => {
             const first = i === 0;
             const last = i === n - 1;

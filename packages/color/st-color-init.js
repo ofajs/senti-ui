@@ -1,7 +1,7 @@
 /**
  * st-color-init.js — Senti-UI 项目初始化模块
  *
- * 读取 color 工具保存在 localStorage 的配置（种子色 / 角色覆盖 / 自定义变量，
+ * 读取 color 工具保存在 localStorage 的配置（种子色 / 角色覆盖 / 自定义变量 / 对比度，
  * key 为 "st-color-config"），动态生成完整 M3 颜色体系并注入 <style>；
  * 无保存配置时使用默认种子色。
  * 体系含内置扩展角色 success（--md-sys-color-success 等 4 个配对 token，
@@ -25,7 +25,13 @@ const STORAGE_KEY = "st-color-config";
 const CSS_CACHE_KEY = "st-theme-css";
 const DEFAULT_SEED = "#0061A4";
 
-let config = { seed: DEFAULT_SEED, overrides: {}, customs: [] };
+let config = {
+  seed: DEFAULT_SEED,
+  overrides: {},
+  customs: [],
+  contrast: 0,
+  contrastTone: "deep",
+};
 try {
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
   if (saved && /^#[0-9a-fA-F]{6}$/.test(saved.seed || "")) {
@@ -33,6 +39,8 @@ try {
       seed: saved.seed,
       overrides: saved.overrides || {},
       customs: Array.isArray(saved.customs) ? saved.customs : [],
+      contrast: saved.contrast ?? 0,
+      contrastTone: saved.contrastTone === "bright" ? "bright" : "deep",
     };
   }
 } catch {}
@@ -45,10 +53,19 @@ const customsObj = Object.fromEntries(
 );
 
 export const themeConfig = config;
-export const theme = applyTheme(config.seed, config.overrides, customsObj);
+export const theme = applyTheme(config.seed, config.overrides, customsObj, {
+  contrast: config.contrast,
+  contrastTone: config.contrastTone,
+});
 
 // 缓存生成的主题 CSS（themeToCss 输出含 :root / html.st-light / html.st-dark 完整块），
 // 供 st-boot.js 下次刷新同步注入（写缓存失败不影响当前页）
 try {
-  localStorage.setItem(CSS_CACHE_KEY, themeToCss(config.seed, config.overrides, customsObj));
+  localStorage.setItem(
+    CSS_CACHE_KEY,
+    themeToCss(config.seed, config.overrides, customsObj, {
+      contrast: config.contrast,
+      contrastTone: config.contrastTone,
+    })
+  );
 } catch {}

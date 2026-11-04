@@ -38,6 +38,7 @@ collapse.removeAttribute("hide");    // 展开
 - 内容高度变化（含嵌套折叠引起的）由 ResizeObserver 瞬时跟随，无过渡——这是特性：嵌套折叠时外层逐帧同步内层，不会拖尾
 - 不要给 collapse 内内容的 margin 依赖外层高度（内容用 absolute 量高，顶部留 0.1px 防 margin 折叠）
 - 配合 st-list-item 的 sublist 使用时无需手动管理
+- 收起时宿主自动加 `inert` + `aria-hidden="true"`，隐藏内容不会留在 Tab 顺序/无障碍树里
 ## 验证页面
 
 `index.html`（直接访问 `/packages/collapse/`）。

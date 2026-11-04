@@ -21,9 +21,9 @@ toast 工具无需预引入组件——内部按需注入 `<l-m>`（snackbar / b
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `open` | boolean | 无 | 显示（底部上滑入场 0.2s） |
+| `open` | boolean | 无 | 显示（即时切换；组件不自带动画，toast 工具负责滑入/滑出） |
 | `duration` | number（毫秒） | 无 | 设置后打开 `duration` 毫秒自动关闭并派发 `close` |
-| `color` | M3 角色名 / 自定义变量名 | 无 | 语义配色：底色为角色色、文字为 on-角色色（如 `color="error"`）；未设置时用默认反色底 |
+| `color` | M3 角色名 / 自定义变量名 | 无 | 语义配色：底色为角色色、文字为 on-角色色（如 `color="error"`）；未设置时用默认 `secondary` 底 |
 
 ```js
 $("st-snackbar").attr("open", "");
@@ -80,11 +80,12 @@ const t = await toast({ message: "点 ✕ 关闭", duration: 0 });
 t.close(); // 手动关闭（返回 { close, el }）
 ```
 
-实现说明：消息条复用 st-snackbar（✕ 关闭用**小号 st-icon-button**，`font-size: 10px` 等比缩小到约 28px 不撑高消息条；按钮色走 `color` 属性——默认反色底上 `inverse-primary`、彩色底上 `on-角色色`）；消息文本走 `textContent` 天然防注入；容器 `pointer-events: none` 不挡页面交互。
+实现说明：消息条复用 st-snackbar（✕ 关闭用**小号 `st-icon-button variant="standard"`**，`font-size: 10px` 约 28px，透明底、圆形（`--st-icon-radius: 50%`），不撑高消息条；按钮色走 `color` 属性——默认 `secondary` 底上 `on-secondary`、彩色底上 `on-角色色`）；消息文本走 `textContent` 天然防注入；容器 `pointer-events: none` 不挡页面交互。
 
 ## 注意事项与使用技巧
 
-- **action 按钮必须用 st-button 的 `color` 属性着色**（如默认反色底上 `color="inverse-primary"`、红底上 `color="on-error"`）——给 st-button 写内联 style color 会被其配色逻辑覆盖
+- **action 按钮优先用 st-button 的 `color` 属性着色**（如 `color="on-secondary"`、红底上 `color="on-error"`）；内联样式也能生效，但不会自动配对 on-角色色
+- 组件带 `role="status"` / `aria-live="polite"`；`applyColor` 只写 `--st-snackbar-bg/fg`，不会清掉使用者内联背景
 - `duration` 是毫秒数属性，仅与 `open` 同时存在时生效；`el.hide()`（宿主 property）手动关闭并派发 close
 - 外部 `$("st-snackbar").attr("open", null)` 关闭不派发 close
 - 显隐即时切换，无内建动画；`hide()`（宿主 property）关闭并派发 close

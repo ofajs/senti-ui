@@ -110,7 +110,9 @@ const contextMenu = async (source, items) => {
       true
     );
     // 选中 / 点外部 / Escape 都会触发 close：统一在这里 resolve + 销毁
-    menu.addEventListener("close", () => {
+    menu.addEventListener("close", (e) => {
+      // 子菜单的 close 会冒泡上来：只处理根菜单自己的关闭
+      if (e.target !== menu) return;
       finish(pendingId ?? null);
       setTimeout(() => menu.remove(), 250); // 等退出过渡播完再销毁
     });

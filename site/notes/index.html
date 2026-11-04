@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>手记 — Senti-UI</title>
+  <meta name="description" content="Senti-UI 手记：关于组件、材质与 AI 协作的设计思考。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../../packages/skin/cyberpunk.css" />
+  <link rel="stylesheet" href="../../packages/skin/windows.css" />
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+    .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
+    .nojs h1 { margin: 0 0 12px; font-size: 32px; }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>手记</h1>
+      <p>手记页面需要 JavaScript；也可以回到首页或查看 GitHub 源码。</p>
+      <p><a href="../index.html">组件目录</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+    </div>
+  </noscript>
+
+  <o-app src="../app-config.js">
+    <template page>
+      <l-m src="../../packages/button/button.html"></l-m>
+      <l-m src="../../packages/select/select.html"></l-m>
+      <l-m src="../../packages/button/button-group.html"></l-m>
+      <l-m src="../../packages/button/icon-button.html"></l-m>
+      <l-m src="../../packages/menu/menu.html"></l-m>
+      <l-m src="../../packages/tooltip/tooltip.html"></l-m>
+      <l-m src="../../packages/progress/progress.html"></l-m>
+
+      <link rel="stylesheet" href="../notes.css" />
+
+      <article class="notes-index">
+        <header class="notes-hero">
+          <p class="kicker">NOTES / DESIGN</p>
+          <h1>手记</h1>
+          <p class="lead">
+            关于 Senti-UI 的设计取舍、材质系统，以及和 AI 一起构建界面的思考。
+            这里不重复 API 用法——那些在文档里；这里记录“为什么这样做”。
+          </p>
+        </header>
+
+        <div class="notes-list">
+          <a class="note-card" olink href="./why-senti-ui.html">
+            <div class="note-card-top">
+              <span class="note-index">01</span>
+              <span>设计理念</span>
+              <span>2026-11-01</span>
+              <span>约 4 分钟</span>
+            </div>
+            <h2>为什么要开发 Senti-UI</h2>
+            <p>
+              过去我们用前端框架省下组件开发时间，也顺便接受了它的设计语言。
+              AI 让重新开发变得划算，Senti-UI 则想成为更适合 AI 使用的前端框架：
+              行为统一，VI 留给皮肤。
+            </p>
+            <span class="more">阅读全文 <iconify-icon icon="mdi:arrow-right"></iconify-icon></span>
+          </a>
+        </div>
+
+        <aside class="notes-about">
+          <strong>关于这个栏目。</strong>
+          手记会记录组件库背后的判断：为什么把颜色收进 M3 角色，为什么皮肤只能改材质，
+          以及我们怎样让 AI 少猜一点。文章会随版本演进，但尽量只写已经成立的事实。
+        </aside>
+      </article>
+
+      <script>
+        export const parent = "../layout.html";
+
+        export default async () => ({});
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin, getSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = Object.assign(window.__site || {}, { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu });
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

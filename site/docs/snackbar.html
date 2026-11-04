@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snackbar — 组件文档 — Senti-UI</title>
+  <meta name="description" content="Snackbar（st-snackbar）用法：消息条：默认次级色底、即时显示；duration 到时自动关闭（toast 工具另带滑入/滑出）。命令式版本是 toast。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../../packages/skin/cyberpunk.css" />
+  <link rel="stylesheet" href="../../packages/skin/windows.css" />
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+    .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
+    .nojs h1 { margin: 0 0 12px; font-size: 32px; }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>Snackbar</h1>
+      <p>组件文档的示例与目录需要 JavaScript；也可以回到首页或查看 GitHub 源码。</p>
+      <p><a href="../index.html">组件目录</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+    </div>
+  </noscript>
+
+  <o-app src="../app-config.js">
+    <template page>
+      <!-- 依赖放在 template 内：SCSR 切页时目标页 body 里的 <l-m> 不会执行 -->
+      <l-m src="../../packages/button/button.html"></l-m>
+      <l-m src="../../packages/button/button-group.html"></l-m>
+      <l-m src="../../packages/button/split-button.html"></l-m>
+      <l-m src="../../packages/button/icon-button.html"></l-m>
+      <l-m src="../../packages/input/input.html"></l-m>
+      <l-m src="../../packages/textarea/textarea.html"></l-m>
+      <l-m src="../../packages/select/select.html"></l-m>
+      <l-m src="../../packages/dialog/dialog.html"></l-m>
+      <l-m src="../../packages/checkbox/checkbox.html"></l-m>
+      <l-m src="../../packages/switch/switch.html"></l-m>
+      <l-m src="../../packages/radio/radio.html"></l-m>
+      <l-m src="../../packages/snackbar/snackbar.html"></l-m>
+      <l-m src="../../packages/slider/slider.html"></l-m>
+      <l-m src="../../packages/progress/progress.html"></l-m>
+      <l-m src="../../packages/tooltip/tooltip.html"></l-m>
+      <l-m src="../../packages/card/card.html"></l-m>
+      <l-m src="../../packages/badges/badges.html"></l-m>
+      <l-m src="../../packages/collapse/collapse.html"></l-m>
+      <l-m src="../../packages/list/list.html"></l-m>
+      <l-m src="../../packages/menu/menu.html"></l-m>
+      <l-m src="../../packages/tabs/tab-bar.html"></l-m>
+      <l-m src="../../packages/navigation/nav-bar.html"></l-m>
+      <l-m src="../../packages/navigation/nav-layout.html"></l-m>
+      <l-m src="../../packages/ripple/ripple.html"></l-m>
+
+      <link rel="stylesheet" href="../docs.css" />
+
+          <article class="doc-page">
+            <header class="doc-hero">
+              <p class="doc-kicker">反馈 · 11 / 21</p>
+              <h1>Snackbar <code>st-snackbar</code></h1>
+              <p class="doc-lead">消息条：open 控制显示、duration 到时自动关闭、color 换成 M3 角色色。action 插槽放一个用 color 着色的 st-button；toast 是固定在左下角、可堆叠的命令式版本。</p>
+              <div class="doc-links">
+                <a href="../index.html">组件目录</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/snackbar/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
+              </div>
+            </header>
+
+            <section class="doc-section">
+              <h2>显示、隐藏与 action 插槽</h2>
+              <p class="doc-section-lead">open 是布尔属性，页面里用 attr:open 绑定数据。action 插槽放操作按钮；按钮颜色必须用 st-button 的 color 属性（默认 secondary 底上用 on-secondary）；内联 style 也能生效，但不会自动配对 on-角色色。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>open / action</code></div>
+                <div class="demo-stage">
+                  <st-snackbar attr:open="snackOpen">
+                    已删除 1 个项目
+                    <st-button slot="action" variant="text" color="on-secondary" on:click="snackOpen = false">撤销</st-button>
+                  </st-snackbar>
+                  <div class="row">
+                    <st-button variant="outlined" on:click="snackOpen = true">显示消息条</st-button>
+                    <st-button variant="text" on:click="snackOpen = false">隐藏</st-button>
+                  </div>
+                  <span class="demo-note">snackOpen = {{snackOpen}} · 点「撤销」也会把数据置回 false</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-snackbar attr:open="snackOpen"&gt;
+  已删除 1 个项目
+  &lt;st-button slot="action" variant="text" color="on-secondary" on:click="snackOpen = false"&gt;撤销&lt;/st-button&gt;
+&lt;/st-snackbar&gt;
+&lt;st-button on:click="snackOpen = true"&gt;显示消息条&lt;/st-button&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { snackOpen: false },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>duration 自动关闭与 close</h2>
+              <p class="doc-section-lead">duration 是毫秒数，只在 open 存在时生效，到时自动关闭并派发 close。因为自动关闭是组件内部移除 open，页面数据不会自动变回 false，建议在 on:close 里手动复位，否则再次置 true 不会重新打开。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>duration / on:close</code></div>
+                <div class="demo-stage">
+                  <st-snackbar attr:open="autoOpen" duration="3000" on:close="onAutoClose">
+                    设置已保存，消息条将在 3 秒后消失
+                    <st-button slot="action" variant="text" color="on-secondary" on:click="autoOpen = false">立即关闭</st-button>
+                  </st-snackbar>
+                  <st-button variant="outlined" on:click="openAuto">显示 3 秒消息</st-button>
+                  <span class="demo-note">autoOpen = {{autoOpen}} · close 触发 {{closeCount}} 次 · 最近：{{lastClose}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（自动关闭后复位状态）</summary>
+                <pre><code>&lt;st-snackbar attr:open="autoOpen" duration="3000" on:close="onAutoClose"&gt;
+  设置已保存
+&lt;/st-snackbar&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { autoOpen: false, closeCount: 0 },
+    proto: {
+      openAuto() {
+        this.autoOpen = true;
+      },
+      onAutoClose() {
+        this.autoOpen = false;   // 内部移除 open 不会回写数据
+        this.closeCount += 1;
+      },
+    },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>color 语义换色</h2>
+              <p class="doc-section-lead">color 接受 M3 角色名或 color 工具里的自定义变量名，底色用角色色、文字自动配对 on-角色色。红色底上的操作按钮改用 color="on-error"，不要用内联 color。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>color</code></div>
+                <div class="demo-stage block">
+                  <st-snackbar open>默认 · secondary 主题次级色底</st-snackbar>
+                  <st-snackbar open color="primary">primary · 已同步到云端</st-snackbar>
+                  <st-snackbar open color="error">
+                    error · 上传失败，请重试
+                    <st-button slot="action" variant="text" color="on-error">重试</st-button>
+                  </st-snackbar>
+                  <st-snackbar open color="success">success · 保存成功</st-snackbar>
+                </div>
+              </div>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>attr:color</code></div>
+                <div class="demo-stage">
+                  <st-snackbar attr:open="colorOpen" attr:color="barColor">
+                    当前 color = {{barColor}}
+                    <st-button slot="action" variant="text" on:click="colorOpen = false">关闭</st-button>
+                  </st-snackbar>
+                  <div class="row">
+                    <st-button variant="outlined" on:click="setBar('primary')">primary</st-button>
+                    <st-button variant="outlined" on:click="setBar('tertiary')">tertiary</st-button>
+                    <st-button variant="outlined" on:click="setBar('error')">error</st-button>
+                  </div>
+                  <span class="demo-note">切换 color 时底色与文字一起变；操作按钮继承文字色自动配对。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-snackbar open color="success"&gt;保存成功&lt;/st-snackbar&gt;
+&lt;st-snackbar open color="error"&gt;
+  上传失败
+  &lt;st-button slot="action" variant="text" color="on-error"&gt;重试&lt;/st-button&gt;
+&lt;/st-snackbar&gt;
+
+&lt;!-- color 是标签属性，可随数据切换 --&gt;
+&lt;st-snackbar attr:open="colorOpen" attr:color="barColor"&gt;...&lt;/st-snackbar&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>命令式 toast 与堆叠</h2>
+              <p class="doc-section-lead">toast 固定在视口左下角，可同时存在多条（后出的在下），每条独立计时。字符串参数默认 3 秒；对象参数支持 message / duration / color，duration: 0 表示只手动关闭。toast 自带滑入滑出动画。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>window.__site.toast</code></div>
+                <div class="demo-stage">
+                  <st-button variant="outlined" on:click="runToast">默认 toast（3s）</st-button>
+                  <st-button variant="outlined" on:click="runToastColor">success 色（4s）</st-button>
+                  <st-button variant="outlined" on:click="runToastSticky">不自动消失</st-button>
+                  <st-button variant="outlined" on:click="runToastStack">连发 3 条</st-button>
+                  <st-button variant="text" on:click="closeSticky">关闭上一条常驻</st-button>
+                  <span class="demo-note">toast 结果：{{toastResult}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>import toast from "/packages/snackbar/toast.js";
+
+const t = toast("已保存全部更改");
+toast({ message: "同步完成", color: "success", duration: 4000 });
+const sticky = toast({ message: "点 ✕ 关闭", duration: 0 });
+sticky.close(); // 手动关闭（close 幂等）
+
+// 连续调用即堆叠，每条独立计时
+toast("第 1 条");
+toast("第 2 条");
+toast("第 3 条");</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>长文本与操作区排版</h2>
+              <p class="doc-section-lead">默认宽度 14.286em–34.286em（200–480px），长消息自动换行，高度完全由内容决定。检测到 action 插槽有内容时，上下内边距会自动收紧到 0.286em，让 40px 按钮撑出 M3 的 48dp 高度。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>long message / action</code></div>
+                <div class="demo-stage block">
+                  <st-snackbar attr:open="longOpen">
+                    网络连接已断开，正在尝试重新连接。恢复后会自动同步你的数据，无需手动操作。
+                    <st-button slot="action" variant="text" color="on-secondary" on:click="openDetail">查看详情</st-button>
+                  </st-snackbar>
+                  <st-snackbar open>短消息：没有 action 时上下留白更宽松。</st-snackbar>
+                  <div class="row">
+                    <st-button variant="outlined" on:click="longOpen = true">显示长消息</st-button>
+                    <st-button variant="text" on:click="longOpen = false">隐藏</st-button>
+                  </div>
+                  <span class="demo-note">「查看详情」已点击 {{detailCount}} 次 · 点击后关闭消息条</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-snackbar attr:open="longOpen"&gt;
+  网络连接已断开，正在尝试重新连接……
+  &lt;st-button slot="action" variant="text" color="on-secondary" on:click="openDetail"&gt;
+    查看详情
+  &lt;/st-button&gt;
+&lt;/st-snackbar&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>JS hide() 与原生样式定制</h2>
+              <p class="doc-section-lead">el.hide() 会关闭消息条并派发 close（和 duration 到时的路径一致）；页面里通过 this.shadow.$("#id") 取实例。视觉在宿主上，圆角、底色、文字色都能直接用原生 style 覆盖，不需要额外变量。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>hide() / inline style</code></div>
+                <div class="demo-stage block">
+                  <st-snackbar id="doc-snack-js" attr:open="jsOpen">这条由 JS 的 hide() 关闭</st-snackbar>
+                  <div class="row" style="justify-content: flex-start;">
+                    <st-button variant="outlined" on:click="jsOpen = true">显示</st-button>
+                    <st-button variant="text" on:click="hideSnackbar">调用 hide()</st-button>
+                  </div>
+                  <st-snackbar open style="border-radius: 999px; background: var(--md-sys-color-error); color: var(--md-sys-color-on-error);">
+                    胶囊形 + error 角色色（原生 style）
+                  </st-snackbar>
+                  <span class="demo-note">jsOpen = {{jsOpen}} · hide() 后同步把页面数据置回 false</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-snackbar id="snack" attr:open="open"&gt;这条由 JS 关闭&lt;/st-snackbar&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { open: false },
+    proto: {
+      hideSnackbar() {
+        this.shadow.$("#snack").hide(); // 关闭并派发 close
+        this.open = false;
+      },
+    },
+  });
+&lt;/script&gt;
+
+&lt;st-snackbar open style="border-radius: 999px; background: var(--md-sys-color-error); color: var(--md-sys-color-on-error);"&gt;
+  胶囊形消息
+&lt;/st-snackbar&gt;</code></pre>
+              </details>
+            </section>
+
+            <div class="doc-cols">
+              <div class="doc-block">
+                <h3>属性</h3>
+                <table class="api">
+                  <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>open</code></td><td>boolean</td><td>无</td><td>显示；页面里用 <code>attr:open="key"</code> 绑定</td></tr>
+                    <tr><td><code>duration</code></td><td>number（毫秒）</td><td>无</td><td>open 存在时计时，到时自动关闭并派发 close</td></tr>
+                    <tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>角色色底 + on-角色色文字；未设置时 secondary</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="doc-block">
+                <h3>插槽 / 事件 / 注意</h3>
+                <ul class="api-list">
+                  <li>插槽：默认消息文本；<code>action</code> 放操作按钮（颜色用 st-button 的 color 属性）。</li>
+                  <li>事件：<code>close</code>（bubbles + composed），duration 到时或 <code>el.hide()</code> 时派发；外部移除 open 不派发。</li>
+                  <li>命令式：<code>toast(message | options)</code> 返回 <code>{ close, el }</code>，左下角堆叠；duration: 0 不自动消失。</li>
+                  <li>默认值：宽 14.286–34.286em、圆角 0.286em、padding <code>0.571em 1em</code>（有 action 时上下 0.286em）；显隐即时切换，无内建动画。</li>
+                  <li>定位由外部决定；页面里放在 .demo-stage 中已由 docs.css 设为 static，实际应用通常自己包 fixed 容器或直接用 toast。</li>
+                </ul>
+              </div>
+            </div>
+
+            <nav class="doc-pager" aria-label="上下篇">
+              <a class="pager-link" olink href="./menu.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Menu</a><a class="pager-link pager-next" olink href="./progress.html"><span>下一页</span>Progress <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
+            </nav>
+          </article>
+      <script>
+        export const parent = "./layout.html";
+
+        export default async () => ({
+          data: {
+            snackOpen: false,
+            autoOpen: false,
+            closeCount: 0,
+            lastClose: "（无）",
+            colorOpen: true,
+            barColor: "primary",
+            toastResult: "（未调用）",
+            longOpen: false,
+            detailCount: 0,
+            jsOpen: false,
+          },
+          proto: {
+            openAuto() {
+              this.autoOpen = true;
+            },
+            onAutoClose() {
+              this.autoOpen = false;
+              this.closeCount += 1;
+              this.lastClose = "duration 到期 / 手动关闭";
+            },
+            setBar(name) {
+              this.barColor = name;
+              this.colorOpen = true;
+            },
+            runToast() {
+              if (!window.__site) return;
+              window.__site.toast("已保存全部更改");
+              this.toastResult = "默认 toast（3s）";
+            },
+            runToastColor() {
+              if (!window.__site) return;
+              window.__site.toast({ message: "同步完成", color: "success", duration: 4000 });
+              this.toastResult = "success 色（4s）";
+            },
+            runToastSticky() {
+              if (!window.__site) return;
+              this._stickyToast = window.__site.toast({ message: "我不会自动消失，点 ✕ 关闭", duration: 0 });
+              this.toastResult = "常驻 toast（duration: 0）";
+            },
+            closeSticky() {
+              if (!this._stickyToast) {
+                this.toastResult = "还没有常驻 toast";
+                return;
+              }
+              this._stickyToast.close();
+              this._stickyToast = null;
+              this.toastResult = "已关闭常驻 toast";
+            },
+            runToastStack() {
+              if (!window.__site) return;
+              window.__site.toast("第 1 条：正在同步");
+              window.__site.toast({ message: "第 2 条：同步完成", color: "success" });
+              window.__site.toast("第 3 条：可以关闭页面了");
+              this.toastResult = "连发 3 条，左下角堆叠";
+            },
+            openDetail() {
+              this.detailCount += 1;
+              this.longOpen = false;
+            },
+            hideSnackbar() {
+              const bar = this.shadow.$("#doc-snack-js");
+              if (bar && bar.hide) bar.hide();
+              this.jsOpen = false;
+            },
+          },
+        });
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin, getSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = Object.assign(window.__site || {}, { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu });
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

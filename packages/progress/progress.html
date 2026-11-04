@@ -10,7 +10,8 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      font-size: 14px;
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
       color: var(--md-sys-color-primary);
     }
 
@@ -19,8 +20,8 @@
       position: relative;
       width: 100%;
       min-width: 8em;
-      height: 0.286em; /* 4px */
-      border-radius: 0.286em;
+      height: var(--st-progress-thickness, 0.286em);
+      border-radius: var(--st-progress-radius, 0.286em);
       overflow: hidden;
       background: var(--md-sys-color-surface-container-highest);
     }
@@ -29,7 +30,8 @@
       width: 0%;
       border-radius: inherit;
       background: currentColor;
-      transition: width 0.3s cubic-bezier(0.2, 0, 0, 1);
+      transition: width var(--st-progress-duration, 0.3s)
+        var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
 
     /* 线形不定进度动画（keyframes 由 JS 按状态以内联 animation 驱动——
@@ -42,19 +44,19 @@
 
     /* 环形：svg stroke-dash；size = 2.857em（40px），stroke 0.286em */
     svg.circular {
-      width: 2.857em;
-      height: 2.857em;
+      width: var(--st-progress-size, 2.857em);
+      height: var(--st-progress-size, 2.857em);
       transform: rotate(-90deg);
     }
     svg.circular .track {
       fill: none;
       stroke: var(--md-sys-color-surface-container-highest);
-      stroke-width: 0.286em;
+      stroke-width: var(--st-progress-thickness, 0.286em);
     }
     svg.circular .arc {
       fill: none;
       stroke: currentColor;
-      stroke-width: 0.286em;
+      stroke-width: var(--st-progress-thickness, 0.286em);
       stroke-linecap: round;
       stroke-dasharray: 100;
       stroke-dashoffset: 100; /* 0-100 by JS */
@@ -116,6 +118,16 @@
         color() { this.applyColor(); },
       },
       ready() {
+        const ele = this.ele;
+        this._a11yReady = false;
+        // 构造期不能写宿主属性：延后设置角色并重新应用状态
+        queueMicrotask(() => {
+          ele.setAttribute("role", "progressbar");
+          ele.setAttribute("aria-valuemin", "0");
+          ele.setAttribute("aria-valuemax", "100");
+          this._a11yReady = true;
+          this.applyState();
+        });
         this.applyState();
         this.applyColor();
       },
@@ -131,6 +143,16 @@
             this.value !== null && this.value !== "" && !Number.isNaN(Number(this.value));
           const indeterminate = this.indeterminate !== null || !hasValue;
           const v = Math.min(Math.max(Number(this.value ?? 0) || 0, 0), 100);
+          // 语义：不定态不暴露 aria-valuenow，用 aria-busy 表示进行中
+          if (this._a11yReady) {
+            if (indeterminate) {
+              this.ele.removeAttribute("aria-valuenow");
+              this.ele.setAttribute("aria-busy", "true");
+            } else {
+              this.ele.setAttribute("aria-valuenow", String(v));
+              this.ele.removeAttribute("aria-busy");
+            }
+          }
           const svg = sr.querySelector("svg.circular");
           if (indeterminate) {
             bar.style.width = "30%";

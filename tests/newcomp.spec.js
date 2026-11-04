@@ -55,11 +55,18 @@ test("slider：disabled 原生阻断", async ({ page }) => {
 
 test("slider：color=error 拇指为 error 角色色", async ({ page }) => {
   const { token, thumb } = await page.evaluate(() => {
+    const parse = (value) => {
+      if (value.startsWith("#")) {
+        const h = value.slice(1);
+        return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+      }
+      const n = value.match(/[\d.]+/g).map(Number);
+      return value.startsWith("color(") ? n.slice(0, 3).map((v) => Math.round(v * 255)) : n.slice(0, 3);
+    };
     const token = getComputedStyle(document.documentElement).getPropertyValue("--md-sys-color-error").trim();
-    return { token, thumb: getComputedStyle(document.querySelector("#sl-color").shadowRoot.querySelector(".thumb")).backgroundColor };
+    return { token: parse(token), thumb: parse(getComputedStyle(document.querySelector("#sl-color").shadowRoot.querySelector(".thumb")).backgroundColor) };
   });
-  const hex = token.replace("#", "");
-  expect(thumb).toBe(`rgb(${parseInt(hex.slice(0, 2), 16)}, ${parseInt(hex.slice(2, 4), 16)}, ${parseInt(hex.slice(4, 6), 16)})`);
+  expect(thumb).toEqual(token);
 });
 
 // ---------- st-progress ----------
@@ -149,13 +156,22 @@ test("card：三种 variant 配色差异", async ({ page }) => {
   expect(styles.outlined.border).not.toBe(styles.elev.border);
 });
 
-test("card：interactive 点击冒泡，focus 有焦圈元素", async ({ page }) => {
-  await page.locator("#card-click .native").click();
+test("card：interactive 点击冒泡且宿主自身承载 button 语义", async ({ page }) => {
+  await page.locator("#card-click").click();
   await page.waitForTimeout(100);
   expect(await page.evaluate(() => window.events)).toContain("card-click");
   expect(
-    await page.evaluate(() => document.querySelector("#card-click").shadowRoot.querySelector(".native").tagName)
-  ).toBe("BUTTON");
+    await page.evaluate(() => {
+      const el = document.querySelector("#card-click");
+      return { role: el.getAttribute("role"), tab: el.tabIndex };
+    })
+  ).toEqual({ role: "button", tab: 0 });
+});
+
+test("card：interactive 卡片内的按钮仍可点击（覆盖层不再拦截）", async ({ page }) => {
+  await page.locator("#card-inner-btn").click();
+  await page.waitForTimeout(100);
+  expect(await page.evaluate(() => window.events)).toContain("card-inner");
 });
 
 // ---------- st-badges ----------

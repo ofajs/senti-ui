@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Radio — 组件文档 — Senti-UI</title>
+  <meta name="description" content="Radio（st-radio）用法：单选按钮：同 name、同父容器内互斥；选中圆点弹性入场。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../../packages/skin/cyberpunk.css" />
+  <link rel="stylesheet" href="../../packages/skin/windows.css" />
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+    .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
+    .nojs h1 { margin: 0 0 12px; font-size: 32px; }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>Radio</h1>
+      <p>组件文档的示例与目录需要 JavaScript；也可以回到首页或查看 GitHub 源码。</p>
+      <p><a href="../index.html">组件目录</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+    </div>
+  </noscript>
+
+  <o-app src="../app-config.js">
+    <template page>
+      <!-- 依赖放在 template 内：SCSR 切页时目标页 body 里的 <l-m> 不会执行 -->
+      <l-m src="../../packages/button/button.html"></l-m>
+      <l-m src="../../packages/button/button-group.html"></l-m>
+      <l-m src="../../packages/button/split-button.html"></l-m>
+      <l-m src="../../packages/button/icon-button.html"></l-m>
+      <l-m src="../../packages/input/input.html"></l-m>
+      <l-m src="../../packages/textarea/textarea.html"></l-m>
+      <l-m src="../../packages/select/select.html"></l-m>
+      <l-m src="../../packages/dialog/dialog.html"></l-m>
+      <l-m src="../../packages/checkbox/checkbox.html"></l-m>
+      <l-m src="../../packages/switch/switch.html"></l-m>
+      <l-m src="../../packages/radio/radio.html"></l-m>
+      <l-m src="../../packages/snackbar/snackbar.html"></l-m>
+      <l-m src="../../packages/slider/slider.html"></l-m>
+      <l-m src="../../packages/progress/progress.html"></l-m>
+      <l-m src="../../packages/tooltip/tooltip.html"></l-m>
+      <l-m src="../../packages/card/card.html"></l-m>
+      <l-m src="../../packages/badges/badges.html"></l-m>
+      <l-m src="../../packages/collapse/collapse.html"></l-m>
+      <l-m src="../../packages/list/list.html"></l-m>
+      <l-m src="../../packages/menu/menu.html"></l-m>
+      <l-m src="../../packages/tabs/tab-bar.html"></l-m>
+      <l-m src="../../packages/navigation/nav-bar.html"></l-m>
+      <l-m src="../../packages/navigation/nav-layout.html"></l-m>
+      <l-m src="../../packages/ripple/ripple.html"></l-m>
+
+      <link rel="stylesheet" href="../docs.css" />
+
+          <article class="doc-page">
+            <header class="doc-hero">
+              <p class="doc-kicker">表单 · 7 / 21</p>
+              <h1>Radio <code>st-radio</code></h1>
+              <p class="doc-lead">单选按钮：用 name 作为分组键，在最近的同一容器内互斥；attr:checked 表示选中态，change 只在被点中的那一项派发。圆圈与间距全用 em，改 font-size 即等比缩放。</p>
+              <div class="doc-links">
+                <a href="../index.html">组件目录</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/radio/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
+              </div>
+            </header>
+
+            <section class="doc-section">
+              <h2>基础用法与同组互斥</h2>
+              <p class="doc-section-lead">同组选项写在同一个父容器里，name 相同的 st-radio 自动互斥。用 attr:checked 绑定数据、on:change 回写选中值，页面状态与组件选中态保持同一条链路。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>name + attr:checked</code></div>
+                <div class="demo-stage">
+                  <st-radio name="doc-plan" attr:checked="plan === 'free'" on:change="setPlan('free', '免费版')">免费版</st-radio>
+                  <st-radio name="doc-plan" attr:checked="plan === 'pro'" on:change="setPlan('pro', '专业版')">专业版</st-radio>
+                  <st-radio name="doc-plan" attr:checked="plan === 'team'" on:change="setPlan('team', '团队版')">团队版</st-radio>
+                  <span class="demo-note">plan = {{plan}}（{{planLabel}}）· change 触发 {{planChanges}} 次</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（受控单选组）</summary>
+                <pre><code>&lt;st-radio name="plan" attr:checked="plan === 'free'" on:change="plan = 'free'"&gt;免费版&lt;/st-radio&gt;
+&lt;st-radio name="plan" attr:checked="plan === 'pro'" on:change="plan = 'pro'"&gt;专业版&lt;/st-radio&gt;
+&lt;st-radio name="plan" attr:checked="plan === 'team'" on:change="plan = 'team'"&gt;团队版&lt;/st-radio&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { plan: "pro" },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>change 事件与回显</h2>
+              <p class="doc-section-lead">change 是 composed 事件，会穿过 shadow 冒泡到页面；只有被用户点中的那一项派发，被取消的兄弟项不会派发。点击已选中的项也不会重复触发。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>on:change</code></div>
+                <div class="demo-stage">
+                  <st-radio name="doc-fruit" attr:checked="fruit === 'apple'" on:change="setFruit('apple', '苹果')">苹果</st-radio>
+                  <st-radio name="doc-fruit" attr:checked="fruit === 'banana'" on:change="setFruit('banana', '香蕉')">香蕉</st-radio>
+                  <st-radio name="doc-fruit" attr:checked="fruit === 'cherry'" on:change="setFruit('cherry', '樱桃')">樱桃</st-radio>
+                  <span class="demo-note">最近选择：{{fruitLabel}} · 累计 {{fruitChanges}} 次 change</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（事件回显）</summary>
+                <pre><code>&lt;st-radio name="fruit" attr:checked="fruit === 'apple'" on:change="setFruit('apple')"&gt;苹果&lt;/st-radio&gt;
+&lt;st-radio name="fruit" attr:checked="fruit === 'banana'" on:change="setFruit('banana')"&gt;香蕉&lt;/st-radio&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { fruit: "apple", fruitChanges: 0 },
+    proto: {
+      setFruit(value) {
+        this.fruit = value;
+        this.fruitChanges += 1;
+      },
+    },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>disabled、color 与尺寸</h2>
+              <p class="doc-section-lead">disabled 会阻断点击和键盘并降到 0.38 透明度；color 接受 M3 角色名或 color 工具里的自定义变量名，只影响选中态的圆环与圆点。改宿主 font-size 即可整体等比缩放。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled / color / font-size</code></div>
+                <div class="demo-stage">
+                  <st-radio name="doc-off" disabled checked>禁用 · 已选中</st-radio>
+                  <st-radio name="doc-off" disabled>禁用 · 未选中</st-radio>
+                  <st-radio name="doc-color" color="error" attr:checked="accent === 'error'" on:change="accent = 'error'">error</st-radio>
+                  <st-radio name="doc-color" color="success" attr:checked="accent === 'success'" on:change="accent = 'success'">success</st-radio>
+                  <st-radio name="doc-color" color="tertiary" attr:checked="accent === 'tertiary'" on:change="accent = 'tertiary'">tertiary</st-radio>
+                  <st-radio name="doc-scale" style="font-size: 20px;">font-size: 20px</st-radio>
+                  <span class="demo-note">color 组当前选中：{{accent}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-radio name="off" disabled checked&gt;禁用 · 已选中&lt;/st-radio&gt;
+&lt;st-radio name="color" color="error" checked&gt;error&lt;/st-radio&gt;
+&lt;st-radio name="color" color="success"&gt;success&lt;/st-radio&gt;
+
+&lt;st-radio name="scale" style="font-size: 20px;"&gt;font-size: 20px&lt;/st-radio&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>卡片式选项</h2>
+              <p class="doc-section-lead">把 st-radio 本身写成卡片：display:flex + width:100% + 原生 padding / border，组件的透明原生 input 会覆盖整张卡片，点标题、价格或留白都能选中。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-radio as card</code></div>
+                <div class="demo-stage grid">
+                  <st-radio name="doc-card" attr:checked="cardPlan === 'personal'" on:change="pickCard('personal', '个人版', '¥0 / 月 · 1 个项目')" style="display: flex; width: 100%; padding: 14px 16px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px;">
+                    <span style="display: grid; gap: 2px; text-align: left;">
+                      <strong style="font-size: 14px; font-weight: 600;">个人版</strong>
+                      <span style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">¥0 / 月 · 1 个项目</span>
+                    </span>
+                  </st-radio>
+                  <st-radio name="doc-card" attr:checked="cardPlan === 'team'" on:change="pickCard('team', '团队版', '¥25 / 人 / 月 · 无限项目')" style="display: flex; width: 100%; padding: 14px 16px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px;">
+                    <span style="display: grid; gap: 2px; text-align: left;">
+                      <strong style="font-size: 14px; font-weight: 600;">团队版</strong>
+                      <span style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">¥25 / 人 / 月 · 无限项目</span>
+                    </span>
+                  </st-radio>
+                  <st-radio name="doc-card" attr:checked="cardPlan === 'enterprise'" on:change="pickCard('enterprise', '企业版', '按需报价 · 专属支持')" style="display: flex; width: 100%; padding: 14px 16px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px;">
+                    <span style="display: grid; gap: 2px; text-align: left;">
+                      <strong style="font-size: 14px; font-weight: 600;">企业版</strong>
+                      <span style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">按需报价 · 专属支持</span>
+                    </span>
+                  </st-radio>
+                  <span class="demo-note">当前方案：{{cardLabel}} · {{cardPrice}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（整卡可点）</summary>
+                <pre><code>&lt;st-radio name="plan" attr:checked="plan === 'team'" on:change="pick('team')"
+  style="display: flex; width: 100%; padding: 14px 16px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px;"&gt;
+  &lt;span style="display: grid; gap: 2px; text-align: left;"&gt;
+    &lt;strong&gt;团队版&lt;/strong&gt;
+    &lt;span style="font-size: 11px;"&gt;¥25 / 人 / 月 · 无限项目&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/st-radio&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>列表式选项</h2>
+              <p class="doc-section-lead">把一列 st-radio 直接放进带边框的原生 div，每一项 display:flex + width:100% 铺满整行，用 border-bottom 分隔。组内的互斥范围就是这个外层 div，不要再给每一行套独立 div。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>vertical list</code></div>
+                <div class="demo-stage block">
+                  <div style="width: 100%; max-width: 520px; display: grid; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px; overflow: hidden;">
+                    <st-radio name="doc-format" attr:checked="format === 'png'" on:change="setFormat('png', '透明背景，适合图标与插画')" style="display: flex; width: 100%; padding: 13px 16px; border-bottom: 1px solid var(--md-sys-color-outline-variant);">PNG · 透明背景</st-radio>
+                    <st-radio name="doc-format" attr:checked="format === 'jpg'" on:change="setFormat('jpg', '体积小，适合照片')" style="display: flex; width: 100%; padding: 13px 16px; border-bottom: 1px solid var(--md-sys-color-outline-variant);">JPG · 照片优先</st-radio>
+                    <st-radio name="doc-format" attr:checked="format === 'svg'" on:change="setFormat('svg', '矢量图，缩放不糊')" style="display: flex; width: 100%; padding: 13px 16px;">SVG · 矢量图</st-radio>
+                  </div>
+                  <span class="demo-note">导出格式：{{format}} · {{formatHint}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（表单列表）</summary>
+                <pre><code>&lt;div style="display: grid; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px;"&gt;
+  &lt;st-radio name="format" attr:checked="format === 'png'" on:change="format = 'png'"
+    style="display: flex; width: 100%; padding: 13px 16px; border-bottom: 1px solid var(--md-sys-color-outline-variant);"&gt;
+    PNG · 透明背景
+  &lt;/st-radio&gt;
+  &lt;st-radio name="format" attr:checked="format === 'jpg'" on:change="format = 'jpg'"
+    style="display: flex; width: 100%; padding: 13px 16px;"&gt;
+    JPG · 照片优先
+  &lt;/st-radio&gt;
+&lt;/div&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>分组边界：同名不同容器</h2>
+              <p class="doc-section-lead">互斥范围是最近的 st-list / st-menu / fieldset / form / div / section。下面两个容器都用 name="doc-shared"，但它们是两个独立组，各自保持一个选中项。需要联动时，请把选项放进同一个容器。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>grouping scope</code></div>
+                <div class="demo-stage">
+                  <div style="display: grid; gap: 10px; min-width: 220px; padding: 14px 16px; border: 1px dashed var(--md-sys-color-outline); border-radius: 12px;">
+                    <span class="demo-label">容器 A</span>
+                    <st-radio name="doc-shared" checked>选项 A1</st-radio>
+                    <st-radio name="doc-shared">选项 A2</st-radio>
+                  </div>
+                  <div style="display: grid; gap: 10px; min-width: 220px; padding: 14px 16px; border: 1px dashed var(--md-sys-color-outline); border-radius: 12px;">
+                    <span class="demo-label">容器 B</span>
+                    <st-radio name="doc-shared" checked>选项 B1</st-radio>
+                    <st-radio name="doc-shared">选项 B2</st-radio>
+                  </div>
+                  <span class="demo-note">A 与 B 互不影响；点 A2 只会取消 A1，B1 仍然选中。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（两个独立容器）</summary>
+                <pre><code>&lt;div class="group-a"&gt;
+  &lt;st-radio name="shared" checked&gt;选项 A1&lt;/st-radio&gt;
+  &lt;st-radio name="shared"&gt;选项 A2&lt;/st-radio&gt;
+&lt;/div&gt;
+&lt;div class="group-b"&gt;
+  &lt;st-radio name="shared" checked&gt;选项 B1&lt;/st-radio&gt;
+  &lt;st-radio name="shared"&gt;选项 B2&lt;/st-radio&gt;
+&lt;/div&gt;</code></pre>
+              </details>
+            </section>
+
+            <div class="doc-cols">
+              <div class="doc-block">
+                <h3>属性</h3>
+                <table class="api">
+                  <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>name</code></td><td>string</td><td>无</td><td>分组键：选中时取消同一树作用域内同 name 的其他 st-radio</td></tr>
+                    <tr><td><code>checked</code></td><td>boolean</td><td>无</td><td>选中态；页面里用 <code>attr:checked="expr"</code> 绑定</td></tr>
+                    <tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>0.38 透明度、阻断点击与键盘</td></tr>
+                    <tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>无</td><td>只影响选中态的圆环与圆点</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="doc-block">
+                <h3>插槽 / 事件 / 注意</h3>
+                <ul class="api-list">
+                  <li>插槽：默认插槽放标签文字；没有内容时标签区自动隐藏，可当作纯指示器。</li>
+                  <li>事件：<code>change</code>（bubbles + composed），仅被点中的那一项派发；被取消的兄弟项不派发。</li>
+                  <li>键盘：Tab 聚焦、Space / Enter 选中；焦点环画在圆圈外圈。</li>
+                  <li>尺寸：圆环 <code>1.571em</code>、圆点 <code>0.714em</code>、标签间距 <code>0.857em</code>，改 <code>font-size</code> 全部等比缩放。</li>
+                  <li>分组按树作用域：原生 radio 的 name 分组不跨 shadow root，组件在同一 document / o-page shadow root 内手动互斥（不再要求同父容器）。</li>
+                </ul>
+              </div>
+            </div>
+
+            <nav class="doc-pager" aria-label="上下篇">
+              <a class="pager-link" olink href="./switch.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Switch</a><a class="pager-link pager-next" olink href="./slider.html"><span>下一页</span>Slider <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
+            </nav>
+          </article>
+      <script>
+        export const parent = "./layout.html";
+
+        export default async () => ({
+          data: {
+            plan: "pro",
+            planLabel: "专业版",
+            planChanges: 0,
+            fruit: "apple",
+            fruitLabel: "苹果",
+            fruitChanges: 0,
+            accent: "error",
+            cardPlan: "team",
+            cardLabel: "团队版",
+            cardPrice: "¥25 / 人 / 月 · 无限项目",
+            format: "png",
+            formatHint: "透明背景，适合图标与插画",
+          },
+          proto: {
+            setPlan(value, label) {
+              this.plan = value;
+              this.planLabel = label;
+              this.planChanges += 1;
+            },
+            setFruit(value, label) {
+              this.fruit = value;
+              this.fruitLabel = label;
+              this.fruitChanges += 1;
+            },
+            pickCard(value, label, price) {
+              this.cardPlan = value;
+              this.cardLabel = label;
+              this.cardPrice = price;
+            },
+            setFormat(value, hint) {
+              this.format = value;
+              this.formatHint = hint;
+            },
+          },
+        });
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin, getSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = Object.assign(window.__site || {}, { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu });
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

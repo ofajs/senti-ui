@@ -14,7 +14,7 @@
         用户切换 hide 时由 JS 临时启用 0.3s 过渡（见 watch） */
       /* 注意 shorthand 中第一个时间是 duration：写成 "0.3s ... 0s" 时 0s 是 delay，
          时长仍是 0.3s（曾因此让 RO 跟随也被动画化、二级折叠诡异缓慢） */
-      transition: height 0s cubic-bezier(0.2, 0, 0, 1);
+      transition: height 0s var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1));
     }
     /* 显隐高度完全由 JS 驱动（watch hide 先启用过渡再设高度）：
        若用 :host([hide]) height:0 !important 强制，高度变化发生在异步 watch 设置
@@ -47,8 +47,13 @@
           if (!content) return; // watch 初始触发可能早于 shadow 就绪（坑 #27）
           if (this.hide !== null) {
             ele.style.height = "0px";
+            // 高度为 0 的内容仍会留在 Tab 顺序与无障碍树里：一起 inert + aria-hidden
+            ele.inert = true;
+            ele.setAttribute("aria-hidden", "true");
             return;
           }
+          ele.inert = false;
+          ele.removeAttribute("aria-hidden");
           const target = height ?? content.scrollHeight;
           ele.style.height = target + "px";
         },
@@ -64,7 +69,7 @@
           // 用户切换 hide：临时启用 0.3s 过渡，播完（或超时兜底）恢复 0s
           const ele = this.ele;
           clearTimeout(this._animTimer);
-          ele.style.transitionDuration = "0.3s";
+          ele.style.transitionDuration = "var(--st-motion-duration-slow, 0.3s)";
           this._animTimer = setTimeout(() => {
             ele.style.transitionDuration = "";
           }, 400);

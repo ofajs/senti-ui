@@ -53,26 +53,261 @@ export const EXTENDED_ROLES = {
   success: "#006E1C",
 };
 
+const roleTokenNames = (role) => {
+  const cap = role[0].toUpperCase() + role.slice(1);
+  return [role, "on" + cap, role + "Container", "on" + cap + "Container"];
+};
+
 // M3 tone 规则：light [角色, on, container, onContainer] / dark 同序
-const TONES = {
+const ROLE_TONES = {
   light: [40, 100, 90, 10],
   dark: [80, 20, 30, 90],
 };
+const ROLE_TOKEN_TYPES = ["role", "on", "container", "onContainer"];
 
-// surface-container 五层 tone（npm 版 scheme 缺这几个 getter，从 neutral 色调盘推导）
-const SURFACE_TONES = {
-  light: { surfaceContainerLowest: 100, surfaceContainerLow: 96, surfaceContainer: 94, surfaceContainerHigh: 92, surfaceContainerHighest: 90 },
-  dark: { surfaceContainerLowest: 4, surfaceContainerLow: 10, surfaceContainer: 12, surfaceContainerHigh: 17, surfaceContainerHighest: 22 },
+// 库内 scheme 的 error 在深色下 onErrorContainer 取 tone 80（其余角色 90），
+// 这里保持一致，避免默认输出与旧版本漂移
+const ROLE_TONE_EXCEPTIONS = {
+  error: { dark: { 3: 80 } },
 };
 
-// 从一个自定义颜色推导它在某 scheme 下的 4 个配对 token（保持色相/色度，只按 M3 tone 调明度）
-// 注意：CDN 版本中 Hct.from(int) 解析异常，须先用 Cam16 提取色相/色度；不同版本方法名不同，做兼容
-function deriveRoleTokens(hex, scheme) {
+// 中性 token 的 tone 表与对比度类型（surface-container 五层 scheme 里没有，从 neutral 色盘推导）
+const NEUTRAL_TOKEN_TONES = {
+  surface: { palette: "neutral", light: 99, dark: 10, type: "surface" },
+  onSurface: { palette: "neutral", light: 10, dark: 90, type: "onSurface" },
+  surfaceVariant: { palette: "neutralVariant", light: 90, dark: 30, type: "surfaceVariant" },
+  onSurfaceVariant: { palette: "neutralVariant", light: 30, dark: 80, type: "onSurfaceVariant" },
+  surfaceContainerLowest: { palette: "neutral", light: 100, dark: 4, type: "surfaceContainer" },
+  surfaceContainerLow: { palette: "neutral", light: 96, dark: 10, type: "surfaceContainer" },
+  surfaceContainer: { palette: "neutral", light: 94, dark: 12, type: "surfaceContainer" },
+  surfaceContainerHigh: { palette: "neutral", light: 92, dark: 17, type: "surfaceContainer" },
+  surfaceContainerHighest: { palette: "neutral", light: 90, dark: 22, type: "surfaceContainer" },
+  outline: { palette: "neutralVariant", light: 50, dark: 60, type: "outline" },
+  outlineVariant: { palette: "neutralVariant", light: 80, dark: 30, type: "outlineVariant" },
+  inverseSurface: { palette: "neutral", light: 20, dark: 90, type: "inverseSurface" },
+  inverseOnSurface: { palette: "neutral", light: 95, dark: 20, type: "inverseOnSurface" },
+  inversePrimary: { palette: "primary", light: 80, dark: 40, type: "inversePrimary" },
+};
+
+// 提高对比度（contrast 0 ~ 1）的 tone 偏移：值为对比度 = 1 时相对标准 M3 tone 的增量。
+// 角色色往“更饱和的深色调”走；深色模式同时压暗表面，
+// 于是明度对比基本保持、彩色饱和对比明显增强（霓虹 / 游戏类主题需要的观感）。
+// 降低对比度（负值）使用下方的 SOFT_DELTAS。
+const CONTRAST_DELTAS = {
+  light: {
+    role: -10,
+    on: 0,
+    container: -8,
+    onContainer: -8,
+    surface: 1,
+    surfaceContainer: 0,
+    onSurface: -8,
+    surfaceVariant: 4,
+    onSurfaceVariant: -10,
+    outline: -12,
+    outlineVariant: -8,
+    inverseSurface: -4,
+    inverseOnSurface: 3,
+    inversePrimary: 0,
+  },
+  dark: {
+    role: -14,
+    on: -8,
+    container: -8,
+    onContainer: 8,
+    surface: -8,
+    surfaceContainer: -5,
+    onSurface: 8,
+    surfaceVariant: -8,
+    onSurfaceVariant: 10,
+    outline: 16,
+    outlineVariant: 10,
+    inverseSurface: 5,
+    inverseOnSurface: -4,
+    inversePrimary: 0,
+  },
+};
+
+// 提高对比度时深色模式角色色的两种方向：
+// - deep（默认）：tone 下移，角色色更深更纯（洋红/紫等霓虹色需要）
+// - bright：tone 上移，角色色更亮（荧光绿/黄等浅色种子需要，参考“亮绿按钮 + 深底”）
+// 容器与 on-container 在两种方向下都保持“深容器 + 亮文字”，只翻转角色色本身
+const BRIGHT_ROLE_DELTAS = {
+  role: 10,
+  on: -10,
+};
+
+// 负对比度（柔和 / 可爱主题）：值为 contrast = -1 时的“反向增量”，
+// 实际计算是 tone + SOFT_DELTAS * contrast，所以这里写的是期望方向的反数。
+// 浅色整体变浅、深色整体变亮，文字与描边向中间靠拢，形成低对比的柔和观感。
+const SOFT_DELTAS = {
+  light: {
+    role: -10, // tone +10：角色色变浅，靠近白色表面
+    on: 5, // tone -5：on-角色色略变灰
+    container: -4, // tone +4：容器更浅
+    onContainer: -25, // tone +25：容器文字变柔和
+    surface: 2, // tone -2
+    surfaceContainer: 0,
+    onSurface: -18, // tone +18：正文变柔
+    surfaceVariant: -3,
+    onSurfaceVariant: -22,
+    outline: -18, // tone +18：描边变浅
+    outlineVariant: -8,
+    inverseSurface: -5,
+    inverseOnSurface: 5,
+    inversePrimary: 0,
+  },
+  dark: {
+    role: 10, // tone -10：角色色变暗，靠近深色表面
+    on: -10, // tone +10：on-角色色变亮
+    container: -6, // tone +6：容器变亮
+    onContainer: 12, // tone -12：容器文字变柔
+    surface: -8, // tone +8：深色表面变亮
+    surfaceContainer: -8,
+    onSurface: 12, // tone -12：正文变柔
+    surfaceVariant: -6,
+    onSurfaceVariant: 14,
+    outline: 15, // tone -15：描边变暗
+    outlineVariant: 8,
+    inverseSurface: 5,
+    inverseOnSurface: -5,
+    inversePrimary: 0,
+  },
+};
+
+// 对比度可按角色单独设置；neutral 控制 surface / outline 等中性色，custom 控制自定义变量
+export const CONTRAST_ROLES = ["primary", "secondary", "tertiary", "error", "success"];
+const CONTRAST_KEYS = [...CONTRAST_ROLES, "neutral", "custom"];
+
+const clampTone = (tone) => Math.max(0, Math.min(100, tone));
+const clampContrast = (value) => Math.max(-1, Math.min(1, Number(value) || 0));
+
+// 对比度方向只影响“提高对比度”（正值）的深色角色色；负值统一走柔和表
+function contrastDelta(mode, type, contrast, contrastTone) {
+  if (contrast < 0) return SOFT_DELTAS[mode][type];
+  if (mode === "dark" && contrastTone === "bright" && BRIGHT_ROLE_DELTAS[type] != null) {
+    return BRIGHT_ROLE_DELTAS[type];
+  }
+  return CONTRAST_DELTAS[mode][type];
+}
+
+/**
+ * 规范化对比度参数：范围 -1 ~ 1
+ * - 正数：提高对比度（角色色更鲜明、表面更极端）
+ * - 负数：降低对比度（表面与文字互相靠拢，适合柔和 / 可爱主题）
+ * - 数字：统一作用于全部角色 / 中性色 / 自定义变量
+ * - 对象：{ default?, primary?, secondary?, tertiary?, error?, success?, neutral?, custom? }
+ *   未指定的键回退到 default（缺省 0）；因此 { primary: 1 } 只增强主色
+ * @returns {Object<string, number>|null}
+ */
+export function normalizeContrast(contrast) {
+  const numeric =
+    typeof contrast === "string" && contrast.trim() !== ""
+      ? Number(contrast)
+      : contrast;
+  if (typeof numeric === "number") {
+    const value = clampContrast(numeric);
+    return Object.fromEntries(CONTRAST_KEYS.map((key) => [key, value]));
+  }
+  if (contrast && typeof contrast === "object") {
+    const fallback = clampContrast(contrast.default);
+    return Object.fromEntries(
+      CONTRAST_KEYS.map((key) => [
+        key,
+        contrast[key] == null ? fallback : clampContrast(contrast[key]),
+      ])
+    );
+  }
+  return null;
+}
+
+// 从一个颜色的色相/色度按给定 tone 推导配对 token（保持色相/色度，只按 M3 tone 调明度）
+// 注意：CDN 版本中 Hct.from(int) 解析异常，须先用 Cam16 提取色相/色度；不同版本方法名不同，做兼容。
+// 必须从源色（或调色板）重新取 tone，不能把已生成的 token 直接平移 tone：
+// 深色角色色在 tone 80 时色度已被色域裁到很低，平移后只会得到发灰的同色，无法恢复霓虹感。
+function deriveRoleTokensAtTones(hex, tones) {
   const camFromArgb = Cam16.fromInt || Cam16.fromArgb;
   const cam = camFromArgb(argbFromHex(hex));
-  return TONES[scheme].map((tone) =>
-    hexFromArgb(Hct.from(cam.hue, cam.chroma, tone).toInt())
+  return tones.map((tone) =>
+    hexFromArgb(Hct.from(cam.hue, cam.chroma, clampTone(tone)).toInt())
   );
+}
+
+function roleTones(mode, role, contrast, applyException = true, contrastTone = "deep") {
+  const tones = ROLE_TONES[mode].slice();
+  if (applyException) {
+    const exception = ROLE_TONE_EXCEPTIONS[role]?.[mode];
+    if (exception) {
+      for (const [index, tone] of Object.entries(exception)) tones[index] = tone;
+    }
+  }
+  return tones.map((tone, index) =>
+    clampTone(
+      tone + contrastDelta(mode, ROLE_TOKEN_TYPES[index], contrast, contrastTone) * contrast
+    )
+  );
+}
+
+// M3 音调盘的标准 tone 采样点（0 = 黑，100 = 白）
+export const TONE_STEPS = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100];
+
+/**
+ * 生成 M3 音调盘（tonal palettes）
+ * - 传种子色字符串：输出标准 Primary / Secondary / Tertiary / Neutral / Neutral variant 五条盘
+ * - 传角色色对象：输出当前实际角色色（含 overrides）的盘；标准角色用 Primary / Secondary /
+ *   Tertiary / Error / Success 标签，自定义变量用变量名作标签，适合官网色块模式与角色面板对齐
+ * 每条盘包含 0–100 共 14 个 tone。
+ * @param {string|Object<string,string>} source 种子色，或 { primary, secondary, tertiary, error, success }
+ * @returns {Array<{key: string, label: string, color: string, tones: Array<{tone: number, hex: string}>}>}
+ */
+export function generateTonalPalettes(source) {
+  if (source && typeof source === "object") {
+    const labels = {
+      primary: "Primary",
+      secondary: "Secondary",
+      tertiary: "Tertiary",
+      error: "Error",
+      success: "Success",
+    };
+    return Object.entries(source)
+      .filter(([, color]) => /^#[0-9a-fA-F]{6}$/.test(color || ""))
+      .map(([key, color]) => ({
+        key,
+        label: labels[key] || key,
+        color: color.toLowerCase(),
+        tones: toneStrip(color),
+      }));
+  }
+
+  const theme = themeFromSourceColor(argbFromHex(source));
+  return [
+    ["primary", "Primary"],
+    ["secondary", "Secondary"],
+    ["tertiary", "Tertiary"],
+    ["neutral", "Neutral"],
+    ["neutralVariant", "Neutral variant"],
+  ].map(([key, label]) => {
+    const palette = theme.palettes[key];
+    return {
+      key,
+      label,
+      color: hexFromArgb(palette.tone(40)).toLowerCase(),
+      tones: TONE_STEPS.map((tone) => ({
+        tone,
+        hex: hexFromArgb(palette.tone(tone)).toLowerCase(),
+      })),
+    };
+  });
+}
+
+// 从一个具体颜色提取色相/色度，再按 tone 采样；用于角色色盘（不受 seed 归一化影响）
+function toneStrip(hex) {
+  const argb = argbFromHex(hex);
+  const cam = Cam16.fromInt ? Cam16.fromInt(argb) : Cam16.fromArgb(argb);
+  return TONE_STEPS.map((tone) => ({
+    tone,
+    hex: hexFromArgb(Hct.from(cam.hue, cam.chroma, tone).toInt()).toLowerCase(),
+  }));
 }
 
 /**
@@ -81,36 +316,58 @@ function deriveRoleTokens(hex, scheme) {
  * @param {Object<string, string>} [overrides] 手动指定的角色颜色，如 { primary: "#B3261E" }，
  *        可选键：primary / secondary / tertiary / error / success（success 为内置扩展角色，
  *        覆盖其默认绿色）；未指定的角色继续由种子色生成（success 恢复默认种子色）
+ * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度调整，见 normalizeContrast；
+ *        数字 -1–1（负数降低对比度），或按角色对象（{ primary: 1, secondary: .5, neutral: 1 }）；
+ *        contrastTone 控制正值时深色模式角色色方向：deep 加深（默认）/ bright 提亮
  * @returns {{ light: Object<string, string>, dark: Object<string, string> }}
  */
-export function generateM3Theme(seedHex, overrides = {}) {
+export function generateM3Theme(seedHex, overrides = {}, options = {}) {
   const theme = themeFromSourceColor(argbFromHex(seedHex));
-  const pick = (scheme, surfaceTones) => {
+  const contrast = normalizeContrast(options.contrast);
+  const contrastTone = options.contrastTone === "bright" ? "bright" : "deep";
+  const pick = (mode) => {
     const out = {};
-    for (const name of TOKEN_NAMES) {
-      if (scheme[name] === undefined) continue; // 扩展角色不在 M3 scheme 上，下面单独推导
-      out[name] = hexFromArgb(scheme[name]);
+    const neutralContrast = contrast ? contrast.neutral : 0;
+
+    // 中性色：从 neutral / neutralVariant 色盘取 tone，对比度通过 tone 偏移表达
+    for (const [name, meta] of Object.entries(NEUTRAL_TOKEN_TONES)) {
+      const tone = clampTone(
+        meta[mode] + CONTRAST_DELTAS[mode][meta.type] * neutralContrast
+      );
+      out[name] = hexFromArgb(theme.palettes[meta.palette].tone(tone));
     }
-    for (const [name, tone] of Object.entries(surfaceTones)) {
-      out[name] = hexFromArgb(theme.palettes.neutral.tone(tone));
+
+    // 核心四角色：未覆盖时从色盘重新取 tone（色度随 tone 自动取到色域上限），
+    // 覆盖时从覆盖色推导，保证与旧版默认输出一致
+    for (const role of ["primary", "secondary", "tertiary", "error"]) {
+      const tokens = roleTokenNames(role);
+      const roleContrast = contrast ? contrast[role] : 0;
+      if (overrides[role]) {
+        const derived = deriveRoleTokensAtTones(
+          overrides[role],
+          roleTones(mode, role, roleContrast, false, contrastTone)
+        );
+        tokens.forEach((token, i) => (out[token] = derived[i]));
+        continue;
+      }
+      const palette = theme.palettes[role];
+      const tones = roleTones(mode, role, roleContrast, true, contrastTone);
+      tokens.forEach((token, i) => {
+        out[token] = hexFromArgb(palette.tone(tones[i]));
+      });
     }
-    const mode = scheme === theme.schemes.light ? "light" : "dark";
-    // 应用手动覆盖：从自定义色按 M3 tone 规则推导角色及其配对 token
-    for (const [role, tokens] of Object.entries(OVERRIDABLE_ROLES)) {
-      if (!overrides[role]) continue;
-      const derived = deriveRoleTokens(overrides[role], mode);
-      tokens.forEach((token, i) => (out[token] = derived[i]));
-    }
+
     // 内置扩展角色：overrides 里有则用之，否则用默认种子色
-    for (const [role, defaultHex] of Object.entries(EXTENDED_ROLES)) {
-      const cap = role[0].toUpperCase() + role.slice(1);
-      const tokens = [role, "on" + cap, role + "Container", "on" + cap + "Container"];
-      const derived = deriveRoleTokens(overrides[role] || defaultHex, mode);
-      tokens.forEach((token, i) => (out[token] = derived[i]));
-    }
+    const successContrast = contrast ? contrast.success : 0;
+    const successDerived = deriveRoleTokensAtTones(
+      overrides.success || EXTENDED_ROLES.success,
+      roleTones(mode, "success", successContrast, false, contrastTone)
+    );
+    roleTokenNames("success").forEach((token, i) => (out[token] = successDerived[i]));
+
     return out;
   };
-  return { light: pick(theme.schemes.light, SURFACE_TONES.light), dark: pick(theme.schemes.dark, SURFACE_TONES.dark) };
+  return { light: pick("light"), dark: pick("dark") };
 }
 
 /**
@@ -126,9 +383,21 @@ function normalizeVarName(name) {
  * 展开自定义颜色变量：按 M3 tone 规则推导配对 token（与核心角色同规则）
  * 如 brand → --brand / --on-brand / --brand-container / --on-brand-container
  * 浅色 tone [40, 100, 90, 10]，深色 tone [80, 20, 30, 90]
+ * @param {Object<string,string>} customs 自定义变量
+ * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度调整；custom 键（或整体数字）控制自定义变量
  * @returns {{ light: Object<string,string>, dark: Object<string,string> }}
  */
-export function expandCustoms(customs) {
+export function expandCustoms(customs, options = {}) {
+  const contrast = normalizeContrast(options.contrast);
+  const contrastTone = options.contrastTone === "bright" ? "bright" : "deep";
+  const customContrast = contrast ? contrast.custom : 0;
+  const tonesFor = (mode) =>
+    ROLE_TONES[mode].map((tone, i) =>
+      clampTone(
+        tone +
+          contrastDelta(mode, ROLE_TOKEN_TYPES[i], customContrast, contrastTone) * customContrast
+      )
+    );
   const light = {}, dark = {};
   for (const [name, hex] of Object.entries(customs || {})) {
     if (!name || !/^#[0-9a-fA-F]{6}$/.test(hex)) continue;
@@ -139,8 +408,8 @@ export function expandCustoms(customs) {
       base + "-container",           // 角色-container
       base.replace(/^--/, "--on-") + "-container", // on-角色-container
     ];
-    const lt = deriveRoleTokens(hex, "light");
-    const dk = deriveRoleTokens(hex, "dark");
+    const lt = deriveRoleTokensAtTones(hex, tonesFor("light"));
+    const dk = deriveRoleTokensAtTones(hex, tonesFor("dark"));
     names.forEach((n, i) => { light[n] = lt[i]; dark[n] = dk[i]; });
   }
   return { light, dark };
@@ -155,11 +424,12 @@ const customLines = (expandedScheme) =>
  * @param {Object<string, string>} [overrides] 手动指定的角色颜色（见 generateM3Theme）
  * @param {Object<string, string>} [customs] 自定义颜色变量，如 { brand: "#FF0000" }，
  *        会按 M3 规则展开为 on/container 配对 token（浅色 + 深色）
+ * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度调整（见 generateM3Theme）
  * @returns {string} CSS 文本
  */
-export function themeToCss(seedHex, overrides, customs) {
-  const { light, dark } = generateM3Theme(seedHex, overrides);
-  const expanded = expandCustoms(customs);
+export function themeToCss(seedHex, overrides, customs, options) {
+  const { light, dark } = generateM3Theme(seedHex, overrides, options);
+  const expanded = expandCustoms(customs, options);
   const block = (scheme, extra) =>
     TOKEN_NAMES.map((n) => `  ${toKebab(n)}: ${scheme[n].toLowerCase()};`).concat(customLines(extra)).join("\n");
   return `:root,\nhtml.st-light {\n  color-scheme: light;\n${block(light, expanded.light)}\n}\n\nhtml.st-dark {\n  color-scheme: dark;\n${block(dark, expanded.dark)}\n}\n\n${darkMediaBlock(block(dark, expanded.dark), "  ")}\n`;
@@ -179,11 +449,12 @@ function darkMediaBlock(decls, indent) {
  * @param {string} seedHex 种子色
  * @param {Object<string, string>} [overrides] 手动指定的角色颜色（见 generateM3Theme）
  * @param {Object<string, string>} [customs] 自定义颜色变量（见 themeToCss）
+ * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度调整（见 generateM3Theme）
  * @returns {{ light: Object, dark: Object }} 生成的体系
  */
-export function applyTheme(seedHex, overrides, customs) {
-  const { light, dark } = generateM3Theme(seedHex, overrides);
-  const expanded = expandCustoms(customs);
+export function applyTheme(seedHex, overrides, customs, options) {
+  const { light, dark } = generateM3Theme(seedHex, overrides, options);
+  const expanded = expandCustoms(customs, options);
   // 动态 <style> 整体注入（含深色选择器）
   let tag = document.getElementById("st-dynamic-theme");
   if (!tag) {
@@ -195,6 +466,6 @@ export function applyTheme(seedHex, overrides, customs) {
     TOKEN_NAMES.map((n) => `${indent}${toKebab(n)}: ${scheme[n]};`)
       .concat(customLines(extraScheme).map((l) => indent + l.trim()))
       .join("\n");
-  tag.textContent = `:root {\n  color-scheme: light;\n${m3Lines(light, expanded.light, "  ")}\n}\nhtml.st-dark {\n  color-scheme: dark;\n${m3Lines(dark, expanded.dark, "  ")}\n}\n${darkMediaBlock(`  color-scheme: dark;\n${m3Lines(dark, expanded.dark, "  ")}`, "  ")}`;
+  tag.textContent = `:root,\nhtml.st-light {\n  color-scheme: light;\n${m3Lines(light, expanded.light, "  ")}\n}\nhtml.st-dark {\n  color-scheme: dark;\n${m3Lines(dark, expanded.dark, "  ")}\n}\n${darkMediaBlock(`  color-scheme: dark;\n${m3Lines(dark, expanded.dark, "  ")}`, "  ")}`;
   return { light, dark };
 }

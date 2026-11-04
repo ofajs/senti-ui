@@ -24,7 +24,7 @@
   <h3>interactive（可点击：hover 抬升 + 波纹 + click 冒泡，计数 {{clickCount}}）</h3>
   <st-card class="demo-card" interactive on:click="clickCount += 1">
     <h4>可点击的卡片</h4>
-    <p>整卡可点（内部原生 button 承载），Tab 聚焦有焦圈、Enter/Space 激活。</p>
+    <p>整卡可点（宿主 role=button 承载），Tab 聚焦有焦圈、Enter/Space 激活。</p>
   </st-card>
 
   <h3>纯 style 定制（原生 CSS 属性 + 插槽组合）</h3>

@@ -70,7 +70,7 @@ site/
 - **滚动容器固定为 `.site-scroll`**：文档 head 里 `html, body { height: 100%; overflow: hidden }`，layout 内部用 `.shell { height: 100dvh; overflow: hidden }` + `.site-scroll { overflow-y: auto; overscroll-behavior-y: none }`。这样整页不会在底部继续触发根节点的弹性回弹，header / 阅读进度 / 回到顶部始终固定在视口；滚动进度、`toTop()`、路由切换后的复位都基于 `.site-scroll` 而不是 `window`；
 - 切页动画用 `pageAnime` 时，`current.transform` 必须写 `"none"`（不是 `translateY(0)`）：identity transform 也会成为 `position: fixed` 的包含块，对话框/菜单会相对页面而不是视口定位（内部滚动后尤其明显）。代价是入场那 0.3s 内页内 `fixed` 后代临时以 `o-page` 为包含块；布局级 fixed 元素（环境光、回到顶部）在 `o-page` 之外，不受影响；
 - **不要给 `pageAnime` 三态写 `transition`**：ofa 的入场是「先写 `next`，rAF+5ms 后再写 `current`」，起点态一旦自带 `transition`，这一帧会先起一个过渡、随后被 `current` 反向，浏览器把它合并成 0 时长，页面直接跳到位（Chromium 实测：`transform` 过渡只活了 1ms，淡入同样失效）。三态只写 `opacity` / `transform`，过渡统一由 ofa 注入的 `all .3s` 提供；
-- 当前 `pageAnime` 是静态对象，**没有 `prefers-reduced-motion` 降级**——系统开启「减弱动效」时仍会播放 0.3s 位移 + 淡入。需要恢复时改成 getter，按 `matchMedia("(prefers-reduced-motion: reduce)")` 返回另一组无位移、0.01s 过渡的态（0s 不触发 `transitionend`，离场会多等 350ms 兜底，见 [CONTEXT 坑 #59](../CONTEXT.md)）；
+- 当前 `pageAnime` 是静态对象，**没有 `prefers-reduced-motion` 降级**——系统开启「减弱动效」时仍会播放 0.3s 位移 + 淡入。需要恢复时改成 getter，按 `matchMedia("(prefers-reduced-motion: reduce)")` 返回另一组无位移、0.01s 过渡的态（0s 不触发 `transitionend`，离场会多等 350ms 兜底，见 [pitfall #59b](../pitfall/59b-pageanime-transition.md)）；
 - `pageAnime` 只覆盖站内路由切换：整页刷新 / 直接打开某页时 scsr 不经过切换，因此没有入场动画（这是有意接受的，不是 bug）；
 - header 用 senti-ui 组件搭：三个 `variant="text"` 的 `st-button` 做「文档 / 皮肤 / 手记」导航（组件目录即首页，不再单独占一个导航项，点品牌字标回首页；当前项用 `class:active` 换成 primary 色，不使用 button-group）、`st-icon-button` + `st-tooltip`（主题 / GitHub）、品牌也是 `st-button`：favicon 同款圆角方块 + 白点标记 + SentiUI 字标；导航用页面实例的 `goto()` 保持真实路径与共享布局；
 - scsr 接管后，把当前 URL（`/site/`、`/site/index.html`、`/site/docs/button.html` 等）收编为 `<o-page src>`，用同一份 HTML 的 `template[page]` 转译成页面模块，然后移除内联 template；
@@ -140,7 +140,7 @@ https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.m
 
 scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的连续 import 中保证顺序。语法遵循 `ofajs-docs-v5` 技能（`o-if` / `o-fill` / `attr:` / `sync:` / `on:`，页面 `<script>` 在 `template[page]` 内）。
 
-与 `docs/`（现有组件文档站，o-router hash 路由）不同，本页是真实路径 + SCSR 的前向验证场景。若 v5 分支升级导致行为变化，优先修组件、再更新本页；组件级兼容问题（如子项升级时序）应沉淀到 CONTEXT 的已知坑。
+与 `docs/`（现有组件文档站，o-router hash 路由）不同，本页是真实路径 + SCSR 的前向验证场景。若 v5 分支升级导致行为变化，优先修组件、再更新本页；组件级兼容问题（如子项升级时序）应沉淀到 [pitfall/](../pitfall/README.md)。
 
 ## 组件覆盖
 
@@ -176,7 +176,7 @@ scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的�
 - **对比度**：种子色下方「对比度」滑杆（-100% ~ 100%）传给 `applyTheme` 的 `options.contrast`；正值提高对比度（Cyberpunk 默认 100%），负值降低对比度（可爱 / 柔和主题），0 为标准 M3。切换材质时滑杆回到目标主题的默认值；主题内部的 `contrastTone`（deep / bright）也随主题重置，但不在滑杆 UI 中暴露。分角色精细调节在 `packages/color/index.html`
 - **改色（单角色）**：primary / secondary / tertiary / error / success 五个角色可单独覆盖，on-* 与 container 配对仍按 M3 tone 规则推导；可随时复位回自动生成
 - **加色**：添加任意数量自定义变量（如 `brand`），自动生成 `--brand` / `--on-brand` / `--brand-container` / `--on-brand-container` 四配对 token；组件直接 `color="brand"` 使用
-- **可用色块变量**：工具下方分「白天 / 黑夜」两块面板，各用该模式的 `surface-container` 铺底；按 Primary / Secondary / Tertiary / Error / Success + 自定义颜色分组，每组 4 个堆叠色块（角色色 / on / container / on-container），色块底色与文字色使用该模式配对 token，下方标注变量名；角色组下方再按三段布局补 Surface / Surface Variant、五层 Surface Container、On Surface / On Surface Variant / Outline / Outline Variant（当前 M3 生成器未提供 Surface Dim / Surface Bright，故未列），同样可点击复制；改种子色、覆盖角色或增删自定义色时实时重算；`<code>` 内的动态文本要用 `:text`（见 CONTEXT 坑 #54）
+- **可用色块变量**：工具下方分「白天 / 黑夜」两块面板，各用该模式的 `surface-container` 铺底；按 Primary / Secondary / Tertiary / Error / Success + 自定义颜色分组，每组 4 个堆叠色块（角色色 / on / container / on-container），色块底色与文字色使用该模式配对 token，下方标注变量名；角色组下方再按三段布局补 Surface / Surface Variant、五层 Surface Container、On Surface / On Surface Variant / Outline / Outline Variant（当前 M3 生成器未提供 Surface Dim / Surface Bright，故未列），同样可点击复制；改种子色、覆盖角色或增删自定义色时实时重算；`<code>` 内的动态文本要用 `:text`（见 [pitfall #54a](../pitfall/54a-code-pre-interpolation.md)）
 - **色块模式**：标题右侧 `st-button-group` 切换「变量模式 / 色块模式」；色块模式调用 `generateTonalPalettes({ primary, secondary, tertiary, error, success })`，按角色面板里当前实际的颜色（含手动覆盖）生成 Primary / Secondary / Tertiary / Error / Success 五条音调盘；每个自定义颜色再追加一条同名音调盘，每条展示 0–100 共 14 个 tone；点击任意 tone 色块复制该行变量名（标准角色 `--md-sys-color-*`，自定义 `--name`）
 - **变量位置标记**：色块面板下方「标出变量位置」radio 组（白天 / 黑夜，默认白天），在对应的 tone 列叠加长条：白天为色值 40 / on 100 / container 90 / on-container 10，黑夜为色值 80 / on 20 / container 30 / on-container 90；宽屏是跨行的连续长条，移动端改为对应 tone 色块的描边；切换 radio 时提示与标记同步更新
 - **持久化**：每次改动写 `st-color-config`（配置）与 `st-theme-css`（下次刷新首帧 CSS），同域页面刷新后一起生效

@@ -128,7 +128,7 @@ test("JS setAttribute 动态切换 disabled 生效（异步 watch）", async ({ 
   await page.evaluate(() => {
     document.querySelector("#btn-default").setAttribute("disabled", "");
   });
-  // ofa 的 setAttribute watch 是异步的（CONTEXT.md 坑 #18）
+  // ofa 的 setAttribute watch 是异步的（pitfall #18）
   await page.waitForTimeout(200);
   const innerDisabled = await page.evaluate(
     () => document.querySelector("#btn-default").shadowRoot.querySelector("button").disabled

@@ -466,6 +466,6 @@ export function applyTheme(seedHex, overrides, customs, options) {
     TOKEN_NAMES.map((n) => `${indent}${toKebab(n)}: ${scheme[n]};`)
       .concat(customLines(extraScheme).map((l) => indent + l.trim()))
       .join("\n");
-  tag.textContent = `:root {\n  color-scheme: light;\n${m3Lines(light, expanded.light, "  ")}\n}\nhtml.st-dark {\n  color-scheme: dark;\n${m3Lines(dark, expanded.dark, "  ")}\n}\n${darkMediaBlock(`  color-scheme: dark;\n${m3Lines(dark, expanded.dark, "  ")}`, "  ")}`;
+  tag.textContent = `:root,\nhtml.st-light {\n  color-scheme: light;\n${m3Lines(light, expanded.light, "  ")}\n}\nhtml.st-dark {\n  color-scheme: dark;\n${m3Lines(dark, expanded.dark, "  ")}\n}\n${darkMediaBlock(`  color-scheme: dark;\n${m3Lines(dark, expanded.dark, "  ")}`, "  ")}`;
   return { light, dark };
 }

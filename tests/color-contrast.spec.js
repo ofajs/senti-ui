@@ -187,6 +187,46 @@ test("contrastTone: bright 提亮深色角色色，浅色与中性色不变", as
   expect(result.brightCustom.light["--brand"]).toBe(result.deepCustom.light["--brand"]);
 });
 
+test("强制浅色下动态主题覆盖 boot 缓存（html.st-light 选择器）", async ({ page }) => {
+  const expected = generateM3Theme("#D6FE78", {}, {
+    contrast: 1,
+    contrastTone: "bright",
+  }).light.primary;
+  await page.goto("/tests/fixtures/color-scheme.html");
+  await page.evaluate(() => {
+    localStorage.setItem("st-theme-mode", "light");
+    localStorage.setItem(
+      "st-color-config",
+      JSON.stringify({
+        seed: "#D6FE78",
+        overrides: {},
+        customs: [],
+        contrast: 1,
+        contrastTone: "bright",
+      })
+    );
+    // 模拟旧版 boot 缓存：只有浅色块，且带 html.st-light
+    localStorage.setItem(
+      "st-theme-css",
+      ":root, html.st-light { --md-sys-color-primary: #0061a4; }"
+    );
+  });
+  await page.reload();
+  await page.waitForFunction(() => document.getElementById("st-dynamic-theme") !== null);
+  expect(
+    await page.evaluate(() => document.documentElement.classList.contains("st-light"))
+  ).toBe(true);
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--md-sys-color-primary")
+          .trim()
+      )
+    )
+    .toBe(expected);
+});
+
 test("st-color-init 读取配置里的 contrast 并注入增强后的 token", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "dark" });
   await page.goto("/tests/fixtures/color-scheme.html");

@@ -1003,7 +1003,7 @@
             <div class="skin-head">
               <div>
                 <h2>Cyberpunk · 霓虹终端</h2>
-                <p>零圆角、等宽字、霓虹描边与外发光、方形开关 / 滑块拇指；选中时会一并套用深色 + 荧光绿配色。</p>
+                <p>零圆角、等宽字、霓虹描边与外发光、方形开关 / 滑块拇指；选中时会一并套用荧光绿配色；深浅模式仍是全局设置。</p>
               </div>
               <span class="skin-chip">cyberpunk</span>
             </div>
@@ -1021,14 +1021,15 @@
                 on:click="useCyberpunk">
                 {{skin === 'cyberpunk' ? '当前主题' : '使用此主题'}}
               </st-button>
-              <span class="hint">深色 + 荧光绿</span>
+              <span class="hint">荧光绿</span>
             </div>
           </article>
         </section>
 
         <p class="note">
-          每套主题 = 材质 + 官方配色。切换时会保存当前主题的颜色与深浅模式，切回来时恢复；
+          每套主题 = 材质 + 官方配色。切换时会保存当前主题的颜色，切回来时恢复；
           M3 的槽位承接你原本的品牌色，所以从 Cyberpunk 回到 M3 会得到进入前的配色。
+          深浅模式（自动 / 浅色 / 深色）是全局设置，切换主题不会改变它——Cyberpunk 也有自己的浅色模式。
           对比度不跨材质记忆：切到某套主题时始终回到它的默认值（Cyberpunk 100%，其余 0%）。
           皮肤 CSS 本身仍然只写 token、不写颜色，<code>setSkin()</code> 也只换材质；
           这套主题预设只存在于官网演示层。
@@ -1385,7 +1386,7 @@
               for (const el of root.querySelectorAll(".skin-preview[data-skin]")) {
                 const theme = themes[el.dataset.skin];
                 if (!theme) continue;
-                const vars = theme.forceDark || dark ? theme.dark : theme.light;
+                const vars = dark ? theme.dark : theme.light;
                 for (const [name, value] of Object.entries(vars)) {
                   el.style.setProperty(name, value);
                 }
@@ -1819,7 +1820,7 @@
               this.skin = id;
             },
             useCyberpunk() {
-              // Cyberpunk 的官方配色（深色 + 荧光绿）由主题预设统一提供；
+              // Cyberpunk 的官方配色（荧光绿，深浅模式跟随全局）由主题预设统一提供；
               // 皮肤 CSS 本身仍然不写任何颜色。
               this.use("cyberpunk");
             },

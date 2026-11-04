@@ -125,7 +125,7 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 
 运行时用 `packages/skin/st-skin.js` 的 `setSkin("windows")` 切换（持久化并跨同源窗口同步）。全部交互与表面组件都已接入；完整 token / `part` 契约与自定义皮肤写法见 [packages/skin/README.md](./packages/skin/README.md)。
 
-官网另有一层**主题预设**（只存在于 `site/theme-presets.js`，不属于包 API）：每套材质配一套官方配色（M3 蓝 / Apple iOS 蓝 / Windows 蓝 / shadcn zinc / Cyberpunk 荧光绿，并带满档对比度 + 提亮方向），切换时一并套用，并按材质记住各自的颜色；深浅模式是全局设置，切换主题不会改变它；`setSkin()` 本身仍然只换材质。
+官网另有一层**主题预设**（只存在于 `site/theme-presets.js`，不属于包 API）：每套材质配一套官方配色（M3 蓝 / Apple iOS 蓝 / Windows 蓝 / shadcn zinc / Cyberpunk 荧光绿，并带满档对比度 + 提亮方向），切换时一并套用，并按材质记住各自的颜色；深浅模式是全局设置，默认不随主题切换（Cyberpunk 深色优先：从浅色进入时切深色，之后保持深色）；`setSkin()` 本身仍然只换材质。
 
 ## 官网首页
 

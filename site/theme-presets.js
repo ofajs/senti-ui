@@ -3,7 +3,8 @@
  *
  * 皮肤系统（packages/skin/）只换材质，不碰颜色。但官网的材质卡是“主题”
  * 而不是纯皮肤：每套材质配一套官方配色，点选时由这里一起套用，并按材质
- * 记住各自的颜色配置，切回来时恢复。深浅模式是**全局设置**，不随主题切换。
+ * 记住各自的颜色配置，切回来时恢复。深浅模式是**全局设置**，切换主题
+ * 默认不改变它；深色优先主题（preferDark，如 Cyberpunk）从浅色进入时例外。
  *
  * - `setSkin("cyberpunk")` / `<html data-skin>` 仍然只换材质
  * - 官网皮肤页与 header 菜单走 applyThemePreset()，才会同时换配色
@@ -11,7 +12,7 @@
  */
 
 import { applyTheme, normalizeContrast, themeToCss } from "../packages/color/m3-theme.js";
-import { getThemeMode } from "../packages/color/st-theme-mode.js";
+import { getThemeMode, setThemeMode } from "../packages/color/st-theme-mode.js";
 import { getSkin, setSkin } from "../packages/skin/st-skin.js";
 
 const SLOTS_KEY = "st-theme-palettes";
@@ -42,6 +43,8 @@ export const THEME_PRESETS = Object.freeze({
     customs: [],
     contrast: 1,
     contrastTone: "bright",
+    // 深色优先主题：从浅色/自动+浅色进入时切到深色；离开后保持深色
+    preferDark: true,
   }),
 });
 
@@ -151,15 +154,34 @@ const migrateLegacyBackup = (slots) => {
   return slots;
 };
 
+// 深色优先主题：只有真正切换主题时生效；auto + 系统已是深色则保持 auto
+const presetMode = (id, currentMode, switching) => {
+  if (!switching || !THEME_PRESETS[id]?.preferDark) return currentMode;
+  if (currentMode === "auto") {
+    const systemDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
+    if (systemDark) return currentMode;
+  }
+  if (currentMode !== "dark") setThemeMode("dark");
+  return "dark";
+};
+
+const announcePreset = (skin, mode) => {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent("st-theme-preset-change", { detail: { skin, mode } })
+  );
+};
+
 /**
  * 切换主题：保存当前材质的颜色配置，套用目标材质的槽位或官方默认配色。
- * 深浅模式是全局设置，切换主题不会改变它；返回值里的 mode 只是当前全局模式。
+ * 深浅模式默认保持全局设置；preferDark 主题从浅色进入时会切到深色，离开后保持深色。
  */
 export function applyThemePreset(name) {
   const id = THEME_PRESETS[name] ? name : "m3";
   const current = activeSkin();
   const currentConfig = readActiveConfig();
   const currentMode = getThemeMode();
+  const nextMode = presetMode(id, currentMode, current !== id);
   const slots = migrateLegacyBackup(readSlots());
 
   const preset = presetConfig(id);
@@ -174,7 +196,8 @@ export function applyThemePreset(name) {
   // 重复点击当前主题：保留用户调过的种子色/角色色，但对比度回默认
   if (current === id && currentConfig) {
     const applied = writeActiveConfig(withPresetContrast(currentConfig));
-    return { skin: id, config: applied, mode: currentMode };
+    announcePreset(id, nextMode);
+    return { skin: id, config: applied, mode: nextMode };
   }
 
   if (current !== id) {
@@ -188,5 +211,6 @@ export function applyThemePreset(name) {
   if (current !== id) writeSlots(slots);
   const applied = writeActiveConfig(config);
   setSkin(id);
-  return { skin: id, config: applied, mode: currentMode };
+  announcePreset(id, nextMode);
+  return { skin: id, config: applied, mode: nextMode };
 }

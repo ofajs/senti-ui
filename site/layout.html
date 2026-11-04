@@ -399,8 +399,13 @@
               this._onModeStorage = (e) => {
                 if (e.key === "st-theme-mode") this.themeMode = e.newValue || "auto";
               };
+              this._onPresetChange = (e) => {
+                if (e.detail?.mode) this.themeMode = e.detail.mode;
+                if (e.detail?.skin) this.skin = e.detail.skin;
+              };
               window.addEventListener("storage", this._onSkinStorage);
               window.addEventListener("storage", this._onModeStorage);
+              window.addEventListener("st-theme-preset-change", this._onPresetChange);
               // setSkin() 只改 <html data-skin>，不一定走 storage；观察它同步 header / 环境光
               this._skinAttrObserver = new MutationObserver(() => {
                 this.skin = document.documentElement.dataset.skin || "m3";
@@ -427,6 +432,7 @@
               window.removeEventListener("popstate", this._onPop);
               window.removeEventListener("storage", this._onSkinStorage);
               window.removeEventListener("storage", this._onModeStorage);
+              window.removeEventListener("st-theme-preset-change", this._onPresetChange);
               this._skinAttrObserver?.disconnect();
               this._scrollHost?.removeEventListener("scroll", this._onScroll);
               clearInterval(this._poll);

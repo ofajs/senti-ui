@@ -93,7 +93,7 @@ site/
 - **25 张组件卡片**（`CATALOG / 25 CARDS`）：每张卡片 = 真实组件预览 + 名称 + 标签 + 站内文档 ↗
   - 预览区可交互：按钮、输入、选择、开关、滑块、标签栏、导航、折叠、对话框、菜单、Toast 等都能直接操作
   - 覆盖 20 个模块、29 个 `st-*` 标签，以及 toast / alert / confirm / prompt / contextMenu 命令式工具
-- 四张局部 `data-skin` 材质卡：M3 / Apple 毛玻璃 / Windows 11 / shadcn 同页对比；应用切换在独立的 `skins.html`
+- 三张局部 `data-skin` 系统 UI 卡：Android Material 3 / Apple 毛玻璃 / Windows 11 同页对比；每张卡用 `previewThemes` 写入平台默认 `--md-sys-color-*`，不跟随站点当前主题色；shadcn 与 Cyberpunk 仍在独立的 `skins.html` 选用
 - 快速开始：安装代码、复制、文档入口
 - 深浅色切换（`st-button-group` → `setThemeMode`）、皮肤切换（`setSkin`）
 
@@ -161,8 +161,8 @@ scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的�
 ## 皮肤与主题
 
 - 包内皮肤：`html[data-skin]` + `st-skin.js`（五套 CSS 已在 `index.html` 与页面 shadow 内预载，切换零等待）；皮肤仍只改材质，颜色来自 M3。
-- 官网「主题」= 材质 + 官方配色：M3 蓝 `#0061A4` / Apple iOS 蓝 `#007AFF` / Windows 蓝 `#0078D4` / shadcn zinc `#18181B` / Cyberpunk 荧光绿 `#D6FE78`（`contrastTone: "bright"`；同样有浅色方案，不强制深色）。切换主题时由 `site/theme-presets.js` 一起套用。
-- 每个主题的颜色（含对比度）按材质存进 `st-theme-palettes`；**深浅模式是全局设置**，不存在 `st-theme-palettes` 里，切换主题时保持不变。Cyberpunk 预设的 `contrast` 为 `1`（满档）、`contrastTone` 为 `"bright"`，其余材质为 `0` / `"deep"`，切换材质时对比度与方向回到该主题默认值；M3 槽位承接用户原本的品牌色，所以从 Cyberpunk 回到 M3 会恢复进入前的配色。
+- 官网「主题」= 材质 + 官方配色：M3 蓝 `#0061A4` / Apple iOS 蓝 `#007AFF` / Windows 蓝 `#0078D4` / shadcn zinc `#18181B` / Cyberpunk 荧光绿 `#D6FE78`（`contrastTone: "bright"`，深色优先；同样有浅色方案）。切换主题时由 `site/theme-presets.js` 一起套用。
+- 每个主题的颜色（含对比度）按材质存进 `st-theme-palettes`；**深浅模式是全局设置**，不存在 `st-theme-palettes` 里，切换主题时默认保持不变。唯一例外是深色优先主题：Cyberpunk 从浅色 / 自动+系统浅色进入时会切到显式深色（auto + 系统已是深色则保持 auto），之后切到其他主题也继续保持深色。Cyberpunk 预设的 `contrast` 为 `1`（满档）、`contrastTone` 为 `"bright"`，其余材质为 `0` / `"deep"`，切换材质时对比度与方向回到该主题默认值；M3 槽位承接用户原本的品牌色，所以从 Cyberpunk 回到 M3 会恢复进入前的配色。
 - 局部预览：`.skin-preview[data-skin="..."]` 会在元素上写入该主题官方配色的 `--md-sys-color-*` 局部变量，所以五张卡能同页展示不同颜色；这只影响预览，不改全站。
 - 文档树的 `[data-skin]` 选择器进不了 `o-page` 的 shadow，因此 `template[page]` 顶部额外 `<link>` 了五套 CSS 到 shadow 内；这是本页能「同页多种材质」的关键。
 - `setSkin()` 仍然只换材质；header 菜单和 skins 页的切换走主题预设，才会同时换色。

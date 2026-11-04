@@ -64,6 +64,9 @@ test("官网首页：25 张卡片 / 29 个标签 / 共享 SCSR 布局，无页�
       templateRemoved: !document.querySelector("o-app template[page]"),
       cards: sr.querySelectorAll(".comp").length,
       lastCard: [...sr.querySelectorAll(".comp")].at(-1)?.querySelector(".comp-id h3")?.textContent.trim(),
+      systemUiCards: [...sr.querySelectorAll("#skins .skin-card h3")].map((h) =>
+        h.textContent.trim()
+      ),
       tags,
       notReady: tags.filter((tag) => {
         const el = sr.querySelector(tag);
@@ -86,6 +89,12 @@ test("官网首页：25 张卡片 / 29 个标签 / 共享 SCSR 布局，无页�
   expect(state.templateRemoved).toBe(true);
   expect(state.sections).toEqual(["top", "components", "skins", "start"]);
   expect(state.cards).toBe(25);
+  // 首页只列三个主流平台的系统 UI；shadcn / cyberpunk 在皮肤页
+  expect(state.systemUiCards).toEqual([
+    "Android · Material 3",
+    "Apple · 毛玻璃",
+    "Microsoft · Windows 11",
+  ]);
   // Ripple 是 M3 专属的材质细节，放到组件卡片最后
   expect(state.lastCard).toBe("Ripple");
   expect(state.legacyDocsLinks).toBe(0);
@@ -94,6 +103,57 @@ test("官网首页：25 张卡片 / 29 个标签 / 共享 SCSR 布局，无页�
   await page.reload({ waitUntil: "networkidle" });
   await waitHome(page);
   expect(await page.evaluate(() => location.pathname)).toBe("/site/");
+});
+
+test("首页三张系统 UI 卡使用平台默认配色，不跟随站点主题色", async ({ page }) => {
+  await page.goto("/site/", { waitUntil: "networkidle", timeout: 60_000 });
+  await waitHome(page);
+  await page.evaluate(() => window.__site.setThemeMode("dark"));
+  await page.reload({ waitUntil: "networkidle" });
+  await waitHome(page);
+
+  const readCards = () =>
+    page.evaluate(() => {
+      const child = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp")
+      );
+      return [...child.shadowRoot.querySelectorAll("#skins .skin-preview[data-skin]")].map(
+        (el) => ({
+          skin: el.dataset.skin,
+          primary: getComputedStyle(el).getPropertyValue("--md-sys-color-primary").trim(),
+          local: el.style.getPropertyValue("--md-sys-color-primary").trim(),
+        })
+      );
+    });
+
+  await page.waitForFunction(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp")
+    );
+    const el = child?.shadowRoot.querySelector('#skins .skin-preview[data-skin="m3"]');
+    return !!el?.style.getPropertyValue("--md-sys-color-primary");
+  });
+
+  const before = await readCards();
+  expect(before.map((x) => x.skin)).toEqual(["m3", "apple", "windows"]);
+  expect(before.every((x) => x.local)).toBe(true);
+  expect(new Set(before.map((x) => x.primary)).size).toBe(3);
+
+  // 切到 Cyberpunk 荧光绿主题后，三张卡仍使用各自平台默认配色
+  await page.waitForFunction(() => window.__siteTheme?.applyThemePreset);
+  await page.evaluate(() => window.__siteTheme.applyThemePreset("cyberpunk"));
+  await page.reload({ waitUntil: "networkidle" });
+  await waitHome(page);
+  await page.waitForFunction(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp")
+    );
+    const el = child?.shadowRoot.querySelector('#skins .skin-preview[data-skin="m3"]');
+    return !!el?.style.getPropertyValue("--md-sys-color-primary");
+  });
+
+  const after = await readCards();
+  expect(after.map((x) => x.primary)).toEqual(before.map((x) => x.primary));
 });
 
 test("从主题页切回首页：首页组件依赖随 template 重新加载", async ({ page }) => {
@@ -846,7 +906,7 @@ test("主题页：五套主题可选，顶部快捷菜单只保留三巨头", as
     .toBe("m3");
 });
 
-test("Cyberpunk 主题：荧光绿配色在浅色/深色下都成立，不强制深浅模式", async ({ page }) => {
+test("Cyberpunk 主题：荧光绿配色在浅色/深色下都成立，进入时深色优先", async ({ page }) => {
   await page.goto("/site/skins.html");
   await page.evaluate(() => {
     localStorage.removeItem("st-skin");
@@ -874,15 +934,28 @@ test("Cyberpunk 主题：荧光绿配色在浅色/深色下都成立，不强制
       contrastTone: saved.contrastTone,
     };
   });
-  // 主题不覆盖全局模式：进入前是浅色，套用 Cyberpunk 后仍是浅色
-  expect(state.dark).toBe(false);
-  expect(state.light).toBe(true);
-  expect(state.mode).toBe("light");
+  // Cyberpunk 是深色优先主题：从显式浅色进入时切到深色
+  expect(state.dark).toBe(true);
+  expect(state.light).toBe(false);
+  expect(state.mode).toBe("dark");
   expect(state.seed).toBe("#d6fe78");
   expect(state.tertiary).toBeUndefined();
   // Cyberpunk 预设：满档对比度 + 提亮方向（荧光绿）
   expect(state.contrast).toBe(1);
   expect(state.contrastTone).toBe("bright");
+
+  // header 的模式组跟随预设切到「深色」
+  expect(
+    await page.evaluate(() => {
+      const layout = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot?.querySelector(".layout-nav")
+      );
+      const active = [...layout.shadowRoot.querySelectorAll(".theme-group st-button")].find(
+        (btn) => btn.getAttribute("variant") === "filled"
+      );
+      return active?.textContent.trim();
+    })
+  ).toBe("深色");
 
   // 皮肤不改变颜色：filled 按钮仍然消费 M3 primary / on-primary
   const colors = await page.evaluate(() => {
@@ -917,14 +990,14 @@ test("Cyberpunk 主题：荧光绿配色在浅色/深色下都成立，不强制
   expect(colors.bg).toEqual(colors.primary);
   expect(colors.color).toEqual(colors.onPrimary);
 
-  // 全局模式独立于主题：切深色/浅色后 Cyberpunk 仍是当前主题，只是换用对应方案
-  await page.evaluate(() => window.__site.setThemeMode("dark"));
-  await page.waitForFunction(() => document.documentElement.classList.contains("st-dark"));
-  expect(await page.evaluate(() => document.documentElement.dataset.skin)).toBe("cyberpunk");
-  expect(await page.evaluate(() => localStorage.getItem("st-theme-mode"))).toBe("dark");
-
+  // 同一个 Cyberpunk 也有浅色方案：手动切浅色后仍是当前主题，只是换用对应 token
   await page.evaluate(() => window.__site.setThemeMode("light"));
   await page.waitForFunction(() => document.documentElement.classList.contains("st-light"));
+  expect(await page.evaluate(() => document.documentElement.dataset.skin)).toBe("cyberpunk");
+  expect(await page.evaluate(() => localStorage.getItem("st-theme-mode"))).toBe("light");
+
+  await page.evaluate(() => window.__site.setThemeMode("dark"));
+  await page.waitForFunction(() => document.documentElement.classList.contains("st-dark"));
   expect(await page.evaluate(() => document.documentElement.dataset.skin)).toBe("cyberpunk");
 });
 
@@ -1032,7 +1105,7 @@ test("主题预设：每套材质带官方配色，并按主题记住各自颜�
   expect(await themeState()).toMatchObject({ seed: "#007aff", primary: undefined });
 });
 
-test("切换主题不改变全局深浅模式", async ({ page }) => {
+test("切换主题保留全局深浅模式（Cyberpunk 深色优先）", async ({ page }) => {
   await page.goto("/site/skins.html");
   await page.evaluate(() => localStorage.clear());
   await page.reload();
@@ -1065,13 +1138,39 @@ test("切换主题不改变全局深浅模式", async ({ page }) => {
   }
 
   await page.evaluate(() => window.__site.setThemeMode("light"));
-  for (const [name, id] of [
-    ["Android · Material 3", "m3"],
-    ["Cyberpunk · 霓虹终端", "cyberpunk"],
-  ]) {
-    await useTheme(name, id);
-    expect(await mode()).toEqual({ dark: false, light: true, stored: "light" });
-  }
+  await useTheme("Android · Material 3", "m3");
+  expect(await mode()).toEqual({ dark: false, light: true, stored: "light" });
+
+  // Cyberpunk 深色优先：从浅色进入时切到显式深色
+  await useTheme("Cyberpunk · 霓虹终端", "cyberpunk");
+  expect(await mode()).toEqual({ dark: true, light: false, stored: "dark" });
+
+  // 离开 Cyberpunk 后继续保持深色
+  await useTheme("Android · Material 3", "m3");
+  expect(await mode()).toEqual({ dark: true, light: false, stored: "dark" });
+});
+
+test("Cyberpunk 在自动 + 系统深色下不改成显式深色", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.goto("/site/skins.html");
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.locator(".skin-card").first().waitFor({ state: "visible" });
+
+  await page
+    .locator(".skin-card")
+    .filter({ hasText: "Cyberpunk · 霓虹终端" })
+    .locator(".skin-actions st-button")
+    .click();
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
+    .toBe("cyberpunk");
+
+  // auto 已经是深色，不落显式 dark；有效 color-scheme 仍是 dark
+  expect(await page.evaluate(() => localStorage.getItem("st-theme-mode"))).toBeNull();
+  expect(
+    await page.evaluate(() => getComputedStyle(document.documentElement).colorScheme)
+  ).toContain("dark");
 });
 
 test("主题预览：刷新和切页后仍按各自官方配色渲染", async ({ page }) => {
@@ -1125,7 +1224,7 @@ test("主题预览：刷新和切页后仍按各自官方配色渲染", async ({
   expect(new Set(Object.values(state.primaries)).size).toBeGreaterThanOrEqual(4);
 });
 
-test("离开 Cyberpunk：恢复进入前的配色与主题模式", async ({ page }) => {
+test("离开 Cyberpunk：配色恢复，深色模式继续保持", async ({ page }) => {
   await page.goto("/site/skins.html");
   await page.evaluate(() => {
     localStorage.clear();
@@ -1145,14 +1244,14 @@ test("离开 Cyberpunk：恢复进入前的配色与主题模式", async ({ page
   const cyberpunk = page.locator(".skin-card").filter({ hasText: "Cyberpunk · 霓虹终端" });
   const m3 = page.locator(".skin-card").filter({ hasText: "Android · Material 3" });
 
-  // 进入 Cyberpunk：荧光绿，但保留全局浅色模式
+  // 进入 Cyberpunk：荧光绿，深色优先（从浅色进入会切到深色）
   await cyberpunk.locator(".skin-actions st-button").filter({ hasText: "使用此主题" }).click();
   await expect
     .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
     .toBe("cyberpunk");
-  expect(await page.evaluate(() => document.documentElement.classList.contains("st-light"))).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.classList.contains("st-dark"))).toBe(true);
 
-  // 从皮肤页切回 M3：颜色与浅色模式都要回来
+  // 从皮肤页切回 M3：颜色恢复，深色模式继续保持
   await m3.locator(".skin-actions st-button").click();
   await expect
     .poll(() => page.evaluate(() => document.documentElement.dataset.skin), { timeout: 5_000 })
@@ -1169,9 +1268,9 @@ test("离开 Cyberpunk：恢复进入前的配色与主题模式", async ({ page
       backup: localStorage.getItem("st-cyberpunk-backup"),
     };
   });
-  expect(restored.dark).toBe(false);
-  expect(restored.light).toBe(true);
-  expect(restored.mode).toBe("light");
+  expect(restored.dark).toBe(true);
+  expect(restored.light).toBe(false);
+  expect(restored.mode).toBe("dark");
   expect(restored.seed).toBe("#336699");
   expect(restored.error).toBe("#aa0000");
   expect(restored.customs).toEqual([{ name: "brand", color: "#12ab34" }]);
@@ -1196,8 +1295,8 @@ test("离开 Cyberpunk：恢复进入前的配色与主题模式", async ({ page
       error: saved.overrides?.error,
     };
   });
-  expect(viaHeader.dark).toBe(false);
-  expect(viaHeader.mode).toBe("light");
+  expect(viaHeader.dark).toBe(true);
+  expect(viaHeader.mode).toBe("dark");
   expect(viaHeader.seed).toBe("#336699");
   expect(viaHeader.error).toBe("#aa0000");
 
@@ -1224,8 +1323,8 @@ test("离开 Cyberpunk：恢复进入前的配色与主题模式", async ({ page
       backup: localStorage.getItem("st-cyberpunk-backup"),
     };
   });
-  expect(crossPage.dark).toBe(false);
-  expect(crossPage.mode).toBe("light");
+  expect(crossPage.dark).toBe(true);
+  expect(crossPage.mode).toBe("dark");
   expect(crossPage.seed).toBe("#336699");
   expect(crossPage.error).toBe("#aa0000");
   expect(crossPage.backup).toBeNull();

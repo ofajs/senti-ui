@@ -12,7 +12,7 @@
   <meta property="og:title" content="Senti-UI — 语义组件，任意材质" />
   <meta
     property="og:description"
-    content="同一批 st-* 组件，同一套 M3 颜色；材质可换（M3 / Apple 毛玻璃 / Windows 11 / shadcn），无构建，CDN 即用。"
+    content="同一批 st-* 组件，同一套 M3 颜色；系统 UI 适配（Android Material 3 / Apple 毛玻璃 / Windows 11），无构建，CDN 即用。"
   />
   <meta name="theme-color" content="#0061A4" />
   <link
@@ -28,7 +28,7 @@
   <!-- 首帧主题引导（同步、禁缓存路径由 npm run dev 提供） -->
   <script src="../packages/boot/st-boot.js"></script>
 
-  <!-- 四套材质同时预载：切换零等待，且允许同页并列展示四种材质 -->
+  <!-- 皮肤 CSS 同时预载：切换零等待，且允许同页并列展示三种系统 UI -->
   <link rel="stylesheet" href="../packages/skin/m3.css" />
   <link rel="stylesheet" href="../packages/skin/apple.css" />
   <link rel="stylesheet" href="../packages/skin/shadcn.css" />
@@ -726,7 +726,7 @@
           /* ---------- 皮肤 ---------- */
           .skin-cards {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 14px;
           }
           .skin-card {
@@ -773,7 +773,7 @@
             padding: 16px;
             border: 1px solid var(--md-sys-color-outline-variant);
             border-radius: 16px;
-            /* 让毛玻璃有东西可模糊：四种材质共用 M3 色彩渐变做背景 */
+            /* 让毛玻璃有东西可模糊：三种材质共用 M3 色彩渐变做背景 */
             background:
               radial-gradient(120% 120% at 10% 0%, color-mix(in srgb, var(--md-sys-color-primary-container) 70%, transparent), transparent 58%),
               radial-gradient(100% 100% at 100% 100%, color-mix(in srgb, var(--md-sys-color-tertiary-container) 60%, transparent), transparent 62%),
@@ -1329,7 +1329,7 @@
     }
     .skin-cards {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
     }
     .skin-card {
@@ -1809,40 +1809,32 @@
     <section class="section" id="skins">
       <div class="section-head">
         <div>
-          <p class="section-kicker">MATERIALS</p>
-          <h2>四种材质，同页对比</h2>
+          <p class="section-kicker">SYSTEM UI</p>
+          <h2>三种系统 UI，同页对比</h2>
         </div>
-        <p class="section-desc">下面四张卡片各自锁定一种材质（局部 data-skin），颜色仍来自 M3。全站换肤用 setSkin()，或在 &lt;html&gt; 上设置 data-skin；也可以前往 <a href="./skins.html">皮肤页</a>切换。</p>
+        <p class="section-desc">针对 Android / Apple / Windows 三个主流平台做好系统 UI 适配：同一批组件，各自锁定平台默认配色与材质，不跟随当前站点主题色。全站换肤用 setSkin()，或在 &lt;html&gt; 上设置 data-skin；也可以前往 <a href="./skins.html">皮肤页</a>切换。</p>
       </div>
       <div class="skin-cards">
         <article class="skin-card">
-          <div class="skin-card-head"><h3>M3 材质</h3><span class="skin-chip">m3</span></div>
-          <p class="skin-desc">全圆角、state layer、波纹，Material Design 3 的默认触感。</p>
+          <div class="skin-card-head"><h3>Android · Material 3</h3><span class="skin-chip">m3</span></div>
+          <p class="skin-desc">Android 系统 UI：全圆角、state layer、波纹，Material Design 3 的默认触感。</p>
           <div class="skin-preview" data-skin="m3">
             <st-button>Button</st-button>
             <st-input placeholder="Input"></st-input>
           </div>
         </article>
         <article class="skin-card">
-          <div class="skin-card-head"><h3>Apple 毛玻璃</h3><span class="skin-chip">apple</span></div>
-          <p class="skin-desc">半透明表面 + backdrop blur、更小圆角、外侧柔光焦点环，无波纹。</p>
+          <div class="skin-card-head"><h3>Apple · 毛玻璃</h3><span class="skin-chip">apple</span></div>
+          <p class="skin-desc">iOS / macOS 系统 UI：半透明表面 + backdrop blur、更小圆角、外侧柔光焦点环，无波纹。</p>
           <div class="skin-preview" data-skin="apple">
             <st-button>Button</st-button>
             <st-input placeholder="Input"></st-input>
           </div>
         </article>
         <article class="skin-card">
-          <div class="skin-card-head"><h3>Windows 11</h3><span class="skin-chip">windows</span></div>
-          <p class="skin-desc">4px 控件圆角、8px 表面、Segoe UI、Mica 表面与 Acrylic 浮层，焦点矩形替代外发光。</p>
+          <div class="skin-card-head"><h3>Microsoft · Windows 11</h3><span class="skin-chip">windows</span></div>
+          <p class="skin-desc">Windows 11 / Fluent 系统 UI：4px 控件圆角、8px 表面、Segoe UI、Mica 表面与 Acrylic 浮层，焦点矩形替代外发光。</p>
           <div class="skin-preview" data-skin="windows">
-            <st-button>Button</st-button>
-            <st-input placeholder="Input"></st-input>
-          </div>
-        </article>
-        <article class="skin-card">
-          <div class="skin-card-head"><h3>shadcn 扁平</h3><span class="skin-chip">shadcn</span></div>
-          <p class="skin-desc">6px 圆角、1px 细描边、极轻阴影、外扩 focus ring，紧凑密度；作用于全部浮层与表面组件。</p>
-          <div class="skin-preview" data-skin="shadcn">
             <st-button>Button</st-button>
             <st-input placeholder="Input"></st-input>
           </div>
@@ -1938,11 +1930,49 @@
                 attributes: true,
                 attributeFilter: ["data-skin"],
               });
+              this.initPreviewPalettes();
             },
             detached() {
               this._skinObserver?.disconnect();
+              this._previewObserver?.disconnect();
+              if (this._previewMedia && this._onPreviewScheme) {
+                this._previewMedia.removeEventListener("change", this._onPreviewScheme);
+              }
             },
             proto: {
+              async initPreviewPalettes() {
+                let tries = 0;
+                while (!window.__site?.previewThemes && tries++ < 300) {
+                  await new Promise((resolve) => setTimeout(resolve, 20));
+                }
+                if (!window.__site?.previewThemes) return;
+                this.applyPreviewPalettes();
+                this._previewObserver = new MutationObserver(() => this.applyPreviewPalettes());
+                this._previewObserver.observe(document.documentElement, {
+                  attributes: true,
+                  attributeFilter: ["class"],
+                });
+                this._previewMedia = window.matchMedia("(prefers-color-scheme: dark)");
+                this._onPreviewScheme = () => this.applyPreviewPalettes();
+                this._previewMedia.addEventListener("change", this._onPreviewScheme);
+              },
+              applyPreviewPalettes() {
+                const themes = window.__site?.previewThemes;
+                const root = this.ele?.shadowRoot;
+                if (!themes || !root) return;
+                const dark =
+                  document.documentElement.classList.contains("st-dark") ||
+                  (!document.documentElement.classList.contains("st-light") &&
+                    window.matchMedia("(prefers-color-scheme: dark)").matches);
+                for (const el of root.querySelectorAll(".skin-preview[data-skin]")) {
+                  const theme = themes[el.dataset.skin];
+                  if (!theme) continue;
+                  const vars = dark ? theme.dark : theme.light;
+                  for (const [name, value] of Object.entries(vars)) {
+                    el.style.setProperty(name, value);
+                  }
+                }
+              },
               get tabLabel() {
                 return this.tabLabels[this.tab] || "";
               },

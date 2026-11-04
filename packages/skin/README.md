@@ -268,7 +268,7 @@ applyTheme("#D6FE78", {}, {}, {
 });
 ```
 
-`contrast` 是颜色体系的能力（详见 [../color/README.md](../color/README.md)），不是皮肤 token：霓虹 / 游戏类材质靠它得到近黑表面、更纯的角色色与更亮的描边，而不必另造一套颜色变量。官网 `site/theme-presets.js` 的 Cyberpunk 就是“材质 + 配色”的打包：荧光绿 `#D6FE78` + `contrast: 1` + `contrastTone: "bright"`，其余材质默认 `0` / `deep`；**切换材质时对比度与方向回到该主题的默认值**，不跨材质记忆（种子色 / 角色覆盖仍按材质槽位记忆）。**深浅模式是全局设置**，不随主题切换，Cyberpunk 也有自己的浅色方案。
+`contrast` 是颜色体系的能力（详见 [../color/README.md](../color/README.md)），不是皮肤 token：霓虹 / 游戏类材质靠它得到近黑表面、更纯的角色色与更亮的描边，而不必另造一套颜色变量。官网 `site/theme-presets.js` 的 Cyberpunk 就是“材质 + 配色”的打包：荧光绿 `#D6FE78` + `contrast: 1` + `contrastTone: "bright"`，其余材质默认 `0` / `deep`；**切换材质时对比度与方向回到该主题的默认值**，不跨材质记忆（种子色 / 角色覆盖仍按材质槽位记忆）。**深浅模式是全局设置**，默认不随主题切换；Cyberpunk 是深色优先主题，从浅色进入时会切到深色，离开后继续保持深色，但它的浅色方案仍然存在、可手动切回。
 
 ## 注意事项与使用技巧
 

@@ -42,11 +42,11 @@
 <option value="relay" label="邀请码">...</option>
 ```
 
-**富内容选项**：选项内可以嵌套自定义元素/HTML（span 等内联元素、任意自定义组件），子节点会被克隆渲染到下拉项中。原生 `<option>` 受浏览器解析限制，富内容场景推荐用 **`<st-option>`** 组件（随 `select.html` 自动加载，无需单独引入）：
+**富内容选项**：选项内可以嵌套自定义元素/HTML（span 等内联元素、任意自定义组件），子节点会被克隆渲染到下拉项中；其中**图标元素**（`svg` / `img` / `iconify-icon`，或带 `slot="icon"` 的元素）还会同步显示在闭合态，闭合态文字仍由 `label` 决定。原生 `<option>` 受浏览器解析限制，富内容场景推荐用 **`<st-option>`** 组件（随 `select.html` 自动加载，无需单独引入）：
 
 ```html
 <st-select placeholder="选择部署方式">
-  <st-option value="direct" label="直连"><span style="margin-right:8px;">⚡</span><b>直连</b> Direct</st-option>
+  <st-option value="direct" label="直连"><svg viewBox="0 0 16 16" width="1em" height="1em"><circle cx="8" cy="8" r="6" fill="currentColor" /></svg><b>直连</b> Direct</st-option>
   <st-option value="relay" label="邀请码">
     <span lang="cn">邀请码</span><span lang="en">Invite code</span>
   </st-option>
@@ -59,7 +59,7 @@ st-option 语义属性：
 |------|------|--------|------|
 | `value` | string | 取 `label` 属性，再取插槽文本 | 选中值 |
 | `label` | string | 取插槽文本 | 闭合状态显示文本 |
-| 默认插槽 | — | — | 富内容：克隆渲染到下拉项（闭合态不显示，闭合态显示 label） |
+| 默认插槽 | — | — | 富内容：克隆渲染到下拉项；图标元素（svg / img / iconify-icon / `[slot="icon"]`）会同步到闭合态，文字仍显示 `label` |
 
 选项内只放纯文本时（无元素、无实际文本的空白节点不算富内容），下拉项直接显示 label/文本。
 
@@ -170,7 +170,7 @@ $("st-select").on("change", (e) => {
 
 - `value` 是运行时状态：`el.value = "x"` 改选中（不派发 change）；初始选中用 `default-value`
 - 选项元素（`option` / `st-option`）是纯数据源：收集发生在 attached 与 slotchange/o-fill 重渲染时，**直接改已渲染选项的 `value`/`label` 属性不会生效**——动态选项用 `el.options`、`:options` 或 o-fill 嵌套
-- 富内容/多语言场景用 `st-option` + `label` 属性：插槽内容做下拉项展示，`label` 做闭合态文本（原生 `<option>` 受浏览器解析限制，内部元素可能不保真）
+- 富内容/多语言场景用 `st-option` + `label` 属性：插槽内容做下拉项展示，`label` 做闭合态文本；插槽里的图标（svg / img / iconify-icon / `[slot="icon"]`）会同步到闭合态（原生 `<option>` 受浏览器解析限制，内部元素可能不保真）
 - st-option 由 `select.html` 内部 `<l-m>` 自动加载，无需单独引入；`st-select` 内可混用 `<option>` 与 `<st-option>`（保持书写顺序）
 - 下拉弹层渲染在组件 shadow 内（绝对定位），被 `overflow: hidden` 祖先裁剪时会截断——该场景调整布局
 - 键盘全支持：Enter/Space 打开、↑↓ 循环移动、Home/End、Escape/Tab 关闭

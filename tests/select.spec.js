@@ -96,6 +96,35 @@ test("st-option：default-value 初始化 + label 属性控制闭合态文本", 
   expect(label).toBe("邀请码");
 });
 
+test("st-option：闭合态显示选项图标，label 仍控制文本", async ({ page }) => {
+  const labelState = () =>
+    page.evaluate(() => {
+      const label = document
+        .querySelector("#sel-icon-option")
+        .shadowRoot.querySelector("#st-label");
+      return {
+        html: label.innerHTML,
+        text: label.textContent,
+        svg: label.querySelectorAll("svg").length,
+        hasIcon: label.classList.contains("has-icon"),
+      };
+    });
+
+  let state = await labelState();
+  expect(state.hasIcon).toBe(true);
+  expect(state.svg).toBe(1);
+  // 图标没有文字，label.textContent 仍是 label 属性
+  expect(state.text).toBe("通知");
+
+  // 切到没有图标的选项，图标移除
+  await page.locator("#sel-icon-option").click();
+  await page.locator("#sel-icon-option .opt").filter({ hasText: "首页" }).click();
+  state = await labelState();
+  expect(state.hasIcon).toBe(false);
+  expect(state.svg).toBe(0);
+  expect(state.text).toBe("首页");
+});
+
 test("st-option：点击选中富内容项，value 与 change 正常", async ({ page }) => {
   await page.locator("#sel-st-option").click();
   await page.locator("#sel-st-option .opt").filter({ hasText: "Direct" }).click();

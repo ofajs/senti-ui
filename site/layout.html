@@ -196,15 +196,6 @@
             height: 34px;
             font-size: 15px;
           }
-          .theme-mode {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-          }
-          .theme-mode > iconify-icon {
-            font-size: 15px;
-            color: var(--md-sys-color-on-surface-variant);
-          }
           .theme-select {
             width: 84px;
             min-width: 84px;
@@ -351,19 +342,16 @@
                 </st-menu-item>
               </st-menu>
 
-              <span class="theme-mode">
-                <iconify-icon attr:icon="themeModeIcon" aria-hidden="true"></iconify-icon>
-                <st-select
-                  class="theme-select"
-                  :value="themeMode"
-                  aria-label="深浅色模式"
-                  on:change="setThemeMode($event.target.value)"
-                >
-                  <st-option value="auto" label="自动"><iconify-icon icon="mdi:theme-light-dark"></iconify-icon><span>自动</span></st-option>
-                  <st-option value="light" label="浅色"><iconify-icon icon="mdi:white-balance-sunny"></iconify-icon><span>浅色</span></st-option>
-                  <st-option value="dark" label="深色"><iconify-icon icon="mdi:weather-night"></iconify-icon><span>深色</span></st-option>
-                </st-select>
-              </span>
+              <st-select
+                class="theme-select"
+                :value="themeMode"
+                aria-label="深浅色模式"
+                on:change="setThemeMode($event.target.value)"
+              >
+                <st-option value="auto" label="自动"><iconify-icon icon="mdi:theme-light-dark"></iconify-icon><span>自动</span></st-option>
+                <st-option value="light" label="浅色"><iconify-icon icon="mdi:white-balance-sunny"></iconify-icon><span>浅色</span></st-option>
+                <st-option value="dark" label="深色"><iconify-icon icon="mdi:weather-night"></iconify-icon><span>深色</span></st-option>
+              </st-select>
 
               <st-tooltip content="GitHub 仓库">
                 <st-icon-button class="github-btn" title="GitHub" on:click="openRepo"><iconify-icon icon="mdi:github"></iconify-icon></st-icon-button>
@@ -477,15 +465,6 @@
               this.updateProgress();
             },
             proto: {
-              get themeModeIcon() {
-                return (
-                  {
-                    auto: "mdi:theme-light-dark",
-                    light: "mdi:white-balance-sunny",
-                    dark: "mdi:weather-night",
-                  }[this.themeMode] || "mdi:theme-light-dark"
-                );
-              },
               routePage(path) {
                 if (/\/docs(\/|$)/.test(path)) return "docs";
                 if (/\/skins(\.html)?$/.test(path)) return "skins";

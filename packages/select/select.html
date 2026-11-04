@@ -120,6 +120,18 @@
       white-space: nowrap;
       text-align: start;
     }
+    /* 闭合态可带选项里的图标：图标不伸缩，文本负责省略 */
+    .label.has-icon { display: inline-flex; align-items: center; gap: 0.5em; }
+    .label.has-icon .label-text {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .label.has-icon > svg,
+    .label.has-icon > img,
+    .label.has-icon > [slot="icon"],
+    .label.has-icon > iconify-icon { flex: none; }
     .label.placeholder { color: var(--md-sys-color-on-surface-variant); }
 
     /* 真正的 combobox：把焦点与 ARIA 关系放进 shadow，
@@ -512,8 +524,33 @@
         // 选中态与显示文本同步（change 事件由 select() 派发）
         syncSelected() {
           const opt = this._opts?.find((o) => o.value === this.value);
-          this.labelEl.textContent = opt ? opt.label : (this.placeholder || "");
+          this.labelEl.replaceChildren();
           this.labelEl.classList.toggle("placeholder", !opt);
+          if (!opt) {
+            this.labelEl.textContent = this.placeholder || "";
+            this.labelEl.classList.remove("has-icon");
+          } else {
+            // 闭合态：label 提供文字，选项里的图标元素（svg/img/iconify-icon/[slot=icon]）一并显示
+            const icons =
+              opt.el && opt.el.tagName === "ST-OPTION"
+                ? [...opt.el.childNodes].filter((node) => {
+                    if (!node || node.nodeType !== 1) return false;
+                    if (node.getAttribute("slot") === "icon") return true;
+                    const tag = node.tagName.toLowerCase();
+                    return tag === "svg" || tag === "img" || tag.endsWith("-icon");
+                  })
+                : [];
+            this.labelEl.classList.toggle("has-icon", icons.length > 0);
+            if (icons.length) {
+              icons.forEach((node) => this.labelEl.appendChild(node.cloneNode(true)));
+              const text = document.createElement("span");
+              text.className = "label-text";
+              text.textContent = opt.label;
+              this.labelEl.appendChild(text);
+            } else {
+              this.labelEl.textContent = opt.label;
+            }
+          }
           const valueEl = this.ele.shadowRoot?.querySelector("#st-value");
           if (valueEl) {
             valueEl.textContent = opt ? opt.label : (this.placeholder || "");

@@ -167,7 +167,10 @@ test("Iconify Web Component 已加载，header 与模式图标渲染为 SVG", as
       const layout = [...document.querySelectorAll("o-page")].find(
         (op) => op.shadowRoot?.querySelector(".layout-nav")
       );
-      const icon = layout?.shadowRoot.querySelector(".theme-mode > iconify-icon");
+      const label = layout?.shadowRoot
+        .querySelector(".theme-select")
+        ?.shadowRoot?.querySelector("#st-label");
+      const icon = label?.querySelector("iconify-icon");
       return !!icon?.shadowRoot?.querySelector("svg");
     },
     null,
@@ -179,7 +182,10 @@ test("Iconify Web Component 已加载，header 与模式图标渲染为 SVG", as
       const layout = [...document.querySelectorAll("o-page")].find(
         (op) => op.shadowRoot?.querySelector(".layout-nav")
       );
-      return layout.shadowRoot.querySelector(".theme-mode > iconify-icon")?.getAttribute("icon");
+      const label = layout.shadowRoot
+        .querySelector(".theme-select")
+        ?.shadowRoot?.querySelector("#st-label");
+      return label?.querySelector("iconify-icon")?.getAttribute("icon");
     });
   expect(await readThemeIcon()).toBe("mdi:theme-light-dark");
 

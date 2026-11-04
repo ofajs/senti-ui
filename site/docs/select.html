@@ -194,7 +194,7 @@
 
             <section class="doc-section">
               <h2>富内容选项与 st-option</h2>
-              <p class="doc-section-lead">原生 option 内可嵌 span / b，子元素会被克隆到下拉项；但闭合状态显示的是纯文本，复杂或双语内容推荐 <code>st-option</code>：插槽负责下拉项，<code>label</code> 属性单独决定闭合态文字。</p>
+              <p class="doc-section-lead">原生 option 内可嵌 span / b，子元素会被克隆到下拉项；闭合态默认只显示纯文本。复杂或双语内容推荐 <code>st-option</code>：插槽负责下拉项，<code>label</code> 属性决定闭合态文字；插槽里的图标（svg / img / iconify-icon / <code>slot="icon"</code>）会同步显示在闭合态。</p>
               <div class="demo">
                 <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-option / label</code></div>
                 <div class="demo-stage grid">
@@ -210,7 +210,7 @@
                     <span class="demo-label">st-option + label</span>
                     <st-select default-value="relay" placeholder="选择部署方式">
                       <st-option value="direct" label="直连"><iconify-icon icon="mdi:flash" style="margin-right:8px"></iconify-icon><b>直连</b> Direct</st-option>
-                      <st-option value="relay" label="邀请码"><span style="margin-right: 8px;">🔑</span><b>邀请码</b> <span style="opacity: 0.62;">Invite code</span></st-option>
+                      <st-option value="relay" label="邀请码"><iconify-icon icon="mdi:key-variant" style="margin-right:8px"></iconify-icon><b>邀请码</b> <span style="opacity: 0.62;">Invite code</span></st-option>
                       <st-option label="无 value（取 label）">缺省 value 演示</st-option>
                     </st-select>
                   </div>
@@ -220,7 +220,7 @@
                 <summary>示例代码</summary>
                 <pre><code>&lt;st-select default-value="relay"&gt;
   &lt;st-option value="direct" label="直连"&gt;&lt;iconify-icon icon="mdi:flash"&gt;&lt;/iconify-icon&gt; 直连 Direct&lt;/st-option&gt;
-  &lt;st-option value="relay" label="邀请码"&gt;🔑 邀请码 Invite code&lt;/st-option&gt;
+  &lt;st-option value="relay" label="邀请码"&gt;&lt;iconify-icon icon="mdi:key-variant"&gt;&lt;/iconify-icon&gt; 邀请码 Invite code&lt;/st-option&gt;
 &lt;/st-select&gt;</code></pre>
               </details>
             </section>

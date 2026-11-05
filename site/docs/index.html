@@ -69,7 +69,7 @@
               <p class="doc-kicker">DOCS / COMPONENTS</p>
               <h1>组件文档</h1>
               <p class="doc-lead">
-                21 个文档页、29 个标签的独立使用说明。按职责分为基础组件与辅助组件：
+                22 个文档页、30 个标签的独立使用说明。按职责分为基础组件与辅助组件：
                 每个组件一页，按场景拆分多组可交互示例，并附属性表、插槽 / 事件与示例代码。
                 header 与左侧组件目录由父页共享，切换组件时只替换右侧正文。
               </p>
@@ -78,7 +78,7 @@
               <header class="docs-group-head">
                 <div>
                   <p class="docs-group-kicker">FOUNDATION</p>
-                  <h2>基础组件 <span>17</span></h2>
+                  <h2>基础组件 <span>18</span></h2>
                 </div>
                 <p class="docs-group-desc">构成页面骨架与完整业务流程：动作、表单、反馈、内容与导航。</p>
               </header>
@@ -144,6 +144,13 @@
             <h2>Dialog</h2>
             <code>st-dialog</code>
             <p>模态对话框：headline / 默认 / actions 三插槽，auto-close 支持遮罩与 Escape。</p>
+            <span class="more">查看用法 <iconify-icon icon="mdi:arrow-right"></iconify-icon></span>
+          </st-card>
+          <st-card interactive class="docs-card" on:click="goDoc('drawer')">
+            <span class="cat">反馈</span>
+            <h2>Drawer</h2>
+            <code>st-drawer</code>
+            <p>侧边抽屉：side=left/right，headline / 默认 / actions 三插槽；auto-close 支持遮罩与 Escape。</p>
             <span class="more">查看用法 <iconify-icon icon="mdi:arrow-right"></iconify-icon></span>
           </st-card>
           <st-card interactive class="docs-card" on:click="goDoc('menu')">

@@ -176,3 +176,27 @@ export function trapTab(host, event) {
   }
   return false;
 }
+
+// 模态栈：dialog / drawer 共用同一份顺序，保证 Escape 只关最上层。
+// 用模块级数组而不是宿主属性，组件即使来自不同文件也能正确排序。
+const modalStack = [];
+
+/** 把模态宿主压入栈顶（已存在时先移除，避免重复） */
+export function pushModal(host) {
+  const index = modalStack.indexOf(host);
+  if (index !== -1) modalStack.splice(index, 1);
+  modalStack.push(host);
+}
+
+/** 从栈中移除；返回是否原本存在（用于判断是否需要解锁滚动） */
+export function removeModal(host) {
+  const index = modalStack.indexOf(host);
+  if (index === -1) return false;
+  modalStack.splice(index, 1);
+  return true;
+}
+
+/** 是否是最上层模态 */
+export function isTopModal(host) {
+  return modalStack.length > 0 && modalStack[modalStack.length - 1] === host;
+}

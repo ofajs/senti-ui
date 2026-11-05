@@ -78,6 +78,28 @@ await alert("完成"); // true/null
 
 - 坑：不要放在有 transform/filter 的祖先内
 
+## st-drawer 侧边抽屉
+
+- **结构**：宿主是全屏遮罩（fixed），面板在 shadow 内 `part="panel"`；默认左侧滑入，`side="right"` 改为右侧滑入
+- 属性：`auto-close`（遮罩点击 / Escape 关闭并派发 `close`）、`side`（`left`(默认) / `right`）
+- **`open` 是运行时状态**：ofa 页面用 `sync:open="xxx"` 双向绑定（auto-close 关闭自动回写）；纯 JS 用 `$("st-drawer").attr("open", "") / attr("open", null)`
+- 插槽：`headline` / 默认 / `actions`（空区块自动隐藏；正文区超高时内部滚动）
+- 焦点：`role="dialog"` + `aria-modal`，打开移入面板、Tab 焦点陷阱、关闭归还焦点、背景滚动锁；与 st-dialog 共用模态栈，Escape 只关最上层
+- 面板定制：`st-drawer::part(panel) { width: 360px; }`；part：`panel` / `scrim` / `headline` / `body` / `actions`
+- 皮肤 token：`--st-drawer-bg` / `--st-drawer-radius` / `--st-drawer-border` / `--st-drawer-shadow` / `--st-drawer-padding` / `--st-drawer-gap` / `--st-drawer-backdrop-filter` / `--st-drawer-scrim` / `--st-drawer-scrim-filter` / `--st-drawer-enter-duration` / `--st-drawer-exit-duration`
+
+```html
+<st-drawer sync:open="drawerOpen" auto-close side="left">
+  <h2 slot="headline">导航</h2>
+  <p>抽屉内容</p>
+  <div slot="actions">
+    <st-button variant="text" on:click="drawerOpen = false">关闭</st-button>
+  </div>
+</st-drawer>
+```
+
+完整属性表、默认值与示例见 [components/drawer.md](./components/drawer.md)。
+
 ## st-checkbox / st-switch / st-radio 表单选择类
 
 统一范式：内部透明原生 input 承载点击/Space/焦点，变更后反射回宿主属性并派发 `change`（composed）。

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drawer — 组件文档 — Senti-UI</title>
+  <meta name="description" content="Drawer（st-drawer）用法：侧边抽屉，side=left/right，headline / 默认 / actions 三插槽，auto-close 支持遮罩与 Escape。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../../packages/skin/cyberpunk.css" />
+  <link rel="stylesheet" href="../../packages/skin/windows.css" />
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+    .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
+    .nojs h1 { margin: 0 0 12px; font-size: 32px; }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>Drawer</h1>
+      <p>组件文档的示例与目录需要 JavaScript；也可以回到首页或查看 GitHub 源码。</p>
+      <p><a href="../index.html">组件目录</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+    </div>
+  </noscript>
+
+  <o-app src="../app-config.js">
+    <template page>
+      <!-- 依赖放在 template 内：SCSR 切页时目标页 body 里的 <l-m> 不会执行 -->
+      <l-m src="../../packages/button/button.html"></l-m>
+      <l-m src="../../packages/button/button-group.html"></l-m>
+      <l-m src="../../packages/button/split-button.html"></l-m>
+      <l-m src="../../packages/button/icon-button.html"></l-m>
+      <l-m src="../../packages/input/input.html"></l-m>
+      <l-m src="../../packages/textarea/textarea.html"></l-m>
+      <l-m src="../../packages/select/select.html"></l-m>
+      <l-m src="../../packages/drawer/drawer.html"></l-m>
+      <l-m src="../../packages/dialog/dialog.html"></l-m>
+      <l-m src="../../packages/checkbox/checkbox.html"></l-m>
+      <l-m src="../../packages/switch/switch.html"></l-m>
+      <l-m src="../../packages/radio/radio.html"></l-m>
+      <l-m src="../../packages/snackbar/snackbar.html"></l-m>
+      <l-m src="../../packages/slider/slider.html"></l-m>
+      <l-m src="../../packages/progress/progress.html"></l-m>
+      <l-m src="../../packages/tooltip/tooltip.html"></l-m>
+      <l-m src="../../packages/card/card.html"></l-m>
+      <l-m src="../../packages/badges/badges.html"></l-m>
+      <l-m src="../../packages/collapse/collapse.html"></l-m>
+      <l-m src="../../packages/list/list.html"></l-m>
+      <l-m src="../../packages/menu/menu.html"></l-m>
+      <l-m src="../../packages/tabs/tab-bar.html"></l-m>
+      <l-m src="../../packages/navigation/nav-bar.html"></l-m>
+      <l-m src="../../packages/navigation/nav-layout.html"></l-m>
+      <l-m src="../../packages/ripple/ripple.html"></l-m>
+
+      <link rel="stylesheet" href="../docs.css" />
+
+          <article class="doc-page">
+            <style>
+              /* 文档页的 fixed 抽屉在 .site-scroll 的 z-index 1 内，
+                 header（z-index 60）会盖住顶部；留出 header 高度，避免标题被压住 */
+              st-drawer::part(panel) { padding-top: 72px; }
+              .doc-drawer-wide::part(panel) {
+                width: min(34em, 92vw);
+              }
+            </style>
+
+            <header class="doc-hero">
+              <p class="doc-kicker">反馈 · 10 / 22</p>
+              <h1>Drawer <code>st-drawer</code></h1>
+              <p class="doc-lead">侧边抽屉：默认从左侧滑入，side="right" 改为右侧。headline / 默认 / actions 三插槽，open 是运行时状态，页面里用 sync:open 双向绑定。auto-close 允许点击遮罩或 Escape 关闭并派发 close；面板用原生 ::part(panel) 定制。</p>
+              <div class="doc-links">
+                <a href="../index.html">组件目录</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/drawer/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
+              </div>
+            </header>
+
+            <section class="doc-section">
+              <h2>左侧 / 右侧</h2>
+              <p class="doc-section-lead">side 控制面板贴哪一侧、从哪个方向滑入。下面两个抽屉都用 sync:open 双向绑定；内部按钮把数据置 false 即可关闭。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>side="left" / side="right"</code></div>
+                <div class="demo-stage">
+                  <st-button variant="outlined" on:click="leftOpen = true">打开左侧抽屉</st-button>
+                  <st-button variant="outlined" on:click="rightOpen = true">打开右侧抽屉</st-button>
+                  <span class="demo-note">leftOpen = {{leftOpen}} · rightOpen = {{rightOpen}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;st-button on:click="leftOpen = true"&gt;打开左侧抽屉&lt;/st-button&gt;
+
+&lt;st-drawer sync:open="leftOpen" auto-close side="left"&gt;
+  &lt;h2 slot="headline"&gt;导航&lt;/h2&gt;
+  &lt;p&gt;抽屉正文&lt;/p&gt;
+  &lt;div slot="actions"&gt;
+    &lt;st-button variant="text" on:click="leftOpen = false"&gt;关闭&lt;/st-button&gt;
+  &lt;/div&gt;
+&lt;/st-drawer&gt;
+
+&lt;st-drawer sync:open="rightOpen" auto-close side="right"&gt;...&lt;/st-drawer&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>auto-close 与 close 事件</h2>
+              <p class="doc-section-lead">设置 auto-close 后，点击遮罩或按 Escape 会关闭抽屉、把 sync:open 绑定的数据回写为 false，并派发 close 事件。close 只在交互关闭时派发；用按钮改数据关闭不会触发。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>auto-close / on:close</code></div>
+                <div class="demo-stage">
+                  <st-button variant="outlined" on:click="autoOpen = true">打开 auto-close 抽屉</st-button>
+                  <span class="demo-note">close 触发 {{closeCount}} 次</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（关闭计数）</summary>
+                <pre><code>&lt;st-drawer sync:open="autoOpen" auto-close side="left" on:close="onAutoClose"&gt;
+  &lt;h2 slot="headline"&gt;auto-close&lt;/h2&gt;
+  &lt;p&gt;点击遮罩或按 Escape 关闭。&lt;/p&gt;
+&lt;/st-drawer&gt;
+
+&lt;script&gt;
+  export default async () =&gt; ({
+    data: { autoOpen: false, closeCount: 0 },
+    proto: {
+      onAutoClose() {
+        this.closeCount += 1;
+      },
+    },
+  });
+&lt;/script&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>用 ::part(panel) 定制</h2>
+              <p class="doc-section-lead">面板在 shadow 内，用原生 ::part(panel) 覆盖宽度、圆角、底色；字号类属性可直接写在宿主 style 上，面板会等比缩放。下面的样式只写在本页 shadow 内。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>::part(panel)</code></div>
+                <div class="demo-stage">
+                  <st-button variant="outlined" on:click="wideOpen = true">Wide · 34em</st-button>
+                  <st-button variant="outlined" on:click="smallOpen = true">font-size: 12px</st-button>
+                  <span class="demo-note">wide 覆盖 width；12px 让 padding、圆角、宽度一起缩小。</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;style&gt;
+  .doc-drawer-wide::part(panel) {
+    width: min(34em, 92vw);
+  }
+&lt;/style&gt;
+
+&lt;st-drawer class="doc-drawer-wide" sync:open="wideOpen" auto-close&gt;...&lt;/st-drawer&gt;
+&lt;st-drawer sync:open="smallOpen" auto-close style="font-size: 12px;"&gt;...&lt;/st-drawer&gt;</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
+              <h2>插槽与焦点</h2>
+              <p class="doc-section-lead">headline / 默认 / actions 三个插槽哪个没有内容，对应区块就自动隐藏；正文超高时在正文区内部滚动。打开后焦点移入面板，Tab / Shift+Tab 在抽屉内循环，关闭后归还打开元素；与 st-dialog 共用模态栈，叠加时 Escape 只关最上层。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>slots / focus</code></div>
+                <div class="demo-stage">
+                  <st-button variant="outlined" on:click="plainOpen = true">只有标题与正文</st-button>
+                  <st-button variant="outlined" on:click="formOpen = true">抽屉里的表单</st-button>
+                </div>
+              </div>
+            </section>
+
+            <div class="doc-cols">
+              <div class="doc-block">
+                <h3>属性</h3>
+                <table class="api">
+                  <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>open</code></td><td>运行时状态（ofa data）</td><td>false</td><td>显示状态；页面里用 <code>sync:open="key"</code> 双向绑定</td></tr>
+                    <tr><td><code>auto-close</code></td><td>boolean</td><td>无</td><td>允许点击遮罩 / Escape 关闭，并派发 close</td></tr>
+                    <tr><td><code>side</code></td><td><code>left</code> / <code>right</code></td><td><code>left</code></td><td>面板贴左或贴右，从对应方向滑入</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="doc-block">
+                <h3>插槽 / 事件 / 注意</h3>
+                <ul class="api-list">
+                  <li>插槽：<code>headline</code>（标题 / 品牌 / 关闭按钮）、默认（正文 / 导航，超高时内部滚动）、<code>actions</code>（底部操作，横排可换行）；空区块自动隐藏。</li>
+                  <li>事件：<code>close</code>（bubbles + composed），只在遮罩 / Escape 交互关闭时派发；外部改数据关闭不派发。</li>
+                  <li>面板：<code>::part(panel)</code> 覆盖宽度 / 圆角 / 底色；默认宽 <code>min(22.86em, 88vw)</code>、padding <code>1.43em</code>、内侧圆角 <code>1.143em</code>。另有 <code>scrim</code> / <code>headline</code> / <code>body</code> / <code>actions</code> part。</li>
+                  <li>焦点：打开时移入面板容器并在内部循环（焦点陷阱），关闭后归还打开元素；Escape / 遮罩仅在 auto-close 时生效；打开期间锁定背景滚动。</li>
+                  <li>注意：抽屉别放进设置过 transform / filter 的祖先，否则 fixed 遮罩会错位；宿主 z-index 为 1000。</li>
+                </ul>
+              </div>
+            </div>
+
+            <nav class="doc-pager" aria-label="上下篇">
+              <a class="pager-link" olink href="./dialog.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Dialog</a><a class="pager-link pager-next" olink href="./menu.html"><span>下一页</span>Menu <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
+            </nav>
+          </article>
+
+          <!-- 本页真实的 st-drawer 实例 -->
+          <st-drawer sync:open="leftOpen" auto-close side="left">
+            <h2 slot="headline">左侧抽屉</h2>
+            <p>默认从左侧滑入，占满视口高度。导航类内容放默认插槽，底部操作放 actions。</p>
+            <div slot="actions">
+              <st-button variant="text" on:click="leftOpen = false">关闭</st-button>
+              <st-button on:click="leftOpen = false">知道了</st-button>
+            </div>
+          </st-drawer>
+
+          <st-drawer sync:open="rightOpen" auto-close side="right">
+            <h2 slot="headline">右侧抽屉</h2>
+            <p><code>side="right"</code> 让面板贴右，从右侧滑入；内侧圆角与描边自动镜像。</p>
+            <div slot="actions">
+              <st-button variant="text" on:click="rightOpen = false">取消</st-button>
+              <st-button on:click="rightOpen = false">保存</st-button>
+            </div>
+          </st-drawer>
+
+          <st-drawer sync:open="autoOpen" auto-close side="left" on:close="onAutoClose">
+            <h2 slot="headline">auto-close 抽屉</h2>
+            <p>点击遮罩或按 Escape 关闭，并派发 close 事件。</p>
+            <div slot="actions">
+              <st-button variant="text" on:click="autoOpen = false">关闭</st-button>
+            </div>
+          </st-drawer>
+
+          <st-drawer class="doc-drawer-wide" sync:open="wideOpen" auto-close side="right">
+            <h2 slot="headline">Wide 面板</h2>
+            <p>宽度通过 <code>st-drawer.doc-drawer-wide::part(panel) { width: min(34em, 92vw) }</code> 覆盖。</p>
+            <div slot="actions">
+              <st-button variant="text" on:click="wideOpen = false">关闭</st-button>
+            </div>
+          </st-drawer>
+
+          <st-drawer sync:open="smallOpen" auto-close side="left" style="font-size: 12px;">
+            <h2 slot="headline">12px 缩放</h2>
+            <p>宿主 <code>font-size: 12px</code>，面板 padding / 圆角 / 宽度全部等比缩小。</p>
+            <div slot="actions">
+              <st-button variant="text" on:click="smallOpen = false">关闭</st-button>
+            </div>
+          </st-drawer>
+
+          <st-drawer sync:open="plainOpen" auto-close side="left">
+            <h2 slot="headline">只有标题与正文</h2>
+            <p>没有 actions 插槽内容，底部操作区不会出现。</p>
+          </st-drawer>
+
+          <st-drawer sync:open="formOpen" auto-close side="right">
+            <h2 slot="headline">新建项目</h2>
+            <st-input sync:value="projectName" placeholder="项目名称" style="width: 100%;"></st-input>
+            <p style="color: var(--md-sys-color-on-surface-variant);">Tab 可在输入框与按钮之间循环；关闭后焦点回到打开元素。</p>
+            <div slot="actions">
+              <st-button variant="text" on:click="formOpen = false">取消</st-button>
+              <st-button on:click="saveProject">保存</st-button>
+            </div>
+          </st-drawer>
+
+          <script>
+            export const parent = "./layout.html";
+
+            export default async () => ({
+              data: {
+                leftOpen: false,
+                rightOpen: false,
+                autoOpen: false,
+                wideOpen: false,
+                smallOpen: false,
+                plainOpen: false,
+                formOpen: false,
+                projectName: "",
+                savedName: "（无）",
+                closeCount: 0,
+              },
+              proto: {
+                onAutoClose() {
+                  this.closeCount += 1;
+                },
+                saveProject() {
+                  this.savedName = this.projectName || "（空）";
+                  this.formOpen = false;
+                },
+              },
+            });
+          </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin, getSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = Object.assign(window.__site || {}, { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu });
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

@@ -307,7 +307,7 @@ test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 21);
+    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 22);
   });
   expect(
     await page.evaluate(
@@ -410,7 +410,7 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(state.title).toContain("Input — 组件文档");
   expect(state.header).toBe(true);
   expect(state.pages).toBe(3);
-  expect(state.sideItems).toBe(22);
+  expect(state.sideItems).toBe(23);
   expect(state.active[0]).toContain("Input");
   expect(state.headerNav).toEqual([
     { variant: "text", active: true },
@@ -526,7 +526,7 @@ test("切页不挤动内容区：阅读进度条显隐不改变页面顶边", as
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 21);
+    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 22);
   });
   const docs = await metrics();
 
@@ -536,13 +536,13 @@ test("切页不挤动内容区：阅读进度条显隐不改变页面顶边", as
   expect(docs.barTop).toBeCloseTo(docs.headerBottom, 0);
 });
 
-test("组件文档首页：21 张卡片可进入独立页", async ({ page }) => {
+test("组件文档首页：22 张卡片可进入独立页", async ({ page }) => {
   await page.goto("/site/docs/index.html", { waitUntil: "networkidle", timeout: 60_000 });
   await page.waitForFunction(() => {
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 21);
+    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 22);
   });
   const overview = await page.evaluate(() => {
     const child = [...document.querySelectorAll("o-page")].find(
@@ -557,9 +557,9 @@ test("组件文档首页：21 张卡片可进入独立页", async ({ page }) => 
       })),
     };
   });
-  expect(overview.cards).toBe(21);
+  expect(overview.cards).toBe(22);
   expect(overview.groups).toEqual([
-    { title: "基础组件 17", cards: 17 },
+    { title: "基础组件 18", cards: 18 },
     { title: "辅助组件 4", cards: 4 },
   ]);
   await page.evaluate(() => {
@@ -1416,6 +1416,33 @@ test("共享 header：皮肤菜单切换全站材质并持久化", async ({ page
     .toBe("m3");
 });
 
+test("移动端：横向导航收进左侧抽屉，可进入文档并高亮当前栏目", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/site/index.html");
+  await page.waitForTimeout(1200);
+
+  // 移动端隐藏横向导航，改由左侧抽屉承载
+  await expect(page.locator(".layout-nav")).toBeHidden();
+  const toggle = page.locator("st-icon-button.nav-toggle");
+  await expect(toggle).toBeVisible();
+
+  const drawer = page.locator("st-drawer.mobile-drawer");
+  await toggle.click();
+  await expect(drawer).toHaveAttribute("open", "");
+  await expect(drawer).toBeVisible();
+  const docsItem = drawer.locator("st-button").filter({ hasText: "文档" });
+  await docsItem.click();
+  await expect(page).toHaveURL(/\/site\/docs\/index\.html$/);
+  await page.waitForTimeout(600);
+
+  // 导航后抽屉关闭；重新打开时“文档”为当前栏目
+  await expect(drawer).not.toHaveAttribute("open", "");
+  await toggle.click();
+  await expect(docsItem).toHaveClass(/active/);
+  await page.keyboard.press("Escape");
+  await expect(drawer).not.toHaveAttribute("open", "");
+});
+
 test("官网环境光：Apple 毛玻璃下增强，M3/windows/shadcn 保持低调", async ({ page }) => {
   await page.goto("/site/index.html");
   await page.waitForTimeout(1500);
@@ -1937,7 +1964,7 @@ test("从手记切到文档：二级 layout 的 list / select 依赖随父页加
     };
   });
   expect(state.listUpgraded).toBe(true);
-  expect(state.items).toBe(22);
+  expect(state.items).toBe(23);
   expect(state.firstItemHeight).toBeGreaterThan(20);
   expect(state.pickerUpgraded).toBe(true);
 

@@ -7,7 +7,7 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 种子色、error、success、深浅色主题永远保持一致。皮肤改的是“同样颜色被呈现成什么材质”，
 不是“换成另一套配色”。
 
-已接入皮肤：全部交互与表面组件——`st-button` / `st-button-group` / `st-split-button` / `st-icon-button` / `st-input` / `st-textarea` / `st-select` / `st-card` / `st-dialog` / `st-menu` / `st-list` / `st-checkbox` / `st-switch` / `st-radio` / `st-slider` / `st-progress` / `st-tabs` / `st-navigation` / `st-tooltip` / `st-snackbar` / `st-badges`。未加载皮肤时每个 token 都回退到组件原有默认值。
+已接入皮肤：全部交互与表面组件——`st-button` / `st-button-group` / `st-split-button` / `st-icon-button` / `st-input` / `st-textarea` / `st-select` / `st-card` / `st-dialog` / `st-drawer` / `st-menu` / `st-list` / `st-checkbox` / `st-switch` / `st-radio` / `st-slider` / `st-progress` / `st-tabs` / `st-navigation` / `st-tooltip` / `st-snackbar` / `st-badges`。未加载皮肤时每个 token 都回退到组件原有默认值。
 
 ## 依赖引入
 
@@ -113,6 +113,10 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 | `--st-dialog-bg` / `--st-dialog-border` | `surface-container-high` / `transparent` | 对话框面板 |
 | `--st-dialog-shadow` | `var(--st-shadow-4)` | 对话框阴影 |
 | `--st-dialog-backdrop-filter` / `--st-dialog-scrim` | `blur(2px)` / `rgb(0 0 0 / .28)` | 面板毛玻璃 / 遮罩 |
+| `--st-drawer-bg` / `--st-drawer-border` | `surface-container-low` / `outline-variant` | 抽屉面板底/内边描边 |
+| `--st-drawer-radius` | `var(--st-radius-lg)` | 抽屉内侧圆角 |
+| `--st-drawer-shadow` | `var(--st-shadow-2)` | 抽屉阴影 |
+| `--st-drawer-backdrop-filter` / `--st-drawer-scrim` | `none` / `var(--st-dialog-scrim)` | 抽屉面板毛玻璃 / 遮罩（未单独设置时沿用 dialog 遮罩） |
 | `--st-menu-bg` / `--st-menu-border` | `surface-container` / `transparent` | 菜单与 split-button 面板 |
 | `--st-menu-shadow` / `--st-menu-backdrop-filter` | `var(--st-shadow-3)` / `none` | 菜单材质 |
 | `--st-card-bg` / `--st-card-border` | `surface-container-low` / `transparent` | 卡片（filled/outlined 另有 `--st-card-filled-bg` / `--st-card-outlined-bg`） |
@@ -182,6 +186,8 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 | `--st-overlay-enter-duration` / `--st-overlay-exit-duration` | `200ms` / `150ms` | 菜单/下拉开合 |
 | `--st-dialog-enter-duration` / `--st-dialog-exit-duration` / `--st-dialog-scrim-duration` | `300ms` / `200ms` / `250ms` | 对话框与遮罩开合 |
 | `--st-dialog-scrim-filter` | `blur(2px)` | 遮罩毛玻璃 |
+| `--st-drawer-enter-duration` / `--st-drawer-exit-duration` | `280ms` / `200ms` | 抽屉滑入 / 滑出 |
+| `--st-drawer-scrim-filter` | `var(--st-dialog-scrim-filter)` | 抽屉遮罩毛玻璃 |
 | `--st-tooltip-duration` | `150ms` | 提示入场 |
 | `--st-ripple-duration` | `350ms` | 波纹扩散 |
 
@@ -190,6 +196,7 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 | Token | M3 默认 | 说明 |
 |-------|---------|------|
 | `--st-dialog-padding` / `--st-dialog-gap` | `1.43em` / `1.14em` | 对话框内边距/区块间距 |
+| `--st-drawer-padding` / `--st-drawer-gap` | `1.43em` / `1.14em` | 抽屉内边距/区块间距 |
 | `--st-card-padding` | `1em` | 卡片内边距 |
 | `--st-menu-padding` / `--st-menu-item-padding` | `0.286em` / `0.714em 0.857em` | 菜单/菜单项 |
 | `--st-menu-item-radius` | `0.571em` | 菜单项圆角 |
@@ -231,6 +238,7 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 | `st-button` | `state-layer` / `loader` / `control` | hover 叠层 / loading spinner / 内部原生 button |
 | `st-input` | `focus-ring` / `underline` / `control` | 内嵌焦点环 / filled 底线 / 内部原生 input |
 | `st-dialog` | `panel` | 对话框面板 |
+| `st-drawer` | `panel` / `scrim` / `headline` / `body` / `actions` | 抽屉面板、遮罩与三个插槽容器 |
 
 仅当组件位于 light DOM（不在 `o-page` 等 shadow 内）时，`::part()` 才可达；
 跨 shadow 场景请使用 token。

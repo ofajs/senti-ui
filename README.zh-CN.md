@@ -68,6 +68,7 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 | Textarea 多行输入框 | `st-textarea` | `.../packages/textarea/textarea.html` |
 | Select 单选下拉框 | `st-select` | `.../packages/select/select.html` |
 | Dialog 对话框 | `st-dialog` | `.../packages/dialog/dialog.html` |
+| Drawer 侧边抽屉 | `st-drawer` | `.../packages/drawer/drawer.html` |
 | Dialog 命令式工具 | `alert/confirm/prompt` | `import alert from ".../packages/dialog/alert.js"` 等 |
 | Checkbox 复选框 | `st-checkbox` | `.../packages/checkbox/checkbox.html` |
 | Switch 开关 | `st-switch` | `.../packages/switch/switch.html` |
@@ -88,7 +89,7 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 
 ## 关键使用模式
 
-- **运行时状态不是标签属性**——`st-input`/`st-select`/`st-slider` 的 `value`，`st-dialog`/`st-tooltip` 的 `open` 等是运行时状态：JS 用 `el.value` / `el.open` 读写，`setAttribute("value")` 无效（初始值用 `default-value` 标签属性）
+- **运行时状态不是标签属性**——`st-input`/`st-select`/`st-slider` 的 `value`，`st-dialog`/`st-drawer`/`st-tooltip` 的 `open` 等是运行时状态：JS 用 `el.value` / `el.open` 读写，`setAttribute("value")` 无效（初始值用 `default-value` 标签属性）
 - **布尔属性的 JS 修改必须用 `setAttribute` / `removeAttribute`**——直接改 property 不触发更新
 - 命令式工具即用即毁，返回 Promise，对齐原生语义：
 

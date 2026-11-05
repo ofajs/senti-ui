@@ -66,6 +66,7 @@ Traditional component libraries offer lots of "convenience presets" for humans (
 | Textarea | `st-textarea` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/textarea/textarea.html` |
 | Select | `st-select` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/select/select.html` |
 | Dialog | `st-dialog` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/dialog.html` |
+| Drawer | `st-drawer` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/drawer/drawer.html` |
 | Dialog imperative utils | `alert/confirm/prompt` | `import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/alert.js"` etc. |
 | Checkbox | `st-checkbox` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/checkbox/checkbox.html` |
 | Switch | `st-switch` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/switch/switch.html` |
@@ -88,7 +89,7 @@ Full docs (attribute tables, slots, events, default value lists) live in each pa
 
 ## Key Usage Patterns
 
-- **Runtime state is not a tag attribute** — `value` on `st-input`/`st-select`/`st-slider`, `open` on `st-dialog`/`st-tooltip` etc. are runtime state: read/write via `el.value` / `el.open` in JS (`setAttribute("value")` has no effect; use the `default-value` tag attribute for initial values)
+- **Runtime state is not a tag attribute** — `value` on `st-input`/`st-select`/`st-slider`, `open` on `st-dialog`/`st-drawer`/`st-tooltip` etc. are runtime state: read/write via `el.value` / `el.open` in JS (`setAttribute("value")` has no effect; use the `default-value` tag attribute for initial values)
 - **Boolean attributes must be toggled via attributes** (`$("el").attr("disabled", "")` to set, `attr("disabled", null)` to remove) — assigning properties directly does not trigger updates
 - Imperative utils are promise-based and align with native semantics:
 

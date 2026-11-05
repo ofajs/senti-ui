@@ -145,10 +145,11 @@
       unlockScroll,
       getDeepActiveElement,
       trapTab,
+      pushModal,
+      removeModal,
+      isTopModal,
     } from "../a11y/a11y.js";
 
-    // 打开中的对话框栈：Escape 只关最上层，叠加时不会一次全关
-    const openDialogs = [];
     export default async () => ({
       tag: "st-dialog",
       attrs: {
@@ -174,7 +175,7 @@
             // 锁背景滚动，焦点移到面板容器（tabindex=-1），键盘用户随后 Tab 进内部
             this._wasOpen = true;
             this._prevFocus = getDeepActiveElement();
-            if (!openDialogs.includes(ele)) openDialogs.push(ele);
+            pushModal(ele);
             lockScroll();
             ele.removeAttribute("closing");
             const panel = ele.shadowRoot.querySelector(".panel");
@@ -186,8 +187,7 @@
             // 关闭：短暂保留 closing 态播完退出动画（200ms），再彻底隐藏。
             // data watch 初始化也会以初始值 false 触发一次，用 _wasOpen 区分（坑 #27）
             this._wasOpen = false;
-            const index = openDialogs.indexOf(ele);
-            if (index !== -1) openDialogs.splice(index, 1);
+            removeModal(ele);
             unlockScroll();
             ele.setAttribute("closing", "");
             this._closingTimer = setTimeout(() => ele.removeAttribute("closing"), 250);
@@ -260,10 +260,10 @@
         // 用冒泡阶段而不是捕获：select/menu 会先消费 Escape，避免一次按键关两层。
         this._onKeydown = (e) => {
           if (this.open !== true) return;
-          if (openDialogs[openDialogs.length - 1] !== ele) return;
+          if (!isTopModal(ele)) return;
           if (e.key === "Escape") {
             if (this.autoClose !== null) {
-              e.stopPropagation();
+              e.stopImmediatePropagation();
               this.closeSelf();
             }
             return;
@@ -280,7 +280,7 @@
         // 焦点守卫：Tab 从最后一个元素离开或程序化 focus 逃逸时拉回面板
         this._onFocusIn = (e) => {
           if (this.open !== true) return;
-          if (openDialogs[openDialogs.length - 1] !== ele) return;
+          if (!isTopModal(ele)) return;
           if (!e.composedPath().includes(ele)) {
             e.stopPropagation();
             sr.querySelector(".panel").focus();
@@ -293,11 +293,7 @@
         document.removeEventListener("focusin", this._onFocusIn, true);
         clearTimeout(this._closingTimer);
         this._attrObserver?.disconnect();
-        const index = openDialogs.indexOf(this.ele);
-        if (index !== -1) {
-          openDialogs.splice(index, 1);
-          unlockScroll();
-        }
+        if (removeModal(this.ele)) unlockScroll();
       },
       proto: {
         // 关闭（仅在 auto-close 时允许交互触发），并派发 close 事件供外部监听。

@@ -27,6 +27,17 @@
     }
     /* 顶部 0.1px 防止 margin 折叠导致高度量取偏小 */
     .content { padding-top: 0.1px; }
+
+    /* 减少动态效果：动画/过渡压到近零，同时保留 animationend 等事件语义 */
+    @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 
   <div class="container">

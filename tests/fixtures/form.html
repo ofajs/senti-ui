@@ -10,6 +10,7 @@
   <l-m src="/packages/checkbox/checkbox.html"></l-m>
   <l-m src="/packages/switch/switch.html"></l-m>
   <l-m src="/packages/radio/radio.html"></l-m>
+  <l-m src="/packages/slider/slider.html"></l-m>
   <l-m src="/packages/button/button.html"></l-m>
 </head>
 <body>
@@ -24,6 +25,7 @@
     <st-switch id="f-notify" name="notify" value="on">通知</st-switch>
     <st-radio id="f-radio-m" name="gender" value="m" checked>男</st-radio>
     <st-radio id="f-radio-f" name="gender" value="f">女</st-radio>
+    <st-slider id="f-volume" name="volume" default-value="40"></st-slider>
     <st-button id="f-submit" type="submit">提交</st-button>
     <st-button id="f-reset" type="reset">重置</st-button>
   </form>
@@ -36,7 +38,7 @@
       window.events.push("submit");
       window.lastFormData = Object.fromEntries(new FormData(form).entries());
     });
-    document.querySelectorAll("#form st-input, #form st-textarea, #form st-select, #form st-checkbox, #form st-switch, #form st-radio").forEach((el) => {
+    document.querySelectorAll("#form st-input, #form st-textarea, #form st-select, #form st-checkbox, #form st-switch, #form st-radio, #form st-slider").forEach((el) => {
       el.addEventListener("invalid", () => window.events.push("invalid:" + el.id));
       el.addEventListener("change", () => window.events.push("change:" + el.id));
     });

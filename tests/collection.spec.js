@@ -103,6 +103,51 @@ test("menu：点击外部关闭，Escape 关闭，禁用项不可点", async ({ 
   expect(await page.evaluate(() => window.events)).not.toContain("mi-x");
 });
 
+test("menu：checkable / selected 切换、aria-checked 与 keep-open", async ({ page }) => {
+  await page.waitForFunction(() => document.querySelector("#menu-check")?.shadowRoot);
+  const panelOpen = () =>
+    page.evaluate(
+      () =>
+        getComputedStyle(document.querySelector("#menu-check").shadowRoot.querySelector(".panel"))
+          .display === "block"
+    );
+  const itemState = (id) =>
+    page.evaluate((sel) => {
+      const el = document.querySelector(sel);
+      const native = el.shadowRoot.querySelector(".native");
+      return {
+        selected: el.hasAttribute("selected"),
+        role: native.getAttribute("role"),
+        checked: native.getAttribute("aria-checked"),
+      };
+    }, id);
+
+  await page.locator("#menu-check-trigger").click();
+  await page.waitForTimeout(300);
+  expect((await itemState("#mi-check2")).checked).toBe("true");
+
+  await page.locator("#mi-check").click({ force: true });
+  await page.waitForTimeout(200);
+  const checked = await itemState("#mi-check");
+  expect(checked).toEqual({ selected: true, role: "menuitemcheckbox", checked: "true" });
+  expect(await panelOpen()).toBe(true); // keep-open
+  expect(await page.evaluate(() => window.events)).toContain("change:mi-check");
+
+  await page.locator("#mi-check").click({ force: true });
+  await page.waitForTimeout(200);
+  expect((await itemState("#mi-check")).selected).toBe(false);
+  expect((await itemState("#mi-check")).checked).toBe("false");
+
+  // disabled 的 checkable 项不可切换
+  await page.locator("#mi-check3").click({ force: true }).catch(() => {});
+  await page.waitForTimeout(100);
+  expect((await itemState("#mi-check3")).selected).toBe(false);
+
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(200);
+  expect(await panelOpen()).toBe(false);
+});
+
 test("list-item：嵌套子列表逐级缩进，点击区保持整行宽", async ({ page }) => {
   const box = await page.locator("#li-fold").boundingBox();
   await page.mouse.click(box.x + box.width / 2, box.y + 15);

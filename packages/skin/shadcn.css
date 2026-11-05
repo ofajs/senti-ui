@@ -169,3 +169,23 @@
 
   --st-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
+
+/* 减少动态效果：皮肤 token 统一归零，组件未单独处理时也即时到位 */
+@media (prefers-reduced-motion: reduce) {
+  [data-skin] {
+    --st-motion-duration: 0s;
+    --st-motion-duration-fast: 0s;
+    --st-motion-duration-base: 0s;
+    --st-motion-duration-slow: 0s;
+    --st-overlay-enter-duration: 0s;
+    --st-overlay-exit-duration: 0s;
+    --st-tooltip-duration: 0s;
+    --st-ripple-duration: 0s;
+    --st-progress-duration: 0s;
+    --st-dialog-enter-duration: 0s;
+    --st-dialog-exit-duration: 0s;
+    --st-dialog-scrim-duration: 0s;
+    --st-drawer-enter-duration: 0s;
+    --st-drawer-exit-duration: 0s;
+  }
+}

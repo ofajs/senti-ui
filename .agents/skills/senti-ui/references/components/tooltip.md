@@ -23,6 +23,7 @@
 ## 行为
 
 - 悬停（pointerenter/leave）或聚焦（focusin/out，触发器需可聚焦，如 st-button）显示/隐藏
+- 触屏：长按触发元素 500ms 打开，抬手保留且不触发触发器 click；点触发元素外部关闭；移动超过 10px 取消；长按打开时吞掉系统 contextmenu
 - `Escape` 关闭；气泡 `pointer-events: none` 不挡交互
 - 定位：触发器上方居中，上方放不下自动翻到下方；水平方向夹在视口内
 
@@ -40,7 +41,7 @@
 
 - `content` 是纯文本渲染（防注入）；需要富文本请自行扩展
 - `open` 为运行时状态：ofa 页面用 `sync:open`，JS 用 setAttribute 兼容路径
-- 提示不要承载关键信息（触屏设备无悬停）
+- 提示不要承载关键信息（触屏需长按，键盘用户走 focus 路径）
 
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tooltip/`）。
 

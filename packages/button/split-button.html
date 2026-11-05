@@ -150,6 +150,13 @@
       border-top: 1px solid var(--md-sys-color-outline-variant);
     }
     @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
       .panel, .caret-icon { animation: none; transition: none; }
     }
 

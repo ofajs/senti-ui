@@ -147,13 +147,68 @@
           this._repositionBound = false;
         };
 
-        // 悬停/聚焦开合（disabled 时不响应）
+        // 悬停/聚焦开合（disabled 时不响应）；触屏不响应 pointerenter，
+        // 改为长按 500ms 打开，避免滑动/轻点误触
         const show = () => { if (this.disabled === null) this.open = true; };
-        const hide = () => { this.open = false; };
-        ele.addEventListener("pointerenter", show);
-        ele.addEventListener("pointerleave", hide);
+        const hide = () => {
+          this._touchOpened = false;
+          this.open = false;
+        };
+        const cancelLongPress = () => {
+          clearTimeout(this._touchTimer);
+          this._touchTimer = null;
+          this._touchStart = null;
+        };
+        ele.addEventListener("pointerenter", (e) => {
+          if (e.pointerType === "touch") return;
+          show();
+        });
+        ele.addEventListener("pointerleave", (e) => {
+          if (e.pointerType === "touch") return;
+          hide();
+        });
         ele.addEventListener("focusin", show);
         ele.addEventListener("focusout", hide);
+        ele.addEventListener("pointerdown", (e) => {
+          if (e.pointerType !== "touch" || this.disabled !== null) return;
+          cancelLongPress();
+          this._suppressClick = false;
+          this._touchStart = { x: e.clientX, y: e.clientY };
+          this._touchTimer = setTimeout(() => {
+            this._touchTimer = null;
+            this._touchOpened = true;
+            this._suppressClick = true;
+            show();
+          }, 500);
+        });
+        ele.addEventListener("pointermove", (e) => {
+          if (!this._touchStart || e.pointerType !== "touch") return;
+          const dx = e.clientX - this._touchStart.x;
+          const dy = e.clientY - this._touchStart.y;
+          if (Math.hypot(dx, dy) > 10) cancelLongPress();
+        });
+        for (const type of ["pointerup", "pointercancel"]) {
+          ele.addEventListener(type, (e) => {
+            if (e.pointerType === "touch") cancelLongPress();
+          });
+        }
+        // 长按已打开时吞掉系统 contextmenu 与抬手 click，避免误触触发器
+        ele.addEventListener("contextmenu", (e) => {
+          if (this._touchOpened) e.preventDefault();
+        });
+        ele.addEventListener("click", (e) => {
+          if (!this._suppressClick) return;
+          this._suppressClick = false;
+          e.preventDefault();
+          e.stopPropagation();
+        }, true);
+        // 触屏没有 pointerleave：点触发器外部关闭
+        this._onDocPointerDown = (e) => {
+          if (!this.open) return;
+          if (e.composedPath().includes(ele)) return;
+          hide();
+        };
+        document.addEventListener("pointerdown", this._onDocPointerDown, true);
         // 捕获阶段消费 Escape：只关 tooltip，不连带关掉外层 dialog
         this._onKeydown = (e) => {
           if (e.key === "Escape" && this.open) {
@@ -165,9 +220,11 @@
       },
       detached() {
         document.removeEventListener("keydown", this._onKeydown, true);
+        document.removeEventListener("pointerdown", this._onDocPointerDown, true);
         this.unbindReposition();
         this._attrObserver?.disconnect();
         clearTimeout(this._showTimer);
+        clearTimeout(this._touchTimer);
         this._descTimers?.forEach(clearTimeout);
       },
       proto: {

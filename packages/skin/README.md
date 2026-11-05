@@ -289,6 +289,9 @@ applyTheme("#D6FE78", {}, {}, {
   需要跟随语义色的组合请用数值 token（如 `--st-fill-alpha`）或在组件端组合。
 - **切换皮肤是异步的**：`setSkin()` 改完 `data-skin` 后浏览器还要加载对应 CSS；
   已知固定皮肤时用静态 `<link>` + `<html data-skin>` 可避免首帧闪切。
+- **减少动态效果**：所有带动效的组件在 `prefers-reduced-motion: reduce` 下把动画/过渡压到
+  近零（保留 `animationend` 等事件）；五套皮肤同时把 `--st-*-duration` token 归零，
+  自定义皮肤若新增时长 token 也要在该媒体查询里归零。
 - **新增组件接入皮肤**：视觉属性写成 `var(--st-xxx, 旧默认值)`；颜色仍走
   `--md-sys-color-*`；`color` 属性通过 `--st-accent` 传递；需要外部定制的内部元素加 `part`；
   在本文档补 token/part 行，并在验收页加皮肤下的展示。

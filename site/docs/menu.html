@@ -179,6 +179,38 @@
             </section>
 
             <section class="doc-section">
+              <h2>可勾选菜单项（checkable / selected）</h2>
+              <p class="doc-section-lead">给 st-menu-item 加 checkable 会显示勾选位，selected 控制勾选状态；点击自动切换并派发 change。默认点击后菜单关闭，多选场景给 st-menu 加 keep-open，让菜单保持打开。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>checkable / selected / keep-open</code></div>
+                <div class="demo-stage">
+                  <st-menu keep-open on:change="onCheck">
+                    <st-button slot="trigger" variant="outlined">视图 ▾</st-button>
+                    <st-menu-item checkable selected>网格</st-menu-item>
+                    <st-menu-item checkable>列表</st-menu-item>
+                    <st-menu-item checkable>紧凑</st-menu-item>
+                  </st-menu>
+                  <span class="demo-note">最后变更：{{checkPick}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码（多选视图切换）</summary>
+                <pre><code>&lt;st-menu keep-open on:change="onCheck"&gt;
+  &lt;st-button slot="trigger"&gt;视图 ▾&lt;/st-button&gt;
+  &lt;st-menu-item checkable selected&gt;网格&lt;/st-menu-item&gt;
+  &lt;st-menu-item checkable&gt;列表&lt;/st-menu-item&gt;
+  &lt;st-menu-item checkable&gt;紧凑&lt;/st-menu-item&gt;
+&lt;/st-menu&gt;
+
+// 事件：e.target 是切换的 st-menu-item，读 selected 判断勾选态
+onCheck(e) {
+  this.checkPick = e.target.textContent.trim() +
+    (e.target.hasAttribute("selected") ? "：选中" : "：取消");
+}</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
               <h2>右键定位：openAt(x, y)</h2>
               <p class="doc-section-lead">不需要 trigger：在 contextmenu 事件里阻止浏览器默认菜单，再调用 openAt(clientX, clientY)。面板左上角对齐光标，右侧 / 下方空间不足时自动翻转到左 / 上，并夹紧在视口内。</p>
               <div class="demo">
@@ -278,8 +310,11 @@ const id = await contextMenu(e, [
                   <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
                   <tbody>
                     <tr><td><code>align</code></td><td>"left" | "right"</td><td>"right"</td><td>面板与触发器的水平对齐</td></tr>
+                    <tr><td><code>keep-open</code></td><td>boolean（st-menu）</td><td>无</td><td>点击菜单项后不自动关闭，用于多选 / 勾选菜单</td></tr>
                     <tr><td><code>open</code></td><td>运行时状态（ofa data）</td><td>false</td><td>开合状态；页面里用 <code>sync:open="key"</code> 绑定</td></tr>
                     <tr><td><code>disabled</code></td><td>boolean（st-menu-item）</td><td>无</td><td>禁用菜单项：0.38 透明度、阻断点击</td></tr>
+                    <tr><td><code>checkable</code></td><td>boolean（st-menu-item）</td><td>无</td><td>可勾选项：显示勾选位、<code>menuitemcheckbox</code> + <code>aria-checked</code></td></tr>
+                    <tr><td><code>selected</code></td><td>boolean（st-menu-item）</td><td>无</td><td>勾选状态；点击 checkable 项自动切换并派发 change</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -287,8 +322,8 @@ const id = await contextMenu(e, [
                 <h3>插槽 / 事件 / 注意</h3>
                 <ul class="api-list">
                   <li>插槽：<code>trigger</code> 放触发器；st-menu-item 支持 <code>prefix</code> / 默认文字 / <code>suffix</code> / <code>sub-menu</code>；分隔线用原生 <code>&lt;hr&gt;</code>。</li>
-                  <li>事件：<code>open</code> / <code>close</code>（bubbles + composed）；菜单项 click 正常冒泡，面板随后自动关闭。</li>
-                  <li>关闭：选中任意层级、点击面板外部、Escape；多级菜单的 Escape 从最内层逐次向外。</li>
+                  <li>事件：<code>open</code> / <code>close</code>（bubbles + composed）；<code>change</code>（checkable 项切换）；菜单项 click 正常冒泡，面板随后自动关闭（<code>keep-open</code> 时保持打开）。</li>
+                  <li>关闭：选中任意层级、点击面板外部、Escape；多级菜单的 Escape 从最内层逐次向外（<code>keep-open</code> 时点项不关闭）。</li>
                   <li>命令式：<code>contextMenu(e, items)</code> 返回叶子项 id；<code>contextMenu.longPress(el, items, onSelect)</code> 支持触屏长按。</li>
                   <li>面板默认 <code>min-width: 6em</code>、padding / 圆角 <code>0.286em / 0.857em</code>、<code>max-height: 80vh</code>（内部滚动），宽度由内容决定。</li>
                 </ul>
@@ -317,6 +352,7 @@ const id = await contextMenu(e, [
         export default async () => ({
           data: {
             lastPick: "（无）",
+            checkPick: "（未操作）",
             menuOpen: false,
             openCount: 0,
             cmdPick: "（未调用）",
@@ -325,6 +361,10 @@ const id = await contextMenu(e, [
           proto: {
             pick(label) {
               this.lastPick = label;
+            },
+            onCheck(e) {
+              const label = e.target.textContent.trim();
+              this.checkPick = `${label}：${e.target.hasAttribute("selected") ? "选中" : "取消"}`;
             },
             onMenuOpen() {
               this.openCount += 1;

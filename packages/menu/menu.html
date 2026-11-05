@@ -98,6 +98,7 @@
       tag: "st-menu",
       attrs: {
         align: "right",
+        keepOpen: null,
       },
       data: {
         open: false,
@@ -184,7 +185,7 @@
         // 菜单内任意点击后自动关闭（不阻止冒泡，菜单项 click 正常传出）；
         // 点击子菜单里的菜单项时，冒泡到这里的正是"整链关闭"语义
         sr.querySelector(".panel").addEventListener("click", () => {
-          if (this.open) this.open = false;
+          if (this.open && this.keepOpen === null) this.open = false;
         });
 
         // 追踪仍打开的后代子菜单（open/close 事件 composed 冒泡到宿主）

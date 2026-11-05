@@ -86,6 +86,7 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 | 标签栏 | `st-tab-bar` / `st-tab-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tabs/tab-bar.html` |
 | 导航栏 | `st-nav-bar` / `st-nav-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-bar.html` |
 | 波纹 | `st-ripple` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/ripple/ripple.html` |
+| 代码块 | `st-code` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/code/code.html` |
 
 ## 必读：写法优先级（适用于所有组件文档）
 

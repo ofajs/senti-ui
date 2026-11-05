@@ -193,6 +193,13 @@ const id = await contextMenu(e, [{ id: "copy", label: "复制" }, { separator: t
 - 点击波纹，放在 `position: relative` 的父元素内使用，波纹色 currentColor
 - st-button 等已内嵌，无需重复添加
 
+## st-code 代码块
+
+- 属性：`lang`（`html`(默认)/`js`/`ts`/`css`/`less`/`sass`）、`title`、`code`、`format`（`auto`(默认)/`off`）
+- 源码用 `<template>`（惰性安全）或 `code` 属性 / `attr:code`；不要直接放 light DOM 子节点（script 会执行）
+- 自动格式化：HTML/JS/TS/CSS/Less 走内置 js-beautify；Sass 只去公共缩进；复制按钮内置，复制后派发 `copy`
+- 颜色走 M3 角色；皮肤 token：`--st-code-*`；part：`shell` / `header` / `title` / `copy` / `body` / `pre` / `code`
+
 ## st-theme-mode 全局主题模式工具（无需预引入）
 
 模式偏好持久化在 localStorage key `st-theme-mode`（`auto` / `light` / `dark`）；`st-boot.js` 首帧同步挂 `st-light` / `st-dark` 类，`st-color-init.js` 自动引入本模块，跨窗口经 `storage` 事件实时跟随——同域引入 st-boot 或任一 st-* 组件的页面全部自动生效（详见 theming.md）。

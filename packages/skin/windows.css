@@ -176,6 +176,17 @@
   --st-letter-spacing: normal;
 }
 
+[data-skin="windows"] {
+  --st-code-bg: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 94%, transparent);
+  --st-code-header-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 96%, transparent);
+  --st-code-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
+  --st-code-radius: .571em;
+  --st-code-shadow: var(--st-shadow-2);
+  --st-code-padding: .857em;
+  --st-code-font-size: .857em;
+  --st-code-backdrop-filter: none;
+}
+
 /* 减少动态效果：皮肤 token 统一归零，组件未单独处理时也即时到位 */
 @media (prefers-reduced-motion: reduce) {
   [data-skin] {

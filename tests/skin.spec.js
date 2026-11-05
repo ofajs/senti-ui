@@ -166,9 +166,9 @@ test("cyberpunk 皮肤：零圆角 / 等宽字 / 霓虹外发光", async ({ page
   expect(state.switchRadius).toBe(0);
   expect(state.thumbRadius).toBe(0);
   expect(state.font.toLowerCase()).toContain("monospace");
-  // 霓虹边缘 = 多层发光阴影；CRT 扫描线高光只作用在控件表面
+  // 霓虹边缘 = 多层发光阴影；表面保持干净，不叠高频 CRT 扫描线
   expect(state.shadow).not.toBe("none");
-  expect(state.sheen).toContain("repeating-linear-gradient");
+  expect(state.sheen).toBe("none");
   expect(state.backdrop).toBe("none");
   expect(state.fillAlpha).toBe("100%");
 });

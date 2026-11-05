@@ -165,6 +165,17 @@
   --st-ripple-duration: 350ms;
 }
 
+[data-skin="m3"] {
+  --st-code-bg: var(--md-sys-color-surface-container-highest);
+  --st-code-header-bg: var(--md-sys-color-surface-container-high);
+  --st-code-border: transparent;
+  --st-code-radius: var(--st-radius-md);
+  --st-code-shadow: var(--st-shadow-1);
+  --st-code-padding: 1em;
+  --st-code-font-size: .857em;
+  --st-code-backdrop-filter: none;
+}
+
 /* 减少动态效果：皮肤 token 统一归零，组件未单独处理时也即时到位 */
 @media (prefers-reduced-motion: reduce) {
   [data-skin] {

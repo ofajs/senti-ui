@@ -89,6 +89,7 @@
         <l-m src="../packages/select/select.html"></l-m>
         <l-m src="../packages/dialog/dialog.html"></l-m>
         <l-m src="../packages/drawer/drawer.html"></l-m>
+        <l-m src="../packages/code/code.html"></l-m>
         <l-m src="../packages/checkbox/checkbox.html"></l-m>
         <l-m src="../packages/switch/switch.html"></l-m>
         <l-m src="../packages/radio/radio.html"></l-m>
@@ -819,53 +820,12 @@
             font-size: 1.05em;
             flex: none;
           }
-          .code-panel {
-            overflow: hidden;
-            border: 1px solid var(--md-sys-color-outline-variant);
-            border-radius: 18px;
-            background: var(--md-sys-color-surface-container-low);
-          }
-          .code-head {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 9px 12px 9px 14px;
-            border-bottom: 1px solid var(--md-sys-color-outline-variant);
-            background: var(--md-sys-color-surface-container);
-          }
-          .dots {
-            display: inline-flex;
-            gap: 5px;
-          }
-          .dots i {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--md-sys-color-outline-variant);
-          }
-          .code-file {
-            color: var(--md-sys-color-on-surface-variant);
-            font-family: ui-monospace, Menlo, monospace;
-            font-size: 10.5px;
-          }
-          .copy-btn {
-            margin-left: auto;
-            font-size: 11px;
-            height: 28px;
-            padding: 0 10px;
-          }
-          .code {
-            display: block;
+          .install-code::part(body) {
             max-height: 340px;
-            margin: 0;
             padding: 18px 20px;
-            overflow: auto;
-            color: var(--md-sys-color-on-surface);
-            font-family: ui-monospace, Menlo, monospace;
+          }
+          .install-code::part(pre) {
             font-size: 11.5px;
-            line-height: 1.8;
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
           }
 
           /* ---------- 页脚 ---------- */
@@ -1420,14 +1380,14 @@
         <p class="eyebrow"><span class="dot"></span>ofa.js v5 · AI-first 前端框架 · zero build</p>
         <h1>语义组件，<br /><span class="grad">任意材质。</span></h1>
         <p class="lead">
-          21 个模块、30 个标签，全部可交互。属性只表达语义，颜色只走 M3，材质交给皮肤。
+          22 个模块、31 个标签，全部可交互。属性只表达语义，颜色只走 M3，材质交给皮肤。
           下面每一张卡片都是真实组件，不是截图。
         </p>
       </div>
       <div class="intro-side">
         <div class="intro-stats">
-          <div><strong>20</strong><span>组件模块</span></div>
-          <div><strong>29</strong><span>自定义标签</span></div>
+          <div><strong>22</strong><span>组件模块</span></div>
+          <div><strong>31</strong><span>自定义标签</span></div>
           <div><strong>3</strong><span>内置材质</span></div>
           <div><strong>0</strong><span>构建步骤</span></div>
         </div>
@@ -1881,14 +1841,12 @@
             <st-button variant="outlined" on:click="openRepo">GitHub <iconify-icon slot="suffix" icon="mdi:github"></iconify-icon></st-button>
           </div>
         </div>
-        <div class="code-panel">
-          <div class="code-head">
-            <span class="dots"><i></i><i></i><i></i></span>
-            <span class="code-file">index.html</span>
-            <st-button class="copy-btn" variant="text" on:click="copyCode">{{copied ? "已复制" : "复制"}}</st-button>
-          </div>
-          <pre class="code">{{installCode}}</pre>
-        </div>
+        <st-code
+          class="install-code"
+          lang="html"
+          title="index.html"
+          attr:code="installCode"
+        ></st-code>
       </div>
     </section>
   </main>

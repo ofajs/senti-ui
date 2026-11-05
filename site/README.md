@@ -61,8 +61,8 @@ site/
 ```
 
 - `layout.html` 是 SCSR 的**共享父页**：header（favicon 同款标记 + SentiUI 字标 / 文档·皮肤·手记文字导航（组件目录即首页，点品牌回首页） / 三巨头材质快捷菜单 / 主题 / GitHub）、footer、以及主题与皮肤状态都在这里；子页在 `<slot>` 中渲染，切页时布局不销毁；材质切换走 `data-skin` / `setSkin()`；
-- `index.html` 声明 `export const parent = "./layout.html"`；`docs/layout.html` 再声明 `export const parent = "../layout.html"`，形成**多级嵌套布局**；`docs/` 下每个组件页声明 `export const parent = "./layout.html"`；
-- 文档左侧组件目录（`st-list` + `st-list-item`）和移动端组件目录抽屉只存在于 `docs/layout.html` 一处；同父页的组件互相切换时侧栏不销毁、不重排，只替换 `<slot>` 里的正文；
+- `index.html` 声明 `export const parent = "./layout.html"`；`site/docs/layout.html` 再声明 `export const parent = "../layout.html"`，形成**多级嵌套布局**；`site/docs/` 下每个组件页声明 `export const parent = "./layout.html"`；
+- 文档左侧组件目录（`st-list` + `st-list-item`）和移动端组件目录抽屉只存在于 `site/docs/layout.html` 一处；同父页的组件互相切换时侧栏不销毁、不重排，只替换 `<slot>` 里的正文；
 - `notes/` 是独立的阅读栏目（导航名「手记」）：`index.html` 是文章目录，`why-senti-ui.html` 是第一篇设计手记；两者都 `parent = "../layout.html"`，正文页共用 `notes.css`，站内跳转用 `olink` 保持共享 header；
 - 页面切换动画**只在 `app-config.js` 的 `pageAnime` 里配置**：前进时新页从下方 16px 上移并淡入、旧页上移 16px 淡出；后退方向相反（新页从上方 16px 落下）。过渡时长不写在配置里——ofa 自动注入 `all .3s`，入场淡入、离场淡出与位移都在这次过渡里完成。两级 layout 不写任何切页动画 CSS；页面背景透明，由 layout 的固定环境光层提供底色；文档示例容器 `.demo` / `.demo-stage` / `.demo-content` 也改为半透明，Apple 下同样能透出环境光；
 - **slot 外层必须是相对容器**（`.docs-body { position: relative }`）：离场页会被 scsr 设为 `position: absolute`，没有相对容器时会相对视口定位，切换瞬间露出旧内容造成“闪一下”；
@@ -91,7 +91,7 @@ site/
 - 共享 header（来自 `layout.html`）：文档 / 皮肤 / 手记文字切换（组件目录即首页，点品牌回首页）、自动 / 浅色 / 深色（`st-select` + 随模式变化的 Iconify 图标）、GitHub
 - **图标统一走 Iconify Web Component**（`iconify-icon`，由 `layout.html` 注入 `code.iconify.design` 的 2.1.0 脚本）：header、首页 CTA / 文档链接 / 图标按钮、皮肤页与文档导航都用 `<iconify-icon icon="mdi:...">`，不再用 emoji / Unicode 箭头；`st-select` 的闭合态会显示选中项的图标（选项里的图标元素同步到 label 前）；组件库内部用 CSS 绘制的对勾、箭头、关闭按钮不引入外部图标依赖
 - 紧凑 intro：标题、一句话说明、统计数据、组件文档 / 源码 / AI Skill 下载入口（`senti-ui-skill.zip`，Claude Code / ZCode 可直接加载）
-- **25 张组件卡片**（`CATALOG / 25 CARDS`）：每张卡片 = 真实组件预览 + 名称 + 标签 + 站内文档 ↗
+- **26 张组件卡片**（`CATALOG / 26 CARDS`）：每张卡片 = 真实组件预览 + 名称 + 标签 + 站内文档 ↗
   - 预览区可交互：按钮、输入、选择、开关、滑块、标签栏、导航、折叠、对话框、菜单、Toast 等都能直接操作
   - 覆盖 21 个模块、30 个 `st-*` 标签，以及 toast / alert / confirm / prompt / contextMenu 命令式工具
 - 三张局部 `data-skin` 系统 UI 卡：Android Material 3 / Apple 毛玻璃 / Windows 11 同页对比；每张卡用 `previewThemes` 写入平台默认 `--md-sys-color-*`，不跟随站点当前主题色；shadcn 与 Cyberpunk 仍在独立的 `skins.html` 选用
@@ -102,7 +102,7 @@ site/
 
 ## 站内组件文档（docs/）
 
-不再依赖旧的 `docs/` 目录（该目录准备删除）。每个组件一个独立 SCSR 页面，全部共用 `layout.html` 和文档侧栏：
+旧的根目录 `docs/` 已删除，文档全部在 `site/docs/`。每个组件一个独立 SCSR 页面，全部共用 `layout.html` 和文档侧栏：
 
 - `/site/docs/index.html`：22 张组件卡片概览，分为「基础组件 18」与「辅助组件 4」
   - 基础组件：按钮、表单控件、反馈、内容与导航，承担完整业务流程
@@ -114,8 +114,8 @@ site/
   - 插槽 / 事件 / 注意事项
   - 可折叠的示例代码
   - 指向 GitHub README 的入口
-- 左侧粘性目录只在 `docs/layout.html` 维护一次，用 `st-list` + `st-list-item` 搭；父页在 `routerChange` 里按当前 URL 高亮，移动端改为左侧 `st-drawer` 组件目录抽屉
-- `docs/layout.html` 顶部必须自己声明 `list` / `select` 的 `<l-m>`：SCSR 站内跳转只解析目标页的 `template[page]`，目标页 body 里的 l-m 不会执行；否则从手记/皮肤等栏目进入文档时侧栏组件不会升级
+- 左侧粘性目录只在 `site/docs/layout.html` 维护一次，用 `st-list` + `st-list-item` 搭；父页在 `routerChange` 里按当前 URL 高亮，移动端改为左侧 `st-drawer` 组件目录抽屉
+- `site/docs/layout.html` 顶部必须自己声明 `list` / `select` 的 `<l-m>`：SCSR 站内跳转只解析目标页的 `template[page]`，目标页 body 里的 l-m 不会执行；否则从手记/皮肤等栏目进入文档时侧栏组件不会升级
 - 页面内用 `st-progress` 做阅读进度条、`st-icon-button` + `st-tooltip` 做回到顶部。**进度条必须绝对定位**（`position: absolute; bottom: -4px`，放在 header 内）：它只在文档页出现，如果按普通 flex 项显隐，home ↔ docs 切换时会多占/少占 3px，把整页（包括正在淡出的上一页）挤动 3px——表现就是“切页前内容先偏一下，再开始动画”；
 - header 与首页完全共用；主题 / 材质切换在 header 中，只影响按钮 / 输入框
 - 仍然是 SCSR：每个组件页都是可直达、可刷新、可分享的真实文档
@@ -194,7 +194,7 @@ npm test
 
 烟雾用例检查：
 
-- `/site/` 目录直开：25 张卡片、29 个 `st-*` 全部升级、无页面错误、`template[page]` 已被 scsr 移除、页面内没有 `/docs/` 链接；
+- `/site/` 目录直开：26 张卡片、30 个 `st-*` 全部升级、无页面错误、`template[page]` 已被 scsr 移除、页面内没有 `/docs/` 链接；
 - 皮肤 / 主题 / 对话框交互；
 - 共享 layout：首页两个 `o-page`（layout + 子页）、header 文字导航 / 材质快捷菜单 / 主题 / 回到首页，品牌标记与 favicon 一致；移动端（≤760px）横向导航收进右侧抽屉，抽屉可切到组件目录 / 文档 / 皮肤 / 手记并高亮当前栏目；
 - 组件文档：三层 `o-page`（site layout + docs layout + 组件页）、侧栏只有一份、每页 4 组以上示例、侧栏切换、移动端组件目录抽屉跟随当前页、上一页 / 下一页、阅读进度、页面切换动画；
@@ -207,7 +207,7 @@ npm test
 
 ## 部署
 
-纯静态：把整个仓库（或至少 `site/` + `packages/`）放到任意静态服务器。SCSR **要求每个路径都有自己的 HTML 文件**，但**不需要任何 rewrite**；目录地址 `/site/` 由服务器补 `index.html` 即可。官网不再依赖 `docs/`。`layout.html` 与 `docs/` 下的页面需要一起部署。CDN 只依赖 ofa.js v5。
+纯静态：把整个仓库（或至少 `site/` + `packages/`）放到任意静态服务器。SCSR **要求每个路径都有自己的 HTML 文件**，但**不需要任何 rewrite**；目录地址 `/site/` 由服务器补 `index.html` 即可。官网不再依赖根目录 `docs/`。`layout.html` 与 `site/docs/` 下的页面需要一起部署。CDN 只依赖 ofa.js v5。
 
 ## 新增真实页面
 

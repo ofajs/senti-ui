@@ -88,6 +88,7 @@
         <l-m src="../packages/textarea/textarea.html"></l-m>
         <l-m src="../packages/select/select.html"></l-m>
         <l-m src="../packages/dialog/dialog.html"></l-m>
+        <l-m src="../packages/drawer/drawer.html"></l-m>
         <l-m src="../packages/checkbox/checkbox.html"></l-m>
         <l-m src="../packages/switch/switch.html"></l-m>
         <l-m src="../packages/radio/radio.html"></l-m>
@@ -1442,7 +1443,7 @@
     <section class="catalog" id="components">
       <div class="catalog-head">
         <div>
-          <p class="section-kicker">CATALOG / 25 CARDS</p>
+          <p class="section-kicker">CATALOG / 26 CARDS</p>
           <h2>所有组件</h2>
           <p class="catalog-desc">卡片里的组件可以直接点、输入、开合；每张卡片右下角 <iconify-icon icon="mdi:arrow-top-right"></iconify-icon> 进入该组件的完整文档与验收页。</p>
         </div>
@@ -1619,6 +1620,17 @@
           <div class="comp-foot">
             <div class="comp-id"><h3>Dialog</h3><code>st-dialog</code></div>
             <a class="comp-link" href="./docs/dialog.html" rel="noreferrer" aria-label="Dialog 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <st-button variant="outlined" on:click="drawerOpen = true">打开抽屉</st-button>
+            <span class="mini-note">左侧 / 右侧 · 遮罩关闭</span>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Drawer</h3><code>st-drawer</code></div>
+            <a class="comp-link" href="./docs/drawer.html" rel="noreferrer" aria-label="Drawer 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 
@@ -1893,6 +1905,14 @@
           </div>
         </st-dialog>
 
+        <st-drawer sync:open="drawerOpen" auto-close on:close="drawerOpen = false" side="left">
+          <h2 slot="headline">导航抽屉</h2>
+          <p>这是一个真实的 <span class="mono">st-drawer</span>。焦点陷阱、滚动锁、Escape 只关最上层等模态行为与 st-dialog 共用。</p>
+          <div slot="actions">
+            <st-button variant="text" on:click="drawerOpen = false">关闭</st-button>
+          </div>
+        </st-drawer>
+
         <script>
           export const parent = "./layout.html";
 
@@ -1905,6 +1925,7 @@
               fruit: "",
               volume: "64",
               dialogOpen: false,
+              drawerOpen: false,
               tipOpen: false,
               collapsed: false,
               tab: 0,

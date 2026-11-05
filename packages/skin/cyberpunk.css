@@ -146,6 +146,16 @@
   --st-dialog-enter-duration: 160ms;
   --st-dialog-exit-duration: 120ms;
   --st-dialog-scrim-duration: 140ms;
+  /* 抽屉：零圆角终端面板，主色描边 + 皮肤霓虹阴影 */
+  --st-drawer-bg: color-mix(in srgb, var(--md-sys-color-surface-container-low) 96%, transparent);
+  --st-drawer-border: color-mix(in srgb, var(--md-sys-color-primary) 55%, transparent);
+  --st-drawer-radius: var(--st-dialog-radius);
+  --st-drawer-shadow: var(--st-shadow-2);
+  --st-drawer-backdrop-filter: none;
+  --st-drawer-scrim: var(--st-dialog-scrim);
+  --st-drawer-scrim-filter: var(--st-dialog-scrim-filter);
+  --st-drawer-enter-duration: 160ms;
+  --st-drawer-exit-duration: 120ms;
   --st-menu-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 96%, transparent);
   --st-menu-border: color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
   --st-menu-backdrop-filter: none;
@@ -171,6 +181,8 @@
   /* 密度 */
   --st-dialog-padding: 1.231em;
   --st-dialog-gap: .923em;
+  --st-drawer-padding: 1.231em;
+  --st-drawer-gap: .923em;
   --st-card-padding: .923em;
   --st-menu-padding: .231em;
   --st-menu-item-padding: .615em .692em;

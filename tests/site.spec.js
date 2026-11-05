@@ -33,7 +33,7 @@ const waitDocPage = (page, name) =>
     { timeout: 30_000 }
   );
 
-test("官网首页：25 张卡片 / 29 个标签 / 共享 SCSR 布局，无页面错误", async ({ page }) => {
+test("官网首页：26 张卡片 / 30 个标签 / 共享 SCSR 布局，无页面错误", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
 
@@ -83,12 +83,12 @@ test("官网首页：25 张卡片 / 29 个标签 / 共享 SCSR 布局，无页�
   expect(state.sharedHeader).toBe(true);
   expect(state.heading).toBe("语义组件，任意材质。");
   expect(state.eyebrow).toContain("AI-first 前端框架");
-  expect(state.tags).toHaveLength(29);
+  expect(state.tags).toHaveLength(30);
   expect(state.notReady).toEqual([]);
   expect(state.path).toBe("/site/");
   expect(state.templateRemoved).toBe(true);
   expect(state.sections).toEqual(["top", "components", "skins", "start"]);
-  expect(state.cards).toBe(25);
+  expect(state.cards).toBe(26);
   // 首页只列三个主流平台的系统 UI；shadcn / cyberpunk 在皮肤页
   expect(state.systemUiCards).toEqual([
     "Android · Material 3",
@@ -220,7 +220,7 @@ test("从主题页切回首页：首页组件依赖随 template 重新加载", a
       select: !!sr.querySelector("st-select")?.shadowRoot,
     };
   });
-  expect(state.cards).toBe(25);
+  expect(state.cards).toBe(26);
   expect(state.missing).toEqual([]);
   expect(state.buttonGroup).toBe(true);
   expect(state.select).toBe(true);
@@ -726,6 +726,41 @@ test("首页卡片进入对应组件文档，header 保持共享", async ({ page
   expect(state.pages).toBe(3);
   expect(state.sharedHeader).toBe(true);
   expect(state.active[0]).toContain("Button");
+});
+
+test("首页 Drawer 卡片：打开抽屉并 Escape 关闭", async ({ page }) => {
+  await page.goto("/site/", { waitUntil: "networkidle", timeout: 60_000 });
+  await waitHome(page);
+  await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp")
+    );
+    const card = [...child.shadowRoot.querySelectorAll(".comp")].find(
+      (el) => el.querySelector(".comp-id h3")?.textContent.trim() === "Drawer"
+    );
+    card.querySelector(".comp-preview st-button").click();
+  });
+  await page.waitForFunction(
+    () => {
+      const child = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp")
+      );
+      return child.shadowRoot.querySelector("st-drawer")?.hasAttribute("open");
+    },
+    null,
+    { timeout: 10_000 }
+  );
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(
+    () => {
+      const child = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp")
+      );
+      return !child.shadowRoot.querySelector("st-drawer")?.hasAttribute("open");
+    },
+    null,
+    { timeout: 10_000 }
+  );
 });
 
 test("Ripple 文档：并列示例只触发被点的波纹（o-page 内绑定最近父元素）", async ({ page }) => {

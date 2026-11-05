@@ -84,6 +84,7 @@ Traditional component libraries offer lots of "convenience presets" for humans (
 | Tabs | `st-tab-bar` / `st-tab-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tabs/tab-bar.html` |
 | Navigation bar | `st-nav-bar` / `st-nav-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-bar.html` |
 | Ripple | `st-ripple` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/ripple/ripple.html` |
+| Code | `st-code` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/code/code.html` |
 
 Full docs (attribute tables, slots, events, default value lists) live in each package's `README.md` (e.g. `.../packages/button/README.md`).
 

@@ -21,10 +21,11 @@
         <l-m src="../../packages/drawer/drawer.html"></l-m>
         <l-m src="../../packages/button/button.html"></l-m>
         <l-m src="../../packages/button/icon-button.html"></l-m>
+        <l-m src="../../packages/code/code.html"></l-m>
 
         <div class="docs-shell">
           <aside class="docs-side" aria-label="组件文档目录">
-            <p class="side-title">Components · 22</p>
+            <p class="side-title">Components · 23</p>
 
             <st-list class="side-list">
               <st-list-item button class:active="current === 'index'" on:click="goDoc('index')">
@@ -143,6 +144,10 @@
                     { id: "ripple", label: "Ripple", tag: "st-ripple" },
                     { id: "tools", label: "Command tools", tag: "toast" },
                   ],
+                },
+                {
+                  title: "高级",
+                  items: [{ id: "code", label: "Code", tag: "st-code" }],
                 },
               ],
             },

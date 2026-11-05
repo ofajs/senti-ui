@@ -69,7 +69,7 @@
               <p class="doc-kicker">DOCS / COMPONENTS</p>
               <h1>组件文档</h1>
               <p class="doc-lead">
-                22 个文档页、30 个标签的独立使用说明。按职责分为基础组件与辅助组件：
+                23 个文档页、31 个标签的独立使用说明。按职责分为基础组件、辅助组件与高级组件：
                 每个组件一页，按场景拆分多组可交互示例，并附属性表、插槽 / 事件与示例代码。
                 header 与左侧组件目录由父页共享，切换组件时只替换右侧正文。
               </p>
@@ -247,6 +247,25 @@
             <h2>Command tools</h2>
             <code>toast · alert · confirm · prompt</code>
             <p>命令式工具：Promise 化、用完即毁。基于 st-snackbar / st-dialog，可在任意 JS 中调用。</p>
+            <span class="more">查看用法 <iconify-icon icon="mdi:arrow-right"></iconify-icon></span>
+          </st-card>
+              </div>
+            </section>
+
+            <section class="docs-group">
+              <header class="docs-group-head">
+                <div>
+                  <p class="docs-group-kicker">ADVANCED</p>
+                  <h2>高级组件 <span>1</span></h2>
+                </div>
+                <p class="docs-group-desc">在基础交互之上提供工程能力：代码展示、语法高亮与自动格式化。</p>
+              </header>
+              <div class="docs-cards">
+          <st-card interactive class="docs-card" on:click="goDoc('code')">
+            <span class="cat">高级</span>
+            <h2>Code</h2>
+            <code>st-code</code>
+            <p>代码块：HTML / JS / TS / CSS / Less / Sass 语法高亮、自动格式化、文件名标题与一键复制；支持 template 与 code 属性。</p>
             <span class="more">查看用法 <iconify-icon icon="mdi:arrow-right"></iconify-icon></span>
           </st-card>
               </div>

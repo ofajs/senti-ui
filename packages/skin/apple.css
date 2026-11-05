@@ -189,6 +189,17 @@
   --st-letter-spacing: -0.01em;
 }
 
+[data-skin="apple"] {
+  --st-code-bg: rgb(from var(--md-sys-color-surface-container-high) r g b / 0.5);
+  --st-code-header-bg: rgb(from var(--md-sys-color-surface-container) r g b / 0.46);
+  --st-code-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
+  --st-code-radius: .857em;
+  --st-code-shadow: var(--st-shadow-1);
+  --st-code-padding: 1em;
+  --st-code-font-size: .857em;
+  --st-code-backdrop-filter: blur(18px) saturate(180%);
+}
+
 /* 减少动态效果：皮肤 token 统一归零，组件未单独处理时也即时到位 */
 @media (prefers-reduced-motion: reduce) {
   [data-skin] {

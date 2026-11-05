@@ -170,6 +170,17 @@
   --st-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
+[data-skin="shadcn"] {
+  --st-code-bg: var(--md-sys-color-surface);
+  --st-code-header-bg: var(--md-sys-color-surface-container);
+  --st-code-border: var(--md-sys-color-outline-variant);
+  --st-code-radius: .429em;
+  --st-code-shadow: var(--st-shadow-1);
+  --st-code-padding: .857em;
+  --st-code-font-size: .857em;
+  --st-code-backdrop-filter: none;
+}
+
 /* 减少动态效果：皮肤 token 统一归零，组件未单独处理时也即时到位 */
 @media (prefers-reduced-motion: reduce) {
   [data-skin] {

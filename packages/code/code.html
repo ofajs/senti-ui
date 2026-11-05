@@ -1,0 +1,511 @@
+<!--
+  st-code — Senti-UI 代码展示组件（基于 ofa.js）
+  语义属性：lang（html / js / ts / css / less / sass）/ title（文件名或标题）/ code（代码字符串）
+  安全：只从 <template>（惰性）或 code 属性读取源码；渲染结果全部转义为文本节点
+-->
+<template component>
+  <style>
+    :host {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      font-size: 14px;
+      font-family: var(--st-font, inherit);
+      color: var(--md-sys-color-on-surface);
+    }
+
+    .shell {
+      box-sizing: border-box;
+      overflow: hidden;
+      border: 1px solid var(--st-code-border, transparent);
+      border-radius: var(--st-code-radius, var(--st-radius-md, 0.857em));
+      background: var(--st-code-bg, var(--md-sys-color-surface-container-highest));
+      box-shadow: var(--st-code-shadow, var(--st-shadow-1, none));
+      -webkit-backdrop-filter: var(--st-code-backdrop-filter, none);
+      backdrop-filter: var(--st-code-backdrop-filter, none);
+    }
+
+    .head {
+      display: flex;
+      align-items: center;
+      gap: 0.714em;
+      min-height: 2.429em;
+      padding: 0.429em 0.857em;
+      box-sizing: border-box;
+      background: var(--st-code-header-bg, var(--md-sys-color-surface-container-high));
+      border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
+    }
+
+    .dots {
+      display: inline-flex;
+      gap: 0.286em;
+      flex: none;
+    }
+    .dots i {
+      width: 0.571em;
+      height: 0.571em;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 45%, transparent);
+    }
+
+    .title {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 0.786em;
+      letter-spacing: 0.02em;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .copy {
+      all: unset;
+      flex: none;
+      box-sizing: border-box;
+      padding: 0.286em 0.643em;
+      border-radius: var(--st-radius-xs, 0.286em);
+      cursor: pointer;
+      font-size: 0.786em;
+      line-height: 1.4;
+      color: var(--md-sys-color-primary);
+      transition: background-color var(--st-motion-duration, 0.15s) ease;
+    }
+    .copy:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
+    .copy:focus-visible {
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: 1px;
+    }
+
+    .body {
+      max-height: var(--st-code-max-height, none);
+      overflow: auto;
+      overscroll-behavior: contain;
+      padding: var(--st-code-padding, 1em);
+      box-sizing: border-box;
+    }
+
+    pre {
+      margin: 0;
+      font-family: var(--st-code-font, ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace);
+      font-size: var(--st-code-font-size, 0.857em);
+      line-height: var(--st-code-line-height, 1.65);
+      color: var(--md-sys-color-on-surface);
+      tab-size: 2;
+      white-space: pre;
+    }
+    code {
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    /* 语法配色全部来自 M3 角色，不写死颜色 */
+    .tk-keyword,
+    .tk-tag,
+    .tk-atrule,
+    .tk-selector { color: var(--md-sys-color-primary); }
+    .tk-string,
+    .tk-entity { color: var(--md-sys-color-success, var(--md-sys-color-tertiary)); }
+    .tk-number,
+    .tk-color,
+    .tk-variable,
+    .tk-type { color: var(--md-sys-color-tertiary); }
+    .tk-comment { color: var(--md-sys-color-on-surface-variant); font-style: italic; }
+    .tk-function,
+    .tk-attr,
+    .tk-property { color: var(--md-sys-color-secondary); }
+    .tk-punct { color: var(--md-sys-color-on-surface-variant); }
+
+
+    @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <div class="shell" part="shell">
+    <div class="head" part="header">
+      <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="title" part="title"></span>
+      <button class="copy" type="button" part="copy" aria-label="复制代码">复制</button>
+    </div>
+    <div class="body" part="body">
+      <pre part="pre"><code part="code"></code></pre>
+    </div>
+  </div>
+
+  <script>
+    import "../color/st-color-init.js";
+    import beautifier from "./vendor/beautifier.mjs";
+
+    const ESC = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+    const esc = (s) => String(s).replace(/[&<>"']/g, (ch) => ESC[ch]);
+    const span = (type, text) => `<span class="tk-${type}">${esc(text)}</span>`;
+
+    const LANG_ALIASES = {
+      html: "html",
+      htm: "html",
+      xml: "html",
+      svg: "html",
+      js: "js",
+      javascript: "js",
+      mjs: "js",
+      ts: "ts",
+      typescript: "ts",
+      css: "css",
+      less: "less",
+      sass: "sass",
+      scss: "sass",
+    };
+
+    const normalizeLang = (lang) => LANG_ALIASES[String(lang || "html").toLowerCase()] || "html";
+    const langLabel = (lang) => ({ html: "HTML", js: "JS", ts: "TS", css: "CSS", less: "LESS", sass: "SASS" }[lang] || lang);
+
+    // js-beautify（MIT）随组件 vendored，格式化为同步执行；失败时保留 dedent 原文。
+    function formatCode(beautifier, code, lang) {
+      const common = {
+        indent_size: 2,
+        indent_char: " ",
+        end_with_newline: false,
+        preserve_newlines: true,
+        max_preserve_newlines: 2,
+        wrap_line_length: 0,
+      };
+      if (lang === "html") {
+        return beautifier.html(code, {
+          ...common,
+          content_unformatted: ["pre", "textarea"],
+          indent_scripts: "normal",
+        });
+      }
+      if (lang === "js" || lang === "ts") {
+        return beautifier.js(code, { ...common, brace_style: "collapse" });
+      }
+      return beautifier.css(code, common);
+    }
+
+    function dedent(text) {
+      const lines = String(text).replace(/\r\n?/g, "\n").replace(/\t/g, "  ").split("\n");
+      while (lines.length && !lines[0].trim()) lines.shift();
+      while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
+      const indents = lines
+        .filter((line) => line.trim())
+        .map((line) => (/^ */.exec(line) || [""])[0].length);
+      const min = indents.length ? Math.min(...indents) : 0;
+      return lines.map((line) => line.slice(min)).join("\n");
+    }
+
+    // 通用粘性正则扫描器：按规则顺序匹配当前位置，未命中的字符原样转义。
+    function scan(code, rules) {
+      let out = "";
+      let i = 0;
+      while (i < code.length) {
+        let hit = null;
+        for (const rule of rules) {
+          rule.re.lastIndex = i;
+          const m = rule.re.exec(code);
+          if (m && m.index === i && m[0].length) {
+            hit = { type: rule.type, text: m[0] };
+            break;
+          }
+        }
+        if (hit) {
+          out += span(hit.type, hit.text);
+          i += hit.text.length;
+        } else {
+          out += esc(code[i]);
+          i += 1;
+        }
+      }
+      return out;
+    }
+
+    const JS_WORDS =
+      "break case catch class const continue debugger default delete do else export extends finally for function if import in instanceof let new return super switch this throw try typeof var void while with yield async await of from as static get set constructor";
+    const TS_WORDS =
+      "interface type enum implements public private protected readonly abstract declare namespace module satisfies keyof infer asserts is";
+    const JS_LITERALS = "true false null undefined NaN Infinity";
+    const wordRule = (words, type) => ({
+      type,
+      re: new RegExp(`\\b(?:${words.replace(/ /g, "|")})\\b`, "y"),
+    });
+
+    const JS_RULES = [
+      { type: "comment", re: /\/\/[^\n]*|\/\*[\s\S]*?\*\//y },
+      { type: "string", re: /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`/y },
+      { type: "number", re: /\b(?:0[xX][\da-fA-F]+|0[bB][01]+|0[oO][0-7]+|\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\b/y },
+      wordRule(JS_WORDS, "keyword"),
+      wordRule(TS_WORDS, "keyword"),
+      wordRule(JS_LITERALS, "keyword"),
+      { type: "function", re: /\b[A-Za-z_$][\w$]*(?=\s*\()/y },
+      { type: "type", re: /\b[A-Z][A-Za-z0-9_$]*\b/y },
+      { type: "variable", re: /@[A-Za-z_$][\w$]*/y },
+      { type: "punct", re: /[{}()[\];,.:?=+\-*/%<>!&|^~]+/y },
+    ];
+
+    const CSS_RULES = [
+      { type: "comment", re: /\/\*[\s\S]*?\*\/|\/\/[^\n]*/y },
+      { type: "string", re: /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/y },
+      { type: "keyword", re: /@[-\w]+/y },
+      { type: "variable", re: /(?:--|\$)[-\w]+/y },
+      { type: "color", re: /#[0-9a-fA-F]{3,8}\b/y },
+      { type: "number", re: /\b\d*\.?\d+(?:[a-zA-Z%]+)?\b/y },
+      { type: "property", re: /[-\w]+(?=\s*:)/y },
+      { type: "function", re: /[-\w]+(?=\()/y },
+      { type: "selector", re: /::?[-\w]+|[.#][-\w]+|\[[^\]]*\]/y },
+      { type: "punct", re: /[{}();:,>+~*[\]]/y },
+    ];
+
+    function findTagEnd(code, start) {
+      let quote = "";
+      for (let i = start + 1; i < code.length; i += 1) {
+        const ch = code[i];
+        if (quote) {
+          if (ch === quote) quote = "";
+        } else if (ch === '"' || ch === "'") {
+          quote = ch;
+        } else if (ch === ">") {
+          return i;
+        }
+      }
+      return -1;
+    }
+
+    function highlightTag(tag) {
+      const open = /^<(\/?)([^\s/>]+)/.exec(tag);
+      if (!open) return esc(tag);
+      let out = span("punct", "<") + (open[1] ? span("punct", "/") : "") + span("tag", open[2]);
+      const rest = tag.slice(open[0].length);
+      let i = 0;
+      while (i < rest.length) {
+        const ws = /^\s+/.exec(rest.slice(i));
+        if (ws) {
+          out += ws[0];
+          i += ws[0].length;
+          continue;
+        }
+        if (rest.startsWith("/>", i)) {
+          out += span("punct", "/>");
+          i += 2;
+          continue;
+        }
+        if (rest[i] === ">") {
+          out += span("punct", ">");
+          i += 1;
+          continue;
+        }
+        const attr = /^[^\s=/>]+/.exec(rest.slice(i));
+        if (!attr) {
+          out += esc(rest[i]);
+          i += 1;
+          continue;
+        }
+        out += span("attr", attr[0]);
+        i += attr[0].length;
+        const eqWs = /^\s*/.exec(rest.slice(i))[0];
+        let j = i + eqWs.length;
+        if (rest[j] !== "=") {
+          out += eqWs;
+          i = j;
+          continue;
+        }
+        out += eqWs + span("punct", "=");
+        j += 1;
+        const valWs = /^\s*/.exec(rest.slice(j))[0];
+        out += valWs;
+        j += valWs.length;
+        const quote = rest[j];
+        if (quote === '"' || quote === "'") {
+          let k = j + 1;
+          while (k < rest.length && rest[k] !== quote) k += 1;
+          out += span("string", rest.slice(j, Math.min(k + 1, rest.length)));
+          i = Math.min(k + 1, rest.length);
+        } else {
+          const val = /^[^\s/>]+/.exec(rest.slice(j));
+          if (val) {
+            out += span("attr", val[0]);
+            i = j + val[0].length;
+          } else {
+            i = j;
+          }
+        }
+      }
+      return out;
+    }
+
+    function highlightText(text) {
+      let out = "";
+      let i = 0;
+      const re = /&[#\w]+;/g;
+      let m;
+      while ((m = re.exec(text))) {
+        out += esc(text.slice(i, m.index)) + span("entity", m[0]);
+        i = m.index + m[0].length;
+      }
+      return out + esc(text.slice(i));
+    }
+
+    function highlightHtml(code) {
+      let out = "";
+      let i = 0;
+      while (i < code.length) {
+        if (code.startsWith("<!--", i)) {
+          const end = code.indexOf("-->", i + 4);
+          const stop = end === -1 ? code.length : end + 3;
+          out += span("comment", code.slice(i, stop));
+          i = stop;
+          continue;
+        }
+        if (code[i] === "<") {
+          const end = findTagEnd(code, i);
+          if (end === -1) {
+            out += esc(code.slice(i));
+            break;
+          }
+          const tag = code.slice(i, end + 1);
+          out += highlightTag(tag);
+          const open = /^<([A-Za-z][\w:-]*)/.exec(tag);
+          const selfClosing = /\/>$/.test(tag);
+          if (open && !selfClosing && /^(script|style)$/i.test(open[1])) {
+            const close = new RegExp(`</${open[1]}\\s*>`, "i");
+            const rest = code.slice(end + 1);
+            const match = close.exec(rest);
+            if (match) {
+              const content = rest.slice(0, match.index);
+              out += open[1].toLowerCase() === "script" ? scan(content, JS_RULES) : scan(content, CSS_RULES);
+              i = end + 1 + match.index;
+              continue;
+            }
+          }
+          i = end + 1;
+          continue;
+        }
+        const next = code.indexOf("<", i);
+        const stop = next === -1 ? code.length : next;
+        out += highlightText(code.slice(i, stop));
+        i = stop;
+      }
+      return out;
+    }
+
+    function highlight(code, lang) {
+      if (lang === "html") return highlightHtml(code);
+      if (lang === "js" || lang === "ts") return scan(code, JS_RULES);
+      return scan(code, CSS_RULES);
+    }
+
+    export default async () => ({
+      tag: "st-code",
+      attrs: {
+        lang: "html",
+        title: null,
+        code: null,
+        format: "auto",
+      },
+      watch: {
+        lang() { this.render?.(); },
+        title() { this.render?.(); },
+        code() { this.render?.(); },
+        format() { this.render?.(); },
+      },
+      ready() {
+        const ele = this.ele;
+        const sr = ele.shadowRoot;
+        const codeEl = sr.querySelector("code");
+        const titleEl = sr.querySelector(".title");
+        const copyBtn = sr.querySelector(".copy");
+        let copyTimer = null;
+
+        this.render = () => {
+          const template = ele.querySelector("template");
+          let raw = "";
+          if (this.code !== null && this.code !== undefined) {
+            raw = this.code;
+          } else if (template) {
+            // 带标签的 HTML 代码用 innerHTML 保留标签；纯文本（JS/CSS）用 textContent。
+            // 两者都只读字符串，不插入 DOM，因此 <script> 不会执行。
+            raw = template.content.querySelector("*")
+              ? template.innerHTML
+              : template.content.textContent;
+          } else if (ele.children.length === 0) {
+            raw = ele.textContent;
+          }
+          const lang = normalizeLang(this.lang);
+          let source = dedent(raw);
+          // Sass 是缩进语法，交给 beautifier 会把层级压平，只做去公共缩进。
+          if (String(this.format).toLowerCase() !== "off" && lang !== "sass" && source.trim()) {
+            try {
+              source = formatCode(beautifier, source, lang) || source;
+            } catch (_) {
+              // 格式化失败时保留 dedent 结果
+            }
+          }
+          this._raw = source;
+          titleEl.textContent = this.title || langLabel(lang);
+          codeEl.innerHTML = highlight(source, lang);
+          copyBtn.removeAttribute("data-copied");
+          copyBtn.textContent = "复制";
+        };
+
+        this.render();
+        this._observer = new MutationObserver(() => this.render());
+        this._observer.observe(ele, { childList: true, subtree: true });
+        const template = ele.querySelector("template");
+        if (template) {
+          this._templateObserver = new MutationObserver(() => this.render());
+          this._templateObserver.observe(template.content, {
+            childList: true,
+            subtree: true,
+            characterData: true,
+          });
+        }
+
+        const fallbackCopy = () => {
+          const ta = document.createElement("textarea");
+          ta.value = this._raw;
+          ta.setAttribute("readonly", "");
+          ta.style.cssText = "position:fixed;left:-9999px;top:0;opacity:0;";
+          ele.appendChild(ta);
+          ta.select();
+          try { document.execCommand("copy"); } catch (_) { /* ignore */ }
+          ta.remove();
+        };
+
+        copyBtn.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(this._raw);
+          } catch (_) {
+            fallbackCopy();
+          }
+          copyBtn.dataset.copied = "true";
+          copyBtn.textContent = "已复制";
+          clearTimeout(copyTimer);
+          copyTimer = setTimeout(() => {
+            copyBtn.removeAttribute("data-copied");
+            copyBtn.textContent = "复制";
+          }, 1600);
+          ele.dispatchEvent(new Event("copy", { bubbles: true, composed: true }));
+        });
+
+        this._cleanup = () => {
+          this._observer?.disconnect();
+          this._templateObserver?.disconnect();
+          clearTimeout(copyTimer);
+        };
+      },
+      detached() {
+        this._cleanup?.();
+      },
+    });
+  </script>
+</template>

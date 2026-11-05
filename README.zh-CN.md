@@ -86,6 +86,7 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 | Tabs 标签栏 | `st-tab-bar` / `st-tab-item` | `.../packages/tabs/tab-bar.html` |
 | Navigation 导航栏 | `st-nav-bar` / `st-nav-item` | `.../packages/navigation/nav-bar.html` |
 | Ripple 波纹 | `st-ripple` | `.../packages/ripple/ripple.html` |
+| Code 代码块 | `st-code` | `.../packages/code/code.html` |
 
 ## 关键使用模式
 

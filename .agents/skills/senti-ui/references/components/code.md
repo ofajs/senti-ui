@@ -1,6 +1,8 @@
 # st-code 代码块组件
 
-基于 ofa.js 的轻量代码块：语法高亮、自动格式化、文件名标题与一键复制。支持 HTML / JS / TS / CSS / Less / Sass；高亮器与格式化器都随组件提供，不请求外部 CDN。
+基于 ofa.js 的轻量代码块：语法高亮、自动格式化。支持 HTML / JS / TS / CSS / Less / Sass；高亮器与格式化器都随组件提供，不请求外部 CDN。
+
+默认只有代码本身：无边框、无阴影、无底色、无顶栏；加 `frame` 才有浏览器窗口式外壳（圆点 / 文件名 / 复制）。
 
 **安全**：组件只把源码当字符串读取，再转义渲染到 shadow DOM；`<template>` 内的 `<script>` 不会执行，`code` 属性只当纯文本。
 
@@ -21,13 +23,23 @@
 | `title` | string | 无 | 顶栏文件名 / 标题；缺省显示语言名 |
 | `code` | string | 无 | 代码字符串；设置后优先于 template |
 | `format` | `"auto" \| "off"` | `"auto"` | 自动格式化；Sass 只做去公共缩进 |
+| `frame` | boolean | 无 | 浏览器外壳：底色 / 边框 / 圆点 / 标题 / 复制按钮 |
 
 ## 用法
 
 ### template（推荐，安全）
 
 ```html
-<st-code lang="html" title="index.html">
+<!-- 默认：只有代码 -->
+<st-code lang="html">
+  <template>
+    <div class="card">Hello</div>
+    <script>alert("不会执行")</script>
+  </template>
+</st-code>
+
+<!-- 加 frame：浏览器外壳 + 标题 + 复制 -->
+<st-code lang="html" frame title="index.html">
   <template>
     <div class="card">Hello</div>
     <script>alert("不会执行")</script>
@@ -61,27 +73,29 @@ $("st-code").attr("code", cssText);
 
 ## 事件
 
-- `copy`：复制成功后派发（`bubbles` + `composed`）
+- `copy`：`frame` 模式下复制成功后派发（`bubbles` + `composed`）
 
 ## 默认值（直接覆盖即可）
 
 | 属性 | 默认值 |
 |------|--------|
-| 代码区 / 顶栏底色 | `surface-container-highest` / `surface-container-high` |
-| 圆角 / 阴影 | `--st-radius-md` / `--st-shadow-1` |
-| padding / 字号 | `1em` / `0.857em` |
+| 默认外观 | 透明底、无边框 / 阴影 / 顶栏 / padding |
+| `frame` 底色 / 顶栏 | `surface-container-highest` / `surface-container-high` |
+| `frame` 圆角 / 阴影 | `--st-radius-md` / `--st-shadow-1` |
+| 字号 | `0.857em` |
 | 字体 | 等宽系统字体栈 |
 | 最大高度 | 无限制（内部滚动） |
 
 ## 皮肤 token 与 part
 
-token：`--st-code-bg` / `--st-code-header-bg` / `--st-code-border` / `--st-code-radius` / `--st-code-shadow` / `--st-code-padding` / `--st-code-font` / `--st-code-font-size` / `--st-code-line-height` / `--st-code-backdrop-filter` / `--st-code-max-height`。
+`frame` 模式 token：`--st-code-bg` / `--st-code-header-bg` / `--st-code-border` / `--st-code-radius` / `--st-code-shadow` / `--st-code-padding` / `--st-code-font` / `--st-code-font-size` / `--st-code-line-height` / `--st-code-backdrop-filter` / `--st-code-max-height`。
 
-part：`shell` / `header` / `title` / `copy` / `body` / `pre` / `code`。
+part：`shell` / `header` / `title` / `copy` / `body` / `pre` / `code`；`header` / `title` / `copy` 只在 `frame` 模式显示。
 
 ## 注意事项
 
 - 优先 template；动态代码用 `code` 属性 / `attr:code`
+- 默认无浏览器外壳；需要标题 / 复制时加 `frame`
 - 代码块横向滚动，不自动换行；需要换行用 `st-code::part(pre) { white-space: pre-wrap; }`
 - 高亮颜色全部来自 M3 角色，自动跟随深浅色 / 皮肤
 - 复制使用 `navigator.clipboard`，失败时回退 `execCommand`

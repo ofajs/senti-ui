@@ -1,6 +1,8 @@
 # st-code 代码展示组件
 
-基于 ofa.js 的轻量代码块：语法高亮、文件名标题、一键复制。支持 HTML / JS / TS / CSS / Less / Sass，内置高亮器，不依赖 highlight.js 或任何外部 CDN。
+基于 ofa.js 的轻量代码块：语法高亮、自动格式化。支持 HTML / JS / TS / CSS / Less / Sass，内置高亮器，不依赖 highlight.js 或任何外部 CDN。
+
+**默认只有代码本身**：无边框、无阴影、无底色、无顶栏。需要浏览器窗口式的包裹（圆点 / 文件名 / 复制按钮）时加 `frame`。
 
 **安全模型**：组件只把源码当字符串读取，再逐字符转义后渲染到 shadow DOM。`<template>` 内的 `<script>` 不会执行；`code` 属性/属性绑定也只当纯文本。
 
@@ -23,13 +25,23 @@
 | `title` | string | 无 | 顶栏文件名 / 标题；缺省显示语言名（HTML / JS / CSS…） |
 | `code` | string | 无 | 代码字符串（属性或 `attr:code` 绑定）；设置后优先于 `<template>` |
 | `format` | `"auto" \| "off"` | `"auto"` | 自动格式化开关；Sass 始终只做去公共缩进 |
+| `frame` | boolean | 无 | 加浏览器外壳：底色 / 边框 / 圆点 / 标题 / 复制按钮 |
 
 ## 写法一：`<template>`（推荐，声明式）
 
 `<template>` 的内容天然惰性，里面的 `<script>` 不会执行。组件读取后重新转义渲染，所以可以安全地展示 HTML / JS 源码。
 
 ```html
-<st-code lang="html" title="index.html">
+<!-- 默认：只有高亮后的代码 -->
+<st-code lang="html">
+  <template>
+    <div class="card">Hello</div>
+    <script>alert("不会执行")</script>
+  </template>
+</st-code>
+
+<!-- 加 frame：浏览器窗口外壳 + 文件名 + 复制 -->
+<st-code lang="html" frame title="index.html">
   <template>
     <div class="card">Hello</div>
     <script>alert("不会执行")</script>
@@ -81,20 +93,17 @@ $("st-code").attr("code", cssText);
 
 ## 事件
 
-- `copy`：点击复制按钮并写入剪贴板后派发（`bubbles` + `composed`）
+- `copy`：`frame` 模式下点击复制按钮并写入剪贴板后派发（`bubbles` + `composed`）
 
 ## 默认值（直接覆盖即可）
 
 | 属性 | 默认值 |
 |------|--------|
-| 代码区底色 | `surface-container-highest` |
-| 顶栏底色 | `surface-container-high` |
-| 圆角 / 阴影 | `--st-radius-md`（0.857em）/ `--st-shadow-1` |
-| 内边距 | `1em` |
+| 默认外观 | 透明背景、无边框 / 阴影 / 顶栏 / 内边距 |
 | 字号 / 行高 | `0.857em`（12px @14px）/ `1.65` |
 | 字体 | `ui-monospace, SFMono-Regular, Menlo, Consolas, monospace` |
 | 最大高度 | 无限制；滚动发生在代码区内 |
-| 顶栏 | 三个圆点 + 标题 + 复制按钮 |
+| `frame` 外壳 | `surface-container-highest` 底、`surface-container-high` 顶栏、`--st-radius-md` 圆角、`--st-shadow-1` 阴影、`1em` 内边距、三个圆点 + 标题 + 复制 |
 
 ## 皮肤 token 与 part
 
@@ -110,7 +119,7 @@ $("st-code").attr("code", cssText);
 | `--st-code-backdrop-filter` | `none` |
 | `--st-code-max-height` | `none` |
 
-part：`shell` / `header` / `title` / `copy` / `body` / `pre` / `code`。
+part：`shell` / `header` / `title` / `copy` / `body` / `pre` / `code`。`header` / `title` / `copy` 只在 `frame` 模式下显示。
 
 ```css
 st-code::part(copy) {
@@ -125,6 +134,8 @@ st-code::part(copy) {
 - `lang` 只影响高亮，不做语法校验；未知语言按 HTML 展示
 - 代码块横向滚动，不自动换行；需要换行时用原生 `st-code::part(pre) { white-space: pre-wrap; }`
 - 高亮颜色全部来自 M3 角色，深浅色 / 皮肤切换自动跟随；不提供自定义颜色变量
+- 默认模式不画边框 / 阴影 / 底色；需要浏览器外壳时加 `frame`
+- `title` / 复制按钮只在 `frame` 模式下显示
 - 格式化器随组件 vendored（`packages/code/vendor/beautifier.mjs`，MIT，见同目录 LICENSE），不请求外部 CDN
 - 复制按钮用 `navigator.clipboard`，失败时回退到 `execCommand("copy")`；复制成功派发 `copy` 事件
 - `prefers-reduced-motion` 下复制按钮的过渡会压到近零

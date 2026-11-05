@@ -16,8 +16,17 @@
       color: var(--md-sys-color-on-surface);
     }
 
+    /* 默认只有代码本身：无边框、无阴影、无底色、无浏览器顶栏。
+       加 frame 属性后才出现窗口外壳（圆点 / 标题 / 复制）。 */
     .shell {
       box-sizing: border-box;
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+    :host([frame]) .shell {
       overflow: hidden;
       border: 1px solid var(--st-code-border, transparent);
       border-radius: var(--st-code-radius, var(--st-radius-md, 0.857em));
@@ -28,7 +37,7 @@
     }
 
     .head {
-      display: flex;
+      display: none;
       align-items: center;
       gap: 0.714em;
       min-height: 2.429em;
@@ -37,6 +46,7 @@
       background: var(--st-code-header-bg, var(--md-sys-color-surface-container-high));
       border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 55%, transparent);
     }
+    :host([frame]) .head { display: flex; }
 
     .dots {
       display: inline-flex;
@@ -84,9 +94,10 @@
       max-height: var(--st-code-max-height, none);
       overflow: auto;
       overscroll-behavior: contain;
-      padding: var(--st-code-padding, 1em);
+      padding: 0;
       box-sizing: border-box;
     }
+    :host([frame]) .body { padding: var(--st-code-padding, 1em); }
 
     pre {
       margin: 0;
@@ -411,6 +422,7 @@
         title: null,
         code: null,
         format: "auto",
+        frame: null,
       },
       watch: {
         lang() { this.render?.(); },

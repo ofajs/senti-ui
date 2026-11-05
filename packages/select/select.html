@@ -225,6 +225,13 @@
       to { opacity: 1; transform: none; }
     }
     @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
       .listbox { animation: none; transition: none; }
     }
 

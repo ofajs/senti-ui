@@ -14,27 +14,49 @@
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `align` | `"left" \| "right"` | `"right"` | 面板与触发器的水平对齐 |
+| `keep-open` | boolean | 无 | 点击菜单项后不自动关闭；用于多选 / 勾选菜单（点外部 / Escape 仍关闭） |
 
 ## 运行时状态（st-menu）
 
-- `open`：**ofa data，非标签属性**。JS 控制用 `el.open`（ofa 实例）或真实点击 trigger 切换；面板打开时点击菜单项/外部/Escape 自动关闭。
+- `open`：**ofa data，非标签属性**。JS 控制用 `el.open`（ofa 实例）或真实点击 trigger 切换；面板打开时点击菜单项/外部/Escape 自动关闭（`keep-open` 时菜单项点击不关）。
 
 ## 事件（st-menu）
 
 - `open` / `close`：面板打开/关闭时派发（`bubbles` + `composed`）
-- 菜单项点击：`st-menu-item` 的 `click` 正常冒泡，面板监听后自动关闭
+- `change`（st-menu-item）：`checkable` 项切换 `selected` 时派发（`bubbles` + `composed`）
+- 菜单项点击：`st-menu-item` 的 `click` 正常冒泡，面板监听后自动关闭（`keep-open` 时除外）
 
 ## 语义属性（st-menu-item）
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断点击 |
+| `checkable` | boolean | 无 | 可勾选项：显示勾选位、`role="menuitemcheckbox"`、`aria-checked` 跟随 `selected` |
+| `selected` | boolean | 无 | 勾选状态；点击 `checkable` 项自动切换并派发 `change`；也可由外部控制 |
 
 ## 插槽（st-menu-item）
 
 - `prefix` / 默认（文字）/ `suffix`（快捷键提示等）/ `sub-menu`（放 `st-menu` 子菜单，见下文）
 
 分隔线：菜单项之间放原生 `<hr>`。
+
+## 可勾选菜单项（checkable / selected）
+
+给菜单项加 `checkable` 会显示勾选位，`selected` 控制勾选状态；点击时组件自动切换 `selected` 并派发 `bubbles` + `composed` 的 `change`。默认选中后菜单关闭；多选场景在 `st-menu` 上加 `keep-open`，让菜单保持打开。
+
+```html
+<st-menu keep-open>
+  <st-button slot="trigger" variant="outlined">视图 ▾</st-button>
+  <st-menu-item checkable selected>网格</st-menu-item>
+  <st-menu-item checkable>列表</st-menu-item>
+  <st-menu-item checkable>紧凑</st-menu-item>
+</st-menu>
+```
+
+- 无障碍：内部 `.native` 的 `role` 为 `menuitemcheckbox`，`aria-checked` 随 `selected` 更新
+- 单选语义：监听 `change`，在回调里取消同组其他项的 `selected`（ofa 页面用 `$(item).attr("selected", null)`）
+- 仅 `checkable` 项显示勾选位并自动切换；只有 `selected` 不会产生勾选视觉
+- `disabled` 的 checkable 项不响应点击，也不能用键盘激活
 
 ## 多级子菜单
 
@@ -154,13 +176,13 @@ onCtx(e) {
 ## 注意事项与使用技巧
 
 - `open` 是运行时状态（ofa data，非标签属性）：ofa 页面用 `sync:open="menuOpen"` 双向绑定（选中后自动关闭会回写）；JS 触发用真实点击 trigger
-- trigger 必须放 `slot="trigger"`；菜单项点击后面板自动关闭，item 的 click 正常冒泡供业务监听
+- trigger 必须放 `slot="trigger"`；菜单项点击后面板自动关闭（`keep-open` 时保持打开），item 的 click 正常冒泡供业务监听
 - 面板 fixed 定位自动翻转避让视口、宽度由内容决定（min-width 6em 兜底），不受祖先 overflow 裁剪；transform 容器（如 st-dialog）内自动按 containing block 原点换算，不漂移（坑 #42）
 - 点击外部关闭用 composedPath 判断（坑 #21），滚动/resize 时自动重定位
 - `align="left"` 面板左对齐触发器，默认右对齐
 - 多级子菜单：`st-menu` 放在 item 的 `sub-menu` 插槽内（见上文），箭头自动显示
 - 右键菜单：不放 trigger，`on:contextmenu` 里 `e.preventDefault()` 后调 `openAt(e.clientX, e.clientY)`（见上文）
-- 无障碍：面板 `role="menu"`、菜单项原生按钮 `role="menuitem"`；触发器及其内部原生 button 自动获得 `aria-haspopup="menu"` + `aria-expanded`；↑/↓/Home/End 移动焦点；Escape 在捕获阶段只关最内层菜单
+- 无障碍：面板 `role="menu"`、菜单项原生按钮 `role="menuitem"`（`checkable` 时 `menuitemcheckbox` + `aria-checked`）；触发器及其内部原生 button 自动获得 `aria-haspopup="menu"` + `aria-expanded`；↑/↓/Home/End 移动焦点；Escape 在捕获阶段只关最内层菜单
 
 ## 验证页面
 

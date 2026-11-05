@@ -133,6 +133,17 @@
       display: inline-flex;
       color: var(--md-sys-color-on-surface-variant);
     }
+
+    /* 减少动态效果：动画/过渡压到近零，同时保留 animationend 等事件语义 */
+    @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 
   <span class="outline-ring" part="focus-ring"></span>

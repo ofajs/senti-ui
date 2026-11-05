@@ -136,6 +136,37 @@
             </section>
 
             <section class="doc-section">
+              <h2>原生 form（name / reset）</h2>
+              <p class="doc-section-lead">st-slider 通过内部不可见的原生 range 代理参与原生表单：name 决定 FormData 字段名，提交时取当前 value，reset 回到 default-value（缺省时回到 min）。</p>
+              <div class="demo">
+                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>name / FormData / reset</code></div>
+                <div class="demo-stage block">
+                  <form on:submit="onSliderForm">
+                    <st-slider name="volume" default-value="40"></st-slider>
+                    <div style="display: flex; gap: 8px; margin-top: 12px;">
+                      <st-button type="submit">提交</st-button>
+                      <st-button variant="text" type="reset">重置</st-button>
+                    </div>
+                  </form>
+                  <span class="demo-note">FormData volume：{{formVolume}}</span>
+                </div>
+              </div>
+              <details class="snippet">
+                <summary>示例代码</summary>
+                <pre><code>&lt;form on:submit="onSliderForm"&gt;
+  &lt;st-slider name="volume" default-value="40"&gt;&lt;/st-slider&gt;
+  &lt;st-button type="submit"&gt;提交&lt;/st-button&gt;
+  &lt;st-button variant="text" type="reset"&gt;重置&lt;/st-button&gt;
+&lt;/form&gt;
+
+onSliderForm(e) {
+  e.preventDefault();
+  this.formVolume = new FormData(e.target).get("volume");
+}</code></pre>
+              </details>
+            </section>
+
+            <section class="doc-section">
               <h2>input 与 change 的区别</h2>
               <p class="doc-section-lead">拖动过程中每个变化都派发 input（适合实时预览），松手或键盘提交时派发一次 change（适合提交表单、触发表单校验）。两者都是 bubbles + composed。</p>
               <div class="demo">
@@ -272,6 +303,9 @@
                     <tr><td><code>default-value</code></td><td>string</td><td>无</td><td>初始值，attached 时读取一次</td></tr>
                     <tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>primary</td><td>激活轨道、拇指与数值气泡的角色色</td></tr>
                     <tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>0.38 透明度、阻断拖拽与键盘</td></tr>
+                    <tr><td><code>name</code></td><td>string</td><td>无</td><td>表单字段名，提交到 <code>FormData</code></td></tr>
+                    <tr><td><code>form</code></td><td>string</td><td>无</td><td>关联到指定 id 的 form</td></tr>
+                    <tr><td><code>required</code></td><td>boolean</td><td>无</td><td>转发给原生 range；range 始终有值，不产生 invalid</td></tr>
                     <tr><td><code>value</code></td><td>运行时状态（ofa data）</td><td>0</td><td><code>el.value</code> 读写；不是标签属性，初始值用 default-value</td></tr>
                   </tbody>
                 </table>
@@ -281,6 +315,7 @@
                 <ul class="api-list">
                   <li>插槽：无。视觉全部由组件内部绘制。</li>
                   <li>事件：<code>input</code>（拖动中实时）/ <code>change</code>（松手、键盘提交），均 bubbles + composed。</li>
+                  <li>表单：<code>name</code> / <code>form</code> 生效，提交取当前 value，<code>reset</code> 回到 <code>default-value</code> / <code>min</code>。</li>
                   <li>键盘：Tab 聚焦、←/→ 步进、Home / End 到两端；焦点环画在拇指上。</li>
                   <li>默认尺寸 <code>13.571em × 2.857em</code>（190×40px 触控高度），轨道两端各内缩拇指半径，数值气泡在拖动/聚焦时显示。</li>
                   <li>不要用 <code>attr:value</code> / <code>setAttribute("value")</code> 控制值；JS 读写一律走 <code>el.value</code>。</li>
@@ -306,8 +341,13 @@
             sliderColor: "primary",
             level: "30",
             readResult: "（未读取）",
+            formVolume: "（未提交）",
           },
           proto: {
+            onSliderForm(e) {
+              e.preventDefault();
+              this.formVolume = new FormData(e.target).get("volume");
+            },
             onVolume(e) {
               this.volume = e.target.value;
             },

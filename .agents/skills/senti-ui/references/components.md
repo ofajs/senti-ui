@@ -122,10 +122,11 @@ const t = toast("已保存", { duration: 3000 }); // 返回 { close, el }；dura
 
 ## st-slider 滑块
 
-- 属性：`min`/`max`/`step`（默认 0/100/1，转发原生 range）、`default-value`、`disabled`、`color`
+- 属性：`min`/`max`/`step`（默认 0/100/1，转发原生 range）、`default-value`、`disabled`、`color`、`name`/`form`（原生表单）
 - **`value` 是运行时状态**（`el.value`；ofa 页面绑定 `attr:value`）
 - 事件：`input`（拖动实时）、`change`（松手/键盘提交），均 composed
 - 键盘：Tab 聚焦、`←/→` 步进、`Home/End` 到两端；拖动/聚焦显示数值气泡
+- 表单：`name` + `form` 进 `FormData`，`reset` 回 `default-value` / `min`；`required` 对 range 无实际约束
 
 ## st-progress 进度
 
@@ -136,8 +137,8 @@ const t = toast("已保存", { duration: 3000 }); // 返回 { close, el }；dura
 
 - 属性：`content`（纯文本，防注入）、`disabled`
 - **`open` 是运行时状态**（`sync:open` / setAttribute 兼容）
-- 悬停或聚焦触发器显示；气泡 fixed 自动上下翻转；触发器需可聚焦（如 st-button）
-- 不承载关键信息（触屏无悬停）
+- 悬停、聚焦或触屏长按 500ms 显示；点外部 / Escape 关闭；气泡 fixed 自动上下翻转；触发器需可聚焦（如 st-button）
+- 不承载关键信息
 
 ## st-card 卡片
 
@@ -161,10 +162,11 @@ const t = toast("已保存", { duration: 3000 }); // 返回 { close, el }；dura
 
 ## st-menu / st-menu-item 下拉菜单
 
-- `st-menu` 属性：`align`（`right`(默认)/`left`，面板与触发器水平对齐）；插槽：`trigger`（触发器）+ light DOM 菜单项 `st-menu-item`
+- `st-menu` 属性：`align`（`right`(默认)/`left`，面板与触发器水平对齐）、`keep-open`（点击项后不关，用于多选）；插槽：`trigger`（触发器）+ light DOM 菜单项 `st-menu-item`
 - `open` 运行时状态；面板 fixed 定位 JS 计算（翻转避让视口）
-- 点外部 / Escape / 选中自动关闭；事件 `open` / `close`
-- item 属性：`disabled`；菜单文字直接写在 item 内
+- 点外部 / Escape / 选中自动关闭（`keep-open` 时点项不关）；事件 `open` / `close` / `change`
+- item 属性：`disabled`、`checkable`、`selected`；菜单文字直接写在 item 内
+- 可勾选菜单：`<st-menu-item checkable selected>`，点击切换 `selected` 并派发 `change`；`role=menuitemcheckbox` + `aria-checked`
 - 多级子菜单：`st-menu` 放在 item 的 `sub-menu` 插槽内，箭头自动显示、hover 展开、选中任意项整链关闭
 - 右键菜单：`openAt(x, y)`（ofa 页面在 `on:contextmenu` 里 `e.preventDefault()` 后调）；面板自动翻转避让视口
 - `contextMenu` 命令式工具（无需预引入）：`await contextMenu(e, [{id,label,prefix,suffix,disabled,children},{separator:true}])` → 点击的叶子项 id / 取消 null，菜单挂 body 用完即毁；移动端 `contextMenu.longPress(el, items, onSelect)` 长按 500ms 呼出（触屏子菜单为点击开合，无 hover）

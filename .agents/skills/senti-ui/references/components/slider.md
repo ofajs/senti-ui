@@ -17,6 +17,21 @@
 | `default-value` | string | 无 | 初始值（标签属性，attached 时读取一次） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互 |
 | `color` | M3 角色名 / 自定义变量名 | 无 | 激活轨道与拇指换角色色（默认 primary） |
+| `name` | string | 无 | 表单字段名，提交到 `FormData` |
+| `form` | string | 无 | 关联到指定 id 的 form |
+| `required` | boolean | 无 | 转发给原生 range 代理；range 始终有值，不产生 invalid |
+
+## 表单（原生 form）
+
+支持 `name` / `form`：提交时以当前 `value` 写入 `FormData`，`reset` 回到 `default-value`（缺省时回到 `min`）。
+
+```html
+<form>
+  <st-slider name="volume" default-value="40"></st-slider>
+  <st-button type="submit">保存</st-button>
+  <st-button type="reset">重置</st-button>
+</form>
+```
 
 ## 运行时状态
 
@@ -40,6 +55,7 @@
 ## 注意事项与使用技巧
 
 - `value` 是运行时状态：JS 用 `el.value`，`setAttribute("value")` 无效
+- 表单：`name` / `form` 生效；`reset` 回到 `default-value` / `min`
 - 键盘：Tab 聚焦（焦圈画在拇指上）、`←/→` 步进、`Home/End` 到两端
 - `setAttribute` 改 min/max 后下一帧生效，越界 `value` 会自动夹回范围
 

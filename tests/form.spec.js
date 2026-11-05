@@ -32,6 +32,7 @@ test("form：name / value / checkbox / radio / select 全量进入 FormData", as
     agree: "yes",
     notify: "on",
     gender: "m",
+    volume: "40",
   });
 });
 
@@ -63,6 +64,7 @@ test("form：reset 同步代理与可见组件", async ({ page }) => {
     document.querySelector("#f-select").value = "sh";
     document.querySelector("#f-notify").setAttribute("checked", "");
     document.querySelector("#f-agree").removeAttribute("checked");
+    document.querySelector("#f-volume").value = "80";
   });
   await page.waitForTimeout(150);
   await page.click("#f-reset");
@@ -74,6 +76,7 @@ test("form：reset 同步代理与可见组件", async ({ page }) => {
     select: document.querySelector("#f-select").value,
     agree: document.querySelector("#f-agree").hasAttribute("checked"),
     notify: document.querySelector("#f-notify").hasAttribute("checked"),
+    volume: document.querySelector("#f-volume").value,
     formData: Object.fromEntries(new FormData(document.querySelector("#form")).entries()),
   }));
   expect(state.input).toBe("guest");
@@ -81,5 +84,6 @@ test("form：reset 同步代理与可见组件", async ({ page }) => {
   expect(state.select).toBe("bj");
   expect(state.agree).toBe(true);
   expect(state.notify).toBe(false);
-  expect(state.formData).toMatchObject({ username: "guest", bio: "initial", city: "bj", agree: "yes" });
+  expect(state.volume).toBe("40");
+  expect(state.formData).toMatchObject({ username: "guest", bio: "initial", city: "bj", agree: "yes", volume: "40" });
 });

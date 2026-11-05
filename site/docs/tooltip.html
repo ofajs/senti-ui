@@ -68,7 +68,7 @@
             <header class="doc-hero">
               <p class="doc-kicker">辅助 · 20 / 22</p>
               <h1>Tooltip <code>st-tooltip</code></h1>
-              <p class="doc-lead">给按钮、图标按钮或任意可聚焦元素挂一条纯文本提示。悬停与键盘聚焦都能触发；气泡 fixed 定位，上方空间不足时自动翻到下方。</p>
+              <p class="doc-lead">给按钮、图标按钮或任意可聚焦元素挂一条纯文本提示。悬停、键盘聚焦与触屏长按都能触发；气泡 fixed 定位，上方空间不足时自动翻到下方。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
                 <a href="https://github.com/ofajs/senti-ui/blob/main/packages/tooltip/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
@@ -109,8 +109,8 @@
             </section>
 
             <section class="doc-section">
-              <h2>悬停、聚焦与 Escape</h2>
-              <p class="doc-section-lead">pointerenter / pointerleave 自动开合；focusin / focusout 让键盘用户也能看到提示；按 Escape 立即关闭。气泡 pointer-events: none，不会挡住触发器的点击。</p>
+              <h2>悬停、聚焦、触屏长按与 Escape</h2>
+              <p class="doc-section-lead">pointerenter / pointerleave 自动开合；focusin / focusout 让键盘用户也能看到提示；触屏在触发元素上长按 500ms 打开，点外部关闭；按 Escape 立即关闭。气泡 pointer-events: none，不会挡住触发器的点击。</p>
               <div class="demo">
                 <div class="demo-top"><span class="live"><i></i>LIVE</span><code>hover / focusin / Escape</code></div>
                 <div class="demo-stage">
@@ -123,7 +123,7 @@
                   <st-tooltip content="邮箱用于接收登录验证码" style="width: 100%; max-width: 300px;">
                     <st-input placeholder="邮箱地址" style="width: 100%;"></st-input>
                   </st-tooltip>
-                  <span class="demo-note">输入框获得焦点时同样显示；触屏设备没有悬停，不要把关键信息只放在提示里。</span>
+                  <span class="demo-note">输入框获得焦点时同样显示；触屏长按触发器 500ms 打开，抬手不会触发按钮 click，点外部关闭。</span>
                 </div>
               </div>
               <details class="snippet">
@@ -277,10 +277,10 @@
                 <h3>插槽 / 事件 / 注意</h3>
                 <ul class="api-list">
                   <li>插槽：默认插槽放触发元素，任意元素均可。</li>
-                  <li>触发：<code>pointerenter</code> / <code>focusin</code> 显示，<code>pointerleave</code> / <code>focusout</code> 隐藏。</li>
+                  <li>触发：<code>pointerenter</code> / <code>focusin</code> 显示，<code>pointerleave</code> / <code>focusout</code> 隐藏；触屏长按 500ms 打开、抬手不触发 click，点外部关闭；滑动超过 10px 取消。</li>
                   <li>定位：fixed 定位，上方放不下自动翻到下方，左右夹在视口内；没有 placement 属性。</li>
                   <li>气泡 <code>pointer-events: none</code>，不会拦截下方交互。</li>
-                  <li>触屏没有悬停；关键信息不要只放在提示里。</li>
+                  <li>触屏长按是辅助入口；关键信息不要只放在提示里。</li>
                 </ul>
               </div>
             </div>

@@ -141,6 +141,57 @@ test("tooltip：贴近视口顶部时上方放不下，自动翻到下方", asyn
   expect(state.belowHost).toBe(true);
 });
 
+test("tooltip：触屏长按 500ms 打开，点外部关闭", async ({ page }) => {
+  await page.evaluate(() => {
+    document.querySelector("#tip-basic").dispatchEvent(
+      new PointerEvent("pointerdown", {
+        bubbles: true,
+        composed: true,
+        pointerType: "touch",
+        clientX: 20,
+        clientY: 20,
+      })
+    );
+  });
+  await page.waitForTimeout(150);
+  expect(
+    await page.evaluate(() => document.querySelector("#tip-basic").hasAttribute("open"))
+  ).toBe(false);
+
+  await page.waitForTimeout(450);
+  expect(
+    await page.evaluate(() => document.querySelector("#tip-basic").hasAttribute("open"))
+  ).toBe(true);
+
+  // 抬手不关闭（触屏没有 pointerleave 语义）
+  await page.evaluate(() => {
+    document.querySelector("#tip-basic").dispatchEvent(
+      new PointerEvent("pointerup", { bubbles: true, composed: true, pointerType: "touch" })
+    );
+  });
+  await page.waitForTimeout(100);
+  expect(
+    await page.evaluate(() => document.querySelector("#tip-basic").hasAttribute("open"))
+  ).toBe(true);
+
+  // 点触发器外部关闭
+  await page.evaluate(() => {
+    document.body.dispatchEvent(
+      new PointerEvent("pointerdown", {
+        bubbles: true,
+        composed: true,
+        pointerType: "touch",
+        clientX: 5,
+        clientY: 300,
+      })
+    );
+  });
+  await page.waitForTimeout(100);
+  expect(
+    await page.evaluate(() => document.querySelector("#tip-basic").hasAttribute("open"))
+  ).toBe(false);
+});
+
 // ---------- st-card ----------
 
 test("card：三种 variant 配色差异", async ({ page }) => {
@@ -187,4 +238,28 @@ test("badges：点/数字/封顶/文本四种形态", async ({ page }) => {
     };
   });
   expect(state).toEqual({ dot: "", num: "8", max: "99+", text: "NEW" });
+});
+
+// ---------- prefers-reduced-motion ----------
+
+test("减少动态效果：card / slider 过渡时长压到近零", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.reload();
+  await page.waitForFunction(
+    () =>
+      document.querySelector("#sl-basic")?.shadowRoot?.querySelector(".value-tip") &&
+      document.querySelector("#card-elev"),
+    { timeout: 20_000 }
+  );
+  const state = await page.evaluate(() => {
+    const duration = (el) => getComputedStyle(el).transitionDuration;
+    return {
+      card: duration(document.querySelector("#card-elev")),
+      sliderTip: duration(
+        document.querySelector("#sl-basic").shadowRoot.querySelector(".value-tip")
+      ),
+    };
+  });
+  expect(parseFloat(state.card)).toBeLessThan(0.001);
+  expect(parseFloat(state.sliderTip)).toBeLessThan(0.001);
 });

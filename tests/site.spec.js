@@ -519,6 +519,24 @@ test("移动端文档：组件目录收进左侧抽屉，替代小 select", asyn
   await expect(page).toHaveURL(/\/site\/docs\/drawer\.html$/);
   await expect(drawer).not.toHaveAttribute("open", "");
   await expect(trigger).toContainText("Drawer");
+
+  // 上下页在移动端改为两张等宽纵向卡片，箭头不能挤到独立一行
+  const links = page.locator(".doc-pager .pager-link");
+  await expect(links).toHaveCount(2);
+  const pager = await page.evaluate(() => {
+    const pagerEl = [...document.querySelectorAll("o-page")]
+      .find((op) => op.shadowRoot?.querySelector(".doc-page"))
+      ?.shadowRoot.querySelector(".doc-pager");
+    return {
+      direction: getComputedStyle(pagerEl).flexDirection,
+      widths: [...pagerEl.querySelectorAll(".pager-link")].map(
+        (el) => el.getBoundingClientRect().width
+      ),
+    };
+  });
+  expect(pager.direction).toBe("column");
+  expect(Math.abs(pager.widths[0] - pager.widths[1])).toBeLessThan(2);
+  expect(pager.widths[0]).toBeGreaterThan(300);
 });
 
 test("切页不挤动内容区：阅读进度条显隐不改变页面顶边", async ({ page }) => {

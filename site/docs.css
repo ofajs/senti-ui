@@ -259,8 +259,10 @@ code { font-family: ui-monospace, Menlo, monospace; }
   border-top: 1px solid var(--md-sys-color-outline-variant);
 }
 .pager-link {
-  display: grid;
-  gap: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
   padding: 10px 13px;
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 12px;
@@ -268,17 +270,22 @@ code { font-family: ui-monospace, Menlo, monospace; }
   font-size: 12px;
   text-decoration: none;
 }
+/* 标签独占一行，图标与组件名在第二行；用 order 让左右箭头分别落在文字两侧 */
 .pager-link span {
+  order: -2;
+  flex: 0 0 100%;
   color: var(--md-sys-color-on-surface-variant);
   font-size: 9.5px;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
+.pager-link iconify-icon { order: -1; }
+.pager-next iconify-icon { order: 1; }
 .pager-link:hover {
   border-color: var(--md-sys-color-primary);
   background: var(--md-sys-color-surface-container-low);
 }
-.pager-next { margin-left: auto; text-align: right; }
+.pager-next { margin-left: auto; justify-content: flex-end; text-align: right; }
 .pager-empty { flex: 1; }
 
 /* docs index */
@@ -347,8 +354,9 @@ code { font-family: ui-monospace, Menlo, monospace; }
     font-size: 10px;
   }
   .demo-stage { padding: 22px 14px; }
-  .doc-pager { flex-direction: column; align-items: stretch; }
-  .pager-next { text-align: left; }
+  .doc-pager { flex-direction: column; align-items: stretch; gap: 10px; }
+  .pager-link { width: 100%; box-sizing: border-box; }
+  .pager-next { margin-left: 0; justify-content: flex-start; text-align: left; }
 }
 
 /* docs shell：位于二级父页 docs/layout.html；侧栏只渲染一次，切组件时只替换 slot 里的正文 */

@@ -195,7 +195,7 @@ const id = await contextMenu(e, [{ id: "copy", label: "复制" }, { separator: t
 
 ## st-code 代码块
 
-- 属性：`lang`（`html`(默认)/`js`/`ts`/`css`/`less`/`sass`）、`title`、`code`、`format`（`auto`(默认)/`off`）
+- 属性：`lang`（`html`(默认)/`js`/`ts`/`css`/`less`/`sass`）、`title`、`code`、`format`（`auto`(默认)/`off`）、`frame`（浏览器外壳；默认只有代码）
 - 源码用 `<template>`（惰性安全）或 `code` 属性 / `attr:code`；不要直接放 light DOM 子节点（script 会执行）
 - 自动格式化：HTML/JS/TS/CSS/Less 走内置 js-beautify；Sass 只去公共缩进；复制按钮内置，复制后派发 `copy`
 - 颜色走 M3 角色；皮肤 token：`--st-code-*`；part：`shell` / `header` / `title` / `copy` / `body` / `pre` / `code`

@@ -129,7 +129,7 @@ html[data-skin="cyberpunk"] {
 | `--st-drawer-radius` | `var(--st-radius-lg)` | 抽屉内侧圆角 |
 | `--st-drawer-shadow` | `var(--st-shadow-2)` | 抽屉阴影 |
 | `--st-drawer-backdrop-filter` / `--st-drawer-scrim` | `none` / `var(--st-dialog-scrim)` | 抽屉面板毛玻璃 / 遮罩（未单独设置时沿用 dialog 遮罩） |
-| `--st-code-bg` / `--st-code-header-bg` | `surface-container-highest` / `surface-container-high` | 代码块主体 / 顶栏 |
+| `--st-code-bg` / `--st-code-header-bg` | `surface-container-highest` / `surface-container-high` | 代码块主体 / 顶栏（仅 `frame` 模式） |
 | `--st-code-border` / `--st-code-radius` / `--st-code-shadow` | `transparent` / `var(--st-radius-md)` / `var(--st-shadow-1)` | 代码块描边 / 圆角 / 阴影 |
 | `--st-code-backdrop-filter` | `none` | 代码块毛玻璃 |
 | `--st-menu-bg` / `--st-menu-border` | `surface-container` / `transparent` | 菜单与 split-button 面板 |

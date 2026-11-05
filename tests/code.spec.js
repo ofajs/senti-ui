@@ -33,6 +33,25 @@ test("code：shell 可见并占满容器宽度", async ({ page }) => {
   expect(state.width).toBeCloseTo(state.hostWidth, 0);
 });
 
+test("code：默认无浏览器外壳，frame 才有顶栏 / 复制", async ({ page }) => {
+  const state = await page.evaluate(() => {
+    const plain = document.querySelector("#c-off");
+    const framed = document.querySelector("#c-html");
+    const head = (el) => getComputedStyle(el.shadowRoot.querySelector(".head")).display;
+    const shell = (el) => getComputedStyle(el.shadowRoot.querySelector(".shell"));
+    return {
+      plainHead: head(plain),
+      framedHead: head(framed),
+      plainBg: shell(plain).backgroundColor,
+      plainShadow: shell(plain).boxShadow,
+    };
+  });
+  expect(state.plainHead).toBe("none");
+  expect(state.framedHead).toBe("flex");
+  expect(state.plainBg).toBe("rgba(0, 0, 0, 0)");
+  expect(state.plainShadow).toBe("none");
+});
+
 test("code：template 内 HTML 保留标签，script 不执行", async ({ page }) => {
   const state = await page.evaluate(() => {
     const el = document.querySelector("#c-html");

@@ -9,16 +9,18 @@
   </style>
 </head>
   <body>
-    <!-- SCSR 二级父页：文档侧栏 / 移动端组件选择器只在这里维护一次。
+    <!-- SCSR 二级父页：文档侧栏 / 移动端左侧抽屉只在这里维护一次。
          每个组件页 export const parent = "./layout.html"，正文通过 <slot> 进入。 -->
     <o-app src="../app-config.js">
       <template page>
         <link rel="stylesheet" href="../docs.css" />
 
-        <!-- 文档 layout 自己会用到 list / select；从手记、皮肤等其他栏目进入文档时，
+        <!-- 文档 layout 自己会用到 list / drawer；从手记、皮肤等其他栏目进入文档时，
              目标页 body 里的 <l-m> 不会被执行，所以依赖必须在父页里再声明一次。 -->
         <l-m src="../../packages/list/list.html"></l-m>
-        <l-m src="../../packages/select/select.html"></l-m>
+        <l-m src="../../packages/drawer/drawer.html"></l-m>
+        <l-m src="../../packages/button/button.html"></l-m>
+        <l-m src="../../packages/button/icon-button.html"></l-m>
 
         <div class="docs-shell">
           <aside class="docs-side" aria-label="组件文档目录">
@@ -30,83 +32,58 @@
               </st-list-item>
             </st-list>
 
-            <p class="side-group">基础</p>
-            <st-list class="side-list">
-              <st-list-item button class:active="current === 'button'" on:click="goDoc('button')"><span>Button</span><code slot="suffix">st-button</code></st-list-item>
-            </st-list>
-
-            <p class="side-group">表单</p>
-            <st-list class="side-list">
-              <st-list-item button class:active="current === 'input'" on:click="goDoc('input')"><span>Input</span><code slot="suffix">st-input</code></st-list-item>
-              <st-list-item button class:active="current === 'textarea'" on:click="goDoc('textarea')"><span>Textarea</span><code slot="suffix">st-textarea</code></st-list-item>
-              <st-list-item button class:active="current === 'select'" on:click="goDoc('select')"><span>Select</span><code slot="suffix">st-select</code></st-list-item>
-              <st-list-item button class:active="current === 'checkbox'" on:click="goDoc('checkbox')"><span>Checkbox</span><code slot="suffix">st-checkbox</code></st-list-item>
-              <st-list-item button class:active="current === 'switch'" on:click="goDoc('switch')"><span>Switch</span><code slot="suffix">st-switch</code></st-list-item>
-              <st-list-item button class:active="current === 'radio'" on:click="goDoc('radio')"><span>Radio</span><code slot="suffix">st-radio</code></st-list-item>
-              <st-list-item button class:active="current === 'slider'" on:click="goDoc('slider')"><span>Slider</span><code slot="suffix">st-slider</code></st-list-item>
-            </st-list>
-
-            <p class="side-group">反馈</p>
-            <st-list class="side-list">
-              <st-list-item button class:active="current === 'dialog'" on:click="goDoc('dialog')"><span>Dialog</span><code slot="suffix">st-dialog</code></st-list-item>
-              <st-list-item button class:active="current === 'drawer'" on:click="goDoc('drawer')"><span>Drawer</span><code slot="suffix">st-drawer</code></st-list-item>
-              <st-list-item button class:active="current === 'menu'" on:click="goDoc('menu')"><span>Menu</span><code slot="suffix">st-menu</code></st-list-item>
-              <st-list-item button class:active="current === 'snackbar'" on:click="goDoc('snackbar')"><span>Snackbar</span><code slot="suffix">st-snackbar</code></st-list-item>
-              <st-list-item button class:active="current === 'progress'" on:click="goDoc('progress')"><span>Progress</span><code slot="suffix">st-progress</code></st-list-item>
-            </st-list>
-
-            <p class="side-group">内容</p>
-            <st-list class="side-list">
-              <st-list-item button class:active="current === 'card'" on:click="goDoc('card')"><span>Card</span><code slot="suffix">st-card</code></st-list-item>
-              <st-list-item button class:active="current === 'badges'" on:click="goDoc('badges')"><span>Badges</span><code slot="suffix">st-badges</code></st-list-item>
-              <st-list-item button class:active="current === 'list'" on:click="goDoc('list')"><span>List</span><code slot="suffix">st-list</code></st-list-item>
-            </st-list>
-
-            <p class="side-group">导航</p>
-            <st-list class="side-list">
-              <st-list-item button class:active="current === 'tabs'" on:click="goDoc('tabs')"><span>Tabs</span><code slot="suffix">st-tab-bar</code></st-list-item>
-              <st-list-item button class:active="current === 'navigation'" on:click="goDoc('navigation')"><span>Navigation</span><code slot="suffix">st-nav-bar</code></st-list-item>
-            </st-list>
-
-            <p class="side-group">辅助</p>
-            <st-list class="side-list">
-              <st-list-item button class:active="current === 'collapse'" on:click="goDoc('collapse')"><span>Collapse</span><code slot="suffix">st-collapse</code></st-list-item>
-              <st-list-item button class:active="current === 'tooltip'" on:click="goDoc('tooltip')"><span>Tooltip</span><code slot="suffix">st-tooltip</code></st-list-item>
-              <st-list-item button class:active="current === 'ripple'" on:click="goDoc('ripple')"><span>Ripple</span><code slot="suffix">st-ripple</code></st-list-item>
-              <st-list-item button class:active="current === 'tools'" on:click="goDoc('tools')"><span>Command tools</span><code slot="suffix">toast</code></st-list-item>
-            </st-list>
+            <o-fill :value="navGroups" fill-key="title">
+              <div class="side-group-block">
+                <p class="side-group">{{$data.title}}</p>
+                <st-list class="side-list">
+                  <o-fill :value="$data.items" fill-key="id">
+                    <st-list-item button attr:class="$data.active ? 'active' : ''" on:click="$host.goDoc($data.id)">
+                      <span>{{$data.label}}</span><code slot="suffix">{{$data.tag}}</code>
+                    </st-list-item>
+                  </o-fill>
+                </st-list>
+              </div>
+            </o-fill>
           </aside>
 
           <div class="docs-body">
-            <st-select class="docs-picker" placeholder="选择组件" on:change="onNavigate">
-              <option value="index">概览</option>
-              <option value="button">Button</option>
-              <option value="input">Input</option>
-              <option value="textarea">Textarea</option>
-              <option value="select">Select</option>
-              <option value="checkbox">Checkbox</option>
-              <option value="switch">Switch</option>
-              <option value="radio">Radio</option>
-              <option value="slider">Slider</option>
-              <option value="dialog">Dialog</option>
-              <option value="drawer">Drawer</option>
-              <option value="menu">Menu</option>
-              <option value="snackbar">Snackbar</option>
-              <option value="progress">Progress</option>
-              <option value="card">Card</option>
-              <option value="badges">Badges</option>
-              <option value="list">List</option>
-              <option value="tabs">Tabs</option>
-              <option value="navigation">Navigation</option>
-              <option value="collapse">Collapse</option>
-              <option value="tooltip">Tooltip</option>
-              <option value="ripple">Ripple</option>
-              <option value="tools">Command tools</option>
-            </st-select>
+            <div class="docs-mobile-nav">
+              <st-button class="docs-nav-trigger" variant="outlined" on:click="navOpen = true">
+                <iconify-icon slot="prefix" icon="mdi:format-list-bulleted"></iconify-icon>
+                组件目录 · {{currentLabel}}
+              </st-button>
+            </div>
+
 
             <slot></slot>
           </div>
         </div>
+
+        <st-drawer class="docs-nav-drawer" sync:open="navOpen" auto-close side="left" aria-label="组件文档目录">
+          <div slot="headline" class="docs-nav-head">
+            <span class="docs-nav-title">组件目录</span>
+            <st-icon-button title="关闭目录" on:click="navOpen = false"><iconify-icon icon="mdi:close"></iconify-icon></st-icon-button>
+          </div>
+          <div class="docs-nav-body">
+            <st-list class="side-list">
+              <st-list-item button class:active="current === 'index'" on:click="goDoc('index')">
+                <span>概览</span><code slot="suffix">all</code>
+              </st-list-item>
+            </st-list>
+            <o-fill :value="navGroups" fill-key="title">
+              <div class="side-group-block">
+                <p class="side-group">{{$data.title}}</p>
+                <st-list class="side-list">
+                  <o-fill :value="$data.items" fill-key="id">
+                    <st-list-item button attr:class="$data.active ? 'active' : ''" on:click="$host.goDoc($data.id)">
+                      <span>{{$data.label}}</span><code slot="suffix">{{$data.tag}}</code>
+                    </st-list-item>
+                  </o-fill>
+                </st-list>
+              </div>
+            </o-fill>
+          </div>
+        </st-drawer>
 
         <script>
           export const parent = "../layout.html";
@@ -114,22 +91,67 @@
           export default async () => ({
             data: {
               current: "index",
+              currentLabel: "概览",
+              navOpen: false,
+              navGroups: [
+                {
+                  title: "基础",
+                  items: [{ id: "button", label: "Button", tag: "st-button" }],
+                },
+                {
+                  title: "表单",
+                  items: [
+                    { id: "input", label: "Input", tag: "st-input" },
+                    { id: "textarea", label: "Textarea", tag: "st-textarea" },
+                    { id: "select", label: "Select", tag: "st-select" },
+                    { id: "checkbox", label: "Checkbox", tag: "st-checkbox" },
+                    { id: "switch", label: "Switch", tag: "st-switch" },
+                    { id: "radio", label: "Radio", tag: "st-radio" },
+                    { id: "slider", label: "Slider", tag: "st-slider" },
+                  ],
+                },
+                {
+                  title: "反馈",
+                  items: [
+                    { id: "dialog", label: "Dialog", tag: "st-dialog" },
+                    { id: "drawer", label: "Drawer", tag: "st-drawer" },
+                    { id: "menu", label: "Menu", tag: "st-menu" },
+                    { id: "snackbar", label: "Snackbar", tag: "st-snackbar" },
+                    { id: "progress", label: "Progress", tag: "st-progress" },
+                  ],
+                },
+                {
+                  title: "内容",
+                  items: [
+                    { id: "card", label: "Card", tag: "st-card" },
+                    { id: "badges", label: "Badges", tag: "st-badges" },
+                    { id: "list", label: "List", tag: "st-list" },
+                  ],
+                },
+                {
+                  title: "导航",
+                  items: [
+                    { id: "tabs", label: "Tabs", tag: "st-tab-bar" },
+                    { id: "navigation", label: "Navigation", tag: "st-nav-bar" },
+                  ],
+                },
+                {
+                  title: "辅助",
+                  items: [
+                    { id: "collapse", label: "Collapse", tag: "st-collapse" },
+                    { id: "tooltip", label: "Tooltip", tag: "st-tooltip" },
+                    { id: "ripple", label: "Ripple", tag: "st-ripple" },
+                    { id: "tools", label: "Command tools", tag: "toast" },
+                  ],
+                },
+              ],
             },
             ready() {
               this.syncActive();
-              this.syncPicker();
-              // 移动端 picker 可能比父页晚升级，升级后再同步一次当前项
-              customElements.whenDefined("st-select").then(() => this.syncPicker());
-              this._pickerTimer = setTimeout(() => this.syncPicker(), 160);
             },
             routerChange({ current } = {}) {
               this.syncActive(current);
-              this.syncPicker();
-              clearTimeout(this._pickerTimer);
-              this._pickerTimer = setTimeout(() => this.syncPicker(), 80);
-            },
-            detached() {
-              clearTimeout(this._pickerTimer);
+              this.navOpen = false;
             },
             proto: {
               syncActive(current) {
@@ -137,17 +159,17 @@
                   (current && current.src) || location.pathname.split("?")[0];
                 const file = raw.split("?")[0].split("/").pop().replace(/\.html$/, "");
                 this.current = !file || file === "index" || file === "layout" ? "index" : file;
-              },
-              syncPicker() {
-                const picker = this.ele.shadowRoot?.querySelector(".docs-picker");
-                if (!picker) return;
-                if (picker.value !== this.current) picker.value = this.current;
-              },
-              onNavigate(e) {
-                const id = e.target.value;
-                if (id) this.goDoc(id);
+                let label = this.current === "index" ? "概览" : "组件目录";
+                for (const group of this.navGroups) {
+                  for (const item of group.items) {
+                    item.active = item.id === this.current;
+                    if (item.active) label = item.label;
+                  }
+                }
+                this.currentLabel = label;
               },
               goDoc(id) {
+                this.navOpen = false;
                 this.goto(id === "index" ? "./index.html" : "./" + id + ".html");
               },
             },

@@ -389,8 +389,8 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
         active: b.classList.contains("active"),
       })),
       sidebar: !!dsr.querySelector(".docs-side"),
-      picker: !!dsr.querySelector(".docs-picker"),
-      pickerValue: dsr.querySelector(".docs-picker").value,
+      mobileNav: !!dsr.querySelector(".docs-nav-trigger"),
+      mobileNavLabel: dsr.querySelector(".docs-nav-trigger")?.textContent.replace(/\s+/g, " ").trim(),
       progress: !!layout.shadowRoot.querySelector(".read-progress st-progress"),
       h1: sr.querySelector("h1").textContent.trim(),
       apiRows: sr.querySelectorAll(".api tbody tr").length,
@@ -418,8 +418,8 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
     { variant: "text", active: false },
   ]);
   expect(state.sidebar).toBe(true);
-  expect(state.picker).toBe(true);
-  expect(state.pickerValue).toBe("input");
+  expect(state.mobileNav).toBe(true);
+  expect(state.mobileNavLabel).toContain("Input");
   expect(state.progress).toBe(true);
   expect(state.h1).toBe("Input st-input");
   expect(state.apiRows).toBeGreaterThan(2);
@@ -457,7 +457,10 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
       active: [...docs.shadowRoot.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
         x.textContent.replace(/\s+/g, " ").trim()
       ),
-      pickerValue: docs.shadowRoot.querySelector(".docs-picker").value,
+      mobileNavLabel: docs.shadowRoot
+        .querySelector(".docs-nav-trigger")
+        ?.textContent.replace(/\s+/g, " ")
+        .trim(),
       // pageAnime 三态由 app-config.js 注入 o-page 内联样式，过渡由 ofa 注入（all .3s）
       transitionProperty: getComputedStyle(child).transitionProperty,
       transitionDuration: getComputedStyle(child).transitionDuration,
@@ -469,7 +472,7 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(after.pages).toBe(3);
   expect(after.sidebars).toBe(1);
   expect(after.active[0]).toContain("Slider");
-  expect(after.pickerValue).toBe("slider");
+  expect(after.mobileNavLabel).toContain("Slider");
   // 上移淡入 = pageAnime 的 transform + opacity，过渡时长来自 ofa
   expect(after.transitionProperty).toBe("all");
   expect(after.transitionDuration).toBe("0.3s");
@@ -490,6 +493,32 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   await waitDocPage(page, "Dialog");
   expect(await page.evaluate(() => [...document.querySelectorAll("o-page")].length)).toBe(3);
   expect(errors).toEqual([]);
+});
+
+test("移动端文档：组件目录收进左侧抽屉，替代小 select", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/site/docs/input.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await waitDocPage(page, "Input");
+
+  await expect(page.locator(".docs-side")).toBeHidden();
+  await expect(page.locator(".docs-mobile-nav")).toBeVisible();
+  await expect(page.locator(".docs-picker")).toHaveCount(0);
+
+  const trigger = page.locator("st-button.docs-nav-trigger");
+  await expect(trigger).toContainText("Input");
+  await trigger.click();
+
+  const drawer = page.locator("st-drawer.docs-nav-drawer");
+  await expect(drawer).toHaveAttribute("open", "");
+  await expect(drawer).toBeVisible();
+  await expect(
+    drawer.locator("st-list-item").filter({ hasText: "Input" })
+  ).toHaveClass(/active/);
+
+  await drawer.locator("st-list-item").filter({ hasText: "Drawer" }).click();
+  await expect(page).toHaveURL(/\/site\/docs\/drawer\.html$/);
+  await expect(drawer).not.toHaveAttribute("open", "");
+  await expect(trigger).toContainText("Drawer");
 });
 
 test("切页不挤动内容区：阅读进度条显隐不改变页面顶边", async ({ page }) => {
@@ -1037,6 +1066,9 @@ test("切换材质时对比度回到该主题的默认值", async ({ page }) => 
   await page.evaluate(() => localStorage.clear());
   await page.reload();
   await page.locator(".skin-card").first().waitFor({ state: "visible" });
+  await page.waitForFunction(() => typeof window.__site?.setThemeMode === "function", null, {
+    timeout: 15_000,
+  });
 
   const useTheme = async (name) => {
     await page
@@ -1141,6 +1173,9 @@ test("切换主题保留全局深浅模式（Cyberpunk 深色优先）", async (
   await page.evaluate(() => localStorage.clear());
   await page.reload();
   await page.locator(".skin-card").first().waitFor({ state: "visible" });
+  await page.waitForFunction(() => typeof window.__site?.setThemeMode === "function", null, {
+    timeout: 15_000,
+  });
 
   const useTheme = (name, id) => {
     const card = page.locator(".skin-card").filter({ hasText: name });
@@ -1416,12 +1451,12 @@ test("共享 header：皮肤菜单切换全站材质并持久化", async ({ page
     .toBe("m3");
 });
 
-test("移动端：横向导航收进左侧抽屉，可进入文档并高亮当前栏目", async ({ page }) => {
+test("移动端：横向导航收进右侧抽屉，可进入文档并高亮当前栏目", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/site/index.html");
   await page.waitForTimeout(1200);
 
-  // 移动端隐藏横向导航，改由左侧抽屉承载
+  // 移动端隐藏横向导航，改由右侧抽屉承载
   await expect(page.locator(".layout-nav")).toBeHidden();
   const toggle = page.locator("st-icon-button.nav-toggle");
   await expect(toggle).toBeVisible();
@@ -1429,6 +1464,7 @@ test("移动端：横向导航收进左侧抽屉，可进入文档并高亮当�
   const drawer = page.locator("st-drawer.mobile-drawer");
   await toggle.click();
   await expect(drawer).toHaveAttribute("open", "");
+  await expect(drawer).toHaveAttribute("side", "right");
   await expect(drawer).toBeVisible();
   const docsItem = drawer.locator("st-button").filter({ hasText: "文档" });
   await docsItem.click();
@@ -1586,7 +1622,7 @@ test("文档侧栏按使用频率排序：Ripple 等低频组件靠后", async (
     );
     const sr = docs.shadowRoot;
     return {
-      groups: [...sr.querySelectorAll(".side-group")].map((el) => el.textContent.trim()),
+      groups: [...sr.querySelectorAll(".docs-side .side-group")].map((el) => el.textContent.trim()),
       items: [...sr.querySelectorAll(".docs-side st-list-item")].map((el) =>
         el.textContent.replace(/\s+/g, " ").trim()
       ),
@@ -1913,7 +1949,7 @@ test("皮肤页：可用色块变量按角色分组展示白天 / 黑夜，色�
   expect(luminance(backPanels[0])).toBeGreaterThan(luminance(backPanels[1]));
 });
 
-test("从手记切到文档：二级 layout 的 list / select 依赖随父页加载", async ({ page }) => {
+test("从手记切到文档：二级 layout 的 list / drawer 依赖随父页加载", async ({ page }) => {
   await page.goto("/site/notes/index.html", { waitUntil: "networkidle", timeout: 60_000 });
   await page.waitForFunction(() =>
     [...document.querySelectorAll("o-page")].some(
@@ -1955,18 +1991,18 @@ test("从手记切到文档：二级 layout 的 list / select 依赖随父页加
     const sr = docs.shadowRoot;
     const list = sr.querySelector(".docs-side st-list");
     const item = sr.querySelector(".docs-side st-list-item");
-    const picker = sr.querySelector(".docs-picker");
+    const drawer = sr.querySelector(".docs-nav-drawer");
     return {
       listUpgraded: !!list?.shadowRoot,
       items: sr.querySelectorAll(".docs-side st-list-item").length,
       firstItemHeight: item?.getBoundingClientRect().height || 0,
-      pickerUpgraded: !!picker?.shadowRoot,
+      drawerUpgraded: !!drawer?.shadowRoot,
     };
   });
   expect(state.listUpgraded).toBe(true);
   expect(state.items).toBe(23);
   expect(state.firstItemHeight).toBeGreaterThan(20);
-  expect(state.pickerUpgraded).toBe(true);
+  expect(state.drawerUpgraded).toBe(true);
 
   // 目标文档页自己的组件依赖也必须在 template 内：从手记进入时按钮组 / 分裂按钮要能升级
   await page.evaluate(() => {

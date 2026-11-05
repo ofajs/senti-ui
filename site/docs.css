@@ -400,11 +400,38 @@ code { font-family: ui-monospace, Menlo, monospace; }
   white-space: nowrap;
 }
 .docs-body { min-width: 0; }
-.docs-picker {
-  display: none;
+
+/* 移动端组件目录：左侧抽屉（桌面保留上面的 .docs-side 侧栏） */
+.docs-mobile-nav { display: none; margin-bottom: 18px; }
+.docs-nav-trigger {
   width: 100%;
-  max-width: 360px;
-  margin-bottom: 18px;
+  justify-content: flex-start;
+  height: 44px;
+  font-size: 13px;
+}
+.docs-nav-drawer::part(panel) { padding-top: 72px; }
+.docs-nav-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+.docs-nav-title { font-size: 16px; font-weight: 600; }
+.docs-nav-body st-list { gap: 1px; }
+.docs-nav-body st-list-item {
+  font-size: 13px;
+  border-radius: 9px;
+}
+.docs-nav-body st-list-item.active {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+.docs-nav-body code[slot="suffix"] {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 9px;
+  opacity: 0.75;
+  white-space: nowrap;
 }
 @media (max-width: 980px) {
   .docs-shell {
@@ -412,7 +439,7 @@ code { font-family: ui-monospace, Menlo, monospace; }
     padding-top: 12px;
   }
   .docs-side { display: none; }
-  .docs-picker { display: block; }
+  .docs-mobile-nav { display: block; }
 }
 
 /* 二级父页（docs/layout.html）：slot 外层必须是相对容器，

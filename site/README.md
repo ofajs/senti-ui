@@ -20,7 +20,7 @@ site/
   index.html       # 组件目录首页（export const parent = "./layout.html"）
   skins.html       # 主题页：五张主题卡（材质 + 官方配色）+ 改色/加色（parent = "./layout.html"）
   docs/
-    layout.html    # 二级父页：左侧组件目录 / 移动端 picker + <slot>（parent 指向上级 layout）
+    layout.html    # 二级父页：左侧组件目录 / 移动端左侧抽屉 + <slot>（parent 指向上级 layout）
     index.html     # 文档概览：22 张卡片，按基础 / 辅助分组（parent = "./layout.html"）
     button.html    # 每个组件一页（共 21 页，均 parent = "./layout.html"）
     input.html
@@ -62,7 +62,7 @@ site/
 
 - `layout.html` 是 SCSR 的**共享父页**：header（favicon 同款标记 + SentiUI 字标 / 文档·皮肤·手记文字导航（组件目录即首页，点品牌回首页） / 三巨头材质快捷菜单 / 主题 / GitHub）、footer、以及主题与皮肤状态都在这里；子页在 `<slot>` 中渲染，切页时布局不销毁；材质切换走 `data-skin` / `setSkin()`；
 - `index.html` 声明 `export const parent = "./layout.html"`；`docs/layout.html` 再声明 `export const parent = "../layout.html"`，形成**多级嵌套布局**；`docs/` 下每个组件页声明 `export const parent = "./layout.html"`；
-- 文档左侧组件目录（`st-list` + `st-list-item`）和移动端 `st-select` 只存在于 `docs/layout.html` 一处；同父页的组件互相切换时侧栏不销毁、不重排，只替换 `<slot>` 里的正文；
+- 文档左侧组件目录（`st-list` + `st-list-item`）和移动端组件目录抽屉只存在于 `docs/layout.html` 一处；同父页的组件互相切换时侧栏不销毁、不重排，只替换 `<slot>` 里的正文；
 - `notes/` 是独立的阅读栏目（导航名「手记」）：`index.html` 是文章目录，`why-senti-ui.html` 是第一篇设计手记；两者都 `parent = "../layout.html"`，正文页共用 `notes.css`，站内跳转用 `olink` 保持共享 header；
 - 页面切换动画**只在 `app-config.js` 的 `pageAnime` 里配置**：前进时新页从下方 16px 上移并淡入、旧页上移 16px 淡出；后退方向相反（新页从上方 16px 落下）。过渡时长不写在配置里——ofa 自动注入 `all .3s`，入场淡入、离场淡出与位移都在这次过渡里完成。两级 layout 不写任何切页动画 CSS；页面背景透明，由 layout 的固定环境光层提供底色；文档示例容器 `.demo` / `.demo-stage` / `.demo-content` 也改为半透明，Apple 下同样能透出环境光；
 - **slot 外层必须是相对容器**（`.docs-body { position: relative }`）：离场页会被 scsr 设为 `position: absolute`，没有相对容器时会相对视口定位，切换瞬间露出旧内容造成“闪一下”；
@@ -72,7 +72,7 @@ site/
 - **不要给 `pageAnime` 三态写 `transition`**：ofa 的入场是「先写 `next`，rAF+5ms 后再写 `current`」，起点态一旦自带 `transition`，这一帧会先起一个过渡、随后被 `current` 反向，浏览器把它合并成 0 时长，页面直接跳到位（Chromium 实测：`transform` 过渡只活了 1ms，淡入同样失效）。三态只写 `opacity` / `transform`，过渡统一由 ofa 注入的 `all .3s` 提供；
 - 当前 `pageAnime` 是静态对象，**没有 `prefers-reduced-motion` 降级**——系统开启「减弱动效」时仍会播放 0.3s 位移 + 淡入。需要恢复时改成 getter，按 `matchMedia("(prefers-reduced-motion: reduce)")` 返回另一组无位移、0.01s 过渡的态（0s 不触发 `transitionend`，离场会多等 350ms 兜底，见 [pitfall #59b](../pitfall/59b-pageanime-transition.md)）；
 - `pageAnime` 只覆盖站内路由切换：整页刷新 / 直接打开某页时 scsr 不经过切换，因此没有入场动画（这是有意接受的，不是 bug）；
-- header 用 senti-ui 组件搭：三个 `variant="text"` 的 `st-button` 做「文档 / 皮肤 / 手记」导航（组件目录即首页，不再单独占一个导航项，点品牌字标回首页；当前项用 `class:active` 换成 primary 色，不使用 button-group）、`st-icon-button` + `st-tooltip`（主题 / GitHub）、品牌也是 `st-button`：favicon 同款圆角方块 + 白点标记 + SentiUI 字标；导航用页面实例的 `goto()` 保持真实路径与共享布局；**≤760px 时横向导航隐藏，改由左侧 `st-drawer.mobile-drawer` 承载组件目录 / 文档 / 皮肤 / 手记 / GitHub，当前栏目在抽屉内高亮**；
+- header 用 senti-ui 组件搭：三个 `variant="text"` 的 `st-button` 做「文档 / 皮肤 / 手记」导航（组件目录即首页，不再单独占一个导航项，点品牌字标回首页；当前项用 `class:active` 换成 primary 色，不使用 button-group）、`st-icon-button` + `st-tooltip`（主题 / GitHub）、品牌也是 `st-button`：favicon 同款圆角方块 + 白点标记 + SentiUI 字标；导航用页面实例的 `goto()` 保持真实路径与共享布局；**≤760px 时横向导航隐藏，改由右侧 `st-drawer.mobile-drawer` 承载组件目录 / 文档 / 皮肤 / 手记 / GitHub，当前栏目在抽屉内高亮**；
 - scsr 接管后，把当前 URL（`/site/`、`/site/index.html`、`/site/docs/button.html` 等）收编为 `<o-page src>`，用同一份 HTML 的 `template[page]` 转译成页面模块，然后移除内联 template；
 - 页面本体随后渲染在 `o-page` 的 shadow 内，`:host` 样式、`this.ele.shadowRoot` 等写法与普通页面模块一致；
 - `app-config.js` **不声明 home**：首页就是当前 URL 的页面，声明 home 会与 scsr 竞争；
@@ -114,14 +114,14 @@ site/
   - 插槽 / 事件 / 注意事项
   - 可折叠的示例代码
   - 指向 GitHub README 的入口
-- 左侧粘性目录只在 `docs/layout.html` 维护一次，用 `st-list` + `st-list-item` 搭；父页在 `routerChange` 里按当前 URL 高亮，移动端自动显示 `st-select` 组件切换器
+- 左侧粘性目录只在 `docs/layout.html` 维护一次，用 `st-list` + `st-list-item` 搭；父页在 `routerChange` 里按当前 URL 高亮，移动端改为左侧 `st-drawer` 组件目录抽屉
 - `docs/layout.html` 顶部必须自己声明 `list` / `select` 的 `<l-m>`：SCSR 站内跳转只解析目标页的 `template[page]`，目标页 body 里的 l-m 不会执行；否则从手记/皮肤等栏目进入文档时侧栏组件不会升级
 - 页面内用 `st-progress` 做阅读进度条、`st-icon-button` + `st-tooltip` 做回到顶部。**进度条必须绝对定位**（`position: absolute; bottom: -4px`，放在 header 内）：它只在文档页出现，如果按普通 flex 项显隐，home ↔ docs 切换时会多占/少占 3px，把整页（包括正在淡出的上一页）挤动 3px——表现就是“切页前内容先偏一下，再开始动画”；
 - header 与首页完全共用；主题 / 材质切换在 header 中，只影响按钮 / 输入框
 - 仍然是 SCSR：每个组件页都是可直达、可刷新、可分享的真实文档
 - 页面切换有淡入 + 轻微上滑动画；header / 阅读进度常驻，内容区不因侧栏出现而重排
 
-新增组件文档时：在 `site/docs/` 复制一个页面改内容；只改 `site/docs/layout.html` 一处，补上侧栏项与移动端 `<option>`；再在 `site/docs/index.html` 补一张卡（放进基础或辅助分组，并同步该组计数），并同步首页卡片的 `./docs/{id}.html` 链接。组件页本身不再包含侧栏。
+新增组件文档时：在 `site/docs/` 复制一个页面改内容；只改 `site/docs/layout.html` 一处，补上 `navGroups` 项（桌面侧栏与移动抽屉共用）；再在 `site/docs/index.html` 补一张卡（放进基础或辅助分组，并同步该组计数），并同步首页卡片的 `./docs/{id}.html` 链接。组件页本身不再包含侧栏。
 
 ## 首屏与无 JS
 
@@ -196,8 +196,8 @@ npm test
 
 - `/site/` 目录直开：25 张卡片、29 个 `st-*` 全部升级、无页面错误、`template[page]` 已被 scsr 移除、页面内没有 `/docs/` 链接；
 - 皮肤 / 主题 / 对话框交互；
-- 共享 layout：首页两个 `o-page`（layout + 子页）、header 文字导航 / 材质快捷菜单 / 主题 / 回到首页，品牌标记与 favicon 一致；移动端（≤760px）横向导航收进左侧抽屉，抽屉可切到组件目录 / 文档 / 皮肤 / 手记并高亮当前栏目；
-- 组件文档：三层 `o-page`（site layout + docs layout + 组件页）、侧栏只有一份、每页 4 组以上示例、侧栏切换、移动端 picker 跟随当前页、上一页 / 下一页、阅读进度、页面切换动画；
+- 共享 layout：首页两个 `o-page`（layout + 子页）、header 文字导航 / 材质快捷菜单 / 主题 / 回到首页，品牌标记与 favicon 一致；移动端（≤760px）横向导航收进右侧抽屉，抽屉可切到组件目录 / 文档 / 皮肤 / 手记并高亮当前栏目；
+- 组件文档：三层 `o-page`（site layout + docs layout + 组件页）、侧栏只有一份、每页 4 组以上示例、侧栏切换、移动端组件目录抽屉跟随当前页、上一页 / 下一页、阅读进度、页面切换动画；
 - 滚动外壳：`body` 不滚动、内部 `.site-scroll` 滚动、`overscroll-behavior-y: none`，header / 侧栏固定，阅读进度随内部滚动更新，路由切换复位；
 - 固定弹层：页面动画结束后 `transform` 必须回到 `none`，对话框遮罩覆盖整个视口；
 - 皮肤页改色：种子色实时重算 CSS token、加色生成四配对 token、可用色块按角色分组、分白天 / 黑夜面板展示且色块可复制、色块模式展示当前角色色 + 自定义色的音调盘且随改色更新、刷新后持久化、恢复默认清空配置；

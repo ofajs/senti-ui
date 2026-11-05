@@ -126,6 +126,16 @@
   --st-dialog-enter-duration: 280ms;
   --st-dialog-exit-duration: 180ms;
   --st-dialog-scrim-duration: 240ms;
+  /* 抽屉：与 dialog 同为毛玻璃浮层，但面板用较低一层的 surface */
+  --st-drawer-bg: rgb(from var(--md-sys-color-surface-container-low) r g b / 0.52);
+  --st-drawer-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
+  --st-drawer-radius: var(--st-dialog-radius);
+  --st-drawer-shadow: var(--st-shadow-2);
+  --st-drawer-backdrop-filter: blur(24px) saturate(180%);
+  --st-drawer-scrim: var(--st-dialog-scrim);
+  --st-drawer-scrim-filter: var(--st-dialog-scrim-filter);
+  --st-drawer-enter-duration: 280ms;
+  --st-drawer-exit-duration: 180ms;
   --st-menu-bg: rgb(from var(--md-sys-color-surface-container) r g b / 0.46);
   --st-menu-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
   /* 菜单是贴近正文的弹层：模糊比大面积表面轻，才能看出底下的内容轮廓 */
@@ -152,6 +162,8 @@
   /* 密度 */
   --st-dialog-padding: 1.429em;
   --st-dialog-gap: 1em;
+  --st-drawer-padding: 1.429em;
+  --st-drawer-gap: 1em;
   --st-menu-padding: 0.286em;
   --st-menu-item-padding: 0.714em 0.643em;
   --st-card-padding: 1em;

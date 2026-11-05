@@ -115,6 +115,16 @@
   --st-dialog-enter-duration: 160ms;
   --st-dialog-exit-duration: 120ms;
   --st-dialog-scrim-duration: 140ms;
+  /* 抽屉：扁平表面 + 细描边，和 dialog 同一套 shadcn 浮层材质 */
+  --st-drawer-bg: var(--md-sys-color-surface);
+  --st-drawer-border: var(--md-sys-color-outline-variant);
+  --st-drawer-radius: var(--st-dialog-radius);
+  --st-drawer-shadow: var(--st-shadow-1);
+  --st-drawer-backdrop-filter: none;
+  --st-drawer-scrim: var(--st-dialog-scrim);
+  --st-drawer-scrim-filter: var(--st-dialog-scrim-filter);
+  --st-drawer-enter-duration: 160ms;
+  --st-drawer-exit-duration: 120ms;
   --st-menu-bg: var(--md-sys-color-surface);
   --st-menu-border: var(--md-sys-color-outline-variant);
   --st-card-bg: var(--md-sys-color-surface);
@@ -135,6 +145,8 @@
   /* 密度 */
   --st-dialog-padding: 1.143em;
   --st-dialog-gap: 0.857em;
+  --st-drawer-padding: 1.143em;
+  --st-drawer-gap: 0.857em;
   --st-menu-padding: 0.214em;
   --st-menu-item-padding: 0.643em 0.571em;
   --st-card-padding: 0.857em;

@@ -103,6 +103,16 @@
   --st-dialog-enter-duration: 300ms;
   --st-dialog-exit-duration: 200ms;
   --st-dialog-scrim-duration: 250ms;
+  /* 抽屉：与 dialog 同一套浮层语言，但面板贴边、默认较低一层的 surface */
+  --st-drawer-bg: var(--md-sys-color-surface-container-low);
+  --st-drawer-border: var(--md-sys-color-outline-variant);
+  --st-drawer-radius: var(--st-radius-lg);
+  --st-drawer-shadow: var(--st-shadow-2);
+  --st-drawer-backdrop-filter: none;
+  --st-drawer-scrim: var(--st-dialog-scrim);
+  --st-drawer-scrim-filter: var(--st-dialog-scrim-filter);
+  --st-drawer-enter-duration: 280ms;
+  --st-drawer-exit-duration: 200ms;
   --st-menu-bg: var(--md-sys-color-surface-container);
   --st-menu-border: transparent;
   --st-menu-backdrop-filter: none;
@@ -126,6 +136,8 @@
   /* 密度 */
   --st-dialog-padding: 1.43em;
   --st-dialog-gap: 1.14em;
+  --st-drawer-padding: 1.43em;
+  --st-drawer-gap: 1.14em;
   --st-card-padding: 1em;
   --st-menu-padding: 0.286em;
   --st-menu-item-padding: 0.786em 0.714em;

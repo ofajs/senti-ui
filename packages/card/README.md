@@ -44,7 +44,8 @@
 ## 注意事项与使用技巧
 
 - `interactive` 时整卡可点、Tab 聚焦有焦圈、Enter/Space 激活；非 interactive 是纯容器
-- 可访问名称取卡片文字；文字不理想时用 `aria-label` 覆盖。卡片内放按钮/链接不再被覆盖层挡住（可以正常点击），但 click 仍会冒泡到卡片宿主，需要时在内部元素上 `stopPropagation`；若卡片本身不需要整卡可点，优先去掉 interactive（避免 button 嵌套 button 的语义问题）
+- 可访问名称取卡片文字（内容变化会自动跟随；文字不理想时用 `aria-label` 覆盖）。卡片内放按钮/链接不再被覆盖层挡住（可以正常点击），但 click 仍会冒泡到卡片宿主，需要时在内部元素上 `stopPropagation`
+- **键盘**：Enter/Space 只在卡片宿主自身获得焦点时激活卡片；焦点在卡片内部按钮/链接上时会放行给内部控件，不会把内部按钮的默认激活吞掉。若卡片本身不需要整卡可点，优先去掉 interactive（避免 button 嵌套 button 的语义问题）
 - 媒体区直接 `<img>` + `style="margin: -1em -1em 1em; width: calc(100% + 2em); display:block;"` 铺满
 
 ## 验证页面

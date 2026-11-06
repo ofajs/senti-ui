@@ -66,7 +66,7 @@
 
           <article class="doc-page">
             <header class="doc-hero">
-              <p class="doc-kicker">辅助 · 20 / 21</p>
+              <p class="doc-kicker">辅助 · 21 / 22</p>
               <h1>Ripple <code>st-ripple</code></h1>
               <p class="doc-lead">点击波纹组件：放进任意 position: relative 的父元素，点击该区域就会从指针处扩散一圈 currentColor。它不拦截交互、不改变布局，按钮与列表项已经内嵌，一般只在自定义容器里单独使用。</p>
               <div class="doc-links">
@@ -79,32 +79,43 @@
               <h2>基本用法：放进 relative 父元素</h2>
               <p class="doc-section-lead">唯一要求是父元素 position: relative（或 absolute）。st-ripple 自身绝对定位铺满父元素、pointer-events: none，不会挡住点击；波纹色取父元素文字色 currentColor，自动与任何配色协调。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-ripple</code></div>
-                <div class="demo-stage" style="gap: 12px;">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-ripple</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" style="gap: 12px;" attr:hidden="codeView.demo1">
                   <div on:click="basicClicks += 1" style="position: relative; width: 260px; height: 104px; display: grid; place-items: center; overflow: hidden; border-radius: 16px; cursor: pointer; background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); font-size: 13px; --st-ripple-opacity: 0.32;">
                     点我试试
                     <st-ripple></st-ripple>
                   </div>
                   <span class="demo-note">已点击 {{basicClicks}} 次 · 波纹从指针位置扩散，0.35s 后消失</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;div style="position: relative; width: 230px; height: 96px;
-            background: var(--md-sys-color-primary);
-            color: var(--md-sys-color-on-primary);"&gt;
-  点我试试
-  &lt;st-ripple&gt;&lt;/st-ripple&gt;
-&lt;/div&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>在自定义容器里：整行可点</h2>
               <p class="doc-section-lead">列表行、设置项、卡片都可以直接放 st-ripple。父元素负责圆角与 overflow，波纹会继承 border-radius 并自动裁剪；点击坐标相对父元素计算，行内文字与图标不干扰扩散。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>自定义行</code></div>
-                <div class="demo-stage block">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>自定义行</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo2">
                   <div style="width: 100%; max-width: 460px; overflow: hidden; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 16px; background: var(--md-sys-color-surface-container-low); --st-ripple-opacity: 0.28;">
                     <div on:click="wifiOn = !wifiOn" style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; cursor: pointer;">
                       <span>Wi-Fi</span>
@@ -114,25 +125,26 @@
                   </div>
                   <span class="demo-note">点击整行切换：{{wifiOn ? "已连接" : "未连接"}} · 波纹从点击位置扩散，父元素负责圆角与裁剪</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（设置行）</summary>
-                <pre><code>&lt;div on:click="openWifi()"
-     style="position: relative; display: flex; justify-content: space-between;
-            padding: 14px 16px; cursor: pointer;"&gt;
-  &lt;span&gt;Wi-Fi&lt;/span&gt;
-  &lt;span&gt;已连接 ›&lt;/span&gt;
-  &lt;st-ripple&gt;&lt;/st-ripple&gt;
-&lt;/div&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>键盘激活：从中心扩散</h2>
               <p class="doc-section-lead">键盘按 Enter / Space 产生的 click 没有坐标（detail 为 0），组件会改为从父元素中心扩散。用原生 button 或 st-button 承载焦点与键盘语义即可，st-ripple 本身不需要 tabindex。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>Enter / Space</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>Enter / Space</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo3">
                   <button type="button" on:click="keyCount += 1" style="position: relative; width: 230px; height: 96px; overflow: hidden; border: 0; border-radius: 16px; cursor: pointer; background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); font: inherit; font-size: 13px; --st-ripple-opacity: 0.32;">
                     点我，或 Tab 后按 Enter / Space
                     <st-ripple></st-ripple>
@@ -140,23 +152,26 @@
                   <st-button style="--st-ripple-opacity: 0.32;" on:click="keyCount += 1">st-button 已内嵌波纹</st-button>
                   <span class="demo-note">激活 {{keyCount}} 次；按钮组件内的事件由 st-button 自己的 ripple 处理。</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（可聚焦容器）</summary>
-                <pre><code>&lt;button type="button" on:click="activate()"
-        style="position: relative; overflow: hidden;"&gt;
-  点我试试
-  &lt;st-ripple&gt;&lt;/st-ripple&gt;
-&lt;/button&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>颜色与透明度</h2>
               <p class="doc-section-lead">波纹没有 color 属性：颜色永远跟随父元素的 currentColor，组件里换 color 就换波纹色。透明度由皮肤 token --st-ripple-opacity 控制（默认 0.28），设为 0 就完全关闭；Apple 与 shadcn 皮肤默认关闭。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>currentColor / --st-ripple-opacity</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>currentColor / --st-ripple-opacity</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo4">
                   <div class="demo-cell">
                     <span class="demo-label">手动区域 · opacity 0.55</span>
                     <div on:click="colorPicks += 1" style="position: relative; height: 90px; display: grid; place-items: center; overflow: hidden; border-radius: 14px; cursor: pointer; background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-primary); font-size: 12.5px; --st-ripple-opacity: 0.55;">
@@ -181,26 +196,26 @@
                   </div>
                 </div>
                 <span class="demo-note" style="display: block; grid-column: 1 / -1;">手动区域点击 {{colorPicks}} 次；三个彩色按钮的波纹色来自各自的 color。关闭示例把变量设为 0，按钮仍在但不再产生波纹。</span>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;div style="position: relative; color: var(--md-sys-color-primary);
-            --st-ripple-opacity: 0.5;"&gt;
-  文字色即波纹色
-  &lt;st-ripple&gt;&lt;/st-ripple&gt;
-&lt;/div&gt;
 
-&lt;!-- 关闭波纹 --&gt;
-&lt;div style="--st-ripple-opacity: 0;"&gt;...&lt;/div&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>嵌套组件：不会叠两层波纹</h2>
               <p class="doc-section-lead">父容器与内部组件都带波纹时，事件如果源自嵌套的自定义组件（st-button、st-list-item 等），外层的 st-ripple 会自动忽略，只保留内层组件自己的波纹，避免一次点击出现多层涟漪。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>nested ripple</code></div>
-                <div class="demo-stage block">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo5 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>nested ripple</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo5')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo5 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo5 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo5">
                   <div on:click="outerClicks += 1" style="position: relative; width: 100%; max-width: 460px; overflow: hidden; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 18px; background: var(--md-sys-color-surface-container-low); padding: 16px; --st-ripple-opacity: 0.28;">
                     <p style="margin: 0 0 10px; color: var(--md-sys-color-on-surface-variant); font-size: 12px; line-height: 1.65;">这个外层容器也放了 st-ripple：点空白处出现外层波纹，点内部组件只有组件自己的波纹。</p>
                     <div class="row" style="justify-content: flex-start; margin-bottom: 12px;">
@@ -219,16 +234,9 @@
                   </div>
                   <span class="demo-note">内部组件点击 {{innerClicks}} 次 · 外层容器 click {{outerClicks}} 次（事件照常冒泡，但外层不再生成波纹）</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;div style="position: relative;"&gt;
-  &lt;st-button&gt;内嵌按钮&lt;/st-button&gt;
-  &lt;st-ripple&gt;&lt;/st-ripple&gt;
-&lt;/div&gt;
 
-&lt;!-- 点按钮：只有按钮的波纹；点空白：外层波纹 --&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo5" lang="html" :code="demo5Code"></st-code>
+              </div>
             </section>
 
             <div class="doc-cols">
@@ -265,6 +273,12 @@
 
         export default async () => ({
           data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false },
+            demo1Code: "<div on:click=\"basicClicks += 1\" style=\"position: relative; width: 260px; height: 104px; display: grid; place-items: center; overflow: hidden; border-radius: 16px; cursor: pointer; background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); font-size: 13px; --st-ripple-opacity: 0.32;\">\n                    点我试试\n                    <st-ripple></st-ripple>\n                  </div>\n                  <span class=\"demo-note\">已点击 {{basicClicks}} 次 · 波纹从指针位置扩散，0.35s 后消失</span>",
+            demo2Code: "<div style=\"width: 100%; max-width: 460px; overflow: hidden; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 16px; background: var(--md-sys-color-surface-container-low); --st-ripple-opacity: 0.28;\">\n                    <div on:click=\"wifiOn = !wifiOn\" style=\"position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; cursor: pointer;\">\n                      <span>Wi-Fi</span>\n                      <span style=\"color: var(--md-sys-color-on-surface-variant); font-size: 12px;\">{{wifiOn ? \"已连接 ›\" : \"未连接 ›\"}}</span>\n                      <st-ripple></st-ripple>\n                    </div>\n                  </div>\n                  <span class=\"demo-note\">点击整行切换：{{wifiOn ? \"已连接\" : \"未连接\"}} · 波纹从点击位置扩散，父元素负责圆角与裁剪</span>",
+            demo3Code: "<button type=\"button\" on:click=\"keyCount += 1\" style=\"position: relative; width: 230px; height: 96px; overflow: hidden; border: 0; border-radius: 16px; cursor: pointer; background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); font: inherit; font-size: 13px; --st-ripple-opacity: 0.32;\">\n                    点我，或 Tab 后按 Enter / Space\n                    <st-ripple></st-ripple>\n                  </button>\n                  <st-button style=\"--st-ripple-opacity: 0.32;\" on:click=\"keyCount += 1\">st-button 已内嵌波纹</st-button>\n                  <span class=\"demo-note\">激活 {{keyCount}} 次；按钮组件内的事件由 st-button 自己的 ripple 处理。</span>",
+            demo4Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">手动区域 · opacity 0.55</span>\n                    <div on:click=\"colorPicks += 1\" style=\"position: relative; height: 90px; display: grid; place-items: center; overflow: hidden; border-radius: 14px; cursor: pointer; background: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-primary); font-size: 12.5px; --st-ripple-opacity: 0.55;\">\n                      强波纹\n                      <st-ripple></st-ripple>\n                    </div>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">颜色跟随 currentColor</span>\n                    <div class=\"row\" style=\"justify-content: flex-start;\">\n                      <st-button color=\"primary\" style=\"--st-ripple-opacity: 0.32;\">Primary</st-button>\n                      <st-button color=\"error\" style=\"--st-ripple-opacity: 0.32;\">Error</st-button>\n                      <st-button color=\"success\" style=\"--st-ripple-opacity: 0.32;\">Success</st-button>\n                    </div>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">关闭 · --st-ripple-opacity: 0</span>\n                    <div class=\"row\" style=\"justify-content: flex-start;\">\n                      <st-button style=\"--st-ripple-opacity: 0;\">无波纹</st-button>\n                      <st-button variant=\"outlined\" style=\"--st-ripple-opacity: 0;\">无波纹</st-button>\n                    </div>\n                  </div>",
+            demo5Code: "<div on:click=\"outerClicks += 1\" style=\"position: relative; width: 100%; max-width: 460px; overflow: hidden; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 18px; background: var(--md-sys-color-surface-container-low); padding: 16px; --st-ripple-opacity: 0.28;\">\n                    <p style=\"margin: 0 0 10px; color: var(--md-sys-color-on-surface-variant); font-size: 12px; line-height: 1.65;\">这个外层容器也放了 st-ripple：点空白处出现外层波纹，点内部组件只有组件自己的波纹。</p>\n                    <div class=\"row\" style=\"justify-content: flex-start; margin-bottom: 12px;\">\n                      <st-button on:click=\"innerClicks += 1\">内嵌按钮</st-button>\n                      <st-button variant=\"outlined\" on:click=\"innerClicks += 1\">内嵌按钮</st-button>\n                    </div>\n                    <st-list style=\"width: 100%; max-width: 100%;\">\n                      <st-list-item button on:click=\"innerClicks += 1\">\n                        <iconify-icon slot=\"prefix\" icon=\"mdi:bell-outline\"></iconify-icon>通知<iconify-icon slot=\"suffix\" icon=\"mdi:chevron-right\"></iconify-icon>\n                      </st-list-item>\n                      <st-list-item button on:click=\"innerClicks += 1\">\n                        <span slot=\"prefix\">🔒</span>隐私<iconify-icon slot=\"suffix\" icon=\"mdi:chevron-right\"></iconify-icon>\n                      </st-list-item>\n                    </st-list>\n                    <st-ripple></st-ripple>\n                  </div>\n                  <span class=\"demo-note\">内部组件点击 {{innerClicks}} 次 · 外层容器 click {{outerClicks}} 次（事件照常冒泡，但外层不再生成波纹）</span>",
             basicClicks: 0,
             wifiOn: true,
             keyCount: 0,
@@ -272,7 +286,10 @@
             innerClicks: 0,
             outerClicks: 0,
           },
-          proto: {},
+          proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },},
         });
       </script>
     </template>

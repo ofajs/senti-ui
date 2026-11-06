@@ -59,14 +59,33 @@ export function syncAccessibleName(host, control, opts = {}) {
 
   apply();
   const observer = new MutationObserver(apply);
-  observer.observe(host, {
+  const options = {
     attributes: true,
     attributeFilter: ["aria-label", "aria-labelledby", "title"],
-    childList: true,
-    subtree: true,
-    characterData: true,
-  });
+  };
+  // 只有名称来自插槽文本时才需要观察整棵子树；显式 aria-label/title 场景
+  // 只观察宿主属性即可，避免每个输入框/图标按钮都挂一个 subtree observer。
+  if (fromSlot) {
+    options.childList = true;
+    options.subtree = true;
+    options.characterData = true;
+  }
+  observer.observe(host, options);
   return () => observer.disconnect();
+}
+
+/** rAF 合并同一帧内的多次重排（滚动/resize 重定位用） */
+export function rafThrottle(fn) {
+  let frame = 0;
+  let lastArgs;
+  return (...args) => {
+    lastArgs = args;
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      fn(...lastArgs);
+    });
+  };
 }
 
 /** 把宿主自身的 aria-label / aria-labelledby / title 解析成纯文本（用于需要自己写 label 的场景） */
@@ -175,4 +194,85 @@ export function trapTab(host, event) {
     return true;
   }
   return false;
+}
+
+// 模态栈：dialog / drawer 共用同一份顺序，保证 Escape 只关最上层。
+// 用模块级数组而不是宿主属性，组件即使来自不同文件也能正确排序。
+const modalStack = [];
+
+// 背景 inert：打开模态层时把宿主分支之外的内容移出焦点/无障碍树，
+// 而不是只靠焦点陷阱（读屏虚拟光标仍能浏览背景）。
+const inertRecords = new Map();
+
+const parentAcrossShadow = (el) => {
+  if (el.parentElement) return el.parentElement;
+  const root = el.getRootNode?.();
+  return root && root.host ? root.host : null;
+};
+
+const collectBackground = (host, protectedNodes) => {
+  const out = [];
+  let node = host;
+  while (node) {
+    const parent = node.parentNode;
+    if (!parent) break;
+    if (parent.nodeType === 1 || parent.nodeType === 11) {
+      for (const child of parent.children || []) {
+        if (child === node || protectedNodes.has(child)) continue;
+        if (!(child instanceof HTMLElement)) continue;
+        if (/^(SCRIPT|STYLE|LINK|META|TITLE|TEMPLATE)$/.test(child.tagName)) continue;
+        out.push(child);
+      }
+    }
+    if (parent === document.body) break;
+    // 穿过 shadow root 继续向上，直到 body
+    node = parent.nodeType === 11 ? parent.host : parent;
+  }
+  return out;
+};
+
+const syncModalInert = () => {
+  for (const [el, wasInert] of inertRecords) {
+    if (el.isConnected) el.inert = wasInert;
+  }
+  inertRecords.clear();
+  if (!modalStack.length || !document.body) return;
+  // 所有打开模态的祖先链都不能被 inert（否则顶层模态自己也会失效），
+  // 其它模态分支同样受保护，避免叠层时互相禁掉。
+  const protectedNodes = new Set();
+  for (const host of modalStack) {
+    let node = host;
+    while (node) {
+      protectedNodes.add(node);
+      node = parentAcrossShadow(node);
+    }
+  }
+  for (const host of modalStack) {
+    for (const el of collectBackground(host, protectedNodes)) {
+      if (!inertRecords.has(el)) inertRecords.set(el, el.inert);
+      el.inert = true;
+    }
+  }
+};
+
+/** 把模态宿主压入栈顶（已存在时先移除，避免重复） */
+export function pushModal(host) {
+  const index = modalStack.indexOf(host);
+  if (index !== -1) modalStack.splice(index, 1);
+  modalStack.push(host);
+  syncModalInert();
+}
+
+/** 从栈中移除；返回是否原本存在（用于判断是否需要解锁滚动） */
+export function removeModal(host) {
+  const index = modalStack.indexOf(host);
+  if (index === -1) return false;
+  modalStack.splice(index, 1);
+  syncModalInert();
+  return true;
+}
+
+/** 是否是最上层模态 */
+export function isTopModal(host) {
+  return modalStack.length > 0 && modalStack[modalStack.length - 1] === host;
 }

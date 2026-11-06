@@ -40,6 +40,7 @@
 - 徽标 `pointer-events: none`，不挡被标记元素的点击
 - 数字变化直接 `setAttribute("value", ...)`；ofa 页面绑定 `attr:value="count"` 
 - value 为非数字字符串时按文字徽标展示（不封顶、不换底色尺寸）
+- 徽标本身是纯视觉元素（`aria-hidden="true"`），不会自动进入被标记控件的可访问名称；需要读屏播报数量时，请在按钮/图标按钮上写完整 `aria-label`（如 `aria-label="通知，3 条未读"`）
 
 ## 验证页面
 

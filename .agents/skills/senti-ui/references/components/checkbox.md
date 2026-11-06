@@ -52,7 +52,9 @@ $("st-checkbox").on("change", (e) => {
 ## 注意事项与使用技巧
 
 - `checked` / `indeterminate` 是标签属性：JS 用 `setAttribute` / `removeAttribute`（直接改 property 不生效）；ofa 页面绑定用 `attr:checked="expr"`
+- `checked` 是 attrs，不支持 `sync:checked`；双向场景监听 `change` 回写 data
 - 用户点击会自动退出 `indeterminate` 并切换为选中态（M3 行为）
+- `indeterminate` 会同步到内部原生 checkbox 的混合态；它只是视觉态，未 checked 时不参与表单提交
 - 交互由内部透明原生 checkbox 承载（覆盖整个组件，点文字也能切换），Space 键盘可用
 - 无标签内容时（`:empty`）标签区自动隐藏
 - `color` 属性只影响选中态配色，未选中态边框恒为 on-surface-variant

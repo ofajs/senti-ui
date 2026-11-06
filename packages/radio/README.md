@@ -54,10 +54,12 @@
 
 ## 注意事项与使用技巧
 
-- **同组互斥靠 `name` 属性**：原生 radio 分组不跨 shadow root，组件在**同一树作用域**（document 或同一个 o-page shadow root）内查询同 `name` 的 `st-radio` 手动互斥——不再要求写在同一个父容器里
+- **同组互斥靠 `name` 属性**：原生 radio 分组不跨 shadow root，组件在**同一树作用域 + 同一 form owner**内查询同 `name` 的 `st-radio` 手动互斥——不再要求写在同一个父容器里，两个独立 `<form>` 中的同名项互不影响
+- 键盘：组内 roving tabindex（只有选中项，或无选中时的第一个可用项在 Tab 顺序里），`←/↑/→/↓` 在组内循环移动并选中
 - 无障碍：默认插槽文字会成为内部 radio 的可访问名称；也可用宿主 `aria-label` / `aria-labelledby` 覆盖
 - 被取消选中的兄弟项**不**派发 change，只有被点击的项派发
 - `checked` / `disabled` 用 attribute 方式修改；`color` 只影响选中态描边/圆点色
+- `checked` 是 attrs，不支持 `sync:checked`；需要双向时监听 `change` 回写 data（方向键选中同样派发 change）
 - 无标签内容时标签区自动隐藏
 ## 验证页面
 

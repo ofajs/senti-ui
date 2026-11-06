@@ -72,7 +72,7 @@
       width: 0.714em;
       height: 0.143em;
       border-radius: 0.143em;
-      background: var(--md-sys-color-on-primary);
+      background: currentColor;
       opacity: 0;
       transition: opacity var(--st-motion-duration, 0.15s) ease;
     }
@@ -100,6 +100,17 @@
     }
 
     l-m { display: none; }
+
+    /* 减少动态效果：动画/过渡压到近零，同时保留 animationend 等事件语义 */
+    @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 
   <input class="native" type="checkbox" tabindex="0">
@@ -174,7 +185,9 @@
             name: this.name,
             form: ele.getAttribute("form"),
             value: this.value ?? "on",
-            checked: this.checked !== null || this.indeterminate !== null,
+            // 原生 indeterminate 只是视觉态，checked 仍为 false，不参与提交；
+            // 代理若把它当 checked 会把未选中的值提交进 FormData。
+            checked: this.checked !== null,
             disabled: this.disabled !== null,
             required: this.required !== null,
           });
@@ -209,6 +222,8 @@
           const on = this.checked !== null || this.indeterminate !== null;
 
           input.checked = this.checked !== null;
+          // 原生 mixed 态：读屏器据此播报“部分选中”，表单语义仍是未选中
+          input.indeterminate = this.indeterminate !== null;
           input.disabled = this.disabled !== null;
           this.syncForm?.();
 

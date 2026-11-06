@@ -115,6 +115,16 @@
   --st-dialog-enter-duration: 160ms;
   --st-dialog-exit-duration: 120ms;
   --st-dialog-scrim-duration: 140ms;
+  /* 抽屉：扁平表面 + 细描边，和 dialog 同一套 shadcn 浮层材质 */
+  --st-drawer-bg: var(--md-sys-color-surface);
+  --st-drawer-border: var(--md-sys-color-outline-variant);
+  --st-drawer-radius: var(--st-dialog-radius);
+  --st-drawer-shadow: var(--st-shadow-1);
+  --st-drawer-backdrop-filter: none;
+  --st-drawer-scrim: var(--st-dialog-scrim);
+  --st-drawer-scrim-filter: var(--st-dialog-scrim-filter);
+  --st-drawer-enter-duration: 160ms;
+  --st-drawer-exit-duration: 120ms;
   --st-menu-bg: var(--md-sys-color-surface);
   --st-menu-border: var(--md-sys-color-outline-variant);
   --st-card-bg: var(--md-sys-color-surface);
@@ -135,6 +145,8 @@
   /* 密度 */
   --st-dialog-padding: 1.143em;
   --st-dialog-gap: 0.857em;
+  --st-drawer-padding: 1.143em;
+  --st-drawer-gap: 0.857em;
   --st-menu-padding: 0.214em;
   --st-menu-item-padding: 0.643em 0.571em;
   --st-card-padding: 0.857em;
@@ -156,4 +168,35 @@
   --st-tooltip-duration: 100ms;
 
   --st-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+[data-skin="shadcn"] {
+  --st-code-bg: var(--md-sys-color-surface);
+  --st-code-header-bg: var(--md-sys-color-surface-container);
+  --st-code-border: var(--md-sys-color-outline-variant);
+  --st-code-radius: .429em;
+  --st-code-shadow: var(--st-shadow-1);
+  --st-code-padding: .857em;
+  --st-code-font-size: .857em;
+  --st-code-backdrop-filter: none;
+}
+
+/* 减少动态效果：皮肤 token 统一归零，组件未单独处理时也即时到位 */
+@media (prefers-reduced-motion: reduce) {
+  [data-skin] {
+    --st-motion-duration: 0s;
+    --st-motion-duration-fast: 0s;
+    --st-motion-duration-base: 0s;
+    --st-motion-duration-slow: 0s;
+    --st-overlay-enter-duration: 0s;
+    --st-overlay-exit-duration: 0s;
+    --st-tooltip-duration: 0s;
+    --st-ripple-duration: 0s;
+    --st-progress-duration: 0s;
+    --st-dialog-enter-duration: 0s;
+    --st-dialog-exit-duration: 0s;
+    --st-dialog-scrim-duration: 0s;
+    --st-drawer-enter-duration: 0s;
+    --st-drawer-exit-duration: 0s;
+  }
 }

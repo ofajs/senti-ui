@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>st-drawer test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-color-init.js"></script>
+  <l-m src="/packages/drawer/drawer.html"></l-m>
+  <l-m src="/packages/dialog/dialog.html"></l-m>
+  <l-m src="/packages/button/button.html"></l-m>
+</head>
+<body>
+  <button id="opener">打开抽屉</button>
+
+  <st-drawer id="drw-left">
+    <h2 slot="headline">左抽屉</h2>
+    <p>正文内容</p>
+    <div slot="actions">
+      <button id="inner-close">关闭</button>
+      <button id="inner-ok">确定</button>
+    </div>
+  </st-drawer>
+
+  <st-drawer id="drw-right" side="right" auto-close>
+    <h2 slot="headline">右抽屉</h2>
+    <p>右侧正文</p>
+  </st-drawer>
+
+  <st-drawer id="drw-auto" auto-close>
+    <h2 slot="headline">自动关闭</h2>
+    <p>点遮罩或 Escape</p>
+  </st-drawer>
+
+  <st-drawer id="drw-bare"></st-drawer>
+
+  <st-dialog id="dlg" auto-close>
+    <h2 slot="headline">对话框</h2>
+    <p>顶层对话框</p>
+  </st-dialog>
+
+  <script>
+    window.events = [];
+    document.querySelectorAll("st-drawer").forEach((el) => {
+      el.addEventListener("close", () => window.events.push({ id: el.id, type: "close" }));
+    });
+    document.querySelector("#opener").addEventListener("click", () => {
+      document.querySelector("#drw-left").setAttribute("open", "");
+    });
+    document.querySelector("#inner-close").addEventListener("click", () => {
+      document.querySelector("#drw-left").removeAttribute("open");
+    });
+  </script>
+</body>
+</html>

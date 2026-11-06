@@ -59,9 +59,14 @@ st-option 语义属性：
 |------|------|--------|------|
 | `value` | string | 取 `label` 属性，再取插槽文本 | 选中值 |
 | `label` | string | 取插槽文本 | 闭合状态显示文本 |
+| `disabled` | boolean | 无 | 禁用该项：不可点击、方向键跳过、`aria-disabled="true"` |
 | 默认插槽 | — | — | 富内容：克隆渲染到下拉项；图标元素（svg / img / iconify-icon / `[slot="icon"]`）会同步到闭合态，文字仍显示 `label` |
 
 选项内只放纯文本时（无元素、无实际文本的空白节点不算富内容），下拉项直接显示 label/文本。
+
+**禁用选项与分组**：`<option disabled>` / `<st-option disabled>` 生效；`<optgroup label>` 的分组标题渲染为 `.group-label`（`role="group"` + `aria-label`），`<optgroup disabled>` 下选项继承禁用；`el.options` 数组支持 `{ value, label, disabled, group }`。
+
+**value 应唯一**：重复 value 时组件按“最近一次用户选择的下标”高亮，点哪项选哪项；外部 `el.value = "x"` 只能定位到第一个同值项。
 
 **动态选项**：三种方式任选——`el.options = [...]`、`:options` 数据绑定，或 **o-fill 嵌套**（组件会深入容器内部收集渲染出的 `<option>` / `<st-option>`，并用 MutationObserver 跟随数据重渲染自动更新列表）：
 
@@ -169,6 +174,7 @@ $("st-select").on("change", (e) => {
 ## 注意事项与使用技巧
 
 - `value` 是运行时状态：`el.value = "x"` 改选中（不派发 change）；初始选中用 `default-value`
+- 写入不存在的选项值（或选中项被动态删除）会被清空为未选中，不会界面显示占位、表单却提交旧值
 - 选项元素（`option` / `st-option`）是纯数据源：收集发生在 attached 与 slotchange/o-fill 重渲染时，**直接改已渲染选项的 `value`/`label` 属性不会生效**——动态选项用 `el.options`、`:options` 或 o-fill 嵌套
 - 富内容/多语言场景用 `st-option` + `label` 属性：插槽内容做下拉项展示，`label` 做闭合态文本；插槽里的图标（svg / img / iconify-icon / `[slot="icon"]`）会同步到闭合态（原生 `<option>` 受浏览器解析限制，内部元素可能不保真）
 - st-option 由 `select.html` 内部 `<l-m>` 自动加载，无需单独引入；`st-select` 内可混用 `<option>` 与 `<st-option>`（保持书写顺序）

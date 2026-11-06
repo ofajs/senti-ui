@@ -241,6 +241,9 @@ code {
   color: var(--md-sys-color-on-surface);
   font-size: 0.88em;
 }
+.note-body st-code {
+  margin: 1.7em 0;
+}
 .note-body blockquote {
   margin: 1.9em 0;
   padding: 20px 24px;
@@ -334,6 +337,13 @@ code {
   }
   .note-body h2 {
     font-size: 20px;
+  }
+  .note-body st-code {
+    --st-code-font-size: 11.5px;
+  }
+  .note-body st-code::part(pre) {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
 }
 @media (prefers-reduced-motion: reduce) {

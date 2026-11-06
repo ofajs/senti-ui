@@ -39,6 +39,25 @@
     <st-menu-item disabled id="mi-x">禁用</st-menu-item>
   </st-menu>
 
+  <st-menu id="menu-check" keep-open>
+    <button slot="trigger" id="menu-check-trigger">视图</button>
+    <st-menu-item id="mi-check" checkable>网格</st-menu-item>
+    <st-menu-item id="mi-check2" checkable selected>列表</st-menu-item>
+    <st-menu-item id="mi-check3" checkable disabled>禁用勾选</st-menu-item>
+  </st-menu>
+
+  <st-menu id="menu-nested">
+    <button slot="trigger" id="menu-nested-trigger">嵌套菜单</button>
+    <st-menu-item id="nmi-a">顶层 A</st-menu-item>
+    <st-menu-item id="nmi-parent">
+      顶层 B
+      <st-menu slot="sub-menu">
+        <st-menu-item id="nmi-child-a">子项 A</st-menu-item>
+        <st-menu-item id="nmi-child-b">子项 B</st-menu-item>
+      </st-menu>
+    </st-menu-item>
+  </st-menu>
+
   <st-tab-bar id="tabs">
     <st-tab-item id="tab-a" active>邮件</st-tab-item>
     <st-tab-item id="tab-b">通话</st-tab-item>
@@ -55,6 +74,7 @@
     window.events = [];
     document.querySelectorAll("st-list-item, st-menu-item, st-tab-item, st-nav-item").forEach((el) => {
       el.addEventListener("click", () => window.events.push(el.id));
+      el.addEventListener("change", () => window.events.push("change:" + el.id));
     });
     ["open", "close"].forEach((t) => {
       document.querySelector("#menu").addEventListener(t, () => window.events.push("menu-" + t));

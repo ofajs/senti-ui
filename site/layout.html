@@ -185,6 +185,47 @@
             font-weight: 600;
           }
 
+          /* 移动端导航：≤760px 隐藏横向导航，改用 st-drawer */
+          .nav-toggle { display: none; }
+          .mobile-drawer::part(panel) {
+            width: min(84vw, 320px);
+            background: var(--md-sys-color-surface-container);
+          }
+          .drawer-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            width: 100%;
+          }
+          .drawer-brand {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+          }
+          .drawer-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+          }
+          .drawer-nav st-button,
+          .drawer-github {
+            justify-content: flex-start;
+            width: 100%;
+            height: 46px;
+            padding: 0 14px;
+            border-radius: var(--st-radius-md, 0.857em);
+            font-size: 14px;
+            color: var(--md-sys-color-on-surface-variant);
+          }
+          .drawer-nav st-button.active {
+            background: var(--md-sys-color-secondary-container);
+            color: var(--md-sys-color-on-secondary-container);
+            font-weight: 600;
+          }
+          .drawer-nav st-button iconify-icon,
+          .drawer-github iconify-icon { font-size: 18px; }
+
           .top-actions {
             display: flex;
             align-items: center;
@@ -293,6 +334,7 @@
 
           @media (max-width: 760px) {
             .layout-nav { display: none; }
+            .nav-toggle { display: inline-flex; }
             .top-inner { gap: 8px; }
             .top-actions { gap: 4px; }
             .theme-select { width: 76px; min-width: 76px; }
@@ -300,6 +342,8 @@
             .footer { flex-direction: column; align-items: flex-start; }
           }
         </style>
+
+        <l-m src="../packages/drawer/drawer.html"></l-m>
 
         <div class="shell">
         <div class="ambient" class:ambient-strong="skin === 'apple'" aria-hidden="true">
@@ -356,6 +400,8 @@
               <st-tooltip content="GitHub 仓库">
                 <st-icon-button class="github-btn" title="GitHub" on:click="openRepo"><iconify-icon icon="mdi:github"></iconify-icon></st-icon-button>
               </st-tooltip>
+
+              <st-icon-button class="nav-toggle" title="打开导航" on:click="drawerOpen = true"><iconify-icon icon="mdi:menu"></iconify-icon></st-icon-button>
             </div>
           </div>
 
@@ -363,6 +409,39 @@
             <st-progress attr:value="readProgress"></st-progress>
           </div>
         </header>
+
+        <st-drawer
+          class="mobile-drawer"
+          sync:open="drawerOpen"
+          auto-close
+          side="right"
+          aria-label="站点导航"
+        >
+          <div slot="headline" class="drawer-head">
+            <span class="drawer-brand">Senti<span class="brand-accent">UI</span></span>
+            <st-icon-button title="关闭导航" on:click="drawerOpen = false"><iconify-icon icon="mdi:close"></iconify-icon></st-icon-button>
+          </div>
+          <nav class="drawer-nav" aria-label="移动端主导航">
+            <st-button variant="text" class:active="page === 'home'" on:click="drawerGo('./index.html')">
+              <iconify-icon slot="prefix" icon="mdi:view-grid-outline"></iconify-icon>组件目录
+            </st-button>
+            <st-button variant="text" class:active="page === 'docs'" on:click="drawerGo('./docs/index.html')">
+              <iconify-icon slot="prefix" icon="mdi:file-document-outline"></iconify-icon>文档
+            </st-button>
+            <st-button variant="text" class:active="page === 'skins'" on:click="drawerGo('./skins.html')">
+              <iconify-icon slot="prefix" icon="mdi:palette-outline"></iconify-icon>皮肤
+            </st-button>
+            <st-button variant="text" class:active="page === 'notes'" on:click="drawerGo('./notes/index.html')">
+              <iconify-icon slot="prefix" icon="mdi:notebook-outline"></iconify-icon>手记
+            </st-button>
+          </nav>
+          <div slot="actions">
+            <st-button class="drawer-github" variant="text" on:click="drawerRepo">
+              <iconify-icon slot="prefix" icon="mdi:github"></iconify-icon>GitHub
+              <iconify-icon slot="suffix" icon="mdi:open-in-new"></iconify-icon>
+            </st-button>
+          </div>
+        </st-drawer>
 
         <div class="site-scroll" id="site-scroll">
           <main class="site-main"><slot></slot></main>
@@ -402,14 +481,21 @@
               readProgress: 0,
               themeMode: "auto",
               skin: "m3",
+              drawerOpen: false,
             },
             ready() {
               this.detectPage();
               this.syncChrome();
               this.syncThemeSelect(0);
               this.initSiteApi();
-              this._onPop = () => this.detectPage();
+              this._onPop = () => {
+                this.detectPage();
+                if (this.drawerOpen) this.drawerOpen = false;
+              };
               this._onScroll = () => this.updateProgress();
+              this._onResize = () => {
+                if (this.drawerOpen && window.innerWidth > 760) this.drawerOpen = false;
+              };
               this._onSkinStorage = (e) => {
                 if (e.key === "st-skin") this.syncChrome();
               };
@@ -438,6 +524,7 @@
               this._scrollHost = this.ele.shadowRoot?.querySelector(".site-scroll");
               this._scrollHost?.addEventListener("scroll", this._onScroll, { passive: true });
               window.addEventListener("popstate", this._onPop);
+              window.addEventListener("resize", this._onResize);
               this.updateProgress();
               if (!window.__site) {
                 this._poll = setInterval(() => {
@@ -456,11 +543,13 @@
               window.removeEventListener("st-theme-preset-change", this._onPresetChange);
               this._skinAttrObserver?.disconnect();
               this._scrollHost?.removeEventListener("scroll", this._onScroll);
+              window.removeEventListener("resize", this._onResize);
               clearInterval(this._poll);
             },
             routerChange() {
               this.detectPage();
               this.syncChrome();
+              if (this.drawerOpen) this.drawerOpen = false;
               if (this._scrollHost) this._scrollHost.scrollTop = 0;
               this.updateProgress();
             },
@@ -625,6 +714,14 @@
                 } catch {}
                 document.documentElement.classList.toggle("st-light", next === "light");
                 document.documentElement.classList.toggle("st-dark", next === "dark");
+              },
+              drawerGo(path) {
+                this.drawerOpen = false;
+                this.go(path);
+              },
+              drawerRepo() {
+                this.drawerOpen = false;
+                this.openRepo();
               },
               openRepo() {
                 window.open("https://github.com/ofajs/senti-ui", "_blank", "noopener");

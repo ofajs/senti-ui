@@ -130,6 +130,17 @@
     :host([collapsible]) st-ripple { display: block; }
 
     l-m { display: none; }
+
+    /* 减少动态效果：动画/过渡压到近零，同时保留 animationend 等事件语义 */
+    @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 
   <l-m src="../ripple/ripple.html"></l-m>
@@ -153,7 +164,8 @@
   </div>
 
   <div class="sublist">
-    <st-collapse attr:hide="expanded === null">
+    <!-- 非 collapsible 项的 sublist 恒展开；只有 collapsible 且未 expanded 时才收起 -->
+    <st-collapse attr:hide="collapsible !== null && expanded === null">
       <slot name="sublist"></slot>
     </st-collapse>
   </div>
@@ -199,6 +211,10 @@
         // 页面模块渲染可能在组件升级后才完成 slot 分配，延迟重推兜底
         requestAnimationFrame(pushDepth);
         setTimeout(pushDepth, 100);
+        // 动态增删子列表项时也要重推深度（slotchange 只在 slot 分配变化时触发，
+        // 不会因为已有 st-list 内部追加子项而触发）
+        this._lightObserver = new MutationObserver(() => pushDepth());
+        this._lightObserver.observe(ele, { childList: true, subtree: true });
 
         // collapsible 时显示展开箭头；非 collapsible 时 sublist 经 st-collapse 恒展开显示
         this._syncIcon = () => {
@@ -245,6 +261,7 @@
         expanded() { this.applyExpanded?.(); },
       },
       detached() {
+        this._lightObserver?.disconnect();
         this._a11yCleanup?.();
       },
     });

@@ -225,6 +225,13 @@
       to { opacity: 1; transform: none; }
     }
     @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
       .listbox { animation: none; transition: none; }
     }
 
@@ -256,6 +263,28 @@
       flex-shrink: 0;
     }
     .opt[data-selected] .check { display: inline-block; }
+
+    /* 分组标题（optgroup label）：只作视觉分组，选项仍平铺为 listbox 的子项 */
+    .group { padding-top: 0.286em; }
+    .group-label {
+      padding: 0.429em 0.714em 0.286em;
+      font-size: 0.786em;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--md-sys-color-on-surface-variant);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    /* 禁用选项：不可点、不可键盘选中，保持读屏可感知 */
+    .opt[data-disabled] {
+      opacity: var(--st-disabled-opacity, 0.38);
+      cursor: not-allowed;
+    }
+    .opt[data-disabled]:hover { background: transparent; }
+    .opt[data-disabled][data-selected] {
+      background: var(--md-sys-color-secondary-container);
+    }
 
     /* light DOM 里的 <option>/<st-option> 只作数据源，不参与渲染；
        l-m 是 flex item 会参与 gap 布局，必须隐藏（坑 #14） */
@@ -306,7 +335,13 @@
             try { list = JSON.parse(list || "[]"); } catch { list = []; }
           }
           if (!Array.isArray(list)) return;
-          this._opts = list.map((o) => ({ value: String(o.value ?? o.label), label: String(o.label ?? o.value), el: null }));
+          this._opts = list.map((o) => ({
+            value: String(o.value ?? o.label),
+            label: String(o.label ?? o.value),
+            disabled: !!o.disabled,
+            group: o.group ? String(o.group) : "",
+            el: null,
+          }));
           this.buildList();
           this.syncSelected(false);
         },
@@ -324,6 +359,19 @@
         this.controlEl = sr.querySelector("#st-control");
         this.slotEl = sr.querySelector("#st-slot");
         this.activeIndex = -1;
+        this._selectedIndex = -1;
+        // 宿主本身不可聚焦，桥接 focus/blur 到内部 combobox
+        ele.focus = () => {
+          if (this.disabled === null) this.controlEl.focus();
+        };
+        ele.blur = () => this.controlEl.blur();
+        // 点选项（包括 disabled 项）时把焦点留在 combobox 上：
+        // 否则浏览器会把焦点移到 body，随后 Escape/Tab 不再经过组件的键盘处理
+        this.listEl.addEventListener("pointerdown", (e) => {
+          if (!e.target.closest?.(".opt")) return;
+          e.preventDefault();
+          this.controlEl.focus();
+        });
 
         // 自绘 listbox 的组合框语义（ARIA 角色 + 展开状态 + 选项选中态）。
         // 宿主属性延后到构造结束再写，避免命令式 createElement 时抛
@@ -347,6 +395,7 @@
         });
         this._resetCleanup = bindFormReset(ele, () => {
           const dv = ele.getAttribute("default-value");
+          this._selectedIndex = -1; // reset 按 value 回第一个同值项
           this.value = dv;
           this.syncSelected(false);
           this.close();
@@ -369,7 +418,7 @@
         // 宿主 value 用 getter/setter 反射到 data（ofa 的 data 不在原生属性上）
         Object.defineProperty(ele, "value", {
           get: () => (this.value === null ? "" : this.value),
-          set: (v) => { this.value = v == null ? "" : v; },
+          set: (v) => { this.value = v == null || v === "" ? null : String(v); },
         });
 
         // 宿主 options property：动态选项入口（:options 绑定 / el.options = [...]）。
@@ -379,7 +428,13 @@
           get: () => this._opts || [],
           set: (list) => {
             this._opts = Array.isArray(list)
-              ? list.map((o) => ({ value: String(o.value ?? o.label), label: String(o.label ?? o.value), el: null }))
+              ? list.map((o) => ({
+                  value: String(o.value ?? o.label),
+                  label: String(o.label ?? o.value),
+                  disabled: !!o.disabled,
+                  group: o.group ? String(o.group) : "",
+                  el: null,
+                }))
               : [];
             this.buildList();
             this.syncSelected(false);
@@ -421,7 +476,15 @@
               const text = el.textContent.trim();
               // label 属性定闭合态显示文本（富内容/多语言场景），缺省取插槽文本
               const label = el.getAttribute("label") ?? text;
-              return { value: el.getAttribute("value") ?? label, label, el };
+              // optgroup / option 的 disabled 都要继承；group label 用于下拉分组标题
+              const groupEl = el.closest("optgroup");
+              return {
+                value: el.getAttribute("value") ?? label,
+                label,
+                disabled: el.hasAttribute("disabled") || !!(groupEl && groupEl.hasAttribute("disabled")),
+                group: groupEl?.label?.trim() || "",
+                el,
+              };
             });
           this.buildList();
           // attached 时读取 default-value 属性作为初始值写入 data.value
@@ -440,7 +503,13 @@
             try { list = JSON.parse(list || "[]"); } catch { list = []; }
           }
           if (Array.isArray(list) && list.length) {
-            this._opts = list.map((o) => ({ value: String(o.value ?? o.label), label: String(o.label ?? o.value), el: null }));
+            this._opts = list.map((o) => ({
+              value: String(o.value ?? o.label),
+              label: String(o.label ?? o.value),
+              disabled: !!o.disabled,
+              group: o.group ? String(o.group) : "",
+              el: null,
+            }));
             this.buildList();
             if (this.value === null) {
               const dv = ele.getAttribute("default-value");
@@ -484,9 +553,10 @@
           if (below < this.listEl.offsetHeight && above > below) {
             ele.setAttribute("drop-up", "");
           }
-          // 键盘激活项初始定位到当前选中项
-          const sel = this._opts.findIndex((o) => o.value === this.value);
-          this.setActive(sel < 0 ? 0 : sel, true);
+          // 键盘激活项初始定位到当前选中项；选中项被禁用时从第一个可用项开始
+          const sel = this.currentIndex();
+          const initial = sel >= 0 && !this._opts[sel].disabled ? sel : this.firstEnabled(false);
+          this.setActive(initial, true);
         },
         close() {
           const ele = this.ele;
@@ -500,11 +570,34 @@
         },
         buildList() {
           this.listEl.innerHTML = "";
+          let lastGroup = "";
+          let groupEl = this.listEl;
           this._opts.forEach((opt, i) => {
+            // optgroup：同一组用一个 role=group 容器包住，标题只做视觉呈现
+            if (opt.group && opt.group !== lastGroup) {
+              groupEl = document.createElement("div");
+              groupEl.className = "group";
+              groupEl.setAttribute("role", "group");
+              groupEl.setAttribute("aria-label", opt.group);
+              const heading = document.createElement("div");
+              heading.className = "group-label";
+              heading.setAttribute("aria-hidden", "true");
+              heading.textContent = opt.group;
+              groupEl.appendChild(heading);
+              this.listEl.appendChild(groupEl);
+              lastGroup = opt.group;
+            } else if (!opt.group) {
+              lastGroup = "";
+              groupEl = this.listEl;
+            }
             const item = document.createElement("div");
             item.className = "opt";
             item.id = `st-opt-${i}`;
             item.setAttribute("role", "option");
+            if (opt.disabled) {
+              item.toggleAttribute("data-disabled", true);
+              item.setAttribute("aria-disabled", "true");
+            }
             // 有实际内容（元素或非空白文本）时克隆渲染（支持富内容），否则退回纯文本 label
             const rich = opt.el && [...opt.el.childNodes].some((n) => n.nodeType === 1 || (n.nodeType === 3 && n.textContent.trim()));
             if (rich) {
@@ -515,15 +608,37 @@
             item.appendChild(Object.assign(document.createElement("span"), { className: "check" }));
             item.addEventListener("click", (e) => {
               e.stopPropagation();
+              if (opt.disabled) return;
               this.select(i);
             });
-            item.addEventListener("pointerenter", () => this.setActive(i, false));
-            this.listEl.appendChild(item);
+            item.addEventListener("pointerenter", () => {
+              if (!opt.disabled) this.setActive(i, false);
+            });
+            opt.item = item;
+            groupEl.appendChild(item);
           });
+        },
+        // 当前选中项下标：优先用最近一次用户选择的下标（支持重复 value），
+        // 外部改 value 时回退到第一个同值选项。
+        currentIndex() {
+          const list = this._opts || [];
+          const i = this._selectedIndex;
+          if (i >= 0 && list[i] && list[i].value === this.value) return i;
+          return list.findIndex((o) => o.value === this.value);
         },
         // 选中态与显示文本同步（change 事件由 select() 派发）
         syncSelected() {
-          const opt = this._opts?.find((o) => o.value === this.value);
+          const hasMatch = this._opts?.some((o) => o.value === this.value);
+          // 非法值（外部写入不存在的 value / 选中项被动态删除）不能只显示成占位、
+          // 却继续把旧值交给表单代理：那会让 FormData 提交一个界面上不存在的值。
+          // 选项尚未加载时不处理，等 readOptions 完成后再校验。
+          if (!hasMatch && this.value !== null && this._opts?.length) {
+            this.value = null;
+            this._selectedIndex = -1;
+          }
+          const index = this._opts?.length ? this.currentIndex() : -1;
+          const opt = index >= 0 ? this._opts[index] : undefined;
+          this._selectedIndex = index;
           this.labelEl.replaceChildren();
           this.labelEl.classList.toggle("placeholder", !opt);
           if (!opt) {
@@ -556,34 +671,59 @@
             valueEl.textContent = opt ? opt.label : (this.placeholder || "");
           }
           this.syncForm?.();
-          [...this.listEl.children].forEach((item, i) => {
-            const selected = this._opts[i].value === this.value;
+          this._opts.forEach((opt, i) => {
+            const item = opt.item;
+            if (!item) return;
+            const selected = i === index;
             item.toggleAttribute("data-selected", selected);
             item.setAttribute("aria-selected", selected ? "true" : "false");
           });
         },
         select(i) {
           const opt = this._opts[i];
-          if (!opt || opt.value === this.value) { this.close(); return; }
-          this.value = opt.value; // ofa data → 触发 watch → syncSelected
+          const current = this.currentIndex();
+          if (!opt || opt.disabled || i === current) { this.close(); return; }
+          this._selectedIndex = i;
+          this.value = opt.value; // ofa data（同 value 的重复项也允许切换选中下标）
+          this.syncSelected();
           this.controlEl.removeAttribute("aria-invalid");
           this.close();
           this.ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
         },
         setActive(i, scroll) {
           this.activeIndex = i;
-          [...this.listEl.children].forEach((item, j) => {
-            item.toggleAttribute("data-active", j === i);
+          this._opts.forEach((opt, j) => {
+            opt.item?.toggleAttribute("data-active", j === i);
           });
-          if (i >= 0 && this.listEl.children[i]) {
-            this.controlEl.setAttribute("aria-activedescendant", this.listEl.children[i].id);
+          const item = this._opts[i]?.item;
+          if (i >= 0 && item) {
+            this.controlEl.setAttribute("aria-activedescendant", item.id);
+            if (scroll) item.scrollIntoView({ block: "nearest" });
           }
-          if (scroll && i >= 0) this.listEl.children[i].scrollIntoView({ block: "nearest" });
+        },
+        // 在选项之间移动，跳过 disabled（全部禁用时停在原处）
+        moveActive(step) {
+          const n = this._opts.length;
+          if (!n) return;
+          let i = this.activeIndex;
+          if (i < 0) i = step > 0 ? -1 : 0;
+          for (let k = 0; k < n; k += 1) {
+            i = (i + step + n) % n;
+            if (!this._opts[i].disabled) {
+              this.setActive(i, true);
+              return;
+            }
+          }
+        },
+        firstEnabled(last = false) {
+          const list = last ? [...this._opts].reverse() : this._opts;
+          const index = list.findIndex((opt) => !opt.disabled);
+          if (index === -1) return -1;
+          return last ? this._opts.length - 1 - index : index;
         },
         onKeydown(e) {
           if (this.disabled !== null) return;
           const open = this.isOpen();
-          const n = this._opts.length;
           switch (e.key) {
             case "Enter": case " ":
               e.preventDefault();
@@ -592,18 +732,18 @@
             case "ArrowDown":
               e.preventDefault();
               if (!open) this.openList();
-              else this.setActive((this.activeIndex + 1) % n, true);
+              else this.moveActive(1);
               break;
             case "ArrowUp":
               e.preventDefault();
               if (!open) this.openList();
-              else this.setActive((this.activeIndex - 1 + n) % n, true);
+              else this.moveActive(-1);
               break;
             case "Home":
-              if (open) { e.preventDefault(); this.setActive(0, true); }
+              if (open) { e.preventDefault(); this.setActive(this.firstEnabled(false), true); }
               break;
             case "End":
-              if (open) { e.preventDefault(); this.setActive(n - 1, true); }
+              if (open) { e.preventDefault(); this.setActive(this.firstEnabled(true), true); }
               break;
             case "Escape":
               // 只关下拉：不让 Escape 继续冒泡把外层 dialog 一起关掉

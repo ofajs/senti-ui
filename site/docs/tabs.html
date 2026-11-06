@@ -66,7 +66,7 @@
 
           <article class="doc-page">
             <header class="doc-hero">
-              <p class="doc-kicker">导航 · 16 / 21</p>
+              <p class="doc-kicker">导航 · 17 / 22</p>
               <h1>Tabs <code>st-tab-bar</code></h1>
               <p class="doc-lead">标签栏只负责外观与指示条动画：active 由外部逻辑切换，切换后内容面板由你自己的 data 决定。st-tab-item 支持 icon 插槽与 disabled，宽度与字号直接用原生 CSS 调整。</p>
               <div class="doc-links">
@@ -79,8 +79,17 @@
               <h2>基础切换：active 与内容面板</h2>
               <p class="doc-section-lead">st-tab-bar 自身不保存选中状态。用 attr:active 把每个 item 的 active 绑定到同一个索引，on:click 改索引；指示条会自动滑到新的 active 项，面板再用同一份 data 控制显隐。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-tab-bar + st-tab-item</code></div>
-                <div class="demo-stage block" style="gap: 12px;">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-tab-bar + st-tab-item</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" style="gap: 12px;" attr:hidden="codeView.demo1">
                   <st-tab-bar style="width: 100%;">
                     <st-tab-item attr:active="tab === 0" on:click="select(0)"><span slot="icon">📧</span>邮件</st-tab-item>
                     <st-tab-item attr:active="tab === 1" on:click="select(1)"><span slot="icon">📞</span>通话</st-tab-item>
@@ -93,25 +102,26 @@
                   </div>
                   <span class="demo-note" style="display: block;">当前：{{tabName}} · 已切换 {{switchCount}} 次</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（active + 面板）</summary>
-                <pre><code>&lt;st-tab-bar style="width: 100%;"&gt;
-  &lt;st-tab-item attr:active="tab === 0" on:click="select(0)"&gt;邮件&lt;/st-tab-item&gt;
-  &lt;st-tab-item attr:active="tab === 1" on:click="select(1)"&gt;通话&lt;/st-tab-item&gt;
-&lt;/st-tab-bar&gt;
 
-&lt;div attr:hidden="tab !== 0"&gt;邮件面板&lt;/div&gt;
-&lt;div attr:hidden="tab !== 1"&gt;通话面板&lt;/div&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>图标插槽与纯文字</h2>
               <p class="doc-section-lead">图标放 slot="icon"，标签文字走默认插槽。没有图标时就只显示文字，水平居中；图标尺寸随 font-size 缩放，24px 是默认值。两组标签各自维护 active，互不干扰。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>slot="icon"</code></div>
-                <div class="demo-stage block" style="gap: 20px;">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>slot="icon"</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" style="gap: 20px;" attr:hidden="codeView.demo2">
                   <div style="width: 100%;">
                     <span class="demo-label">带图标 · 4 项</span>
                     <st-tab-bar style="width: 100%; margin-top: 6px;">
@@ -132,22 +142,26 @@
                     <span class="demo-note" style="display: block;">当前文字标签：{{textName}}</span>
                   </div>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-tab-item active&gt;&lt;span slot="icon"&gt;📧&lt;/span&gt;邮件&lt;/st-tab-item&gt;
-&lt;st-tab-item&gt;纯文字标签&lt;/st-tab-item&gt;
 
-&lt;st-tab-bar style="font-size: 12px;"&gt;...&lt;/st-tab-bar&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>禁用项 disabled</h2>
               <p class="doc-section-lead">disabled 项透明度降到 0.38，内部原生 button 被禁用：点击、键盘与事件冒泡全部被阻断，不会误切换。适合“尚未上线但需要被看到”的标签。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>disabled</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo3">
                   <st-tab-bar style="width: 100%;">
                     <st-tab-item attr:active="guardTab === 0" on:click="guardSelect(0)"><iconify-icon slot="icon" icon="mdi:inbox-arrow-down"></iconify-icon>收件箱</st-tab-item>
                     <st-tab-item attr:active="guardTab === 1" on:click="guardSelect(1)"><iconify-icon slot="icon" icon="mdi:send"></iconify-icon>已发送</st-tab-item>
@@ -156,21 +170,26 @@
                   </st-tab-bar>
                   <span class="demo-note" style="display: block;">当前：{{guardName}} · 可用项点击 {{guardClicks}} 次（点禁用项不增加）</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-tab-item disabled&gt;
-  &lt;iconify-icon slot="icon" icon="mdi:message-text"&gt;&lt;/iconify-icon&gt;聊天
-&lt;/st-tab-item&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>等分、字号与宽度</h2>
               <p class="doc-section-lead">st-tab-bar 是 flex 容器，item 默认按内容宽度排布，不会自动等分。需要等分就给 item 写 flex: 1；尺寸类默认值用 em，改 bar 的 font-size 就能整体缩放，也可以直接覆写高度或边框。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>flex / font-size</code></div>
-                <div class="demo-stage block" style="gap: 20px;">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>flex / font-size</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" style="gap: 20px;" attr:hidden="codeView.demo4">
                   <div style="width: 100%;">
                     <span class="demo-label">flex: 1 等分 · 3 项</span>
                     <st-tab-bar style="width: 100%; margin-top: 6px;">
@@ -191,25 +210,26 @@
                     <span class="demo-note" style="display: block;">当前：{{smallName}}</span>
                   </div>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（等分 / 缩放）</summary>
-                <pre><code>&lt;st-tab-bar&gt;
-  &lt;st-tab-item style="flex: 1;" active&gt;日&lt;/st-tab-item&gt;
-  &lt;st-tab-item style="flex: 1;"&gt;周&lt;/st-tab-item&gt;
-  &lt;st-tab-item style="flex: 1;"&gt;月&lt;/st-tab-item&gt;
-&lt;/st-tab-bar&gt;
 
-&lt;st-tab-bar style="font-size: 12px;"&gt;...&lt;/st-tab-bar&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>程序化切换</h2>
               <p class="doc-section-lead">组件没有 next / prev API，切换就是改数据。外部按钮与标签点击可以共用同一个 select 方法：上/下项按索引用余数循环，跳到某一项直接赋值，指示条与面板都会同步。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>外部按钮控制</code></div>
-                <div class="demo-stage block" style="gap: 12px;">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo5 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>外部按钮控制</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo5')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo5 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo5 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" style="gap: 12px;" attr:hidden="codeView.demo5">
                   <st-tab-bar style="width: 100%;">
                     <st-tab-item attr:active="progTab === 0" on:click="progSelect(0)"><iconify-icon slot="icon" icon="mdi:contrast-circle"></iconify-icon>概览</st-tab-item>
                     <st-tab-item attr:active="progTab === 1" on:click="progSelect(1)"><span slot="icon">◫</span>活动</st-tab-item>
@@ -222,27 +242,26 @@
                   </div>
                   <span class="demo-note" style="display: block;">当前：{{progName}} · 最近操作：{{lastAction}}</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（外部按钮）</summary>
-                <pre><code>&lt;st-button on:click="prevTab"&gt;上一项&lt;/st-button&gt;
-&lt;st-button on:click="nextTab"&gt;下一项&lt;/st-button&gt;
 
-prevTab() {
-  this.tab = (this.tab + 2) % 3;
-}
-nextTab() {
-  this.tab = (this.tab + 1) % 3;
-}</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo5" lang="html" :code="demo5Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>同页多组标签</h2>
               <p class="doc-section-lead">每组标签是一个独立的 st-tab-bar，各自维护索引即可并存。同一页面里不要把两组 item 混进同一个 bar——指示条只认第一个 active 项。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>多组独立状态</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo6 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>多组独立状态</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo6')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo6 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo6 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo6">
                   <div class="demo-cell">
                     <span class="demo-label">工作区</span>
                     <st-tab-bar style="width: 100%;">
@@ -262,6 +281,8 @@ nextTab() {
                     <span class="demo-note" style="display: block;">当前：{{tabBName}}</span>
                   </div>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo6" lang="html" :code="demo6Code"></st-code>
               </div>
             </section>
 
@@ -299,6 +320,13 @@ nextTab() {
 
         export default async () => ({
           data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false, demo6: false },
+            demo1Code: "<st-tab-bar style=\"width: 100%;\">\n                    <st-tab-item attr:active=\"tab === 0\" on:click=\"select(0)\"><span slot=\"icon\">📧</span>邮件</st-tab-item>\n                    <st-tab-item attr:active=\"tab === 1\" on:click=\"select(1)\"><span slot=\"icon\">📞</span>通话</st-tab-item>\n                    <st-tab-item attr:active=\"tab === 2\" on:click=\"select(2)\"><iconify-icon slot=\"icon\" icon=\"mdi:star-outline\"></iconify-icon>收藏</st-tab-item>\n                  </st-tab-bar>\n                  <div style=\"width: 100%;\">\n                    <div class=\"demo-copy\" attr:hidden=\"tab !== 0\" style=\"margin-top: 10px;\">邮件 · 3 封未读。指示条会跟随 active 项移动，面板内容完全由页面 data 决定。</div>\n                    <div class=\"demo-copy\" attr:hidden=\"tab !== 1\" style=\"margin-top: 10px;\">通话 · 今天 2 次，共 12 分钟。st-tab-bar 不自动切换 active，点击只负责把索引交回给你。</div>\n                    <div class=\"demo-copy\" attr:hidden=\"tab !== 2\" style=\"margin-top: 10px;\">收藏 · 8 条已保存。多组标签互不影响，每组维护自己的索引即可。</div>\n                  </div>\n                  <span class=\"demo-note\" style=\"display: block;\">当前：{{tabName}} · 已切换 {{switchCount}} 次</span>",
+            demo2Code: "<div style=\"width: 100%;\">\n                    <span class=\"demo-label\">带图标 · 4 项</span>\n                    <st-tab-bar style=\"width: 100%; margin-top: 6px;\">\n                      <st-tab-item attr:active=\"iconTab === 0\" on:click=\"iconTab = 0\"><iconify-icon slot=\"icon\" icon=\"mdi:home-outline\"></iconify-icon>首页</st-tab-item>\n                      <st-tab-item attr:active=\"iconTab === 1\" on:click=\"iconTab = 1\"><iconify-icon slot=\"icon\" icon=\"mdi:magnify\"></iconify-icon>发现</st-tab-item>\n                      <st-tab-item attr:active=\"iconTab === 2\" on:click=\"iconTab = 2\"><iconify-icon slot=\"icon\" icon=\"mdi:bell-outline\"></iconify-icon>通知</st-tab-item>\n                      <st-tab-item attr:active=\"iconTab === 3\" on:click=\"iconTab = 3\"><span slot=\"icon\">👤</span>我的</st-tab-item>\n                    </st-tab-bar>\n                    <span class=\"demo-note\" style=\"display: block;\">当前图标标签：{{iconName}}</span>\n                  </div>\n                  <div style=\"width: 100%;\">\n                    <span class=\"demo-label\">纯文字 · font-size: 12px</span>\n                    <st-tab-bar style=\"width: 100%; font-size: 12px; margin-top: 6px;\">\n                      <st-tab-item attr:active=\"textTab === 0\" on:click=\"textTab = 0\">概览</st-tab-item>\n                      <st-tab-item attr:active=\"textTab === 1\" on:click=\"textTab = 1\">活动</st-tab-item>\n                      <st-tab-item attr:active=\"textTab === 2\" on:click=\"textTab = 2\">设置</st-tab-item>\n                    </st-tab-bar>\n                    <span class=\"demo-note\" style=\"display: block;\">当前文字标签：{{textName}}</span>\n                  </div>",
+            demo3Code: "<st-tab-bar style=\"width: 100%;\">\n                    <st-tab-item attr:active=\"guardTab === 0\" on:click=\"guardSelect(0)\"><iconify-icon slot=\"icon\" icon=\"mdi:inbox-arrow-down\"></iconify-icon>收件箱</st-tab-item>\n                    <st-tab-item attr:active=\"guardTab === 1\" on:click=\"guardSelect(1)\"><iconify-icon slot=\"icon\" icon=\"mdi:send\"></iconify-icon>已发送</st-tab-item>\n                    <st-tab-item disabled><iconify-icon slot=\"icon\" icon=\"mdi:message-text\"></iconify-icon>聊天</st-tab-item>\n                    <st-tab-item disabled><iconify-icon slot=\"icon\" icon=\"mdi:cog\"></iconify-icon>设置</st-tab-item>\n                  </st-tab-bar>\n                  <span class=\"demo-note\" style=\"display: block;\">当前：{{guardName}} · 可用项点击 {{guardClicks}} 次（点禁用项不增加）</span>",
+            demo4Code: "<div style=\"width: 100%;\">\n                    <span class=\"demo-label\">flex: 1 等分 · 3 项</span>\n                    <st-tab-bar style=\"width: 100%; margin-top: 6px;\">\n                      <st-tab-item style=\"flex: 1;\" attr:active=\"eqTab === 0\" on:click=\"eqTab = 0\">日</st-tab-item>\n                      <st-tab-item style=\"flex: 1;\" attr:active=\"eqTab === 1\" on:click=\"eqTab = 1\">周</st-tab-item>\n                      <st-tab-item style=\"flex: 1;\" attr:active=\"eqTab === 2\" on:click=\"eqTab = 2\">月</st-tab-item>\n                    </st-tab-bar>\n                    <span class=\"demo-note\" style=\"display: block;\">当前周期：{{eqName}}</span>\n                  </div>\n                  <div style=\"width: 100%;\">\n                    <span class=\"demo-label\">font-size: 12px · 4 项按内容宽</span>\n                    <st-tab-bar style=\"width: 100%; font-size: 12px; margin-top: 6px;\">\n                      <st-tab-item attr:active=\"smallTab === 0\" on:click=\"smallTab = 0\">概览</st-tab-item>\n                      <st-tab-item attr:active=\"smallTab === 1\" on:click=\"smallTab = 1\">成员</st-tab-item>\n                      <st-tab-item attr:active=\"smallTab === 2\" on:click=\"smallTab = 2\">账单</st-tab-item>\n                      <st-tab-item attr:active=\"smallTab === 3\" on:click=\"smallTab = 3\">设置</st-tab-item>\n                    </st-tab-bar>\n                    <span class=\"demo-note\" style=\"display: block;\">当前：{{smallName}}</span>\n                  </div>",
+            demo5Code: "<st-tab-bar style=\"width: 100%;\">\n                    <st-tab-item attr:active=\"progTab === 0\" on:click=\"progSelect(0)\"><iconify-icon slot=\"icon\" icon=\"mdi:contrast-circle\"></iconify-icon>概览</st-tab-item>\n                    <st-tab-item attr:active=\"progTab === 1\" on:click=\"progSelect(1)\"><span slot=\"icon\">◫</span>活动</st-tab-item>\n                    <st-tab-item attr:active=\"progTab === 2\" on:click=\"progSelect(2)\"><iconify-icon slot=\"icon\" icon=\"mdi:cog\"></iconify-icon>设置</st-tab-item>\n                  </st-tab-bar>\n                  <div class=\"row\">\n                    <st-button variant=\"outlined\" on:click=\"prevTab\">上一项</st-button>\n                    <st-button variant=\"outlined\" on:click=\"nextTab\">下一项</st-button>\n                    <st-button variant=\"text\" on:click=\"progSelect(2)\">跳到设置</st-button>\n                  </div>\n                  <span class=\"demo-note\" style=\"display: block;\">当前：{{progName}} · 最近操作：{{lastAction}}</span>",
+            demo6Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">工作区</span>\n                    <st-tab-bar style=\"width: 100%;\">\n                      <st-tab-item attr:active=\"tabA === 0\" on:click=\"tabA = 0\">概览</st-tab-item>\n                      <st-tab-item attr:active=\"tabA === 1\" on:click=\"tabA = 1\">成员</st-tab-item>\n                      <st-tab-item attr:active=\"tabA === 2\" on:click=\"tabA = 2\">设置</st-tab-item>\n                    </st-tab-bar>\n                    <span class=\"demo-note\" style=\"display: block;\">当前：{{tabAName}}</span>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">报表周期</span>\n                    <st-tab-bar style=\"width: 100%;\">\n                      <st-tab-item attr:active=\"tabB === 0\" on:click=\"tabB = 0\">日</st-tab-item>\n                      <st-tab-item attr:active=\"tabB === 1\" on:click=\"tabB = 1\">周</st-tab-item>\n                      <st-tab-item attr:active=\"tabB === 2\" on:click=\"tabB = 2\">月</st-tab-item>\n                    </st-tab-bar>\n                    <span class=\"demo-note\" style=\"display: block;\">当前：{{tabBName}}</span>\n                  </div>",
             tab: 0,
             switchCount: 0,
             iconTab: 0,
@@ -313,6 +341,9 @@ nextTab() {
             tabB: 0,
           },
           proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
             get tabName() {
               return ["邮件", "通话", "收藏"][this.tab] || "";
             },

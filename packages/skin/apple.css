@@ -126,6 +126,16 @@
   --st-dialog-enter-duration: 280ms;
   --st-dialog-exit-duration: 180ms;
   --st-dialog-scrim-duration: 240ms;
+  /* 抽屉：与 dialog 同为毛玻璃浮层，但面板用较低一层的 surface */
+  --st-drawer-bg: rgb(from var(--md-sys-color-surface-container-low) r g b / 0.52);
+  --st-drawer-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
+  --st-drawer-radius: var(--st-dialog-radius);
+  --st-drawer-shadow: var(--st-shadow-2);
+  --st-drawer-backdrop-filter: blur(24px) saturate(180%);
+  --st-drawer-scrim: var(--st-dialog-scrim);
+  --st-drawer-scrim-filter: var(--st-dialog-scrim-filter);
+  --st-drawer-enter-duration: 280ms;
+  --st-drawer-exit-duration: 180ms;
   --st-menu-bg: rgb(from var(--md-sys-color-surface-container) r g b / 0.46);
   --st-menu-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
   /* 菜单是贴近正文的弹层：模糊比大面积表面轻，才能看出底下的内容轮廓 */
@@ -152,6 +162,8 @@
   /* 密度 */
   --st-dialog-padding: 1.429em;
   --st-dialog-gap: 1em;
+  --st-drawer-padding: 1.429em;
+  --st-drawer-gap: 1em;
   --st-menu-padding: 0.286em;
   --st-menu-item-padding: 0.714em 0.643em;
   --st-card-padding: 1em;
@@ -175,4 +187,35 @@
   /* 字体：系统栈，不引入外部字体文件 */
   --st-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
   --st-letter-spacing: -0.01em;
+}
+
+[data-skin="apple"] {
+  --st-code-bg: rgb(from var(--md-sys-color-surface-container-high) r g b / 0.5);
+  --st-code-header-bg: rgb(from var(--md-sys-color-surface-container) r g b / 0.46);
+  --st-code-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
+  --st-code-radius: .857em;
+  --st-code-shadow: var(--st-shadow-1);
+  --st-code-padding: 1em;
+  --st-code-font-size: .857em;
+  --st-code-backdrop-filter: blur(18px) saturate(180%);
+}
+
+/* 减少动态效果：皮肤 token 统一归零，组件未单独处理时也即时到位 */
+@media (prefers-reduced-motion: reduce) {
+  [data-skin] {
+    --st-motion-duration: 0s;
+    --st-motion-duration-fast: 0s;
+    --st-motion-duration-base: 0s;
+    --st-motion-duration-slow: 0s;
+    --st-overlay-enter-duration: 0s;
+    --st-overlay-exit-duration: 0s;
+    --st-tooltip-duration: 0s;
+    --st-ripple-duration: 0s;
+    --st-progress-duration: 0s;
+    --st-dialog-enter-duration: 0s;
+    --st-dialog-exit-duration: 0s;
+    --st-dialog-scrim-duration: 0s;
+    --st-drawer-enter-duration: 0s;
+    --st-drawer-exit-duration: 0s;
+  }
 }

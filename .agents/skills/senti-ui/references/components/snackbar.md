@@ -95,6 +95,6 @@ t.close(); // 手动关闭（返回 { close, el }）
 ### toast 注意事项
 
 - 返回 `{ close, el }`（非 Promise 结果值本身），`close()` 幂等
-- 多条 toast 在左下角堆叠（后出的在下），各自独立计时关闭
+- 多条 toast 在左下角堆叠（后出的在下），各自独立计时关闭；左右留安全边距，窄屏消息条 `max-width:100%` 不贴边
 - `duration: 0` 不自动消失，只能点 ✕ 或 `close()` 关闭
 - 容器固定在视口左下角（fixed），不要在有 transform 的祖先内调用（坑同 st-dialog #36）——工具自动挂 body，正常使用不受影响

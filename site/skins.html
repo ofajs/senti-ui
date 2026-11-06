@@ -1454,7 +1454,7 @@
                 contrastTone: this.contrastTone,
               };
               const generated = api.generateM3Theme(seed, overrides, options);
-              api.applyTheme(seed, overrides, customsObj, options);
+              const applied = api.applyTheme(seed, overrides, customsObj, options);
               this.syncContrastPct();
               this.refreshToneGuides();
               const auto = generated.light;
@@ -1635,10 +1635,7 @@
                     contrastTone: this.contrastTone,
                   })
                 );
-                localStorage.setItem(
-                  "st-theme-css",
-                  api.themeToCss(seed, overrides, customsObj, options)
-                );
+                localStorage.setItem("st-theme-css", applied.css);
                 this.colorStatus = "已应用，并保存到本域配色。";
               }
             },

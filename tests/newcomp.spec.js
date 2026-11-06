@@ -69,6 +69,27 @@ test("slider：color=error 拇指为 error 角色色", async ({ page }) => {
   expect(thumb).toEqual(token);
 });
 
+test("slider：color 时数值气泡文字使用配对的 on-角色色", async ({ page }) => {
+  const state = await page.evaluate(async () => {
+    const el = document.querySelector("#sl-color");
+    el.shadowRoot.querySelector("input").focus();
+    await new Promise((r) => setTimeout(r, 200));
+    const parse = (value) => {
+      if (value.startsWith("#")) {
+        const h = value.slice(1);
+        return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+      }
+      const n = value.match(/[\d.]+/g).map(Number);
+      return value.startsWith("color(") ? n.slice(0, 3).map((v) => Math.round(v * 255)) : n.slice(0, 3);
+    };
+    return {
+      text: parse(getComputedStyle(el.shadowRoot.querySelector(".value-tip")).color),
+      expected: parse(getComputedStyle(document.documentElement).getPropertyValue("--md-sys-color-on-error").trim()),
+    };
+  });
+  expect(state.text).toEqual(state.expected);
+});
+
 // ---------- st-progress ----------
 
 test("progress：线形确定值宽度、环形 dashoffset、缺省 value 视为不定", async ({ page }) => {
@@ -141,6 +162,113 @@ test("tooltip：贴近视口顶部时上方放不下，自动翻到下方", asyn
   expect(state.belowHost).toBe(true);
 });
 
+test("tooltip：触屏长按 500ms 打开，点外部关闭", async ({ page }) => {
+  await page.evaluate(() => {
+    document.querySelector("#tip-basic").dispatchEvent(
+      new PointerEvent("pointerdown", {
+        bubbles: true,
+        composed: true,
+        pointerType: "touch",
+        clientX: 20,
+        clientY: 20,
+      })
+    );
+  });
+  await page.waitForTimeout(150);
+  expect(
+    await page.evaluate(() => document.querySelector("#tip-basic").hasAttribute("open"))
+  ).toBe(false);
+
+  await page.waitForTimeout(450);
+  expect(
+    await page.evaluate(() => document.querySelector("#tip-basic").hasAttribute("open"))
+  ).toBe(true);
+
+  // 抬手不关闭（触屏没有 pointerleave 语义）
+  await page.evaluate(() => {
+    document.querySelector("#tip-basic").dispatchEvent(
+      new PointerEvent("pointerup", { bubbles: true, composed: true, pointerType: "touch" })
+    );
+  });
+  await page.waitForTimeout(100);
+  expect(
+    await page.evaluate(() => document.querySelector("#tip-basic").hasAttribute("open"))
+  ).toBe(true);
+
+  // 点触发器外部关闭
+  await page.evaluate(() => {
+    document.body.dispatchEvent(
+      new PointerEvent("pointerdown", {
+        bubbles: true,
+        composed: true,
+        pointerType: "touch",
+        clientX: 5,
+        clientY: 300,
+      })
+    );
+  });
+  await page.waitForTimeout(100);
+  expect(
+    await page.evaluate(() => document.querySelector("#tip-basic").hasAttribute("open"))
+  ).toBe(false);
+});
+
+test("tooltip：content 变化时重新定位（长文本不越出视口）", async ({ page }) => {
+  await page.evaluate(() => document.querySelector("#tip-basic").setAttribute("open", ""));
+  await page.waitForTimeout(250);
+  const before = await page.evaluate(() => {
+    const b = document.querySelector("#tip-basic").shadowRoot.querySelector(".bubble");
+    return b.getBoundingClientRect().width;
+  });
+  await page.evaluate(async () => {
+    document.querySelector("#tip-basic").setAttribute(
+      "content",
+      "一条明显更长的提示内容，用来改变气泡宽度并验证打开状态下会重新定位而不是停留在旧位置"
+    );
+    await new Promise((r) => setTimeout(r, 300));
+  });
+  const after = await page.evaluate(() => {
+    const b = document.querySelector("#tip-basic").shadowRoot.querySelector(".bubble").getBoundingClientRect();
+    return { width: b.width, left: b.left, right: b.right, innerWidth };
+  });
+  expect(after.width).toBeGreaterThan(before);
+  expect(after.left).toBeGreaterThanOrEqual(0);
+  expect(after.right).toBeLessThanOrEqual(after.innerWidth + 1);
+});
+
+// ---------- st-card ----------
+
+test("card：卡片内按钮的键盘 Enter/Space 不被卡片抢走", async ({ page }) => {
+  await page.focus("#card-inner-btn");
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(100);
+  expect(await page.evaluate(() => window.events)).toEqual(["card-inner"]);
+
+  await page.evaluate(() => (window.events.length = 0));
+  await page.focus("#card-inner-btn");
+  await page.keyboard.press(" ");
+  await page.waitForTimeout(100);
+  expect(await page.evaluate(() => window.events)).toEqual(["card-inner"]);
+});
+
+test("card：interactive 卡片的可访问名称跟随内容更新", async ({ page }) => {
+  await page.evaluate(async () => {
+    document.querySelector("#card-click").textContent = "更新后的卡片文字";
+    await new Promise((r) => setTimeout(r, 200));
+  });
+  expect(await page.locator("#card-click").ariaSnapshot()).toContain('button "更新后的卡片文字"');
+});
+
+// ---------- st-badges ----------
+
+test("badges：视觉徽标对读屏隐藏，避免孤立数字", async ({ page }) => {
+  expect(
+    await page.evaluate(() =>
+      document.querySelector("#bd-num").shadowRoot.querySelector(".badge").getAttribute("aria-hidden")
+    )
+  ).toBe("true");
+});
+
 // ---------- st-card ----------
 
 test("card：三种 variant 配色差异", async ({ page }) => {
@@ -187,4 +315,28 @@ test("badges：点/数字/封顶/文本四种形态", async ({ page }) => {
     };
   });
   expect(state).toEqual({ dot: "", num: "8", max: "99+", text: "NEW" });
+});
+
+// ---------- prefers-reduced-motion ----------
+
+test("减少动态效果：card / slider 过渡时长压到近零", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.reload();
+  await page.waitForFunction(
+    () =>
+      document.querySelector("#sl-basic")?.shadowRoot?.querySelector(".value-tip") &&
+      document.querySelector("#card-elev"),
+    { timeout: 20_000 }
+  );
+  const state = await page.evaluate(() => {
+    const duration = (el) => getComputedStyle(el).transitionDuration;
+    return {
+      card: duration(document.querySelector("#card-elev")),
+      sliderTip: duration(
+        document.querySelector("#sl-basic").shadowRoot.querySelector(".value-tip")
+      ),
+    };
+  });
+  expect(parseFloat(state.card)).toBeLessThan(0.001);
+  expect(parseFloat(state.sliderTip)).toBeLessThan(0.001);
 });

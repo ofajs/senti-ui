@@ -75,7 +75,8 @@ $("st-dialog").on("close", () => {
 ## 内建行为
 
 - **M3 emphasized 动效**：打开时遮罩淡入（250ms）+ 面板从上方 `translateY(-7.14em) scale(1, 0.5)` 展开入场（300ms）；关闭时反向退出（200ms）。系统开启"减少动态效果"（`prefers-reduced-motion`）时动画时长自动趋零
-- **模态语义**：宿主自动获得 `role="dialog"` / `aria-modal="true"`，用 headline 文本作为 `aria-label`；打开时焦点移入面板，Tab/Shift+Tab 在对话框内循环，关闭后焦点归还打开元素，并锁定背景滚动
+- **模态语义**：宿主自动获得 `role="dialog"` / `aria-modal="true"`，用 headline 文本作为 `aria-label`（文本变化会自动跟随）；打开时焦点移入面板，Tab/Shift+Tab 在对话框内循环，关闭后焦点归还打开元素，并锁定背景滚动
+- 打开时把模态宿主分支之外的内容设为 `inert`（移出 Tab 与无障碍树），关闭后恢复；叠加模态由模态栈统一重算
 - 打开时焦点自动移入面板容器（`tabindex="-1"`），键盘用户可直接 Tab 到内部控件；面板本身不画 focus ring（由内部交互元素各自承载）
 - Escape / 遮罩点击仅在 `auto-close` 存在时生效；多个对话框叠加时 Escape 只关最上层
 - 关闭后组件仍留在 DOM（`display: none`）；快速关闭再打开会立即取消退出动画重新入场

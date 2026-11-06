@@ -101,7 +101,7 @@ localStorage.setItem("st-color-config", JSON.stringify({
 ```js
 import { applyTheme, themeToCss, generateM3Theme, expandCustoms, generateTonalPalettes } from "{cdn}/packages/color/m3-theme.js";
 
-applyTheme("#6750A4");                               // 生成并注入当前文档，即时生效
+applyTheme("#6750A4");                               // 生成并注入当前文档，即时生效；返回 { light, dark, css }
 applyTheme("#6750A4", { primary: "#B3261E" }, { brand: "#FF0000" });
 applyTheme("#D6FE78", {}, {}, { contrast: 1, contrastTone: "bright" }); // 荧光绿高对比
 const css = themeToCss("#6750A4");                   // 完整 CSS 文本（浅色+深色两块），可存静态文件

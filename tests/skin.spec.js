@@ -166,9 +166,9 @@ test("cyberpunk 皮肤：零圆角 / 等宽字 / 霓虹外发光", async ({ page
   expect(state.switchRadius).toBe(0);
   expect(state.thumbRadius).toBe(0);
   expect(state.font.toLowerCase()).toContain("monospace");
-  // 霓虹边缘 = 多层发光阴影；CRT 扫描线高光只作用在控件表面
+  // 霓虹边缘 = 多层发光阴影；表面保持干净，不叠高频 CRT 扫描线
   expect(state.shadow).not.toBe("none");
-  expect(state.sheen).toContain("repeating-linear-gradient");
+  expect(state.sheen).toBe("none");
   expect(state.backdrop).toBe("none");
   expect(state.fillAlpha).toBe("100%");
 });
@@ -305,9 +305,9 @@ test("皮肤选择持久化：刷新后仍是 apple", async ({ page }) => {
   expect(state.radius).toBeLessThan(11);
 });
 
-test("皮肤覆盖浮动层：dialog / menu / card / select / tooltip / snackbar", async ({ page }) => {
+test("皮肤覆盖浮动层：dialog / drawer / menu / card / select / tooltip / snackbar", async ({ page }) => {
   await page.waitForFunction(() => {
-    const names = ["st-dialog", "st-menu", "st-card", "st-select", "st-tooltip", "st-snackbar"];
+    const names = ["st-dialog", "st-drawer", "st-menu", "st-card", "st-select", "st-tooltip", "st-snackbar"];
     return names.every((tag) => document.querySelector(tag)?.shadowRoot);
   }, null, { timeout: 20_000 });
 
@@ -320,11 +320,15 @@ test("皮肤覆盖浮动层：dialog / menu / card / select / tooltip / snackbar
   const shadcn = await page.evaluate(() => {
     const radius = (el) => parseFloat(getComputedStyle(el).borderRadius);
     const dlg = document.querySelector("#dialog-skin");
+    const drawer = document.querySelector("#drawer-skin");
     const menu = document.querySelector("#menu-skin");
     const card = document.querySelector("#card-elev");
     const select = document.querySelector("#select-skin");
     return {
       dialog: radius(dlg.shadowRoot.querySelector(".panel")),
+      drawer: parseFloat(
+        getComputedStyle(drawer.shadowRoot.querySelector(".panel")).borderTopRightRadius
+      ),
       menu: radius(menu.shadowRoot.querySelector(".panel")),
       card: radius(card),
       select: radius(select),
@@ -342,6 +346,7 @@ test("皮肤覆盖浮动层：dialog / menu / card / select / tooltip / snackbar
     };
   });
   expect(shadcn.dialog).toBeLessThan(12);
+  expect(shadcn.drawer).toBeLessThan(12);
   expect(shadcn.menu).toBeLessThan(7);
   expect(shadcn.card).toBeLessThan(7);
   expect(shadcn.select).toBeLessThan(7);
@@ -363,6 +368,7 @@ test("皮肤覆盖浮动层：dialog / menu / card / select / tooltip / snackbar
     };
     return {
       dialog: filter("#dialog-skin", ".panel"),
+      drawer: filter("#drawer-skin", ".panel"),
       menu: filter("#menu-skin", ".panel"),
       card: filter("#card-elev"),
       tooltip: filter("#tip-skin", ".bubble"),
@@ -371,6 +377,9 @@ test("皮肤覆盖浮动层：dialog / menu / card / select / tooltip / snackbar
       ),
       dialogRadius: parseFloat(
         getComputedStyle(document.querySelector("#dialog-skin").shadowRoot.querySelector(".panel")).borderRadius
+      ),
+      drawerRadius: parseFloat(
+        getComputedStyle(document.querySelector("#drawer-skin").shadowRoot.querySelector(".panel")).borderTopRightRadius
       ),
       switchBorder: parseFloat(
         getComputedStyle(document.querySelector("#sw-skin").shadowRoot.querySelector(".bg")).borderWidth
@@ -384,11 +393,13 @@ test("皮肤覆盖浮动层：dialog / menu / card / select / tooltip / snackbar
     };
   });
   expect(apple.dialog).toContain("blur(24px)");
+  expect(apple.drawer).toContain("blur(24px)");
   expect(apple.menu).toContain("blur(8px)");
   expect(apple.card).toContain("blur(18px)");
   expect(apple.tooltip).toContain("blur(18px)");
   expect(apple.checkbox).toBeGreaterThan(5);
   expect(apple.dialogRadius).toBeGreaterThan(18);
+  expect(apple.drawerRadius).toBeGreaterThan(18);
   expect(apple.switchBorder).toBeGreaterThan(1.8);
   expect(apple.sliderShadow).not.toBe("none");
   // Apple 下选中态的开关轨道 / 复选框 / 滑块拇指带半透明 + backdrop blur
@@ -426,7 +437,7 @@ test("皮肤不改变语义色：card / menu / snackbar 仍消费 M3 角色", as
 
 test("m3 默认皮肤：迁移后的表面保持原值", async ({ page }) => {
   await page.waitForFunction(() => {
-    const names = ["st-dialog", "st-menu", "st-card", "st-textarea", "st-checkbox", "st-progress"];
+    const names = ["st-dialog", "st-drawer", "st-menu", "st-card", "st-textarea", "st-checkbox", "st-progress"];
     return names.every((tag) => document.querySelector(tag)?.shadowRoot);
   }, null, { timeout: 20_000 });
 
@@ -442,6 +453,9 @@ test("m3 默认皮肤：迁移后的表面保持原值", async ({ page }) => {
     const tabbar = document.querySelector("#tabbar-skin");
     return {
       dialog: radius(dlg.shadowRoot.querySelector(".panel")),
+      drawer: parseFloat(
+        getComputedStyle(document.querySelector("#drawer-skin").shadowRoot.querySelector(".panel")).borderTopRightRadius
+      ),
       card: radius(document.querySelector("#card-elev")),
       menu: radius(menu.shadowRoot.querySelector(".panel")),
       textarea: radius(document.querySelector("#textarea-skin")),
@@ -456,6 +470,8 @@ test("m3 默认皮肤：迁移后的表面保持原值", async ({ page }) => {
   });
   expect(state.dialog).toBeGreaterThan(23);
   expect(state.dialog).toBeLessThan(25);
+  expect(state.drawer).toBeGreaterThan(15);
+  expect(state.drawer).toBeLessThan(17);
   expect(state.card).toBeGreaterThan(11);
   expect(state.card).toBeLessThan(13);
   expect(state.menu).toBeGreaterThan(11);

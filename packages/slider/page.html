@@ -48,10 +48,26 @@
     <span class="state">读取结果：{{jsValue}}；Tab 聚焦后 ←/→/Home/End 键盘可调</span>
   </section>
 
+  <section>
+    <h3>原生 form（name / reset）</h3>
+    <form id="slider-form" on:submit="onFormSubmit">
+      <st-slider name="volume" default-value="40"></st-slider>
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <st-button type="submit">提交</st-button>
+        <st-button variant="outlined" type="reset">重置</st-button>
+      </div>
+    </form>
+    <span class="state">FormData volume：{{formVolume}}</span>
+  </section>
+
   <script>
     export default async () => ({
-      data: { volume: "50", inCount: 0, doneCount: 0, jsValue: "（未读取）" },
+      data: { volume: "50", inCount: 0, doneCount: 0, jsValue: "（未读取）", formVolume: "（未提交）" },
       proto: {
+        onFormSubmit(e) {
+          e.preventDefault();
+          this.formVolume = new FormData(e.target).get("volume");
+        },
         onVol(e) {
           this.volume = e.target.value;
           this.inCount += 1;

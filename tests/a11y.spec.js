@@ -38,7 +38,7 @@ test.describe("无障碍基础", () => {
     await waitForShadow(page, "#cb-basic");
 
     expect(await page.locator("#cb-basic").ariaSnapshot()).toContain('checkbox "勾选"');
-    expect(await page.locator("#sw-basic").ariaSnapshot()).toContain('checkbox "开关"');
+    expect(await page.locator("#sw-basic").ariaSnapshot()).toContain('switch "开关"');
     expect(await page.locator("#rd-a").ariaSnapshot()).toContain('radio "A"');
   });
 
@@ -236,6 +236,31 @@ test.describe("对话框模态行为", () => {
       await page.evaluate(() => document.querySelector("#dlg-autoclose").hasAttribute("open"))
     ).toBe(false);
   });
+
+  test("对话框：背景 inert 与 headline 名称动态更新", async ({ page }) => {
+    await page.goto("/tests/fixtures/dialog.html");
+    await waitForShadow(page, "#dlg-autoclose");
+
+    await openDialog(page, "#dlg-autoclose");
+    expect(
+      await page.evaluate(() => ({
+        opener: document.querySelector("#opener").inert,
+        label: document.querySelector("#dlg-autoclose").getAttribute("aria-label"),
+      }))
+    ).toEqual({ opener: true, label: "自动关闭" });
+
+    await page.evaluate(async () => {
+      document.querySelector('#dlg-autoclose [slot="headline"]').textContent = "更新后的标题";
+      await new Promise((r) => setTimeout(r, 250));
+    });
+    expect(
+      await page.evaluate(() => document.querySelector("#dlg-autoclose").getAttribute("aria-label"))
+    ).toBe("更新后的标题");
+
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(350);
+    expect(await page.evaluate(() => document.querySelector("#opener").inert)).toBe(false);
+  });
 });
 
 test.describe("已确认行为回归", () => {
@@ -243,8 +268,19 @@ test.describe("已确认行为回归", () => {
     await page.goto("/tests/fixtures/newcomp.html");
     await waitForShadow(page, "#tip-basic");
 
+    await page.evaluate(() => document.fonts.ready);
     await page.evaluate(() => document.querySelector("#tip-basic").setAttribute("open", ""));
-    await page.waitForTimeout(250);
+    // 等真正定位完成（style.left/top 写入）再测量，避免字体/并行负载造成的固定等待抖动
+    await page.waitForFunction(() => {
+      const tip = document.querySelector("#tip-basic");
+      const bubble = tip?.shadowRoot?.querySelector(".bubble");
+      return (
+        bubble &&
+        getComputedStyle(bubble).display === "block" &&
+        bubble.style.left !== "" &&
+        bubble.style.top !== ""
+      );
+    });
     const state = await page.evaluate(() => {
       const tip = document.querySelector("#tip-basic");
       const bubble = tip.shadowRoot.querySelector(".bubble");
@@ -321,9 +357,13 @@ test("context-menu：子菜单开合不会误关根菜单", async ({ page }) => 
   await page.goto("/tests/fixtures/collection.html");
   await waitForShadow(page, "#menu");
 
+  // 拆分动态 import 与调用：避免 load 期间 evaluate 的异步返回值被 GC 掉
   await page.evaluate(async () => {
     const { default: contextMenu } = await import("/packages/menu/context-menu.js");
-    window.__cm = contextMenu({ x: 120, y: 120 }, [
+    window.__contextMenu = contextMenu;
+  });
+  await page.evaluate(() => {
+    window.__cm = window.__contextMenu({ x: 120, y: 120 }, [
       { id: "a", label: "菜单A" },
       {
         id: "b",
@@ -404,6 +444,116 @@ test("menu：方向键在菜单项之间移动焦点", async ({ page }) => {
   });
   expect(first).not.toBe(second);
   expect(second).toBeTruthy();
+});
+
+test("menu：有子菜单时方向键不进入隐藏项，关闭后焦点归还触发器", async ({ page }) => {
+  await page.goto("/tests/fixtures/collection.html");
+  await waitForShadow(page, "#menu-nested");
+
+  await page.locator("#menu-nested-trigger").click();
+  await page.waitForTimeout(250);
+  const focusedLabel = () =>
+    page.evaluate(() => {
+      let a = document.activeElement;
+      while (a?.shadowRoot?.activeElement) a = a.shadowRoot.activeElement;
+      return a?.getAttribute?.("aria-label");
+    });
+
+  await page.keyboard.press("ArrowDown");
+  await page.waitForTimeout(80);
+  expect(await focusedLabel()).toBe("顶层 A");
+  await page.keyboard.press("ArrowDown");
+  await page.waitForTimeout(80);
+  expect(await focusedLabel()).toBe("顶层 B");
+  // 再按一次应回绕到顶层 A，而不是卡在隐藏的子菜单项上
+  await page.keyboard.press("ArrowDown");
+  await page.waitForTimeout(80);
+  expect(await focusedLabel()).toBe("顶层 A");
+
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(300);
+  expect(await page.evaluate(() => document.activeElement?.id)).toBe("menu-nested-trigger");
+});
+
+test("context-menu：事件首次调用同步 preventDefault（组件未加载也能拦住原生菜单）", async ({ page }) => {
+  await page.goto("/tests/fixtures/button.html");
+  await waitForShadow(page, "#btn-default");
+
+  const prevented = await page.evaluate(async () => {
+    const { default: contextMenu } = await import("/packages/menu/context-menu.js");
+    document.body.addEventListener(
+      "contextmenu",
+      (e) => {
+        contextMenu(e, [{ id: "a", label: "菜单A" }]);
+      },
+      { once: true }
+    );
+    const event = new MouseEvent("contextmenu", {
+      bubbles: true,
+      cancelable: true,
+      clientX: 50,
+      clientY: 50,
+    });
+    document.body.dispatchEvent(event);
+    return event.defaultPrevented;
+  });
+  expect(prevented).toBe(true);
+  await page.waitForSelector("body > st-menu[data-st-util]", { state: "attached" });
+  await page.keyboard.press("Escape");
+});
+
+test("split-button：Escape 只关菜单，不连带关闭外层 dialog", async ({ page }) => {
+  await page.goto("/tests/fixtures/button.html");
+  await waitForShadow(page, "#split");
+  await page.evaluate(() =>
+    document.body.insertAdjacentHTML("beforeend", '<l-m src="/packages/dialog/dialog.html"></l-m>')
+  );
+  await page.waitForFunction(() => customElements.get("st-dialog"), null, { timeout: 20_000 });
+
+  await page.evaluate(async () => {
+    const dialog = document.createElement("st-dialog");
+    dialog.id = "dlg-split";
+    dialog.setAttribute("auto-close", "");
+    const split = document.createElement("st-split-button");
+    split.id = "split-in-dialog";
+    split.innerHTML =
+      '发送<st-menu-item slot="menu" id="split-inner-item">菜单项</st-menu-item>';
+    dialog.appendChild(split);
+    document.body.appendChild(dialog);
+    await new Promise((r) => setTimeout(r, 300));
+  });
+  await page.waitForFunction(
+    () =>
+      document.querySelector("#split-in-dialog")?.shadowRoot?.querySelector(".caret-zone"),
+    null,
+    { timeout: 20_000 }
+  );
+  await page.evaluate(() => document.querySelector("#dlg-split").setAttribute("open", ""));
+  await page.waitForTimeout(400);
+
+  await page.evaluate(() =>
+    document.querySelector("#split-in-dialog").shadowRoot.querySelector(".caret-zone").click()
+  );
+  await page.waitForTimeout(300);
+  expect(
+    await page.evaluate(
+      () =>
+        getComputedStyle(
+          document.querySelector("#split-in-dialog").shadowRoot.querySelector(".panel")
+        ).display
+    )
+  ).toBe("block");
+
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(500);
+  expect(
+    await page.evaluate(() => ({
+      dialogOpen: document.querySelector("#dlg-split").hasAttribute("open"),
+      panel: getComputedStyle(
+        document.querySelector("#split-in-dialog").shadowRoot.querySelector(".panel")
+      ).display,
+    }))
+  ).toEqual({ dialogOpen: true, panel: "none" });
 });
 
 test("tabs / nav：方向键移动焦点并激活相邻项", async ({ page }) => {

@@ -48,14 +48,30 @@ test("checkbox：Space 键盘切换", async ({ page }) => {
   ).toBe(true);
 });
 
+test("checkbox：indeterminate 同步到原生混合态，未选中时不产生 checked", async ({ page }) => {
+  expect(
+    await page.evaluate(() => {
+      const el = document.querySelector("#cb-ind");
+      const input = el.shadowRoot.querySelector("input");
+      return { indeterminate: input.indeterminate, checked: input.checked };
+    })
+  ).toEqual({ indeterminate: true, checked: false });
+});
+
 test("checkbox：indeterminate 点击后退化为选中态", async ({ page }) => {
   await page.locator("#cb-ind").click();
   expect(
     await page.evaluate(() => {
       const el = document.querySelector("#cb-ind");
-      return { ind: el.hasAttribute("indeterminate"), checked: el.hasAttribute("checked") };
+      const input = el.shadowRoot.querySelector("input");
+      return {
+        ind: el.hasAttribute("indeterminate"),
+        checked: el.hasAttribute("checked"),
+        nativeIndeterminate: input.indeterminate,
+        nativeChecked: input.checked,
+      };
     })
-  ).toEqual({ ind: false, checked: true });
+  ).toEqual({ ind: false, checked: true, nativeIndeterminate: false, nativeChecked: true });
 });
 
 test("checkbox：disabled 阻断交互（点击/键盘均无效）", async ({ page }) => {
@@ -139,6 +155,49 @@ test("radio：点击选中并取消同组其他项，change 派发一次", async
   }));
   expect(state).toEqual({ a: false, b: true });
   expect(await page.evaluate(() => window.events)).toEqual([{ id: "rd-b", checked: true }]);
+});
+
+test("radio：方向键在组内移动并选中，roving tabindex 只留一个 Tab 停靠点", async ({ page }) => {
+  const tabs = await page.evaluate(() =>
+    ["rd-a", "rd-b", "rd-c"].map(
+      (id) => document.getElementById(id).shadowRoot.querySelector("input").tabIndex
+    )
+  );
+  expect(tabs).toEqual([0, -1, -1]);
+
+  await page.locator("#rd-a .native").focus();
+  await page.keyboard.press("ArrowDown");
+  await page.waitForTimeout(150);
+  const state = await page.evaluate(() => ({
+    a: document.querySelector("#rd-a").hasAttribute("checked"),
+    b: document.querySelector("#rd-b").hasAttribute("checked"),
+    tabs: ["rd-a", "rd-b"].map(
+      (id) => document.getElementById(id).shadowRoot.querySelector("input").tabIndex
+    ),
+    focusOnB: document.querySelector("#rd-b").shadowRoot.activeElement?.tagName,
+  }));
+  expect(state).toEqual({ a: false, b: true, tabs: [-1, 0], focusOnB: "INPUT" });
+});
+
+test("radio：同名项按 form owner 分组，互不影响独立表单", async ({ page }) => {
+  await page.evaluate(async () => {
+    const form = document.createElement("form");
+    form.id = "other-form";
+    form.innerHTML =
+      '<st-radio id="rd-other-a" name="fruit" value="x" checked>X</st-radio>' +
+      '<st-radio id="rd-other-b" name="fruit" value="y">Y</st-radio>';
+    document.body.appendChild(form);
+    await new Promise((r) => setTimeout(r, 800));
+  });
+
+  await page.locator("#rd-a .native").click();
+  await page.waitForTimeout(150);
+  expect(
+    await page.evaluate(() => ({
+      ownGroup: document.querySelector("#rd-a").hasAttribute("checked"),
+      otherForm: document.querySelector("#rd-other-a").hasAttribute("checked"),
+    }))
+  ).toEqual({ ownGroup: true, otherForm: true });
 });
 
 test("radio：disabled 阻断选中", async ({ page }) => {

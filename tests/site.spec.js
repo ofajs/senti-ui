@@ -764,6 +764,36 @@ test("首页 Drawer 卡片：打开抽屉并 Escape 关闭", async ({ page }) =>
   );
 });
 
+test("Button 文档：每个示例代码由 st-code 高亮渲染", async ({ page }) => {
+  await page.goto("/site/docs/button.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await page.waitForFunction(
+    () => {
+      const child = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+      );
+      return child?.shadowRoot.querySelectorAll("st-code").length === 7;
+    },
+    null,
+    { timeout: 30_000 }
+  );
+  const state = await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    const codes = [...child.shadowRoot.querySelectorAll("st-code")];
+    return {
+      count: codes.length,
+      tokens: codes.map((c) => c.shadowRoot.querySelectorAll("code span").length),
+      first: codes[0].shadowRoot.querySelector("code").textContent,
+      loads: codes.every((c) => c.shadowRoot.querySelector("code").textContent.length > 10),
+    };
+  });
+  expect(state.count).toBe(7);
+  expect(state.tokens.every((n) => n > 5)).toBe(true);
+  expect(state.first).toContain("<st-button>Filled</st-button>");
+  expect(state.loads).toBe(true);
+});
+
 test("Ripple 文档：并列示例只触发被点的波纹（o-page 内绑定最近父元素）", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));

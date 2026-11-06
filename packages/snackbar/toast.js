@@ -24,6 +24,7 @@ const addStyles = () => {
     .st-toast-container {
       position: fixed;
       left: 1.429em;
+      right: 1.429em;
       bottom: 1.429em;
       max-width: 600px;
       z-index: 20000;
@@ -35,6 +36,8 @@ const addStyles = () => {
     }
     .st-toast {
       pointer-events: auto;
+      max-width: 100%;
+      box-sizing: border-box;
       margin-top: 0.571em;
       animation: st-toast-in 0.3s cubic-bezier(0.2, 0, 0, 1);
     }

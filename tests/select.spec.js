@@ -239,3 +239,65 @@ test("下拉动画：进入有入场动画，关闭先播退出过渡再隐藏",
     )
   ).toBe("none");
 });
+
+test("disabled 选项不可点、方向键跳过", async ({ page }) => {
+  await page.locator("#sel-basic").click();
+  await page.locator("#sel-basic .opt").filter({ hasText: "榴莲" }).click({ force: true });
+  await page.waitForTimeout(150);
+  expect(await page.evaluate(() => document.querySelector("#sel-basic").value)).toBe("");
+
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(250);
+  await page.locator("#sel-basic #st-control").focus();
+  await page.keyboard.press("Enter"); // 打开，激活 apple
+  await page.keyboard.press("ArrowDown"); // banana
+  await page.keyboard.press("ArrowDown"); // 跳过榴莲 → cherry
+  await page.keyboard.press("Enter");
+  expect(await page.evaluate(() => document.querySelector("#sel-basic").value)).toBe("cherry");
+});
+
+test("optgroup：分组标题渲染，整组 disabled 时选项不可选", async ({ page }) => {
+  await page.locator("#sel-group").click();
+  await page.waitForTimeout(150);
+  const state = await page.evaluate(() => {
+    const el = document.querySelector("#sel-group");
+    const labels = [...el.shadowRoot.querySelectorAll(".group-label")].map((n) => n.textContent);
+    const melon = [...el.shadowRoot.querySelectorAll(".opt")].find((n) => n.textContent.includes("甜瓜"));
+    return {
+      labels,
+      disabled: melon?.hasAttribute("data-disabled"),
+      ariaDisabled: melon?.getAttribute("aria-disabled"),
+      groupRoles: [...el.shadowRoot.querySelectorAll(".group")].map((n) => n.getAttribute("role")),
+    };
+  });
+  expect(state.labels).toEqual(["水果", "禁用组"]);
+  expect(state.disabled).toBe(true);
+  expect(state.ariaDisabled).toBe("true");
+  expect(state.groupRoles).toEqual(["group", "group"]);
+
+  await page.locator("#sel-group .opt").filter({ hasText: "甜瓜" }).click({ force: true });
+  await page.waitForTimeout(150);
+  expect(await page.evaluate(() => document.querySelector("#sel-group").value)).toBe("");
+});
+
+test("重复 value：按选项下标选中，不会同时高亮多项", async ({ page }) => {
+  await page.locator("#sel-duplicate").click();
+  await page.locator("#sel-duplicate .opt").filter({ hasText: "B" }).click();
+  await page.waitForTimeout(150);
+  const second = await page.evaluate(() => {
+    const el = document.querySelector("#sel-duplicate");
+    return {
+      value: el.value,
+      label: el.shadowRoot.querySelector("#st-label").textContent,
+      selected: el.shadowRoot.querySelectorAll('.opt[data-selected=""]').length,
+    };
+  });
+  expect(second).toEqual({ value: "same", label: "B", selected: 1 });
+
+  await page.locator("#sel-duplicate").click();
+  await page.locator("#sel-duplicate .opt").filter({ hasText: "A" }).click();
+  await page.waitForTimeout(150);
+  expect(
+    await page.evaluate(() => document.querySelector("#sel-duplicate").shadowRoot.querySelector("#st-label").textContent)
+  ).toBe("A");
+});

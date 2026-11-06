@@ -58,6 +58,7 @@ el.addEventListener("change", (e) => {
 ## 注意事项与使用技巧
 
 - `checked` / `indeterminate` 是标签属性：JS 用 `setAttribute` / `removeAttribute`（直接改 property 不生效）；ofa 页面绑定用 `attr:checked="expr"`
+- `checked` 是 attrs：组件内部只能 `setAttribute` / `removeAttribute`，无法回写 `sync:checked`；需要双向时监听 `change`，把 `el.hasAttribute("checked")` 写回页面 data
 - 用户点击会自动退出 `indeterminate` 并切换为选中态（M3 行为）
 - `indeterminate` 会同步到内部原生 checkbox 的 `indeterminate`（混合态，读屏器播报“部分选中”）；它只是视觉态，**未 checked 时不参与表单提交**（FormData 不会出现该字段）
 - 交互由内部透明原生 checkbox 承载（覆盖整个组件，点文字也能切换），Space 键盘可用

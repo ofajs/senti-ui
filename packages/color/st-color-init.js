@@ -18,7 +18,7 @@
  * 颜色零延迟；首次访问由 st-boot 引入静态兜底 st-default.css。
  */
 
-import { applyTheme, themeToCss } from "./m3-theme.js";
+import { applyTheme } from "./m3-theme.js";
 import "./st-theme-mode.js";
 
 const STORAGE_KEY = "st-color-config";
@@ -58,14 +58,9 @@ export const theme = applyTheme(config.seed, config.overrides, customsObj, {
   contrastTone: config.contrastTone,
 });
 
-// 缓存生成的主题 CSS（themeToCss 输出含 :root / html.st-light / html.st-dark 完整块），
-// 供 st-boot.js 下次刷新同步注入（写缓存失败不影响当前页）
+// 缓存主题 CSS（applyTheme 的 css 与 themeToCss 完全一致，含完整浅色/深色块），
+// 供 st-boot.js 下次刷新同步注入（写缓存失败不影响当前页）。
+// 复用 applyTheme 已生成的 CSS，避免再次做一遍 HCT 色盘计算。
 try {
-  localStorage.setItem(
-    CSS_CACHE_KEY,
-    themeToCss(config.seed, config.overrides, customsObj, {
-      contrast: config.contrast,
-      contrastTone: config.contrastTone,
-    })
-  );
+  localStorage.setItem(CSS_CACHE_KEY, theme.css);
 } catch {}

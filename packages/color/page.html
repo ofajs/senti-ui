@@ -237,7 +237,7 @@
       // 注意：o-page 升级可能早于 index.html 的内联 module 执行，__m3Ready 尚不存在，需轮询等待
       if (window.__m3Ready) { await window.__m3Ready; }
       else { while (!window.__sentiM3) { await new Promise((r) => setTimeout(r, 10)); } }
-      const { generateM3Theme, themeToCss, applyTheme, expandCustoms, TOKEN_NAMES, OVERRIDABLE_ROLES, EXTENDED_ROLES } = window.__sentiM3;
+      const { generateM3Theme, applyTheme, expandCustoms, TOKEN_NAMES, OVERRIDABLE_ROLES, EXTENDED_ROLES } = window.__sentiM3;
 
       const STORAGE_KEY = "st-color-config";
       const defaults = () => ({ seed: "#0061A4", overrides: {}, customs: [] });
@@ -328,8 +328,9 @@
             };
             const customs = customsToObject(this.customs);
             const expanded = expandCustoms(customs, options);
-            const { light, dark } = applyTheme(this.seed, this.overrides, customs, options);
-            this.cssText = themeToCss(this.seed, this.overrides, customs, options);
+            // applyTheme 返回的 css 与 themeToCss 完全一致，直接复用，避免重复生成色盘
+            const { light, dark, css } = applyTheme(this.seed, this.overrides, customs, options);
+            this.cssText = css;
             this.lightSwatches = toSwatches(light, expanded.light);
             this.darkSwatches = toSwatches(dark, expanded.dark);
             // 未覆盖的角色回显生成值（核心角色回显种子生成的值，success 回显默认/覆盖后的绿色）

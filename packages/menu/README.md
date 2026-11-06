@@ -183,6 +183,7 @@ onCtx(e) {
 - 多级子菜单：`st-menu` 放在 item 的 `sub-menu` 插槽内（见上文），箭头自动显示
 - 右键菜单：不放 trigger，`on:contextmenu` 里 `e.preventDefault()` 后调 `openAt(e.clientX, e.clientY)`（见上文）
 - 传事件对象时会在任何异步组件加载之前同步 `preventDefault()`，首次调用也不会漏出浏览器原生右键菜单
+- `checkable` 的 `selected` 是 attrs：点击切换后派发 `change`，页面用 `attr:selected` + `on:change` 回写；不支持 `sync:selected`
 - 无障碍：面板 `role="menu"`、菜单项原生按钮 `role="menuitem"`（`checkable` 时 `menuitemcheckbox` + `aria-checked`）；触发器及其内部原生 button 自动获得 `aria-haspopup="menu"` + `aria-expanded`；↑/↓/Home/End 只在**当前层**菜单项间移动（不会落到隐藏子菜单项）；Escape 在捕获阶段只关最内层菜单，关闭后焦点归还触发器
 
 ## 验证页面

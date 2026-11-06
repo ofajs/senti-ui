@@ -59,14 +59,33 @@ export function syncAccessibleName(host, control, opts = {}) {
 
   apply();
   const observer = new MutationObserver(apply);
-  observer.observe(host, {
+  const options = {
     attributes: true,
     attributeFilter: ["aria-label", "aria-labelledby", "title"],
-    childList: true,
-    subtree: true,
-    characterData: true,
-  });
+  };
+  // 只有名称来自插槽文本时才需要观察整棵子树；显式 aria-label/title 场景
+  // 只观察宿主属性即可，避免每个输入框/图标按钮都挂一个 subtree observer。
+  if (fromSlot) {
+    options.childList = true;
+    options.subtree = true;
+    options.characterData = true;
+  }
+  observer.observe(host, options);
   return () => observer.disconnect();
+}
+
+/** rAF 合并同一帧内的多次重排（滚动/resize 重定位用） */
+export function rafThrottle(fn) {
+  let frame = 0;
+  let lastArgs;
+  return (...args) => {
+    lastArgs = args;
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      fn(...lastArgs);
+    });
+  };
 }
 
 /** 把宿主自身的 aria-label / aria-labelledby / title 解析成纯文本（用于需要自己写 label 的场景） */

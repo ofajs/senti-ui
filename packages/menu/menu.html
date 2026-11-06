@@ -93,7 +93,7 @@
 
   <script>
     import "../color/st-color-init.js";
-    import { getDeepActiveElement } from "../a11y/a11y.js";
+    import { getDeepActiveElement, rafThrottle } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-menu",
       attrs: {
@@ -241,7 +241,8 @@
             this.open = false;
           }
         };
-        this._onReposition = () => this.updatePosition();
+        // 滚动/resize 可能一帧内触发多次，合并为一次定位
+        this._onReposition = rafThrottle(() => this.updatePosition());
 
         // 判断 item 是否属于当前菜单面板（而不是 sub-menu 里的后代项）。
         // 直接 querySelectorAll 会把隐藏子菜单的项也算进来，方向键会把焦点

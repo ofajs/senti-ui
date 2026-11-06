@@ -108,6 +108,7 @@ await alert("完成"); // true/null
 - radio：同组互斥按**同一树作用域 + 同一 form owner** 的同 `name` 隔离；组内 roving tabindex + 方向键移动/选中
 - switch 内部原生控件带 `role="switch"`
 - 用法：`<st-checkbox checked on:change="...">`；JS 用 `$("st-checkbox").attr("checked", "") / attr("checked", null)`
+- `checked` / `selected` / `expanded` 是 attrs：内部交互只能 setAttribute/removeAttribute，无法回写 `sync:`；双向场景监听 `change`，把 `el.hasAttribute(...)` 写回 data
 
 ## st-snackbar 消息条
 

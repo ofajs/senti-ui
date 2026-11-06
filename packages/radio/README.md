@@ -59,6 +59,7 @@
 - 无障碍：默认插槽文字会成为内部 radio 的可访问名称；也可用宿主 `aria-label` / `aria-labelledby` 覆盖
 - 被取消选中的兄弟项**不**派发 change，只有被点击的项派发
 - `checked` / `disabled` 用 attribute 方式修改；`color` 只影响选中态描边/圆点色
+- `checked` 是 attrs，不支持 `sync:checked`；需要双向时监听 `change` 回写 data（方向键选中同样派发 change）
 - 无标签内容时标签区自动隐藏
 ## 验证页面
 

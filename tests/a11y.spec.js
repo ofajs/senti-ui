@@ -268,8 +268,19 @@ test.describe("已确认行为回归", () => {
     await page.goto("/tests/fixtures/newcomp.html");
     await waitForShadow(page, "#tip-basic");
 
+    await page.evaluate(() => document.fonts.ready);
     await page.evaluate(() => document.querySelector("#tip-basic").setAttribute("open", ""));
-    await page.waitForTimeout(250);
+    // 等真正定位完成（style.left/top 写入）再测量，避免字体/并行负载造成的固定等待抖动
+    await page.waitForFunction(() => {
+      const tip = document.querySelector("#tip-basic");
+      const bubble = tip?.shadowRoot?.querySelector(".bubble");
+      return (
+        bubble &&
+        getComputedStyle(bubble).display === "block" &&
+        bubble.style.left !== "" &&
+        bubble.style.top !== ""
+      );
+    });
     const state = await page.evaluate(() => {
       const tip = document.querySelector("#tip-basic");
       const bubble = tip.shadowRoot.querySelector(".bubble");
@@ -346,9 +357,13 @@ test("context-menu：子菜单开合不会误关根菜单", async ({ page }) => 
   await page.goto("/tests/fixtures/collection.html");
   await waitForShadow(page, "#menu");
 
+  // 拆分动态 import 与调用：避免 load 期间 evaluate 的异步返回值被 GC 掉
   await page.evaluate(async () => {
     const { default: contextMenu } = await import("/packages/menu/context-menu.js");
-    window.__cm = contextMenu({ x: 120, y: 120 }, [
+    window.__contextMenu = contextMenu;
+  });
+  await page.evaluate(() => {
+    window.__cm = window.__contextMenu({ x: 120, y: 120 }, [
       { id: "a", label: "菜单A" },
       {
         id: "b",

@@ -123,6 +123,8 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 2026-11-06 交互与无障碍回归修复：模态层打开时把宿主分支之外的背景设为 `inert`（模态栈统一重算，dialog/drawer 共用）；dialog/drawer 的 headline 名称随文本变化更新；switch 内部控件改 `role=switch`；radio 同名分组按 form owner 隔离并补组内方向键 + roving tabindex；menu 方向键只遍历当前层菜单项、关闭后焦点归还触发器；split-button 菜单补 `role=menu` / `aria-controls` / 方向键与 Escape 捕获（不再连带关闭外层 dialog）；card 键盘只在宿主自身聚焦时激活（内部按钮 Enter/Space 不再被吞）；checkbox `indeterminate` 同步原生混合态且不再错误参与表单提交；select 非法 value 自动清空；st-input/st-textarea/st-select 的 `el.focus()` / `el.blur()` 桥接到内部控件。
 
+2026-11-06 P3 优化：`m3-theme` 的 `themeToCss` / `applyTheme` 共用同一 CSS 生成器，`applyTheme` 返回 `{ light, dark, css }`，`st-color-init` / 改色页 / 官网预设复用 `css`，不再为写缓存重复生成色盘；`syncAccessibleName` 只在 `fromSlot` 场景观察子树，显式 aria-label 场景只观察宿主属性；menu / tooltip / split-button 的滚动/resize 重定位用新增的 `rafThrottle` 合并到一帧；select 支持 `option disabled`、`optgroup` 分组标题与整组禁用、重复 value 按最近选择下标高亮（外部 `el.value` 仍按值定位第一项），点击选项时焦点保持在 combobox；nav-layout 断点改用 `clientWidth`；toast 窄屏增加右侧安全边距；两个已知并行 flaky 用例改为条件等待。
+
 ## 当前状态（2026-11-05）
 
 当前 22 个模块（含 4 个双标签模块，2026-08-21 新增 slider/progress/tooltip/card/badges 五件套——参考 MUI 清单筛选引入），st-button 作为整个库设计范式的样板：

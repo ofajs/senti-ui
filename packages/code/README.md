@@ -4,7 +4,7 @@
 
 **默认只有代码本身**：无边框、无阴影、无底色、无顶栏。需要浏览器窗口式的包裹（圆点 / 文件名 / 复制按钮）时加 `frame`。
 
-**安全模型**：组件只把源码当字符串读取，再逐字符转义后渲染到 shadow DOM。`<template>` 内的 `<script>` 不会执行；`code` 属性/属性绑定也只当纯文本。
+**安全模型**：组件只把源码当字符串读取，再逐字符转义后渲染到 shadow DOM。源码用惰性 `<template>`、RCDATA `<textarea>` 或 `code` 属性传入，`<script>` 都不会执行。**直接子节点无法安全展示**：浏览器解析页面时脚本已经执行，组件代码还没有机会运行。
 
 ## 依赖引入（使用前必须）
 
@@ -23,11 +23,11 @@
 |------|------|--------|------|
 | `lang` | `"html" \| "js" \| "ts" \| "css" \| "less" \| "sass"` | `"html"` | 高亮语言；兼容 `htm/xml/svg/javascript/typescript/scss` 别名 |
 | `title` | string | 无 | 顶栏文件名 / 标题；缺省显示语言名（HTML / JS / CSS…） |
-| `code` | string | 无 | 代码字符串（属性或 `attr:code` 绑定）；设置后优先于 `<template>` |
+| `code` | 运行时状态（ofa data） | `null` | 代码字符串；用 `:code="..."` 或 `el.code = ...` 写入，**不是标签属性**；优先于 textarea / `<template>` |
 | `format` | `"auto" \| "off"` | `"auto"` | 自动格式化开关；Sass 始终只做去公共缩进 |
 | `frame` | boolean | 无 | 加浏览器外壳：底色 / 边框 / 圆点 / 标题 / 复制按钮 |
 
-## 写法一：`<template>`（推荐，声明式）
+## 写法一：`<template>`（惰性，保留标签）
 
 `<template>` 的内容天然惰性，里面的 `<script>` 不会执行。组件读取后重新转义渲染，所以可以安全地展示 HTML / JS 源码。
 
@@ -52,6 +52,26 @@
 - 带标签的 HTML 代码：组件读取 `template.innerHTML`，保留标签原样展示
 - 纯文本代码（JS / TS / CSS）：读取 `template.textContent`
 - 两种路径都只读字符串，不把代码插入页面
+- 缺点：HTML 会先被浏览器解析再序列化，裸属性可能变成 `attr=""`，格式也不一定和原文一致
+
+## 写法二：`<textarea hidden>`（无需 template，推荐）
+
+`<textarea>` 是 RCDATA：内部标签不会被解析成 DOM，`<script>` 不会执行，内容几乎原样保留。不需要手动转义 `<` / `>`。
+
+```html
+<st-code lang="html">
+  <textarea hidden>
+    <div>1111</div>
+    <script>alert("不会执行")</script>
+  </textarea>
+</st-code>
+```
+
+- 只用在源码容器上；组件读取 `textarea.value` 后会把它隐藏
+- 只有字面量 `</textarea>` 需要写成 `&lt;/textarea&gt;`（会被解码回 `</textarea>` 展示）
+- HTML 实体会被解码：想在代码里显示 `&lt;`，写成 `&amp;lt;`
+- 首个换行会被 HTML 解析器吃掉，组件会照常 dedent / 格式化
+- 适合展示带标签的 HTML、包含 `<script>` 的代码
 
 ## 自动格式化
 
@@ -67,10 +87,10 @@
 <st-code lang="js" format="off" title="exact.js"> ... </st-code>
 ```
 
-## 写法二：`code` 属性（动态字符串，无需 template）
+## 写法三：`code` 数据（动态字符串，无任何子节点）
 
 ```html
-<st-code lang="css" title="theme.css" attr:code="cssText"></st-code>
+<st-code lang="css" title="theme.css" :code="cssText"></st-code>
 ```
 
 ```js
@@ -89,7 +109,7 @@ $("st-code").attr("code", cssText);
 </st-code>
 ```
 
-组件没有设置 `<slot>`，所以这些 light DOM 内容不会显示；但脚本在组件升级前就已经执行了。展示源码请用 `<template>` 或 `code` 属性。
+组件没有设置 `<slot>`，所以这些 light DOM 内容不会显示；但脚本在组件升级前就已经执行了。展示源码请用 `<textarea hidden>`、`<template>` 或 `code` 属性。
 
 ## 事件
 
@@ -129,8 +149,11 @@ st-code::part(copy) {
 
 ## 注意事项与使用技巧
 
-- **优先用 `<template>`**：声明式写源码最方便；动态字符串用 `code` 属性 / `attr:code`
-- **不要用直接子节点**：没有 `<template>` 包裹的 `<script>` 会在升级前执行，组件无法拦截
+- **静态源码优先用 `<textarea hidden>`**：无需手动转义 `<`，标签和 `<script>` 都原样保留
+- `<template>` 适合接受浏览器序列化（属性可能被规范成 `attr=""`）的场景
+- 动态字符串用 `:code` 绑定 / `el.code`（运行时状态，不写 attribute）
+- `setAttribute("code", ...)` 无效；`code` 是 ofa data
+- **不要用直接子节点**：直接放在 `<st-code>` 下的 `<script>` 会在组件升级前执行，任何组件 JS 都无法拦截
 - `lang` 只影响高亮，不做语法校验；未知语言按 HTML 展示
 - 代码块横向滚动，不自动换行；需要换行时用原生 `st-code::part(pre) { white-space: pre-wrap; }`
 - 高亮颜色全部来自 M3 角色，深浅色 / 皮肤切换自动跟随；不提供自定义颜色变量

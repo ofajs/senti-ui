@@ -792,6 +792,87 @@ test("Button 文档：每个示例代码由 st-code 高亮渲染", async ({ page
   expect(state.tokens.every((n) => n > 5)).toBe(true);
   expect(state.first).toContain("<st-button>Filled</st-button>");
   expect(state.loads).toBe(true);
+
+  // 每个 demo 都能切到代码模式
+  await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    child.shadowRoot.querySelectorAll(".demo .demo-code-toggle").forEach((btn) => {
+      btn.shadowRoot.querySelector(".native").click();
+    });
+  });
+  await page.waitForTimeout(200);
+  const modes = await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    return [...child.shadowRoot.querySelectorAll(".demo")].map((demo) => ({
+      stage: getComputedStyle(demo.querySelector(".demo-stage")).display,
+      code: getComputedStyle(demo.querySelector(".demo-code")).display,
+      label: demo.querySelector(".live").textContent.trim(),
+      toggle: demo.querySelector(".demo-code-toggle").textContent.replace(/\s+/g, " ").trim(),
+      codeText: demo.querySelector("st-code").shadowRoot.querySelector("code").textContent,
+    }));
+  });
+  expect(modes).toHaveLength(7);
+  for (const mode of modes) {
+    expect(mode.stage).toBe("none");
+    expect(mode.code).toBe("block");
+    expect(mode.label).toBe("CODE");
+    expect(mode.toggle).toContain("查看示例");
+  }
+  expect(modes[0].codeText).toContain('<st-button variant="outlined">Outlined</st-button>');
+  expect(modes[1].codeText).toContain("Disabled");
+  expect(modes[1].codeText).toContain("Loading");
+  expect(modes[1].codeText).toContain("startTask");
+  expect(modes[2].codeText).toContain('color="primary"');
+  expect(modes[2].codeText).toContain('color="tertiary"');
+  expect(modes[3].codeText).toContain("Default 14px");
+  expect(modes[4].codeText).toContain("full-width");
+  expect(modes[5].codeText).toContain('menu-align="left"');
+  expect(modes[6].codeText).toContain("🔒");
+});
+
+test("Code 文档：5 个案例切换代码模式显示用法源码", async ({ page }) => {
+  await page.goto("/site/docs/code.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await page.waitForFunction(
+    () => {
+      const child = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+      );
+      return child?.shadowRoot.querySelectorAll(".demo-code-toggle").length === 5;
+    },
+    null,
+    { timeout: 30_000 }
+  );
+  await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    child.shadowRoot.querySelectorAll(".demo-code-toggle").forEach((btn) => {
+      btn.shadowRoot.querySelector(".native").click();
+    });
+  });
+  await page.waitForTimeout(300);
+  const modes = await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    return [...child.shadowRoot.querySelectorAll(".doc-section .demo")].map((demo) => ({
+      stage: getComputedStyle(demo.querySelector(".demo-stage")).display,
+      code: getComputedStyle(demo.querySelector(".demo-code")).display,
+      label: demo.querySelector(".live").textContent.trim(),
+      text: demo.querySelector(".demo-code").shadowRoot.querySelector("code").textContent,
+    }));
+  });
+  expect(modes).toHaveLength(5);
+  for (const mode of modes) {
+    expect(mode.stage).toBe("none");
+    expect(mode.code).toBe("block");
+    expect(mode.label).toBe("CODE");
+    expect(mode.text).toContain("<st-code");
+  }
 });
 
 test("Ripple 文档：并列示例只触发被点的波纹（o-page 内绑定最近父元素）", async ({ page }) => {

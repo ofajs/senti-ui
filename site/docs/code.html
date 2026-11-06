@@ -44,8 +44,17 @@
             默认 auto 格式化会自动整理缩进与换行；下面这个示例加了 frame，所以显示浏览器外壳。
           </p>
           <div class="demo">
-            <div class="demo-top"><span class="live"><i></i>LIVE</span><code>lang="html"</code></div>
-            <div class="demo-stage block">
+            <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.html ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>lang="html"</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('html')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.html ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.html ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+            <div class="demo-stage block" attr:hidden="codeView.html">
               <st-code lang="html" frame title="index.html">
                 <template>
                   <div class="card"><h2>Hello</h2><p>代码会被自动格式化。</p></div>
@@ -53,16 +62,10 @@
                 </template>
               </st-code>
             </div>
-          </div>
-          <details class="snippet">
-            <summary>示例代码</summary>
-            <pre><code>&lt;st-code lang="html" frame title="index.html"&gt;
-  &lt;template&gt;
-    &lt;div class="card"&gt;...&lt;/div&gt;
-    &lt;script&gt;alert("不会执行")&lt;/script&gt;
-  &lt;/template&gt;
-&lt;/st-code&gt;</code></pre>
-          </details>
+
+                <st-code class="demo-code" attr:hidden="!codeView.html" lang="html" :code="htmlDemoCode"></st-code>
+              </div>
+
         </section>
 
         <section class="doc-section">
@@ -73,8 +76,17 @@
             Sass 是缩进语法，自动格式化会把层级压平，所以只做去公共缩进。
           </p>
           <div class="demo">
-            <div class="demo-top"><span class="live"><i></i>LIVE</span><code>lang="js" / "ts"</code></div>
-            <div class="demo-stage block">
+            <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.js ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>lang="js" / "ts"</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('js')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.js ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.js ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+            <div class="demo-stage block" attr:hidden="codeView.js">
               <st-code lang="js">
                 <template>
                   const greet=(name)=>{const message=`Hello, ${name}!`;return message;}
@@ -89,10 +101,21 @@
                 </template>
               </st-code>
             </div>
-          </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.js" lang="html" :code="jsDemoCode"></st-code>
+              </div>
           <div class="demo">
-            <div class="demo-top"><span class="live"><i></i>LIVE</span><code>lang="css" / "less" / "sass"</code></div>
-            <div class="demo-stage block">
+            <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.css ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>lang="css" / "less" / "sass"</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('css')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.css ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.css ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+            <div class="demo-stage block" attr:hidden="codeView.css">
               <st-code lang="css">
                 <template>
                   .card{color:var(--md-sys-color-primary);border-radius:12px;}
@@ -111,33 +134,43 @@
                 </template>
               </st-code>
             </div>
-          </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.css" lang="html" :code="cssDemoCode"></st-code>
+              </div>
         </section>
 
         <section class="doc-section">
-          <h2>动态 code 属性与 copy 事件</h2>
+          <h2>动态 code 数据与 copy 事件</h2>
           <p class="doc-section-lead">
-            从接口 / 编辑器拿到的代码直接写 code 属性（或 attr:code 绑定），不需要 template，也不会被当作 HTML 执行。
+            从接口 / 编辑器拿到的代码用 :code 绑定或 el.code 写入运行时数据（不是标签属性），不需要 template，也不会被当作 HTML 执行。
             点击右上角复制按钮会派发 copy 事件。
           </p>
           <div class="demo">
-            <div class="demo-top"><span class="live"><i></i>LIVE</span><code>attr:code / on:copy</code></div>
-            <div class="demo-stage block">
+            <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.dynamic ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>:code / on:copy</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('dynamic')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.dynamic ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.dynamic ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+            <div class="demo-stage block" attr:hidden="codeView.dynamic">
               <st-code
                 lang="js"
                 frame
                 title="dynamic.js"
-                attr:code="dynamicCode"
+                :code="dynamicCode"
                 on:copy="bumpCopy"
               ></st-code>
               <st-button variant="outlined" on:click="nextSample">换一段</st-button>
               <span class="demo-note">copy 次数：{{copyCount}}</span>
             </div>
-          </div>
-          <details class="snippet">
-            <summary>示例代码</summary>
-            <pre><code>&lt;st-code lang="js" frame attr:code="codeText" on:copy="onCopy"&gt;&lt;/st-code&gt;</code></pre>
-          </details>
+
+                <st-code class="demo-code" attr:hidden="!codeView.dynamic" lang="html" :code="dynamicDemoCode"></st-code>
+              </div>
+
         </section>
 
         <section class="doc-section">
@@ -146,8 +179,17 @@
             代码块材质走 --st-code-* token；语法颜色仍来自 M3 角色。用 --st-code-max-height 控制内部滚动高度。
           </p>
           <div class="demo">
-            <div class="demo-top"><span class="live"><i></i>LIVE</span><code>data-skin / max-height</code></div>
-            <div class="demo-stage block">
+            <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.skin ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>data-skin / max-height</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('skin')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.skin ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.skin ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+            <div class="demo-stage block" attr:hidden="codeView.skin">
               <div data-skin="apple">
                 <st-code lang="css" frame title="apple.css">
                   <template>
@@ -162,7 +204,9 @@
                 </template>
               </st-code>
             </div>
-          </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.skin" lang="html" :code="skinDemoCode"></st-code>
+              </div>
         </section>
 
         <div class="doc-cols">
@@ -173,7 +217,7 @@
               <tbody>
                 <tr><td><code>lang</code></td><td>"html" / "js" / "ts" / "css" / "less" / "sass"</td><td>"html"</td><td>高亮语言；支持 htm / javascript / typescript / scss 等别名</td></tr>
                 <tr><td><code>title</code></td><td>string</td><td>无</td><td>顶栏文件名 / 标题；缺省显示语言名</td></tr>
-                <tr><td><code>code</code></td><td>string</td><td>无</td><td>代码字符串，优先于 template；可 <code>attr:code</code> 绑定</td></tr>
+                <tr><td><code>code</code></td><td>运行时状态（ofa data）</td><td>null</td><td>代码字符串，优先于 textarea / template；用 <code>:code</code> 或 <code>el.code</code> 写入，不是标签属性</td></tr>
                 <tr><td><code>format</code></td><td>"auto" / "off"</td><td>"auto"</td><td>自动格式化开关；Sass 始终只做去公共缩进</td></tr>
                 <tr><td><code>frame</code></td><td>boolean</td><td>无</td><td>加浏览器外壳：底色 / 边框 / 圆点 / 标题 / 复制按钮</td></tr>
               </tbody>
@@ -204,8 +248,23 @@
           data: {
             copyCount: 0,
             dynamicCode: "const answer = 42;",
+            codeView: {
+              html: false,
+              js: false,
+              css: false,
+              dynamic: false,
+              skin: false,
+            },
+            htmlDemoCode: "<st-code lang=\"html\" frame title=\"index.html\">\n  <template>\n    <div class=\"card\"><h2>Hello</h2><p>代码会被自动格式化。</p></div>\n    <script>alert(\"不会执行\")<\/script>\n  </template>\n</st-code>",
+            jsDemoCode: "<st-code lang=\"js\">\n  <template>\n    const greet=(name)=>{const message=`Hello, ${name}!`;return message;}\n    console.log(greet(\"Senti\"));\n  </template>\n</st-code>\n\n<st-code lang=\"ts\">\n  <template>\n    type User={id:number;name:string};\n    const users:User[]=[];\n    function first():User|null{return users[0]??null;}\n  </template>\n</st-code>",
+            cssDemoCode: "<st-code lang=\"css\">\n  <template>\n    .card{color:var(--md-sys-color-primary);border-radius:12px;}\n  </template>\n</st-code>\n\n<st-code lang=\"less\">\n  <template>\n    @brand:#0061a4;.card{color:@brand;&:hover{color:lighten(@brand,10%);}}\n  </template>\n</st-code>\n\n<st-code lang=\"sass\">\n  <template>\n    $brand: #0061a4\n    .card\n      color: $brand\n  </template>\n</st-code>",
+            dynamicDemoCode: "<st-code lang=\"js\" frame title=\"dynamic.js\" :code=\"dynamicCode\" on:copy=\"bumpCopy\"></st-code>\n<st-button variant=\"outlined\" on:click=\"nextSample\">换一段</st-button>\n<span class=\"demo-note\">copy 次数：{{copyCount}}</span>\n\n<script>\n  export default async () => ({\n    data: {\n      copyCount: 0,\n      dynamicCode: \"const answer = 42;\",\n    },\n    proto: {\n      bumpCopy() {\n        this.copyCount += 1;\n      },\n      nextSample() {\n        this.dynamicCode = this.copyCount % 2\n          ? 'const message = \"Hello, Senti\";'\n          : \"const answer = 42;\";\n      },\n    },\n  });\n<\/script>",
+            skinDemoCode: "<div data-skin=\"apple\">\n  <st-code lang=\"css\" frame title=\"apple.css\">\n    <template>\n      .card{background:color-mix(in srgb,var(--md-sys-color-surface) 50%,transparent);backdrop-filter:blur(18px);}\n    </template>\n  </st-code>\n</div>\n\n<st-code lang=\"js\" frame title=\"long.js\" style=\"--st-code-max-height: 9em;\">\n  <template>\n    const rows=Array.from({length:40},(_,i)=>({id:i,label:`Row ${i+1}`}));\n    console.log(rows.length);\n  </template>\n</st-code>",
           },
           proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
             bumpCopy() {
               this.copyCount += 1;
             },

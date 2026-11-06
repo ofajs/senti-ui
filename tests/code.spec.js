@@ -71,6 +71,21 @@ test("code：template 内 HTML 保留标签，script 不执行", async ({ page }
   expect(state.title).toBe("index.html");
 });
 
+test("code：textarea 作为无 template 源码容器，script 不执行", async ({ page }) => {
+  const state = await page.evaluate(() => {
+    const el = document.querySelector("#c-textarea");
+    return {
+      text: el.shadowRoot.querySelector("code").textContent,
+      executed: window.__textareaExecuted === true,
+      hidden: el.querySelector("textarea").hidden,
+    };
+  });
+  expect(state.executed).toBe(false);
+  expect(state.hidden).toBe(true);
+  expect(state.text).toContain("<div>TA</div>");
+  expect(state.text).toContain("<script>");
+});
+
 test("code：auto 格式化 JS / CSS，format=off 保留原文", async ({ page }) => {
   const state = await page.evaluate(() => ({
     js: document.querySelector("#c-js").shadowRoot.querySelector("code").textContent,
@@ -81,9 +96,9 @@ test("code：auto 格式化 JS / CSS，format=off 保留原文", async ({ page }
   expect(state.off).toBe("const a={b:1};");
 });
 
-test("code：code 属性、语言别名与默认标题", async ({ page }) => {
+test("code：code 数据、语言别名与默认标题", async ({ page }) => {
   await page.evaluate(() => {
-    document.querySelector("#c-dyn").setAttribute("code", ".a{color:red}");
+    document.querySelector("#c-dyn").code = ".a{color:red}";
   });
   await page.waitForFunction(
     () => document.querySelector("#c-dyn").shadowRoot.querySelector("code").textContent.includes(".a {")
@@ -97,6 +112,7 @@ test("code：code 属性、语言别名与默认标题", async ({ page }) => {
   });
   expect(state.text).toBe(".a {\n  color: red\n}");
   expect(state.title).toBe("dynamic.css");
+  expect(await page.evaluate(() => document.querySelector("#c-dyn").hasAttribute("code"))).toBe(false);
 });
 
 test("code：Sass 只做去公共缩进，不压平层级", async ({ page }) => {

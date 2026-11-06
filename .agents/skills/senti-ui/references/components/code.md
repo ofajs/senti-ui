@@ -4,7 +4,7 @@
 
 默认只有代码本身：无边框、无阴影、无底色、无顶栏；加 `frame` 才有浏览器窗口式外壳（圆点 / 文件名 / 复制）。
 
-**安全**：组件只把源码当字符串读取，再转义渲染到 shadow DOM；`<template>` 内的 `<script>` 不会执行，`code` 属性只当纯文本。
+**安全**：组件只把源码当字符串读取，再转义渲染到 shadow DOM；`<template>` / `<textarea hidden>` / `code` 属性都不会执行 `<script>`。直接子节点无法安全展示（浏览器解析时脚本已执行）。
 
 ## 依赖引入（使用前必须）
 
@@ -21,13 +21,26 @@
 |------|------|--------|------|
 | `lang` | `"html" \| "js" \| "ts" \| "css" \| "less" \| "sass"` | `"html"` | 高亮语言；兼容 htm/xml/svg/javascript/typescript/scss |
 | `title` | string | 无 | 顶栏文件名 / 标题；缺省显示语言名 |
-| `code` | string | 无 | 代码字符串；设置后优先于 template |
+| `code` | 运行时状态（ofa data） | `null` | 代码字符串；用 `:code` / `el.code` 写入，不是标签属性；优先于 textarea / template |
 | `format` | `"auto" \| "off"` | `"auto"` | 自动格式化；Sass 只做去公共缩进 |
 | `frame` | boolean | 无 | 浏览器外壳：底色 / 边框 / 圆点 / 标题 / 复制按钮 |
 
 ## 用法
 
-### template（推荐，安全）
+### textarea hidden（无需 template，推荐）
+
+```html
+<st-code lang="html">
+  <textarea hidden>
+    <div>1111</div>
+    <script>alert("不会执行")</script>
+  </textarea>
+</st-code>
+```
+
+textarea 是 RCDATA，标签原样保留、不需要转义 `<` / `>`；只有字面量 `</textarea>` 要写成 `&lt;/textarea&gt;`，HTML 实体会被解码（要显示 `&lt;` 写 `&amp;lt;`）。
+
+### template（会序列化 HTML）
 
 ```html
 <!-- 默认：只有代码 -->
@@ -49,10 +62,10 @@
 
 带标签的 HTML 用 `template.innerHTML` 保留标签；纯文本（JS/CSS）用 `template.textContent`。两者都只读字符串，不插入 DOM。
 
-### code 属性（动态字符串）
+### code 数据（动态字符串）
 
 ```html
-<st-code lang="css" title="theme.css" attr:code="cssText"></st-code>
+<st-code lang="css" title="theme.css" :code="cssText"></st-code>
 ```
 
 ```js
@@ -61,7 +74,7 @@ $("st-code").attr("code", cssText);
 
 ### 不要用直接子节点
 
-没有 `<template>` 包裹的 `<script>` 会在组件升级前执行，组件无法拦截。源码请放 template 或 code 属性。
+没有 `<template>` / `<textarea>` 包裹的 `<script>` 会在组件升级前执行，组件无法拦截。源码请放 textarea / template 或 `:code`。
 
 ## 自动格式化
 
@@ -94,7 +107,8 @@ part：`shell` / `header` / `title` / `copy` / `body` / `pre` / `code`；`header
 
 ## 注意事项
 
-- 优先 template；动态代码用 `code` 属性 / `attr:code`
+- 静态源码优先 textarea hidden；动态代码用 `:code` 绑定 / `el.code`
+- `setAttribute("code", ...)` 无效；`code` 是 ofa data
 - 默认无浏览器外壳；需要标题 / 复制时加 `frame`
 - 代码块横向滚动，不自动换行；需要换行用 `st-code::part(pre) { white-space: pre-wrap; }`
 - 高亮颜色全部来自 M3 角色，自动跟随深浅色 / 皮肤

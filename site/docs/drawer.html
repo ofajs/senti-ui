@@ -89,92 +89,93 @@
               <h2>左侧 / 右侧</h2>
               <p class="doc-section-lead">side 控制面板贴哪一侧、从哪个方向滑入。下面两个抽屉都用 sync:open 双向绑定；内部按钮把数据置 false 即可关闭。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>side="left" / side="right"</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>side="left" / side="right"</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo1">
                   <st-button variant="outlined" on:click="leftOpen = true">打开左侧抽屉</st-button>
                   <st-button variant="outlined" on:click="rightOpen = true">打开右侧抽屉</st-button>
                   <span class="demo-note">leftOpen = {{leftOpen}} · rightOpen = {{rightOpen}}</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-button on:click="leftOpen = true"&gt;打开左侧抽屉&lt;/st-button&gt;
-
-&lt;st-drawer sync:open="leftOpen" auto-close side="left"&gt;
-  &lt;h2 slot="headline"&gt;导航&lt;/h2&gt;
-  &lt;p&gt;抽屉正文&lt;/p&gt;
-  &lt;div slot="actions"&gt;
-    &lt;st-button variant="text" on:click="leftOpen = false"&gt;关闭&lt;/st-button&gt;
-  &lt;/div&gt;
-&lt;/st-drawer&gt;
-
-&lt;st-drawer sync:open="rightOpen" auto-close side="right"&gt;...&lt;/st-drawer&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>auto-close 与 close 事件</h2>
               <p class="doc-section-lead">设置 auto-close 后，点击遮罩或按 Escape 会关闭抽屉、把 sync:open 绑定的数据回写为 false，并派发 close 事件。close 只在交互关闭时派发；用按钮改数据关闭不会触发。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>auto-close / on:close</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>auto-close / on:close</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo2">
                   <st-button variant="outlined" on:click="autoOpen = true">打开 auto-close 抽屉</st-button>
                   <span class="demo-note">close 触发 {{closeCount}} 次</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（关闭计数）</summary>
-                <pre><code>&lt;st-drawer sync:open="autoOpen" auto-close side="left" on:close="onAutoClose"&gt;
-  &lt;h2 slot="headline"&gt;auto-close&lt;/h2&gt;
-  &lt;p&gt;点击遮罩或按 Escape 关闭。&lt;/p&gt;
-&lt;/st-drawer&gt;
 
-&lt;script&gt;
-  export default async () =&gt; ({
-    data: { autoOpen: false, closeCount: 0 },
-    proto: {
-      onAutoClose() {
-        this.closeCount += 1;
-      },
-    },
-  });
-&lt;/script&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>用 ::part(panel) 定制</h2>
               <p class="doc-section-lead">面板在 shadow 内，用原生 ::part(panel) 覆盖宽度、圆角、底色；字号类属性可直接写在宿主 style 上，面板会等比缩放。下面的样式只写在本页 shadow 内。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>::part(panel)</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>::part(panel)</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo3">
                   <st-button variant="outlined" on:click="wideOpen = true">Wide · 34em</st-button>
                   <st-button variant="outlined" on:click="smallOpen = true">font-size: 12px</st-button>
                   <span class="demo-note">wide 覆盖 width；12px 让 padding、圆角、宽度一起缩小。</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;style&gt;
-  .doc-drawer-wide::part(panel) {
-    width: min(34em, 92vw);
-  }
-&lt;/style&gt;
 
-&lt;st-drawer class="doc-drawer-wide" sync:open="wideOpen" auto-close&gt;...&lt;/st-drawer&gt;
-&lt;st-drawer sync:open="smallOpen" auto-close style="font-size: 12px;"&gt;...&lt;/st-drawer&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>插槽与焦点</h2>
               <p class="doc-section-lead">headline / 默认 / actions 三个插槽哪个没有内容，对应区块就自动隐藏；正文超高时在正文区内部滚动。打开后焦点移入面板，Tab / Shift+Tab 在抽屉内循环，关闭后归还打开元素；与 st-dialog 共用模态栈，叠加时 Escape 只关最上层。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>slots / focus</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>slots / focus</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo4">
                   <st-button variant="outlined" on:click="plainOpen = true">只有标题与正文</st-button>
                   <st-button variant="outlined" on:click="formOpen = true">抽屉里的表单</st-button>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
               </div>
             </section>
 
@@ -270,6 +271,11 @@
 
             export default async () => ({
               data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false },
+            demo1Code: "<st-button variant=\"outlined\" on:click=\"leftOpen = true\">打开左侧抽屉</st-button>\n                  <st-button variant=\"outlined\" on:click=\"rightOpen = true\">打开右侧抽屉</st-button>\n                  <span class=\"demo-note\">leftOpen = {{leftOpen}} · rightOpen = {{rightOpen}}</span>",
+            demo2Code: "<st-button variant=\"outlined\" on:click=\"autoOpen = true\">打开 auto-close 抽屉</st-button>\n                  <span class=\"demo-note\">close 触发 {{closeCount}} 次</span>",
+            demo3Code: "<st-button variant=\"outlined\" on:click=\"wideOpen = true\">Wide · 34em</st-button>\n                  <st-button variant=\"outlined\" on:click=\"smallOpen = true\">font-size: 12px</st-button>\n                  <span class=\"demo-note\">wide 覆盖 width；12px 让 padding、圆角、宽度一起缩小。</span>",
+            demo4Code: "<st-button variant=\"outlined\" on:click=\"plainOpen = true\">只有标题与正文</st-button>\n                  <st-button variant=\"outlined\" on:click=\"formOpen = true\">抽屉里的表单</st-button>",
                 leftOpen: false,
                 rightOpen: false,
                 autoOpen: false,
@@ -282,6 +288,9 @@
                 closeCount: 0,
               },
               proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
                 onAutoClose() {
                   this.closeCount += 1;
                 },

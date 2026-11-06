@@ -79,8 +79,17 @@
               <h2>基础：trigger 与菜单项</h2>
               <p class="doc-section-lead">触发器必须带 slot="trigger"；st-menu-item 直接写在 st-menu 内。菜单项之间放原生 hr 就是分隔线，disabled 项降到 0.38 透明度并阻断点击。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-menu / st-menu-item</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-menu / st-menu-item</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo1">
                   <st-menu>
                     <st-button slot="trigger" variant="outlined">操作菜单 ▾</st-button>
                     <st-menu-item on:click="pick('编辑')"><span slot="prefix">✏️</span>编辑<span slot="suffix">⌘E</span></st-menu-item>
@@ -91,27 +100,26 @@
                   </st-menu>
                   <span class="demo-note">最近选择：{{lastPick}}</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-menu&gt;
-  &lt;st-button slot="trigger" variant="outlined"&gt;操作菜单 ▾&lt;/st-button&gt;
-  &lt;st-menu-item on:click="pick('编辑')"&gt;
-    &lt;span slot="prefix"&gt;✏️&lt;/span&gt;编辑&lt;span slot="suffix"&gt;⌘E&lt;/span&gt;
-  &lt;/st-menu-item&gt;
-  &lt;st-menu-item disabled&gt;删除（禁用）&lt;/st-menu-item&gt;
-  &lt;hr /&gt;
-  &lt;st-menu-item&gt;关于&lt;/st-menu-item&gt;
-&lt;/st-menu&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>align 与 sync:open</h2>
               <p class="doc-section-lead">align 控制面板与触发器的水平对齐，默认 right、可设 left。open 是运行时状态：用 sync:open 绑定后，选中菜单项、点击外部或 Escape 导致的关闭都会回写到页面数据。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>align / sync:open</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>align / sync:open</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo2">
                   <st-menu sync:open="menuOpen" on:open="onMenuOpen" on:close="onMenuClose">
                     <st-button slot="trigger" variant="outlined">右对齐菜单 ▾</st-button>
                     <st-menu-item on:click="pick('选项一')">选项一</st-menu-item>
@@ -124,27 +132,26 @@
                   </st-menu>
                   <span class="demo-note">menuOpen = {{menuOpen}} · 当前打开中的菜单 {{openCount}} 个</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（开合状态双向绑定）</summary>
-                <pre><code>&lt;st-menu sync:open="menuOpen"&gt;
-  &lt;st-button slot="trigger"&gt;右对齐菜单 ▾&lt;/st-button&gt;
-  &lt;st-menu-item&gt;选项一&lt;/st-menu-item&gt;
-&lt;/st-menu&gt;
 
-&lt;st-menu align="left"&gt;
-  &lt;st-button slot="trigger"&gt;左对齐菜单 ▾&lt;/st-button&gt;
-  &lt;st-menu-item&gt;选项 A&lt;/st-menu-item&gt;
-&lt;/st-menu&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>prefix、suffix 与多级子菜单</h2>
               <p class="doc-section-lead">子菜单写在某个 st-menu-item 的 sub-menu 插槽里：该 item 仍是普通一项，自动显示 ▸ 箭头，hover 展开（触屏点击开合）。选中任意层级后整条链关闭，Escape 只关最内层。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>sub-menu</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>sub-menu</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo3">
                   <st-menu>
                     <st-button slot="trigger" variant="outlined">导出菜单 ▾</st-button>
                     <st-menu-item on:click="pick('新建文档')"><span slot="prefix">📄</span>新建文档</st-menu-item>
@@ -161,29 +168,26 @@
                   </st-menu>
                   <span class="demo-note">最近选择：{{lastPick}}</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（子菜单）</summary>
-                <pre><code>&lt;st-menu&gt;
-  &lt;st-button slot="trigger"&gt;导出菜单 ▾&lt;/st-button&gt;
-  &lt;st-menu-item&gt;
-    导出为
-    &lt;st-menu slot="sub-menu"&gt;
-      &lt;st-menu-item&gt;PDF&lt;/st-menu-item&gt;
-      &lt;st-menu-item&gt;Markdown&lt;/st-menu-item&gt;
-      &lt;st-menu-item&gt;PNG 图片&lt;/st-menu-item&gt;
-    &lt;/st-menu&gt;
-  &lt;/st-menu-item&gt;
-&lt;/st-menu&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>可勾选菜单项（checkable / selected）</h2>
               <p class="doc-section-lead">给 st-menu-item 加 checkable 会显示勾选位，selected 控制勾选状态；点击自动切换并派发 change。默认点击后菜单关闭，多选场景给 st-menu 加 keep-open，让菜单保持打开。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>checkable / selected / keep-open</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>checkable / selected / keep-open</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo4">
                   <st-menu keep-open on:change="onCheck">
                     <st-button slot="trigger" variant="outlined">视图 ▾</st-button>
                     <st-menu-item checkable selected>网格</st-menu-item>
@@ -192,30 +196,26 @@
                   </st-menu>
                   <span class="demo-note">最后变更：{{checkPick}}</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（多选视图切换）</summary>
-                <pre><code>&lt;st-menu keep-open on:change="onCheck"&gt;
-  &lt;st-button slot="trigger"&gt;视图 ▾&lt;/st-button&gt;
-  &lt;st-menu-item checkable selected&gt;网格&lt;/st-menu-item&gt;
-  &lt;st-menu-item checkable&gt;列表&lt;/st-menu-item&gt;
-  &lt;st-menu-item checkable&gt;紧凑&lt;/st-menu-item&gt;
-&lt;/st-menu&gt;
 
-// 事件：e.target 是切换的 st-menu-item，读 selected 判断勾选态
-onCheck(e) {
-  this.checkPick = e.target.textContent.trim() +
-    (e.target.hasAttribute("selected") ? "：选中" : "：取消");
-}</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>右键定位：openAt(x, y)</h2>
               <p class="doc-section-lead">不需要 trigger：在 contextmenu 事件里阻止浏览器默认菜单，再调用 openAt(clientX, clientY)。面板左上角对齐光标，右侧 / 下方空间不足时自动翻转到左 / 上，并夹紧在视口内。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>openAt</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo5 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>openAt</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo5')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo5 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo5 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo5">
                   <div class="ctx-mini" on:contextmenu="onCtx">在这个区域点击右键（靠边时会自动翻转）</div>
                   <st-menu id="doc-ctx-menu">
                     <st-menu-item on:click="pick('剪切')"><span slot="prefix">✂️</span>剪切</st-menu-item>
@@ -226,81 +226,55 @@ onCheck(e) {
                   </st-menu>
                   <span class="demo-note">最近选择：{{lastPick}}</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;div on:contextmenu="onCtx"&gt;右键区域&lt;/div&gt;
-&lt;st-menu id="ctxMenu"&gt;
-  &lt;st-menu-item&gt;剪切&lt;/st-menu-item&gt;
-  &lt;st-menu-item&gt;复制&lt;/st-menu-item&gt;
-&lt;/st-menu&gt;
 
-&lt;script&gt;
-  export default async () =&gt; ({
-    proto: {
-      onCtx(e) {
-        e.preventDefault();
-        this.shadow.$("#ctxMenu").openAt(e.clientX, e.clientY);
-      },
-    },
-  });
-&lt;/script&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo5" lang="html" :code="demo5Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>命令式右键菜单 contextMenu</h2>
               <p class="doc-section-lead">动态菜单用命令式工具更省事：传事件（自动取坐标）或 {x, y}，items 数组支持 separator 与 children 子菜单，await 得到点击的叶子项 id；点空白或 Escape 返回 null。工具自动挂 body，用完即毁。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>window.__site.contextMenu</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo6 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>window.__site.contextMenu</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo6')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo6 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo6 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo6">
                   <div class="ctx-mini" on:contextmenu="onCmdCtx">右键这个区域：菜单由 JS 数组生成，含分隔线与子菜单</div>
                   <span class="demo-note">返回值：{{cmdPick}}</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>import contextMenu from "/packages/menu/context-menu.js";
 
-const id = await contextMenu(e, [
-  { id: "cut", label: "剪切", prefix: "✂️" },
-  { id: "copy", label: "复制", suffix: "⌘C" },
-  { separator: true },
-  {
-    id: "sort",
-    label: "排序",
-    children: [
-      { id: "sort-name", label: "按名称" },
-      { id: "sort-size", label: "按大小" },
-    ],
-  },
-  { id: "del", label: "删除", disabled: true },
-]);
-// id → "cut" / "sort-name"；取消 → null</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo6" lang="html" :code="demo6Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>键盘、外部点击与对话框内使用</h2>
               <p class="doc-section-lead">触发器是原生按钮：Tab 聚焦、Enter / Space 打开；面板内菜单项可 Tab 到达并用 Enter / Space 激活。点击面板外部或按 Escape 关闭。菜单面板会换算 transform 祖先的定位原点，所以放进 st-dialog 也不会漂移。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>menu inside dialog</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo7 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>menu inside dialog</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo7')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo7 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo7 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo7">
                   <st-button variant="outlined" on:click="dlgMenu = true">在对话框里打开菜单</st-button>
                   <span class="demo-note">最近选择：{{lastPick}} · Escape 先关菜单，再关对话框（需 auto-close）</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo7" lang="html" :code="demo7Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（对话框内的菜单）</summary>
-                <pre><code>&lt;st-dialog sync:open="dlgMenu" auto-close&gt;
-  &lt;h2 slot="headline"&gt;选择操作&lt;/h2&gt;
-  &lt;st-menu&gt;
-    &lt;st-button slot="trigger"&gt;操作 ▾&lt;/st-button&gt;
-    &lt;st-menu-item on:click="pick('重命名')"&gt;重命名&lt;/st-menu-item&gt;
-    &lt;st-menu-item on:click="pick('移动')"&gt;移动&lt;/st-menu-item&gt;
-  &lt;/st-menu&gt;
-&lt;/st-dialog&gt;</code></pre>
-              </details>
             </section>
 
             <div class="doc-cols">
@@ -351,6 +325,14 @@ const id = await contextMenu(e, [
 
         export default async () => ({
           data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false, demo6: false, demo7: false },
+            demo1Code: "<st-menu>\n                    <st-button slot=\"trigger\" variant=\"outlined\">操作菜单 ▾</st-button>\n                    <st-menu-item on:click=\"pick('编辑')\"><span slot=\"prefix\">✏️</span>编辑<span slot=\"suffix\">⌘E</span></st-menu-item>\n                    <st-menu-item on:click=\"pick('复制')\"><span slot=\"prefix\">📋</span>复制<span slot=\"suffix\">⌘C</span></st-menu-item>\n                    <hr />\n                    <st-menu-item disabled><span slot=\"prefix\">🗑</span>删除（禁用）</st-menu-item>\n                    <st-menu-item on:click=\"pick('关于')\">关于</st-menu-item>\n                  </st-menu>\n                  <span class=\"demo-note\">最近选择：{{lastPick}}</span>",
+            demo2Code: "<st-menu sync:open=\"menuOpen\" on:open=\"onMenuOpen\" on:close=\"onMenuClose\">\n                    <st-button slot=\"trigger\" variant=\"outlined\">右对齐菜单 ▾</st-button>\n                    <st-menu-item on:click=\"pick('选项一')\">选项一</st-menu-item>\n                    <st-menu-item on:click=\"pick('选项二')\">选项二</st-menu-item>\n                  </st-menu>\n                  <st-menu align=\"left\" on:open=\"onMenuOpen\" on:close=\"onMenuClose\">\n                    <st-button slot=\"trigger\" variant=\"text\">左对齐菜单 ▾</st-button>\n                    <st-menu-item on:click=\"pick('左 A')\">选项 A</st-menu-item>\n                    <st-menu-item on:click=\"pick('左 B')\">选项 B</st-menu-item>\n                  </st-menu>\n                  <span class=\"demo-note\">menuOpen = {{menuOpen}} · 当前打开中的菜单 {{openCount}} 个</span>",
+            demo3Code: "<st-menu>\n                    <st-button slot=\"trigger\" variant=\"outlined\">导出菜单 ▾</st-button>\n                    <st-menu-item on:click=\"pick('新建文档')\"><span slot=\"prefix\">📄</span>新建文档</st-menu-item>\n                    <st-menu-item>\n                      <span slot=\"prefix\">🗂</span>导出为\n                      <st-menu slot=\"sub-menu\">\n                        <st-menu-item on:click=\"pick('导出 PDF')\">PDF</st-menu-item>\n                        <st-menu-item on:click=\"pick('导出 Markdown')\">Markdown</st-menu-item>\n                        <st-menu-item on:click=\"pick('导出 PNG')\">PNG 图片</st-menu-item>\n                      </st-menu>\n                    </st-menu-item>\n                    <hr />\n                    <st-menu-item disabled><span slot=\"prefix\">🗑</span>删除（禁用）</st-menu-item>\n                  </st-menu>\n                  <span class=\"demo-note\">最近选择：{{lastPick}}</span>",
+            demo4Code: "<st-menu keep-open on:change=\"onCheck\">\n                    <st-button slot=\"trigger\" variant=\"outlined\">视图 ▾</st-button>\n                    <st-menu-item checkable selected>网格</st-menu-item>\n                    <st-menu-item checkable>列表</st-menu-item>\n                    <st-menu-item checkable>紧凑</st-menu-item>\n                  </st-menu>\n                  <span class=\"demo-note\">最后变更：{{checkPick}}</span>",
+            demo5Code: "<div class=\"ctx-mini\" on:contextmenu=\"onCtx\">在这个区域点击右键（靠边时会自动翻转）</div>\n                  <st-menu id=\"doc-ctx-menu\">\n                    <st-menu-item on:click=\"pick('剪切')\"><span slot=\"prefix\">✂️</span>剪切</st-menu-item>\n                    <st-menu-item on:click=\"pick('复制')\"><span slot=\"prefix\">📋</span>复制</st-menu-item>\n                    <st-menu-item on:click=\"pick('粘贴')\"><span slot=\"prefix\">📌</span>粘贴</st-menu-item>\n                    <hr />\n                    <st-menu-item on:click=\"pick('刷新')\"><span slot=\"prefix\">🔄</span>刷新</st-menu-item>\n                  </st-menu>\n                  <span class=\"demo-note\">最近选择：{{lastPick}}</span>",
+            demo6Code: "<div class=\"ctx-mini\" on:contextmenu=\"onCmdCtx\">右键这个区域：菜单由 JS 数组生成，含分隔线与子菜单</div>\n                  <span class=\"demo-note\">返回值：{{cmdPick}}</span>",
+            demo7Code: "<st-button variant=\"outlined\" on:click=\"dlgMenu = true\">在对话框里打开菜单</st-button>\n                  <span class=\"demo-note\">最近选择：{{lastPick}} · Escape 先关菜单，再关对话框（需 auto-close）</span>",
             lastPick: "（无）",
             checkPick: "（未操作）",
             menuOpen: false,
@@ -359,6 +341,9 @@ const id = await contextMenu(e, [
             dlgMenu: false,
           },
           proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
             pick(label) {
               this.lastPick = label;
             },

@@ -79,8 +79,17 @@
               <h2>基础结构：prefix、副文本与 suffix</h2>
               <p class="doc-section-lead">默认插槽是正文，prefix / suffix 放图标或数量，正文里的任意子元素加 secondary 属性就显示为小号灰色副文本。st-list 内直接用原生 hr 做分隔线，首尾项自动使用更大圆角。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-list + st-list-item</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-list + st-list-item</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo1">
                   <st-list style="width: 100%; max-width: 460px;">
                     <st-list-item button on:click="pick('收件箱')">
                       <iconify-icon slot="prefix" icon="mdi:inbox-arrow-down"></iconify-icon>
@@ -106,27 +115,26 @@
                   </st-list>
                   <span class="demo-note">最近点击：{{lastPick}} · 共 {{picks}} 次</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-list&gt;
-  &lt;st-list-item button&gt;
-    &lt;iconify-icon slot="prefix" icon="mdi:inbox-arrow-down"&gt;&lt;/iconify-icon&gt;
-    &lt;div&gt;收件箱&lt;span secondary&gt;12 封未读&lt;/span&gt;&lt;/div&gt;
-    &lt;span slot="suffix"&gt;12&lt;/span&gt;
-  &lt;/st-list-item&gt;
-  &lt;hr&gt;
-  &lt;st-list-item&gt;垃圾邮件&lt;/st-list-item&gt;
-&lt;/st-list&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>可点击项：button 与 click</h2>
               <p class="doc-section-lead">加 button 才有点击态：hover / active state layer 与整行波纹。没有 button 的项只是普通内容，点击没有这些视觉反馈，但原生 click 仍会冒泡；click 是原生且 composed 的，用 on:click 直接监听即可。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>button + on:click</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>button + on:click</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo2">
                   <st-list style="width: 100%; max-width: 460px;">
                     <st-list-item button on:click="pick('个人资料')">
                       <span slot="prefix">👤</span>
@@ -151,23 +159,26 @@
                   </st-list>
                   <span class="demo-note">点击结果：{{lastPick}} · 累计 {{picks}} 次</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（点击分发）</summary>
-                <pre><code>&lt;st-list-item button on:click="pick('个人资料')"&gt;
-  &lt;span slot="prefix"&gt;👤&lt;/span&gt;
-  &lt;div&gt;个人资料&lt;span secondary&gt;头像、昵称与简介&lt;/span&gt;&lt;/div&gt;
-  &lt;iconify-icon slot="suffix" icon="mdi:chevron-right"&gt;&lt;/iconify-icon&gt;
-&lt;/st-list-item&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>禁用项 disabled</h2>
               <p class="doc-section-lead">disabled 只降低内容透明度（0.38）并阻断交互：内部原生 button 被禁用，click / hover / 波纹 / 键盘全部失效，state layer 也不显示。它不会隐藏该项，适合表达“当前不可用但需要被看到”。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>disabled</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo3">
                   <st-list style="width: 100%; max-width: 460px;">
                     <st-list-item button on:click="blockedClicks += 1">
                       <span slot="prefix">✅</span>
@@ -192,20 +203,26 @@
                   </st-list>
                   <span class="demo-note">可点击项累计：{{blockedClicks}} 次（点禁用项不会增加）</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-list-item button disabled&gt;禁用的可点击项&lt;/st-list-item&gt;
-&lt;st-list-item disabled&gt;禁用的普通项&lt;/st-list-item&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>可折叠子列表 collapsible + expanded</h2>
               <p class="doc-section-lead">collapsible 显示展开箭头，点击只切换 expanded、不派发 click；展开区域用 sublist 插槽，通常再放一个 st-list。默认展开就写 expanded，层级缩进自动按祖先 st-list 的层数累加。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>collapsible / sublist</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>collapsible / sublist</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo4">
                   <st-list style="width: 100%; max-width: 460px;">
                     <st-list-item collapsible expanded>
                       <span slot="prefix">📁</span>
@@ -238,31 +255,26 @@
                   </st-list>
                   <span class="demo-note">最近点击：{{lastPick}} · 折叠项点击只展开/收起，不进入点击统计</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（两级折叠）</summary>
-                <pre><code>&lt;st-list-item collapsible expanded&gt;
-  &lt;span slot="prefix"&gt;📁&lt;/span&gt;
-  &lt;div&gt;项目&lt;/div&gt;
-  &lt;st-list slot="sublist"&gt;
-    &lt;st-list-item button&gt;设计系统&lt;/st-list-item&gt;
-    &lt;st-list-item collapsible&gt;
-      归档
-      &lt;st-list slot="sublist"&gt;
-        &lt;st-list-item button&gt;2024&lt;/st-list-item&gt;
-      &lt;/st-list&gt;
-    &lt;/st-list-item&gt;
-  &lt;/st-list&gt;
-&lt;/st-list-item&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>缩进量与尺寸</h2>
               <p class="doc-section-lead">每层缩进默认 1em，由行内占位实现，点击区始终是整行宽。需要更明显的层级时，在外层 st-list 上覆盖 --st-list-step；尺寸类默认值都用 em，改 font-size 即可整体缩放。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>--st-list-step / font-size</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo5 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>--st-list-step / font-size</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo5')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo5 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo5 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo5">
                   <div class="demo-cell">
                     <span class="demo-label">默认缩进（1em）</span>
                     <st-list style="width: 100%;">
@@ -297,26 +309,26 @@
                   </div>
                 </div>
                 <span class="demo-note" style="display: block; text-align: center; grid-column: 1 / -1;">缩进量随层数自动累加，不要给 sublist 再加 margin / padding-left。</span>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo5" lang="html" :code="demo5Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（调整缩进步长）</summary>
-                <pre><code>&lt;st-list style="--st-list-step: 2em; font-size: 15px;"&gt;
-  &lt;st-list-item collapsible expanded&gt;
-    &lt;div&gt;一级&lt;/div&gt;
-    &lt;st-list slot="sublist"&gt;
-      &lt;st-list-item button&gt;二级（缩进 2em）&lt;/st-list-item&gt;
-    &lt;/st-list&gt;
-  &lt;/st-list-item&gt;
-&lt;/st-list&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>导航与设置列表</h2>
               <p class="doc-section-lead">导航列表就是“button 项 + suffix 箭头”。多组列表各用独立的 st-list，用标题或 demo-label 分组；每项点击后由外部决定路由或状态，st-list 本身不管理选中项。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>多组列表</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo6 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>多组列表</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo6')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo6 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo6 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo6">
                   <div class="demo-cell">
                     <span class="demo-label">账户</span>
                     <st-list style="width: 100%;">
@@ -347,18 +359,9 @@
                   </div>
                 </div>
                 <span class="demo-note" style="display: block; text-align: center; grid-column: 1 / -1;">最近点击：{{lastPick}} · 累计 {{picks}} 次</span>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo6" lang="html" :code="demo6Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（导航列表）</summary>
-                <pre><code>&lt;st-list&gt;
-  &lt;st-list-item button on:click="go('account')"&gt;
-    &lt;span slot="prefix"&gt;🪪&lt;/span&gt;账户信息&lt;iconify-icon slot="suffix" icon="mdi:chevron-right"&gt;&lt;/iconify-icon&gt;
-  &lt;/st-list-item&gt;
-  &lt;st-list-item button on:click="go('security')"&gt;
-    &lt;span slot="prefix"&gt;🔑&lt;/span&gt;登录方式&lt;iconify-icon slot="suffix" icon="mdi:chevron-right"&gt;&lt;/iconify-icon&gt;
-  &lt;/st-list-item&gt;
-&lt;/st-list&gt;</code></pre>
-              </details>
             </section>
 
             <div class="doc-cols">
@@ -398,11 +401,21 @@
 
         export default async () => ({
           data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false, demo6: false },
+            demo1Code: "<st-list style=\"width: 100%; max-width: 460px;\">\n                    <st-list-item button on:click=\"pick('收件箱')\">\n                      <iconify-icon slot=\"prefix\" icon=\"mdi:inbox-arrow-down\"></iconify-icon>\n                      <div>收件箱<span secondary style=\"display: block;\">12 封未读</span></div>\n                      <span slot=\"suffix\">12</span>\n                    </st-list-item>\n                    <st-list-item button on:click=\"pick('已发送')\">\n                      <iconify-icon slot=\"prefix\" icon=\"mdi:send\"></iconify-icon>\n                      <div>已发送<span secondary style=\"display: block;\">最近发送：今天 09:12</span></div>\n                      <iconify-icon slot=\"suffix\" icon=\"mdi:chevron-right\"></iconify-icon>\n                    </st-list-item>\n                    <st-list-item button on:click=\"pick('草稿')\">\n                      <span slot=\"prefix\">📝</span>\n                      <div>草稿<span secondary style=\"display: block;\">3 封待完善</span></div>\n                      <span slot=\"suffix\">3</span>\n                    </st-list-item>\n                    <hr>\n                    <st-list-item>\n                      <span slot=\"prefix\">🚫</span>\n                      <div>垃圾邮件</div>\n                      <span slot=\"suffix\">0</span>\n                    </st-list-item>\n                  </st-list>\n                  <span class=\"demo-note\">最近点击：{{lastPick}} · 共 {{picks}} 次</span>",
+            demo2Code: "<st-list style=\"width: 100%; max-width: 460px;\">\n                    <st-list-item button on:click=\"pick('个人资料')\">\n                      <span slot=\"prefix\">👤</span>\n                      <div>个人资料<span secondary style=\"display: block;\">头像、昵称与简介</span></div>\n                      <iconify-icon slot=\"suffix\" icon=\"mdi:chevron-right\"></iconify-icon>\n                    </st-list-item>\n                    <st-list-item button on:click=\"pick('通知设置')\">\n                      <iconify-icon slot=\"prefix\" icon=\"mdi:bell-outline\"></iconify-icon>\n                      <div>通知设置<span secondary style=\"display: block;\">邮件、桌面与移动端</span></div>\n                      <iconify-icon slot=\"suffix\" icon=\"mdi:chevron-right\"></iconify-icon>\n                    </st-list-item>\n                    <st-list-item button on:click=\"pick('安全中心')\">\n                      <span slot=\"prefix\">🔒</span>\n                      <div>安全中心<span secondary style=\"display: block;\">两步验证已开启</span></div>\n                      <iconify-icon slot=\"suffix\" icon=\"mdi:chevron-right\"></iconify-icon>\n                    </st-list-item>\n                    <hr>\n                    <st-list-item>\n                      <span slot=\"prefix\">ℹ️</span>\n                      <div>普通项没有 button<span secondary style=\"display: block;\">点击无 hover / 波纹 / 点击态</span></div>\n                    </st-list-item>\n                  </st-list>\n                  <span class=\"demo-note\">点击结果：{{lastPick}} · 累计 {{picks}} 次</span>",
+            demo3Code: "<st-list style=\"width: 100%; max-width: 460px;\">\n                    <st-list-item button on:click=\"blockedClicks += 1\">\n                      <span slot=\"prefix\">✅</span>\n                      <div>可用项<span secondary style=\"display: block;\">点击计数会 +1</span></div>\n                      <iconify-icon slot=\"suffix\" icon=\"mdi:chevron-right\"></iconify-icon>\n                    </st-list-item>\n                    <st-list-item button disabled on:click=\"blockedClicks += 1\">\n                      <span slot=\"prefix\">⛔</span>\n                      <div>禁用的可点击项<span secondary style=\"display: block;\">不会派发 click</span></div>\n                      <span slot=\"suffix\">lock</span>\n                    </st-list-item>\n                    <st-list-item disabled>\n                      <span slot=\"prefix\">🚫</span>\n                      <div>禁用的普通项</div>\n                    </st-list-item>\n                    <hr>\n                    <st-list-item button on:click=\"blockedClicks += 1\">\n                      <span slot=\"prefix\">🔄</span>\n                      <div>另一个可用项</div>\n                      <iconify-icon slot=\"suffix\" icon=\"mdi:chevron-right\"></iconify-icon>\n                    </st-list-item>\n                  </st-list>\n                  <span class=\"demo-note\">可点击项累计：{{blockedClicks}} 次（点禁用项不会增加）</span>",
+            demo4Code: "<st-list style=\"width: 100%; max-width: 460px;\">\n                    <st-list-item collapsible expanded>\n                      <span slot=\"prefix\">📁</span>\n                      <div>项目<span secondary style=\"display: block;\">2 个分组 · 3 个项目</span></div>\n                      <st-list slot=\"sublist\">\n                        <st-list-item button on:click=\"pick('设计系统')\">\n                          <span slot=\"prefix\">📐</span>设计系统\n                        </st-list-item>\n                        <st-list-item collapsible>\n                          <span slot=\"prefix\">🗂</span>\n                          <div>归档</div>\n                          <st-list slot=\"sublist\">\n                            <st-list-item button on:click=\"pick('2024 归档')\">2024</st-list-item>\n                            <st-list-item button on:click=\"pick('2023 归档')\">2023</st-list-item>\n                          </st-list>\n                        </st-list-item>\n                      </st-list>\n                    </st-list-item>\n                    <st-list-item collapsible>\n                      <span slot=\"prefix\">📦</span>\n                      <div>回收站<span secondary style=\"display: block;\">默认收起</span></div>\n                      <st-list slot=\"sublist\">\n                        <st-list-item button on:click=\"pick('旧项目')\">旧项目</st-list-item>\n                      </st-list>\n                    </st-list-item>\n                    <st-list-item button on:click=\"pick('收藏')\">\n                      <iconify-icon slot=\"prefix\" icon=\"mdi:star-outline\"></iconify-icon>收藏\n                      <span slot=\"suffix\">8</span>\n                    </st-list-item>\n                  </st-list>\n                  <span class=\"demo-note\">最近点击：{{lastPick}} · 折叠项点击只展开/收起，不进入点击统计</span>",
+            demo5Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">默认缩进（1em）</span>\n                    <st-list style=\"width: 100%;\">\n                      <st-list-item collapsible expanded>\n                        <div>一级</div>\n                        <st-list slot=\"sublist\">\n                          <st-list-item collapsible expanded>\n                            <div>二级</div>\n                            <st-list slot=\"sublist\">\n                              <st-list-item button>三级</st-list-item>\n                            </st-list>\n                          </st-list-item>\n                        </st-list>\n                      </st-list-item>\n                    </st-list>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">--st-list-step: 2em + 15px</span>\n                    <st-list style=\"width: 100%; --st-list-step: 2em; font-size: 15px;\">\n                      <st-list-item collapsible expanded>\n                        <div>一级</div>\n                        <st-list slot=\"sublist\">\n                          <st-list-item collapsible expanded>\n                            <div>二级</div>\n                            <st-list slot=\"sublist\">\n                              <st-list-item button>三级</st-list-item>\n                            </st-list>\n                          </st-list-item>\n                        </st-list>\n                      </st-list-item>\n                    </st-list>\n                  </div>",
+            demo6Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">账户</span>\n                    <st-list style=\"width: 100%;\">\n                      <st-list-item button on:click=\"pick('账户信息')\">\n                        <span slot=\"prefix\">🪪</span>账户信息<iconify-icon slot=\"suffix\" icon=\"mdi:chevron-right\"></iconify-icon>\n                      </st-list-item>\n                      <st-list-item button on:click=\"pick('登录方式')\">\n                        <span slot=\"prefix\">🔑</span>登录方式<iconify-icon slot=\"suffix\" icon=\"mdi:chevron-right\"></iconify-icon>\n                      </st-list-item>\n                      <st-list-item button on:click=\"pick('订阅方案')\">\n                        <span slot=\"prefix\">💳</span>订阅方案<span slot=\"suffix\">Pro</span>\n                      </st-list-item>\n                    </st-list>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">帮助与支持</span>\n                    <st-list style=\"width: 100%;\">\n                      <st-list-item button on:click=\"pick('使用文档')\">\n                        <iconify-icon slot=\"prefix\" icon=\"mdi:book-open-variant\"></iconify-icon>使用文档<iconify-icon slot=\"suffix\" icon=\"mdi:open-in-new\"></iconify-icon>\n                      </st-list-item>\n                      <st-list-item button on:click=\"pick('反馈问题')\">\n                        <iconify-icon slot=\"prefix\" icon=\"mdi:message-text\"></iconify-icon>反馈问题<iconify-icon slot=\"suffix\" icon=\"mdi:open-in-new\"></iconify-icon>\n                      </st-list-item>\n                      <st-list-item button disabled>\n                        <span slot=\"prefix\">📞</span>电话支持<span slot=\"suffix\">工作时间</span>\n                      </st-list-item>\n                    </st-list>\n                  </div>",
             lastPick: "（未点击）",
             picks: 0,
             blockedClicks: 0,
           },
           proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
             pick(name) {
               this.lastPick = name;
               this.picks += 1;

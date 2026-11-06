@@ -153,6 +153,7 @@ $("st-input").on("input", (e) => {
 `index.html` 为打开即看的完整示例，可作视觉验收用（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/input/`）。
 
 - 无障碍：宿主 `aria-label` / `aria-labelledby` / `title` 会同步到内部 input
+- 组件不内置 label / 浮动标签：label 由页面排版承担（外层说明文字 + `aria-label`），以便适配不同皮肤
 
 ## 表单
 

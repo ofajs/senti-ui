@@ -83,7 +83,7 @@
       text-align: center;
       white-space: nowrap;
       background: var(--st-slider-main, var(--md-sys-color-primary));
-      color: var(--md-sys-color-on-primary);
+      color: var(--st-on-accent, var(--md-sys-color-on-primary));
       opacity: 0;
       pointer-events: none;
       transition: opacity var(--st-motion-duration, 0.15s) ease;
@@ -299,15 +299,23 @@
           tip.style.left = thumbLeft + "px";
           tip.textContent = input.value;
         },
-        // color 接受 M3 角色名：设置 --st-slider-main（激活段/拇指/气泡/三角一处联动），
-        // 气泡文字恒用 on-primary（气泡底是纯角色色）
+        // color 接受 M3 角色名：设置 --st-slider-main / --st-on-accent 一对语义色，
+        // 激活段/拇指/气泡/三角一处联动；气泡文字必须用配对的 on-角色色
         applyColor() {
           const name = this.color;
-          this.ele.style.setProperty(
+          const s = this.ele.style;
+          if (!name) {
+            s.removeProperty("--st-slider-main");
+            s.removeProperty("--st-on-accent");
+            return;
+          }
+          s.setProperty(
             "--st-slider-main",
-            name
-              ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
-              : "var(--md-sys-color-primary)"
+            `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
+          );
+          s.setProperty(
+            "--st-on-accent",
+            `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-primary)))`
           );
         },
       },

@@ -62,3 +62,4 @@
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/slider/`）。
 
 - 无障碍：宿主 `aria-label` / `aria-labelledby` / `title` 会同步到内部 range；宿主尺寸变化由 ResizeObserver 重算几何
+- `color` 同时写入 `--st-slider-main` / `--st-on-accent`：数值气泡文字跟随 on-角色色

@@ -69,6 +69,27 @@ test("slider：color=error 拇指为 error 角色色", async ({ page }) => {
   expect(thumb).toEqual(token);
 });
 
+test("slider：color 时数值气泡文字使用配对的 on-角色色", async ({ page }) => {
+  const state = await page.evaluate(async () => {
+    const el = document.querySelector("#sl-color");
+    el.shadowRoot.querySelector("input").focus();
+    await new Promise((r) => setTimeout(r, 200));
+    const parse = (value) => {
+      if (value.startsWith("#")) {
+        const h = value.slice(1);
+        return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+      }
+      const n = value.match(/[\d.]+/g).map(Number);
+      return value.startsWith("color(") ? n.slice(0, 3).map((v) => Math.round(v * 255)) : n.slice(0, 3);
+    };
+    return {
+      text: parse(getComputedStyle(el.shadowRoot.querySelector(".value-tip")).color),
+      expected: parse(getComputedStyle(document.documentElement).getPropertyValue("--md-sys-color-on-error").trim()),
+    };
+  });
+  expect(state.text).toEqual(state.expected);
+});
+
 // ---------- st-progress ----------
 
 test("progress：线形确定值宽度、环形 dashoffset、缺省 value 视为不定", async ({ page }) => {
@@ -190,6 +211,62 @@ test("tooltip：触屏长按 500ms 打开，点外部关闭", async ({ page }) =
   expect(
     await page.evaluate(() => document.querySelector("#tip-basic").hasAttribute("open"))
   ).toBe(false);
+});
+
+test("tooltip：content 变化时重新定位（长文本不越出视口）", async ({ page }) => {
+  await page.evaluate(() => document.querySelector("#tip-basic").setAttribute("open", ""));
+  await page.waitForTimeout(250);
+  const before = await page.evaluate(() => {
+    const b = document.querySelector("#tip-basic").shadowRoot.querySelector(".bubble");
+    return b.getBoundingClientRect().width;
+  });
+  await page.evaluate(async () => {
+    document.querySelector("#tip-basic").setAttribute(
+      "content",
+      "一条明显更长的提示内容，用来改变气泡宽度并验证打开状态下会重新定位而不是停留在旧位置"
+    );
+    await new Promise((r) => setTimeout(r, 300));
+  });
+  const after = await page.evaluate(() => {
+    const b = document.querySelector("#tip-basic").shadowRoot.querySelector(".bubble").getBoundingClientRect();
+    return { width: b.width, left: b.left, right: b.right, innerWidth };
+  });
+  expect(after.width).toBeGreaterThan(before);
+  expect(after.left).toBeGreaterThanOrEqual(0);
+  expect(after.right).toBeLessThanOrEqual(after.innerWidth + 1);
+});
+
+// ---------- st-card ----------
+
+test("card：卡片内按钮的键盘 Enter/Space 不被卡片抢走", async ({ page }) => {
+  await page.focus("#card-inner-btn");
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(100);
+  expect(await page.evaluate(() => window.events)).toEqual(["card-inner"]);
+
+  await page.evaluate(() => (window.events.length = 0));
+  await page.focus("#card-inner-btn");
+  await page.keyboard.press(" ");
+  await page.waitForTimeout(100);
+  expect(await page.evaluate(() => window.events)).toEqual(["card-inner"]);
+});
+
+test("card：interactive 卡片的可访问名称跟随内容更新", async ({ page }) => {
+  await page.evaluate(async () => {
+    document.querySelector("#card-click").textContent = "更新后的卡片文字";
+    await new Promise((r) => setTimeout(r, 200));
+  });
+  expect(await page.locator("#card-click").ariaSnapshot()).toContain('button "更新后的卡片文字"');
+});
+
+// ---------- st-badges ----------
+
+test("badges：视觉徽标对读屏隐藏，避免孤立数字", async ({ page }) => {
+  expect(
+    await page.evaluate(() =>
+      document.querySelector("#bd-num").shadowRoot.querySelector(".badge").getAttribute("aria-hidden")
+    )
+  ).toBe("true");
 });
 
 // ---------- st-card ----------

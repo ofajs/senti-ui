@@ -331,6 +331,11 @@
         this.controlEl = sr.querySelector("#st-control");
         this.slotEl = sr.querySelector("#st-slot");
         this.activeIndex = -1;
+        // 宿主本身不可聚焦，桥接 focus/blur 到内部 combobox
+        ele.focus = () => {
+          if (this.disabled === null) this.controlEl.focus();
+        };
+        ele.blur = () => this.controlEl.blur();
 
         // 自绘 listbox 的组合框语义（ARIA 角色 + 展开状态 + 选项选中态）。
         // 宿主属性延后到构造结束再写，避免命令式 createElement 时抛
@@ -376,7 +381,7 @@
         // 宿主 value 用 getter/setter 反射到 data（ofa 的 data 不在原生属性上）
         Object.defineProperty(ele, "value", {
           get: () => (this.value === null ? "" : this.value),
-          set: (v) => { this.value = v == null ? "" : v; },
+          set: (v) => { this.value = v == null || v === "" ? null : String(v); },
         });
 
         // 宿主 options property：动态选项入口（:options 绑定 / el.options = [...]）。
@@ -531,6 +536,12 @@
         // 选中态与显示文本同步（change 事件由 select() 派发）
         syncSelected() {
           const opt = this._opts?.find((o) => o.value === this.value);
+          // 非法值（外部写入不存在的 value / 选中项被动态删除）不能只显示成占位、
+          // 却继续把旧值交给表单代理：那会让 FormData 提交一个界面上不存在的值。
+          // 选项尚未加载时不处理，等 readOptions 完成后再校验。
+          if (!opt && this.value !== null && this._opts?.length) {
+            this.value = null;
+          }
           this.labelEl.replaceChildren();
           this.labelEl.classList.toggle("placeholder", !opt);
           if (!opt) {

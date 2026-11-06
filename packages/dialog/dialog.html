@@ -208,21 +208,42 @@
         });
 
         // 用 headline 文本做可访问名称（没有 headline 时保留作者自己写的 label）
+        const headlineSlot = sr.querySelector('slot[name="headline"]');
         this._syncLabel = () => {
           // 作者显式设置的 label 优先；只有“我们自动写的那一个”才跟随 headline 更新
           if (ele.hasAttribute("aria-labelledby")) return;
-          if (ele.hasAttribute("aria-label") && !this._autoLabel) return;
-          const text = sr
-            .querySelector('slot[name="headline"]')
+          const current = ele.getAttribute("aria-label");
+          if (current && (!this._autoLabel || current !== this._autoLabelText)) return;
+          const text = headlineSlot
             .assignedElements()
             .map((node) => node.textContent.trim())
             .filter(Boolean)
             .join(" ");
           this._autoLabel = !!text;
+          this._autoLabelText = text;
           if (text) ele.setAttribute("aria-label", text);
           else ele.removeAttribute("aria-label");
         };
-        sr.querySelector('slot[name="headline"]').addEventListener("slotchange", this._syncLabel);
+        // slotchange 只在分配节点变化时触发；headline 文本被动态修改不会触发，
+        // 需要观察已分配节点自身才能让可访问名称跟随（否则读屏器一直读旧标题）
+        this._observeHeadline = () => {
+          this._headlineObserver?.disconnect();
+          this._headlineObserver = new MutationObserver(() => this._syncLabel());
+          headlineSlot
+            .assignedElements()
+            .forEach((node) =>
+              this._headlineObserver.observe(node, {
+                childList: true,
+                subtree: true,
+                characterData: true,
+              })
+            );
+        };
+        headlineSlot.addEventListener("slotchange", () => {
+          this._observeHeadline();
+          this._syncLabel();
+        });
+        this._observeHeadline();
         queueMicrotask(() => this._syncLabel());
 
         // 关闭后把焦点还给打开它的元素
@@ -293,6 +314,7 @@
         document.removeEventListener("focusin", this._onFocusIn, true);
         clearTimeout(this._closingTimer);
         this._attrObserver?.disconnect();
+        this._headlineObserver?.disconnect();
         if (removeModal(this.ele)) unlockScroll();
       },
       proto: {

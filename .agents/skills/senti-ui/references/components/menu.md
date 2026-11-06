@@ -186,6 +186,6 @@ onCtx(e) {
 
 `index.html`（直接访问 `/packages/menu/`）。
 
-- 无障碍：panel `role="menu"`、item 原生按钮 `role="menuitem"`；触发器自动 `aria-haspopup` / `aria-expanded`；Escape 捕获阶段只关最内层
+- 无障碍：panel `role="menu"`、item 原生按钮 `role="menuitem"`；触发器自动 `aria-haspopup` / `aria-expanded`；↑/↓/Home/End 只在当前层菜单项间移动（不会落到隐藏子菜单项）；Escape 捕获阶段只关最内层，Escape / 选中项关闭后焦点归还触发器
 
 - 触发器及内部原生 button 均带 `aria-haspopup` / `aria-expanded`；↑/↓/Home/End 移动焦点。

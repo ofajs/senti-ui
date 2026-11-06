@@ -46,6 +46,18 @@
     <st-menu-item id="mi-check3" checkable disabled>禁用勾选</st-menu-item>
   </st-menu>
 
+  <st-menu id="menu-nested">
+    <button slot="trigger" id="menu-nested-trigger">嵌套菜单</button>
+    <st-menu-item id="nmi-a">顶层 A</st-menu-item>
+    <st-menu-item id="nmi-parent">
+      顶层 B
+      <st-menu slot="sub-menu">
+        <st-menu-item id="nmi-child-a">子项 A</st-menu-item>
+        <st-menu-item id="nmi-child-b">子项 B</st-menu-item>
+      </st-menu>
+    </st-menu-item>
+  </st-menu>
+
   <st-tab-bar id="tabs">
     <st-tab-item id="tab-a" active>邮件</st-tab-item>
     <st-tab-item id="tab-b">通话</st-tab-item>

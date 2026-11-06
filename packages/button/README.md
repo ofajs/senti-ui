@@ -223,7 +223,9 @@ document.querySelector("st-button").addEventListener("click", () => {});
 - `open` 是**运行时状态（data）**：ofa 页面用 `sync:open="xxx"` 双向绑定（选中菜单项 / 点外部 / Escape 自动关闭会回写）；兼容 `setAttribute` / `removeAttribute`
 - 插槽：`prefix`（主区前置图标）/ 默认（主操作文字）/ `menu`（菜单内容）
 - 事件：主区 `click`（冒泡 composed，业务监听它做主操作）、`open` / `close`（菜单开合）；菜单项自身的 `click` 正常冒泡供业务分发
-- 面板 fixed 定位自动翻转避让视口，与 st-menu 行为一致；键盘：主区 Enter/Space 触发主操作、箭头区 Enter/Space 开合
+- 面板 fixed 定位自动翻转避让视口，与 st-menu 行为一致
+- 键盘：主区 Enter/Space 触发主操作、箭头区 Enter/Space 开合；菜单打开后 ↑/↓/Home/End 在菜单项间移动焦点，Escape 只关菜单（不会连带关闭外层 dialog）并把焦点还给箭头区
+- 菜单面板带 `role="menu"`，箭头区带 `aria-haspopup="menu"` / `aria-expanded` / `aria-controls`
 
 ```html
 <st-split-button on:click="send">

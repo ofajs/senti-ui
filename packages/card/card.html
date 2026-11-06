@@ -87,7 +87,6 @@
   <st-ripple></st-ripple>
 <script>
   import "../color/st-color-init.js";
-  import { syncAccessibleName } from "../a11y/a11y.js";
   export default async () => ({
     tag: "st-card",
     attrs: {
@@ -110,23 +109,23 @@
           ele.removeAttribute("role");
         }
       };
-      // 构造期不能写宿主属性：延后到微任务统一应用角色与无障碍名称
+      // 构造期不能写宿主属性：延后到微任务应用角色。
+      // 不把插槽文本写成宿主 aria-label：那会在首次渲染时冻结名称，
+      // 之后内容变化不再更新（可访问名称应始终来自卡片内容本身）。
       queueMicrotask(() => {
         this._a11yReady = true;
         this.applyInteractive();
-        this._a11yCleanup = syncAccessibleName(ele, ele, { fromSlot: true });
       });
-      // 宿主聚焦时 Enter/Space 激活（原生 button 的等价行为）
+      // 宿主聚焦时 Enter/Space 激活（原生 button 的等价行为）。
+      // 焦点在卡片内部的按钮/链接上时必须放行，否则会取消内部控件的默认激活，
+      // 让“卡片里的按钮”在键盘下完全不可用。
       ele.addEventListener("keydown", (e) => {
-        if (this.interactive === null) return;
+        if (this.interactive === null || e.target !== ele) return;
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           ele.click();
         }
       });
-    },
-    detached() {
-      this._a11yCleanup?.();
     },
   });
 </script>

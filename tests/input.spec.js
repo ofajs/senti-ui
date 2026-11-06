@@ -63,6 +63,18 @@ test("JS 写 el.value 后内部 input 同步", async ({ page }) => {
   expect(inner).toBe("set-by-js");
 });
 
+test("宿主 el.focus() / el.blur() 桥接到内部 input", async ({ page }) => {
+  const state = await page.evaluate(() => {
+    const el = document.querySelector("#in-basic");
+    const input = el.shadowRoot.querySelector("input");
+    el.focus();
+    const focused = el.shadowRoot.activeElement === input;
+    el.blur();
+    return { focused, blurred: el.shadowRoot.activeElement !== input };
+  });
+  expect(state).toEqual({ focused: true, blurred: true });
+});
+
 test("disabled 属性生效：内部 input 禁用、无法输入、事件不触发", async ({ page }) => {
   const state = await page.evaluate(() => {
     const el = document.querySelector("#in-disabled");

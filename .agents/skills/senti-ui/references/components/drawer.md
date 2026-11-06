@@ -63,7 +63,8 @@
 ## 内建行为
 
 - 滑入 / 滑出（默认 280ms / 200ms），关闭动画播完才隐藏；`prefers-reduced-motion` 下动画趋零
-- 自动 `role="dialog"` + `aria-modal="true"`，用 headline 文本作为名称（可显式传 `aria-label` 覆盖）
+- 自动 `role="dialog"` + `aria-modal="true"`，用 headline 文本作为名称（文本变化自动跟随；可显式传 `aria-label` 覆盖）
+- 打开时把宿主分支之外的内容设为 `inert`，关闭后恢复（与 dialog 共用模态栈）
 - 打开时焦点移入面板，Tab / Shift+Tab 在抽屉内循环；关闭后焦点归还打开它的元素
 - 打开期间锁背景滚动；与 `st-dialog` 共用模态栈，叠加时 Escape 只关最上层
 - `open` 兼容裸属性 / `setAttribute` / `removeAttribute`；内部交互关闭写 data `open`，`sync:open` 自动回写

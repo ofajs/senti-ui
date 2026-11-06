@@ -25,7 +25,7 @@
 
 ## st-split-button 分裂按钮
 
-- 主区 click 冒泡做主操作 + 箭头区开合菜单（菜单项用 `st-menu-item`）
+- 主区 click 冒泡做主操作 + 箭头区开合菜单（菜单项用 `st-menu-item`）；菜单面板 `role=menu`，↑/↓ 移动焦点，Escape 只关菜单
 - `open` 为运行时状态，支持 `sync:open` / `attr("open", "")`；`menu-label` 可改箭头区可访问名称
 
 ## st-icon-button 图标按钮
@@ -104,8 +104,9 @@ await alert("完成"); // true/null
 
 统一范式：内部透明原生 input 承载点击/Space/焦点，变更后反射回宿主属性并派发 `change`（composed）。
 
-- 属性：`checked`（checkbox 另有 `indeterminate`）、`color`（选中态换角色色）、`disabled`
-- radio：同组互斥依赖**同一父容器**内的同 `name` 兄弟
+- 属性：`checked`（checkbox 另有 `indeterminate`，混合态不参与表单提交）、`color`（选中态换角色色）、`disabled`
+- radio：同组互斥按**同一树作用域 + 同一 form owner** 的同 `name` 隔离；组内 roving tabindex + 方向键移动/选中
+- switch 内部原生控件带 `role="switch"`
 - 用法：`<st-checkbox checked on:change="...">`；JS 用 `$("st-checkbox").attr("checked", "") / attr("checked", null)`
 
 ## st-snackbar 消息条

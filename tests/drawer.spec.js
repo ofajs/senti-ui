@@ -103,6 +103,16 @@ test("headline / actions 插槽渲染，空区块隐藏", async ({ page }) => {
   expect(state.bareActions).toBe("none");
 });
 
+test("headline 文本变化后 aria-label 跟随更新", async ({ page }) => {
+  await page.evaluate(async () => {
+    document.querySelector('#drw-left [slot="headline"]').textContent = "更新后的抽屉标题";
+    await new Promise((r) => setTimeout(r, 250));
+  });
+  expect(
+    await page.evaluate(() => document.querySelector("#drw-left").getAttribute("aria-label"))
+  ).toBe("更新后的抽屉标题");
+});
+
 test("打开时焦点移入面板，Tab 在抽屉内循环", async ({ page }) => {
   await open(page, "#drw-auto");
   await page.waitForTimeout(100);

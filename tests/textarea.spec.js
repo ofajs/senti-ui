@@ -59,6 +59,18 @@ test("输入后 el.value 更新（含换行），input/change 事件触发", asy
   expect(events[events.length - 1].value).toBe("line1\nline2");
 });
 
+test("宿主 el.focus() / el.blur() 桥接到内部 textarea", async ({ page }) => {
+  const state = await page.evaluate(() => {
+    const el = document.querySelector("#ta-basic");
+    const ta = el.shadowRoot.querySelector("textarea");
+    el.focus();
+    const focused = el.shadowRoot.activeElement === ta;
+    el.blur();
+    return { focused, blurred: el.shadowRoot.activeElement !== ta };
+  });
+  expect(state).toEqual({ focused: true, blurred: true });
+});
+
 test("disabled 属性生效：内部 textarea 禁用、无法输入", async ({ page }) => {
   const state = await page.evaluate(() => {
     const el = document.querySelector("#ta-disabled");

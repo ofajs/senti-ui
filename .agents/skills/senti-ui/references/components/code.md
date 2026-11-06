@@ -21,7 +21,7 @@
 |------|------|--------|------|
 | `lang` | `"html" \| "js" \| "ts" \| "css" \| "less" \| "sass"` | `"html"` | 高亮语言；兼容 htm/xml/svg/javascript/typescript/scss |
 | `title` | string | 无 | 顶栏文件名 / 标题；缺省显示语言名 |
-| `code` | 运行时状态（ofa data） | `null` | 代码字符串；用 `:code` / `el.code` 写入，不是标签属性；优先于 textarea / template |
+| `code` | 运行时状态（ofa data） | `null` | 代码字符串；用 `:code` / `$("st-code").ele.code` 写入，不是标签属性；优先于 textarea / template |
 | `format` | `"auto" \| "off"` | `"auto"` | 自动格式化；Sass 只做去公共缩进 |
 | `frame` | boolean | 无 | 浏览器外壳：底色 / 边框 / 圆点 / 标题 / 复制按钮 |
 
@@ -69,7 +69,7 @@ textarea 是 RCDATA，标签原样保留、不需要转义 `<` / `>`；只有字
 ```
 
 ```js
-$("st-code").attr("code", cssText);
+$("st-code").ele.code = cssText;
 ```
 
 ### 不要用直接子节点
@@ -107,7 +107,7 @@ part：`shell` / `header` / `title` / `copy` / `body` / `pre` / `code`；`header
 
 ## 注意事项
 
-- 静态源码优先 textarea hidden；动态代码用 `:code` 绑定 / `el.code`
+- 静态源码优先 textarea hidden；动态代码用 `:code` 绑定 / `$("st-code").ele.code`
 - `setAttribute("code", ...)` 无效；`code` 是 ofa data
 - 默认无浏览器外壳；需要标题 / 复制时加 `frame`
 - 代码块横向滚动，不自动换行；需要换行用 `st-code::part(pre) { white-space: pre-wrap; }`

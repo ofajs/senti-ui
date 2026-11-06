@@ -223,6 +223,10 @@
         const input = this.ele.shadowRoot.querySelector(".native");
         const ele = this.ele;
         input.readOnly = this.readonly !== null;
+        // 宿主本身没有 tabindex，原生 el.focus() 不会落到内部 input；
+        // 把 focus/blur 桥接到实例上（README 已承诺 el.focus()/el.blur()）
+        ele.focus = () => input.focus();
+        ele.blur = () => input.blur();
         // attached 时读取 default-value 属性作为初始值写入 data.value
         const dv = ele.getAttribute("default-value");
         input.value = dv === null ? "" : dv;

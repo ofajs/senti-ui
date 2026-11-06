@@ -79,65 +79,67 @@
               <h2>基础用法与同组互斥</h2>
               <p class="doc-section-lead">同组选项写在同一个父容器里，name 相同的 st-radio 自动互斥。用 attr:checked 绑定数据、on:change 回写选中值，页面状态与组件选中态保持同一条链路。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>name + attr:checked</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>name + attr:checked</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo1">
                   <st-radio name="doc-plan" attr:checked="plan === 'free'" on:change="setPlan('free', '免费版')">免费版</st-radio>
                   <st-radio name="doc-plan" attr:checked="plan === 'pro'" on:change="setPlan('pro', '专业版')">专业版</st-radio>
                   <st-radio name="doc-plan" attr:checked="plan === 'team'" on:change="setPlan('team', '团队版')">团队版</st-radio>
                   <span class="demo-note">plan = {{plan}}（{{planLabel}}）· change 触发 {{planChanges}} 次</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（受控单选组）</summary>
-                <pre><code>&lt;st-radio name="plan" attr:checked="plan === 'free'" on:change="plan = 'free'"&gt;免费版&lt;/st-radio&gt;
-&lt;st-radio name="plan" attr:checked="plan === 'pro'" on:change="plan = 'pro'"&gt;专业版&lt;/st-radio&gt;
-&lt;st-radio name="plan" attr:checked="plan === 'team'" on:change="plan = 'team'"&gt;团队版&lt;/st-radio&gt;
 
-&lt;script&gt;
-  export default async () =&gt; ({
-    data: { plan: "pro" },
-  });
-&lt;/script&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>change 事件与回显</h2>
               <p class="doc-section-lead">change 是 composed 事件，会穿过 shadow 冒泡到页面；只有被用户点中的那一项派发，被取消的兄弟项不会派发。点击已选中的项也不会重复触发。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>on:change</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>on:change</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo2">
                   <st-radio name="doc-fruit" attr:checked="fruit === 'apple'" on:change="setFruit('apple', '苹果')">苹果</st-radio>
                   <st-radio name="doc-fruit" attr:checked="fruit === 'banana'" on:change="setFruit('banana', '香蕉')">香蕉</st-radio>
                   <st-radio name="doc-fruit" attr:checked="fruit === 'cherry'" on:change="setFruit('cherry', '樱桃')">樱桃</st-radio>
                   <span class="demo-note">最近选择：{{fruitLabel}} · 累计 {{fruitChanges}} 次 change</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（事件回显）</summary>
-                <pre><code>&lt;st-radio name="fruit" attr:checked="fruit === 'apple'" on:change="setFruit('apple')"&gt;苹果&lt;/st-radio&gt;
-&lt;st-radio name="fruit" attr:checked="fruit === 'banana'" on:change="setFruit('banana')"&gt;香蕉&lt;/st-radio&gt;
 
-&lt;script&gt;
-  export default async () =&gt; ({
-    data: { fruit: "apple", fruitChanges: 0 },
-    proto: {
-      setFruit(value) {
-        this.fruit = value;
-        this.fruitChanges += 1;
-      },
-    },
-  });
-&lt;/script&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>disabled、color 与尺寸</h2>
               <p class="doc-section-lead">disabled 会阻断点击和键盘并降到 0.38 透明度；color 接受 M3 角色名或 color 工具里的自定义变量名，只影响选中态的圆环与圆点。改宿主 font-size 即可整体等比缩放。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled / color / font-size</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>disabled / color / font-size</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo3">
                   <st-radio name="doc-off" disabled checked>禁用 · 已选中</st-radio>
                   <st-radio name="doc-off" disabled>禁用 · 未选中</st-radio>
                   <st-radio name="doc-color" color="error" attr:checked="accent === 'error'" on:change="accent = 'error'">error</st-radio>
@@ -146,23 +148,26 @@
                   <st-radio name="doc-scale" style="font-size: 20px;">font-size: 20px</st-radio>
                   <span class="demo-note">color 组当前选中：{{accent}}</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-radio name="off" disabled checked&gt;禁用 · 已选中&lt;/st-radio&gt;
-&lt;st-radio name="color" color="error" checked&gt;error&lt;/st-radio&gt;
-&lt;st-radio name="color" color="success"&gt;success&lt;/st-radio&gt;
 
-&lt;st-radio name="scale" style="font-size: 20px;"&gt;font-size: 20px&lt;/st-radio&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>卡片式选项</h2>
               <p class="doc-section-lead">把 st-radio 本身写成卡片：display:flex + width:100% + 原生 padding / border，组件的透明原生 input 会覆盖整张卡片，点标题、价格或留白都能选中。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-radio as card</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-radio as card</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo4">
                   <st-radio name="doc-card" attr:checked="cardPlan === 'personal'" on:change="pickCard('personal', '个人版', '¥0 / 月 · 1 个项目')" style="display: flex; width: 100%; padding: 14px 16px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px;">
                     <span style="display: grid; gap: 2px; text-align: left;">
                       <strong style="font-size: 14px; font-weight: 600;">个人版</strong>
@@ -183,25 +188,26 @@
                   </st-radio>
                   <span class="demo-note">当前方案：{{cardLabel}} · {{cardPrice}}</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（整卡可点）</summary>
-                <pre><code>&lt;st-radio name="plan" attr:checked="plan === 'team'" on:change="pick('team')"
-  style="display: flex; width: 100%; padding: 14px 16px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px;"&gt;
-  &lt;span style="display: grid; gap: 2px; text-align: left;"&gt;
-    &lt;strong&gt;团队版&lt;/strong&gt;
-    &lt;span style="font-size: 11px;"&gt;¥25 / 人 / 月 · 无限项目&lt;/span&gt;
-  &lt;/span&gt;
-&lt;/st-radio&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>列表式选项</h2>
               <p class="doc-section-lead">把一列 st-radio 直接放进带边框的原生 div，每一项 display:flex + width:100% 铺满整行，用 border-bottom 分隔。组内的互斥范围就是这个外层 div，不要再给每一行套独立 div。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>vertical list</code></div>
-                <div class="demo-stage block">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo5 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>vertical list</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo5')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo5 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo5 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo5">
                   <div style="width: 100%; max-width: 520px; display: grid; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px; overflow: hidden;">
                     <st-radio name="doc-format" attr:checked="format === 'png'" on:change="setFormat('png', '透明背景，适合图标与插画')" style="display: flex; width: 100%; padding: 13px 16px; border-bottom: 1px solid var(--md-sys-color-outline-variant);">PNG · 透明背景</st-radio>
                     <st-radio name="doc-format" attr:checked="format === 'jpg'" on:change="setFormat('jpg', '体积小，适合照片')" style="display: flex; width: 100%; padding: 13px 16px; border-bottom: 1px solid var(--md-sys-color-outline-variant);">JPG · 照片优先</st-radio>
@@ -209,28 +215,26 @@
                   </div>
                   <span class="demo-note">导出格式：{{format}} · {{formatHint}}</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo5" lang="html" :code="demo5Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（表单列表）</summary>
-                <pre><code>&lt;div style="display: grid; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px;"&gt;
-  &lt;st-radio name="format" attr:checked="format === 'png'" on:change="format = 'png'"
-    style="display: flex; width: 100%; padding: 13px 16px; border-bottom: 1px solid var(--md-sys-color-outline-variant);"&gt;
-    PNG · 透明背景
-  &lt;/st-radio&gt;
-  &lt;st-radio name="format" attr:checked="format === 'jpg'" on:change="format = 'jpg'"
-    style="display: flex; width: 100%; padding: 13px 16px;"&gt;
-    JPG · 照片优先
-  &lt;/st-radio&gt;
-&lt;/div&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>分组边界：同名不同容器</h2>
               <p class="doc-section-lead">互斥范围是最近的 st-list / st-menu / fieldset / form / div / section。下面两个容器都用 name="doc-shared"，但它们是两个独立组，各自保持一个选中项。需要联动时，请把选项放进同一个容器。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>grouping scope</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo6 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>grouping scope</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo6')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo6 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo6 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo6">
                   <div style="display: grid; gap: 10px; min-width: 220px; padding: 14px 16px; border: 1px dashed var(--md-sys-color-outline); border-radius: 12px;">
                     <span class="demo-label">容器 A</span>
                     <st-radio name="doc-shared" checked>选项 A1</st-radio>
@@ -243,18 +247,9 @@
                   </div>
                   <span class="demo-note">A 与 B 互不影响；点 A2 只会取消 A1，B1 仍然选中。</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo6" lang="html" :code="demo6Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（两个独立容器）</summary>
-                <pre><code>&lt;div class="group-a"&gt;
-  &lt;st-radio name="shared" checked&gt;选项 A1&lt;/st-radio&gt;
-  &lt;st-radio name="shared"&gt;选项 A2&lt;/st-radio&gt;
-&lt;/div&gt;
-&lt;div class="group-b"&gt;
-  &lt;st-radio name="shared" checked&gt;选项 B1&lt;/st-radio&gt;
-  &lt;st-radio name="shared"&gt;选项 B2&lt;/st-radio&gt;
-&lt;/div&gt;</code></pre>
-              </details>
             </section>
 
             <div class="doc-cols">
@@ -291,6 +286,13 @@
 
         export default async () => ({
           data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false, demo6: false },
+            demo1Code: "<st-radio name=\"doc-plan\" attr:checked=\"plan === 'free'\" on:change=\"setPlan('free', '免费版')\">免费版</st-radio>\n                  <st-radio name=\"doc-plan\" attr:checked=\"plan === 'pro'\" on:change=\"setPlan('pro', '专业版')\">专业版</st-radio>\n                  <st-radio name=\"doc-plan\" attr:checked=\"plan === 'team'\" on:change=\"setPlan('team', '团队版')\">团队版</st-radio>\n                  <span class=\"demo-note\">plan = {{plan}}（{{planLabel}}）· change 触发 {{planChanges}} 次</span>",
+            demo2Code: "<st-radio name=\"doc-fruit\" attr:checked=\"fruit === 'apple'\" on:change=\"setFruit('apple', '苹果')\">苹果</st-radio>\n                  <st-radio name=\"doc-fruit\" attr:checked=\"fruit === 'banana'\" on:change=\"setFruit('banana', '香蕉')\">香蕉</st-radio>\n                  <st-radio name=\"doc-fruit\" attr:checked=\"fruit === 'cherry'\" on:change=\"setFruit('cherry', '樱桃')\">樱桃</st-radio>\n                  <span class=\"demo-note\">最近选择：{{fruitLabel}} · 累计 {{fruitChanges}} 次 change</span>",
+            demo3Code: "<st-radio name=\"doc-off\" disabled checked>禁用 · 已选中</st-radio>\n                  <st-radio name=\"doc-off\" disabled>禁用 · 未选中</st-radio>\n                  <st-radio name=\"doc-color\" color=\"error\" attr:checked=\"accent === 'error'\" on:change=\"accent = 'error'\">error</st-radio>\n                  <st-radio name=\"doc-color\" color=\"success\" attr:checked=\"accent === 'success'\" on:change=\"accent = 'success'\">success</st-radio>\n                  <st-radio name=\"doc-color\" color=\"tertiary\" attr:checked=\"accent === 'tertiary'\" on:change=\"accent = 'tertiary'\">tertiary</st-radio>\n                  <st-radio name=\"doc-scale\" style=\"font-size: 20px;\">font-size: 20px</st-radio>\n                  <span class=\"demo-note\">color 组当前选中：{{accent}}</span>",
+            demo4Code: "<st-radio name=\"doc-card\" attr:checked=\"cardPlan === 'personal'\" on:change=\"pickCard('personal', '个人版', '¥0 / 月 · 1 个项目')\" style=\"display: flex; width: 100%; padding: 14px 16px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px;\">\n                    <span style=\"display: grid; gap: 2px; text-align: left;\">\n                      <strong style=\"font-size: 14px; font-weight: 600;\">个人版</strong>\n                      <span style=\"font-size: 11px; color: var(--md-sys-color-on-surface-variant);\">¥0 / 月 · 1 个项目</span>\n                    </span>\n                  </st-radio>\n                  <st-radio name=\"doc-card\" attr:checked=\"cardPlan === 'team'\" on:change=\"pickCard('team', '团队版', '¥25 / 人 / 月 · 无限项目')\" style=\"display: flex; width: 100%; padding: 14px 16px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px;\">\n                    <span style=\"display: grid; gap: 2px; text-align: left;\">\n                      <strong style=\"font-size: 14px; font-weight: 600;\">团队版</strong>\n                      <span style=\"font-size: 11px; color: var(--md-sys-color-on-surface-variant);\">¥25 / 人 / 月 · 无限项目</span>\n                    </span>\n                  </st-radio>\n                  <st-radio name=\"doc-card\" attr:checked=\"cardPlan === 'enterprise'\" on:change=\"pickCard('enterprise', '企业版', '按需报价 · 专属支持')\" style=\"display: flex; width: 100%; padding: 14px 16px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px;\">\n                    <span style=\"display: grid; gap: 2px; text-align: left;\">\n                      <strong style=\"font-size: 14px; font-weight: 600;\">企业版</strong>\n                      <span style=\"font-size: 11px; color: var(--md-sys-color-on-surface-variant);\">按需报价 · 专属支持</span>\n                    </span>\n                  </st-radio>\n                  <span class=\"demo-note\">当前方案：{{cardLabel}} · {{cardPrice}}</span>",
+            demo5Code: "<div style=\"width: 100%; max-width: 520px; display: grid; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 14px; overflow: hidden;\">\n                    <st-radio name=\"doc-format\" attr:checked=\"format === 'png'\" on:change=\"setFormat('png', '透明背景，适合图标与插画')\" style=\"display: flex; width: 100%; padding: 13px 16px; border-bottom: 1px solid var(--md-sys-color-outline-variant);\">PNG · 透明背景</st-radio>\n                    <st-radio name=\"doc-format\" attr:checked=\"format === 'jpg'\" on:change=\"setFormat('jpg', '体积小，适合照片')\" style=\"display: flex; width: 100%; padding: 13px 16px; border-bottom: 1px solid var(--md-sys-color-outline-variant);\">JPG · 照片优先</st-radio>\n                    <st-radio name=\"doc-format\" attr:checked=\"format === 'svg'\" on:change=\"setFormat('svg', '矢量图，缩放不糊')\" style=\"display: flex; width: 100%; padding: 13px 16px;\">SVG · 矢量图</st-radio>\n                  </div>\n                  <span class=\"demo-note\">导出格式：{{format}} · {{formatHint}}</span>",
+            demo6Code: "<div style=\"display: grid; gap: 10px; min-width: 220px; padding: 14px 16px; border: 1px dashed var(--md-sys-color-outline); border-radius: 12px;\">\n                    <span class=\"demo-label\">容器 A</span>\n                    <st-radio name=\"doc-shared\" checked>选项 A1</st-radio>\n                    <st-radio name=\"doc-shared\">选项 A2</st-radio>\n                  </div>\n                  <div style=\"display: grid; gap: 10px; min-width: 220px; padding: 14px 16px; border: 1px dashed var(--md-sys-color-outline); border-radius: 12px;\">\n                    <span class=\"demo-label\">容器 B</span>\n                    <st-radio name=\"doc-shared\" checked>选项 B1</st-radio>\n                    <st-radio name=\"doc-shared\">选项 B2</st-radio>\n                  </div>\n                  <span class=\"demo-note\">A 与 B 互不影响；点 A2 只会取消 A1，B1 仍然选中。</span>",
             plan: "pro",
             planLabel: "专业版",
             planChanges: 0,
@@ -305,6 +307,9 @@
             formatHint: "透明背景，适合图标与插画",
           },
           proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
             setPlan(value, label) {
               this.plan = value;
               this.planLabel = label;

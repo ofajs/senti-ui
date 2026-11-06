@@ -79,8 +79,17 @@
               <h2>基础：圆点、数字与文字</h2>
               <p class="doc-section-lead">不写 value 是 6px 圆点；写数字会显示为胶囊数字；写非数字字符串则原样展示，不参与 max 封顶。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>value</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>value</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo1">
                   <st-badges>
                     <st-icon-button title="通知"><iconify-icon icon="mdi:bell-outline"></iconify-icon></st-icon-button>
                   </st-badges>
@@ -95,32 +104,26 @@
                   </st-badges>
                   <span class="demo-note">最后一个显示 99+，因为默认 max 是 99；圆点不带数字。</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;!-- 无 value：小圆点 --&gt;
-&lt;st-badges&gt;
-  &lt;st-icon-button title="通知"&gt;&lt;iconify-icon icon="mdi:bell-outline"&gt;&lt;/iconify-icon&gt;&lt;/st-icon-button&gt;
-&lt;/st-badges&gt;
-
-&lt;!-- 数字；超过 max 显示 99+ --&gt;
-&lt;st-badges value="12"&gt;
-  &lt;st-icon-button title="消息"&gt;&lt;iconify-icon icon="mdi:email-outline"&gt;&lt;/iconify-icon&gt;&lt;/st-icon-button&gt;
-&lt;/st-badges&gt;
-
-&lt;!-- 非数字：原样展示 --&gt;
-&lt;st-badges value="NEW" color="success"&gt;
-  &lt;st-button variant="outlined"&gt;新版&lt;/st-button&gt;
-&lt;/st-badges&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>用在按钮与图标按钮上</h2>
               <p class="doc-section-lead">默认插槽可以是任意元素。按钮上的徽标常用于表达待处理数量，图标按钮上的徽标用于未读提醒。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>button / icon-button</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>button / icon-button</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo2">
                   <st-badges value="3">
                     <st-button>收件箱</st-button>
                   </st-badges>
@@ -146,30 +149,26 @@
                     <st-icon-button variant="outlined" title="待处理">📋</st-icon-button>
                   </st-badges>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-badges value="3"&gt;
-  &lt;st-button&gt;收件箱&lt;/st-button&gt;
-&lt;/st-badges&gt;
-
-&lt;st-badges value="9"&gt;
-  &lt;st-icon-button variant="filled" title="通知"&gt;&lt;iconify-icon icon="mdi:bell-outline"&gt;&lt;/iconify-icon&gt;&lt;/st-icon-button&gt;
-&lt;/st-badges&gt;
-
-&lt;!-- 圆点：只提醒“有新内容” --&gt;
-&lt;st-badges&gt;
-  &lt;st-icon-button variant="outlined" title="待处理"&gt;📋&lt;/st-icon-button&gt;
-&lt;/st-badges&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>color 语义换色</h2>
               <p class="doc-section-lead">color 接受 M3 角色名或 color 工具里的自定义变量名，底色与文字自动配对。默认是 error 红，成功、提示、次要状态改用对应角色。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>color</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>color</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo3">
                   <st-badges value="5" color="primary">
                     <st-icon-button title="收件箱"><iconify-icon icon="mdi:inbox-arrow-down"></iconify-icon></st-icon-button>
                   </st-badges>
@@ -186,22 +185,26 @@
                     <st-icon-button title="警告"><iconify-icon icon="mdi:alert-outline"></iconify-icon></st-icon-button>
                   </st-badges>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-badges value="5" color="primary"&gt;...&lt;/st-badges&gt;
-&lt;st-badges value="5" color="success"&gt;...&lt;/st-badges&gt;
-&lt;st-badges value="5" color="tertiary"&gt;...&lt;/st-badges&gt;
-&lt;st-badges value="5"&gt;...&lt;/st-badges&gt; &lt;!-- 默认 error --&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>max 封顶</h2>
               <p class="doc-section-lead">max 只对数字生效，默认 99。达到上限后显示 max+，避免过宽的数字撑破布局；非数字字符串不封顶。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>max</code></div>
-                <div class="demo-stage grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>max</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));" attr:hidden="codeView.demo4">
                   <div class="demo-cell" style="display: flex; align-items: center; gap: 16px; padding: 4px 0;">
                     <st-badges value="12" max="9">
                       <st-icon-button title="聊天"><iconify-icon icon="mdi:message-text"></iconify-icon></st-icon-button>
@@ -227,21 +230,26 @@
                     <span class="demo-label">非数字 NEW · 不封顶</span>
                   </div>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-badges value="12" max="9"&gt;...&lt;/st-badges&gt;   &lt;!-- 9+ --&gt;
-&lt;st-badges value="120"&gt;...&lt;/st-badges&gt;          &lt;!-- 99+ --&gt;
-&lt;st-badges value="1200" max="999"&gt;...&lt;/st-badges&gt; &lt;!-- 999+ --&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>动态更新 value</h2>
               <p class="doc-section-lead">ofa 页面用 attr:value 绑定 data 数字；数据变化时徽标立即更新，不需要手动操作 DOM。徽标本身 <code>pointer-events: none</code>，不会挡住底下按钮的点击。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>attr:value</code></div>
-                <div class="demo-stage block">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo5 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>attr:value</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo5')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo5 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo5 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo5">
                   <div class="row">
                     <st-badges attr:value="count" max="99">
                       <st-icon-button title="实时消息">📡</st-icon-button>
@@ -258,32 +266,26 @@
                   </div>
                   <span class="demo-note">超过 99 后两个徽标都会显示 99+；清零后显示数字 0，而不是圆点。</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（attr:value）</summary>
-                <pre><code>&lt;st-badges attr:value="count" max="99"&gt;
-  &lt;st-icon-button title="实时消息"&gt;📡&lt;/st-icon-button&gt;
-&lt;/st-badges&gt;
 
-&lt;script&gt;
-  export default async () =&gt; ({
-    data: { count: 7 },
-    proto: {
-      inc() {
-        this.count += 1;
-      },
-    },
-  });
-&lt;/script&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo5" lang="html" :code="demo5Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>列表、标题与任意元素</h2>
               <p class="doc-section-lead">徽标可以贴在任何 inline-flex 宿主上：列表项前缀图标、标题文字、头像等。字号随宿主 font-size 等比缩放，位置固定在右上角。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>list / heading / avatar</code></div>
-                <div class="demo-stage block">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo6 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>list / heading / avatar</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo6')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo6 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo6 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo6">
                   <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 18px; width: 100%; max-width: 440px;">
                     <st-badges value="12" color="primary">
                       <strong style="font-size: 16px; padding-right: 22px;">消息中心</strong>
@@ -322,26 +324,9 @@
                     <span class="demo-note" style="width: auto;">左：无 value 的贴角圆点；右：font-size 20px，徽标同步放大。</span>
                   </div>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo6" lang="html" :code="demo6Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（列表与头像）</summary>
-                <pre><code>&lt;st-list&gt;
-  &lt;st-list-item button&gt;
-    &lt;st-badges slot="prefix" value="12"&gt;&lt;iconify-icon icon="mdi:inbox-arrow-down"&gt;&lt;/iconify-icon&gt;&lt;/st-badges&gt;
-    收件箱&lt;span slot="suffix"&gt;刚刚&lt;/span&gt;
-  &lt;/st-list-item&gt;
-&lt;/st-list&gt;
-
-&lt;!-- 标题 --&gt;
-&lt;st-badges value="12" color="primary"&gt;
-  &lt;strong&gt;消息中心&lt;/strong&gt;
-&lt;/st-badges&gt;
-
-&lt;!-- 任意元素：头像上的圆点 --&gt;
-&lt;st-badges&gt;
-  &lt;span style="display: inline-block; width: 40px; height: 40px; border-radius: 50%;"&gt;&lt;/span&gt;
-&lt;/st-badges&gt;</code></pre>
-              </details>
             </section>
 
             <div class="doc-cols">
@@ -377,9 +362,19 @@
 
         export default async () => ({
           data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false, demo6: false },
+            demo1Code: "<st-badges>\n                    <st-icon-button title=\"通知\"><iconify-icon icon=\"mdi:bell-outline\"></iconify-icon></st-icon-button>\n                  </st-badges>\n                  <st-badges value=\"3\">\n                    <st-icon-button title=\"消息\"><iconify-icon icon=\"mdi:email-outline\"></iconify-icon></st-icon-button>\n                  </st-badges>\n                  <st-badges value=\"NEW\" color=\"success\">\n                    <st-button variant=\"outlined\">新版</st-button>\n                  </st-badges>\n                  <st-badges value=\"120\" style=\"justify-self: start;\">\n                    <st-icon-button title=\"更多\"><iconify-icon icon=\"mdi:mailbox\"></iconify-icon></st-icon-button>\n                  </st-badges>\n                  <span class=\"demo-note\">最后一个显示 99+，因为默认 max 是 99；圆点不带数字。</span>",
+            demo2Code: "<st-badges value=\"3\">\n                    <st-button>收件箱</st-button>\n                  </st-badges>\n                  <st-badges value=\"12\">\n                    <st-button variant=\"outlined\">待审批</st-button>\n                  </st-badges>\n                  <st-badges value=\"7\">\n                    <st-button variant=\"text\">草稿</st-button>\n                  </st-badges>\n                  <st-badges value=\"2\" color=\"success\">\n                    <st-button variant=\"tonal\" color=\"success\">在线</st-button>\n                  </st-badges>\n                  <st-badges>\n                    <st-button color=\"error\" variant=\"outlined\">异常</st-button>\n                  </st-badges>\n                  <st-badges value=\"9\">\n                    <st-icon-button variant=\"filled\" title=\"通知\"><iconify-icon icon=\"mdi:bell-outline\"></iconify-icon></st-icon-button>\n                  </st-badges>\n                  <st-badges value=\"99+\">\n                    <st-icon-button variant=\"tonal\" title=\"私信\"><iconify-icon icon=\"mdi:email-outline\"></iconify-icon></st-icon-button>\n                  </st-badges>\n                  <st-badges>\n                    <st-icon-button variant=\"outlined\" title=\"待处理\">📋</st-icon-button>\n                  </st-badges>",
+            demo3Code: "<st-badges value=\"5\" color=\"primary\">\n                    <st-icon-button title=\"收件箱\"><iconify-icon icon=\"mdi:inbox-arrow-down\"></iconify-icon></st-icon-button>\n                  </st-badges>\n                  <st-badges value=\"5\" color=\"success\">\n                    <st-icon-button title=\"消息\"><iconify-icon icon=\"mdi:email-outline\"></iconify-icon></st-icon-button>\n                  </st-badges>\n                  <st-badges value=\"5\" color=\"tertiary\">\n                    <st-icon-button title=\"收藏\"><iconify-icon icon=\"mdi:star-outline\"></iconify-icon></st-icon-button>\n                  </st-badges>\n                  <st-badges value=\"5\" color=\"secondary\">\n                    <st-icon-button title=\"设置\"><iconify-icon icon=\"mdi:cog\"></iconify-icon></st-icon-button>\n                  </st-badges>\n                  <st-badges value=\"5\">\n                    <st-icon-button title=\"警告\"><iconify-icon icon=\"mdi:alert-outline\"></iconify-icon></st-icon-button>\n                  </st-badges>",
+            demo4Code: "<div class=\"demo-cell\" style=\"display: flex; align-items: center; gap: 16px; padding: 4px 0;\">\n                    <st-badges value=\"12\" max=\"9\">\n                      <st-icon-button title=\"聊天\"><iconify-icon icon=\"mdi:message-text\"></iconify-icon></st-icon-button>\n                    </st-badges>\n                    <span class=\"demo-label\">数值 12 · 上限 9 → 9+</span>\n                  </div>\n                  <div class=\"demo-cell\" style=\"display: flex; align-items: center; gap: 16px; padding: 4px 0;\">\n                    <st-badges value=\"120\">\n                      <st-icon-button title=\"邮件\"><iconify-icon icon=\"mdi:mailbox\"></iconify-icon></st-icon-button>\n                    </st-badges>\n                    <span class=\"demo-label\">数值 120 · 上限 99（默认）→ 99+</span>\n                  </div>\n                  <div class=\"demo-cell\" style=\"display: flex; align-items: center; gap: 16px; padding: 4px 0;\">\n                    <st-badges value=\"1200\" max=\"999\">\n                      <st-icon-button title=\"订阅\">📰</st-icon-button>\n                    </st-badges>\n                    <span class=\"demo-label\">数值 1200 · 上限 999 → 999+</span>\n                  </div>\n                  <div class=\"demo-cell\" style=\"display: flex; align-items: center; gap: 16px; padding: 4px 0;\">\n                    <st-badges value=\"NEW\" color=\"primary\">\n                      <st-icon-button title=\"更新\">✨</st-icon-button>\n                    </st-badges>\n                    <span class=\"demo-label\">非数字 NEW · 不封顶</span>\n                  </div>",
+            demo5Code: "<div class=\"row\">\n                    <st-badges attr:value=\"count\" max=\"99\">\n                      <st-icon-button title=\"实时消息\">📡</st-icon-button>\n                    </st-badges>\n                    <st-badges attr:value=\"count\" color=\"success\" max=\"99\">\n                      <st-button variant=\"outlined\">队列</st-button>\n                    </st-badges>\n                    <span class=\"demo-note\" style=\"width: auto;\">count = {{count}}</span>\n                  </div>\n                  <div class=\"row\">\n                    <st-button variant=\"outlined\" on:click=\"inc\">+1</st-button>\n                    <st-button variant=\"outlined\" on:click=\"addTen\">+10</st-button>\n                    <st-button variant=\"text\" on:click=\"clear\">清零</st-button>\n                  </div>\n                  <span class=\"demo-note\">超过 99 后两个徽标都会显示 99+；清零后显示数字 0，而不是圆点。</span>",
+            demo6Code: "<div style=\"display: flex; flex-wrap: wrap; align-items: center; gap: 18px; width: 100%; max-width: 440px;\">\n                    <st-badges value=\"12\" color=\"primary\">\n                      <strong style=\"font-size: 16px; padding-right: 22px;\">消息中心</strong>\n                    </st-badges>\n                    <st-badges>\n                      <strong style=\"font-size: 16px; padding-right: 10px;\">动态</strong>\n                    </st-badges>\n                  </div>\n                  <st-list style=\"width: 100%; max-width: 440px;\">\n                    <st-list-item button>\n                      <st-badges slot=\"prefix\" value=\"12\">\n                        <iconify-icon icon=\"mdi:inbox-arrow-down\"></iconify-icon>\n                      </st-badges>\n                      收件箱<span slot=\"suffix\">刚刚</span>\n                    </st-list-item>\n                    <st-list-item button>\n                      <st-badges slot=\"prefix\">\n                        <iconify-icon icon=\"mdi:send\"></iconify-icon>\n                      </st-badges>\n                      已发送\n                    </st-list-item>\n                    <st-list-item button>\n                      <st-badges slot=\"prefix\" value=\"3\" color=\"success\">\n                        <iconify-icon icon=\"mdi:message-text\"></iconify-icon>\n                      </st-badges>\n                      评论<span slot=\"suffix\">3 条未读</span>\n                    </st-list-item>\n                  </st-list>\n                  <div style=\"display: flex; flex-wrap: wrap; align-items: center; gap: 16px;\">\n                    <st-badges>\n                      <span style=\"display: inline-block; width: 40px; height: 40px; border-radius: 50%; background: var(--md-sys-color-surface-container-high);\"></span>\n                    </st-badges>\n                    <st-badges value=\"8\" style=\"font-size: 20px;\">\n                      <span style=\"display: inline-block; width: 40px; height: 40px; border-radius: 50%; background: var(--md-sys-color-secondary-container);\"></span>\n                    </st-badges>\n                    <span class=\"demo-note\" style=\"width: auto;\">左：无 value 的贴角圆点；右：font-size 20px，徽标同步放大。</span>\n                  </div>",
             count: 7,
           },
           proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
             inc() {
               this.count += 1;
             },

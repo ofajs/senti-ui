@@ -82,8 +82,8 @@
   </section>
 
   <section>
-    <h3>动态 code 属性 + copy 事件</h3>
-    <st-code id="dynamic-code" lang="js" frame title="dynamic.js" attr:code="dynamicCode" on:copy="onCopy"></st-code>
+    <h3>动态 code 数据 + copy 事件</h3>
+    <st-code id="dynamic-code" lang="js" frame title="dynamic.js" :code="dynamicCode" on:copy="onCopy"></st-code>
     <div class="row">
       <st-button variant="outlined" on:click="pickSample">换一段代码</st-button>
       <span class="state">copy 次数：{{copyCount}}</span>

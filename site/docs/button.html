@@ -66,7 +66,7 @@
 
           <article class="doc-page">
             <header class="doc-hero">
-              <p class="doc-kicker">基础 · 1 / 23</p>
+              <p class="doc-kicker">基础 · 1 / 22</p>
               <h1>Button <code>st-button</code></h1>
               <p class="doc-lead">四种按钮形态同属一个包：普通按钮、按钮组、分裂按钮、图标按钮。语义只由 variant / color / disabled / loading 表达，尺寸与材质直接写原生 CSS。</p>
               <div class="doc-links">
@@ -79,49 +79,74 @@
               <h2>三种 variant</h2>
               <p class="doc-section-lead">M3 的 filled / outlined / text 是语义类型，不是外观预设。它们共享同一套高度、内边距与圆角，只改变填充和描边。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-button</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.variant ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-button</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('variant')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.variant ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.variant ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.variant">
                   <st-button>Filled</st-button>
                   <st-button variant="outlined">Outlined</st-button>
                   <st-button variant="text">Text</st-button>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <st-code lang="html">
+
+                <st-code class="demo-code" attr:hidden="!codeView.variant" lang="html">
                   <template>
                     <st-button>Filled</st-button>
                     <st-button variant="outlined">Outlined</st-button>
                     <st-button variant="text">Text</st-button>
                   </template>
                 </st-code>
-              </details>
+              </div>
+
             </section>
 
             <section class="doc-section">
               <h2>状态：disabled 与 loading</h2>
               <p class="doc-section-lead">loading 会自动禁用点击并显示随字号缩放的 spinner；异步任务只需把 loading 绑到 data，不需要手动叠 disabled。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled / loading</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.state ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>disabled / loading</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('state')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.state ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.state ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.state">
                   <st-button disabled>Disabled</st-button>
                   <st-button loading>Loading</st-button>
                   <st-button attr:loading="busy" on:click="startTask">{{busy ? '提交中…' : '提交表单'}}</st-button>
                   <span class="demo-note">点击计数：{{clicks}}</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.state" lang="html" :code="loadingCode"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（异步提交）</summary>
-                <st-code lang="html" attr:code="loadingCode"></st-code>
-              </details>
+
             </section>
 
             <section class="doc-section">
               <h2>color 语义换色</h2>
               <p class="doc-section-lead">color 接受 M3 角色名或 color 工具里的自定义变量名，并与三种 variant 自由组合。切换种子色 / error / success 时全站按钮一起变化，不需要改组件样式。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>color + variant</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.color ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>color + variant</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('color')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.color ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.color ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.color">
                   <div class="demo-cell">
                     <span class="demo-label">primary</span>
                     <div class="row">
@@ -152,27 +177,46 @@
                     </div>
                   </div>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <st-code lang="html">
+
+                <st-code class="demo-code" attr:hidden="!codeView.color" lang="html">
                   <template>
+                    <!-- primary -->
+                    <st-button color="primary">Primary</st-button>
+                    <st-button color="primary" variant="outlined">Primary</st-button>
+
+                    <!-- error -->
                     <st-button color="error">Delete</st-button>
                     <st-button color="error" variant="outlined">Delete</st-button>
+                    <st-button color="error" variant="text">Delete</st-button>
+
+                    <!-- success -->
                     <st-button color="success">保存</st-button>
-                    <!-- 自定义变量需先在 color 工具中定义 -->
-                    <st-button color="brand">Brand</st-button>
+                    <st-button color="success" variant="outlined">已保存</st-button>
+
+                    <!-- secondary / tertiary -->
+                    <st-button color="secondary">Secondary</st-button>
+                    <st-button color="tertiary" variant="outlined">Tertiary</st-button>
                   </template>
                 </st-code>
-              </details>
+              </div>
+
             </section>
 
             <section class="doc-section">
               <h2>图标插槽与尺寸</h2>
               <p class="doc-section-lead">prefix / suffix 放图标；尺寸类默认值全部用 em，只改 font-size 就能整体等比缩放，也可以用原生 CSS 单独覆写高度、圆角或背景。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>slot / font-size</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.icons ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>slot / font-size</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('icons')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.icons ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.icons ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.icons">
                   <st-button><iconify-icon slot="prefix" icon="mdi:magnify"></iconify-icon>Search</st-button>
                   <st-button variant="outlined">Settings<iconify-icon slot="suffix" icon="mdi:cog"></iconify-icon></st-button>
                   <st-button style="font-size: 12px;">12px</st-button>
@@ -180,27 +224,36 @@
                   <st-button style="font-size: 18px;">18px</st-button>
                   <st-button style="height: 32px; border-radius: 8px; font-size: 12px;">Compact 覆写</st-button>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <st-code lang="html">
+
+                <st-code class="demo-code" attr:hidden="!codeView.icons" lang="html">
                   <template>
                     <st-button><iconify-icon slot="prefix" icon="mdi:magnify"></iconify-icon>Search</st-button>
                     <st-button variant="outlined">Settings<iconify-icon slot="suffix" icon="mdi:cog"></iconify-icon></st-button>
-
                     <st-button style="font-size: 12px;">12px</st-button>
-                    <st-button style="height: 32px; border-radius: 8px; font-size: 12px;">Compact</st-button>
+                    <st-button>Default 14px</st-button>
+                    <st-button style="font-size: 18px;">18px</st-button>
+                    <st-button style="height: 32px; border-radius: 8px; font-size: 12px;">Compact 覆写</st-button>
                   </template>
                 </st-code>
-              </details>
+              </div>
+
             </section>
 
             <section class="doc-section">
               <h2>按钮组</h2>
               <p class="doc-section-lead">st-button-group 负责首尾圆角与间距。connected 连体，full-width 等分整行；也可以直接用 attr:variant 把按钮组当分段选择器。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-button-group</code></div>
-                <div class="demo-stage block">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.group ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-button-group</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('group')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.group ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.group ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.group">
                   <st-button-group>
                     <st-button variant="outlined">左</st-button>
                     <st-button variant="outlined">中</st-button>
@@ -222,27 +275,27 @@
                   </st-button-group>
                   <span class="demo-note">range = {{range}}</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.group" lang="html" :code="groupCode"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（连体按钮组）</summary>
-                <st-code lang="html">
-                  <template>
-                    <st-button-group connected>
-                      <st-button>新建</st-button>
-                      <st-button variant="outlined">编辑</st-button>
-                      <st-button color="error" variant="outlined">删除</st-button>
-                    </st-button-group>
-                  </template>
-                </st-code>
-              </details>
+
             </section>
 
             <section class="doc-section">
               <h2>分裂按钮</h2>
               <p class="doc-section-lead">主操作区与菜单箭头分开：点主区触发 click，点箭头展开 menu 插槽。open 是运行时状态，ofa 页面里用 sync:open 双向绑定。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-split-button</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.split ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-split-button</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('split')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.split ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.split ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.split">
                   <st-split-button on:click="splitCount += 1">
                     发送
                     <iconify-icon slot="prefix" icon="mdi:send"></iconify-icon>
@@ -258,27 +311,27 @@
                   </st-split-button>
                   <span class="demo-note">主操作 {{splitCount}} 次 · 最近选择：{{lastPick}}</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.split" lang="html" :code="splitCode"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <st-code lang="html">
-                  <template>
-                    <st-split-button on:click="send">
-                      发送
-                      <st-menu-item slot="menu" on:click="sendTo('email')">发送到邮箱</st-menu-item>
-                      <st-menu-item slot="menu" on:click="sendTo('cloud')">发送到云盘</st-menu-item>
-                    </st-split-button>
-                  </template>
-                </st-code>
-              </details>
+
             </section>
 
             <section class="doc-section">
               <h2>图标按钮</h2>
               <p class="doc-section-lead">standard / filled / tonal / outlined 四种类型，同样支持 color 与 disabled。没有文字，务必用 title 或 aria-label 提供无障碍名称。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-icon-button</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.icon ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-icon-button</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('icon')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.icon ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.icon ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.icon">
                   <st-icon-button title="收藏" on:click="iconCount += 1"><iconify-icon icon="mdi:star-outline"></iconify-icon></st-icon-button>
                   <st-icon-button variant="filled" title="确认" on:click="iconCount += 1">✅</st-icon-button>
                   <st-icon-button variant="tonal" title="删除" on:click="iconCount += 1">🗑</st-icon-button>
@@ -288,17 +341,10 @@
                   <st-icon-button variant="outlined" disabled title="禁用">🔒</st-icon-button>
                   <span class="demo-note">点击 {{iconCount}} 次</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.icon" lang="html" :code="iconCode"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <st-code lang="html">
-                  <template>
-                    <st-icon-button title="收藏"><iconify-icon icon="mdi:star-outline"></iconify-icon></st-icon-button>
-                    <st-icon-button variant="filled" title="确认">✅</st-icon-button>
-                    <st-icon-button variant="tonal" color="error" title="删除">🗑</st-icon-button>
-                  </template>
-                </st-code>
-              </details>
+
             </section>
 
             <div class="doc-cols">
@@ -342,24 +388,107 @@
             splitCount: 0,
             lastPick: "（无）",
             iconCount: 0,
-            loadingCode: `<st-button attr:loading="busy" on:click="submit">
-  {{busy ? '提交中…' : '提交表单'}}
-</st-button>
+            codeView: {
+              variant: false,
+              state: false,
+              color: false,
+              icons: false,
+              group: false,
+              split: false,
+              icon: false,
+            },
+            groupCode: `<st-button-group>
+  <st-button variant="outlined">左</st-button>
+  <st-button variant="outlined">中</st-button>
+  <st-button variant="outlined">右</st-button>
+</st-button-group>
+
+<st-button-group connected>
+  <st-button>新建</st-button>
+  <st-button variant="outlined">编辑</st-button>
+  <st-button color="error" variant="outlined">删除</st-button>
+</st-button-group>
+
+<st-button-group full-width style="max-width: 420px;">
+  <st-button variant="text">取消</st-button>
+  <st-button>确定</st-button>
+</st-button-group>
+
+<!-- 分段选择器：data.range = "day" -->
+<st-button-group connected>
+  <st-button attr:variant="range === 'day' ? 'filled' : 'outlined'" on:click="range = 'day'">日</st-button>
+  <st-button attr:variant="range === 'week' ? 'filled' : 'outlined'" on:click="range = 'week'">周</st-button>
+  <st-button attr:variant="range === 'month' ? 'filled' : 'outlined'" on:click="range = 'month'">月</st-button>
+</st-button-group>
+<span class="demo-note">range = {{range}}</span>
 
 <script>
   export default async () => ({
-    data: { busy: false },
+    data: { range: "day" },
+  });
+<\/script>`,
+            splitCode: `<st-split-button on:click="splitCount += 1">
+  发送
+  <iconify-icon slot="prefix" icon="mdi:send"></iconify-icon>
+  <st-menu-item slot="menu" on:click="lastPick = '发送到邮箱'">发送到邮箱</st-menu-item>
+  <st-menu-item slot="menu" on:click="lastPick = '发送到云盘'">发送到云盘</st-menu-item>
+  <hr slot="menu">
+  <st-menu-item slot="menu" disabled>定时发送（禁用）</st-menu-item>
+</st-split-button>
+
+<st-split-button variant="outlined" color="error" menu-align="left">
+  删除
+  <st-menu-item slot="menu" on:click="lastPick = '移到回收站'">移到回收站</st-menu-item>
+  <st-menu-item slot="menu" on:click="lastPick = '彻底删除'">彻底删除</st-menu-item>
+</st-split-button>
+
+<span class="demo-note">主操作 {{splitCount}} 次 · 最近选择：{{lastPick}}</span>
+
+<script>
+  export default async () => ({
+    data: { splitCount: 0, lastPick: "（无）" },
+  });
+<\/script>`,
+            iconCode: `<st-icon-button title="收藏" on:click="iconCount += 1"><iconify-icon icon="mdi:star-outline"></iconify-icon></st-icon-button>
+<st-icon-button variant="filled" title="确认" on:click="iconCount += 1">✅</st-icon-button>
+<st-icon-button variant="tonal" title="删除" on:click="iconCount += 1">🗑</st-icon-button>
+<st-icon-button variant="outlined" title="设置" on:click="iconCount += 1"><iconify-icon icon="mdi:cog"></iconify-icon></st-icon-button>
+<st-icon-button variant="filled" color="error" title="错误操作" on:click="iconCount += 1">🚫</st-icon-button>
+<st-icon-button variant="tonal" color="success" title="保存" on:click="iconCount += 1">💾</st-icon-button>
+<st-icon-button variant="outlined" disabled title="禁用">🔒</st-icon-button>
+<span class="demo-note">点击 {{iconCount}} 次</span>
+
+<script>
+  export default async () => ({
+    data: { iconCount: 0 },
+  });
+<\/script>`,
+            loadingCode: `<st-button disabled>Disabled</st-button>
+<st-button loading>Loading</st-button>
+<st-button attr:loading="busy" on:click="startTask">
+  {{busy ? '提交中…' : '提交表单'}}
+</st-button>
+<span class="demo-note">点击计数：{{clicks}}</span>
+
+<script>
+  export default async () => ({
+    data: { clicks: 0, busy: false },
     proto: {
-      async submit() {
+      startTask() {
+        if (this.busy) return;
+        this.clicks += 1;
         this.busy = true;
-        await fetch('/api/save', { method: 'POST' });
-        this.busy = false;
+        setTimeout(() => { this.busy = false; }, 1200);
       },
     },
   });
 <\/script>`,
+
           },
           proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
             startTask() {
               if (this.busy) return;
               this.clicks += 1;

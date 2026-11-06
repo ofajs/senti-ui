@@ -92,6 +92,33 @@ code { font-family: ui-monospace, Menlo, monospace; }
   background: rgb(from var(--md-sys-color-surface-container-low) r g b / 0.5);
 }
 .demo-top code { color: var(--md-sys-color-on-surface-variant); font-size: 10px; }
+.demo-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+.demo-code-toggle {
+  font-size: 11px;
+  height: 28px;
+  padding: 0 8px;
+}
+.demo-stage[hidden],
+.demo-code[hidden] { display: none !important; }
+.demo-code {
+  display: block;
+  border-radius: 0 0 calc(var(--st-card-radius, 16px) - 1px)
+    calc(var(--st-card-radius, 16px) - 1px);
+  background: rgb(from var(--md-sys-color-surface-container-highest) r g b / 0.5);
+  overflow: hidden;
+}
+.demo-code::part(body) { padding: 16px 18px; }
+.demo-code::part(pre) {
+  font-size: 11px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .live {
   display: inline-flex;
   align-items: center;

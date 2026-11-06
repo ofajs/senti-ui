@@ -1,7 +1,7 @@
 <!--
   st-code — Senti-UI 代码展示组件（基于 ofa.js）
   语义属性：lang（html / js / ts / css / less / sass）/ title（文件名或标题）/ code（代码字符串）
-  安全：只从 <template>（惰性）或 code 属性读取源码；渲染结果全部转义为文本节点
+  安全：只从 <template> / <textarea> 或 code 数据读取源码；渲染结果全部转义为文本节点
 -->
 <template component>
   <style>
@@ -420,9 +420,12 @@
       attrs: {
         lang: "html",
         title: null,
-        code: null,
         format: "auto",
         frame: null,
+      },
+      data: {
+        // code 是运行时数据（非标签属性）：页面用 :code="..." 绑定或 el.code = ...
+        code: null,
       },
       watch: {
         lang() { this.render?.(); },
@@ -438,11 +441,28 @@
         const copyBtn = sr.querySelector(".copy");
         let copyTimer = null;
 
+        // 宿主 code property 映射到 ofa data；不写回 attribute（用户要求）
+        const initialCode = ele.code;
+        Object.defineProperty(ele, "code", {
+          configurable: true,
+          get: () => this.code,
+          set: (v) => { this.code = v == null ? null : String(v); },
+        });
+        if (initialCode !== undefined && this.code === null) this.code = initialCode;
+
+        const sourceArea = ele.querySelector(":scope > textarea");
+        if (sourceArea) sourceArea.hidden = true;
+
         this.render = () => {
           const template = ele.querySelector("template");
+          const sourceArea = ele.querySelector(":scope > textarea");
           let raw = "";
           if (this.code !== null && this.code !== undefined) {
             raw = this.code;
+          } else if (sourceArea) {
+            // textarea 是 RCDATA：内部标签不会被解析，<script> 不会执行。
+            // 适合不想写 <template>、也不想手动转义 < > 的场景。
+            raw = sourceArea.value;
           } else if (template) {
             // 带标签的 HTML 代码用 innerHTML 保留标签；纯文本（JS/CSS）用 textContent。
             // 两者都只读字符串，不插入 DOM，因此 <script> 不会执行。
@@ -487,7 +507,7 @@
           ta.value = this._raw;
           ta.setAttribute("readonly", "");
           ta.style.cssText = "position:fixed;left:-9999px;top:0;opacity:0;";
-          ele.appendChild(ta);
+          document.body.appendChild(ta);
           ta.select();
           try { document.execCommand("copy"); } catch (_) { /* ignore */ }
           ta.remove();

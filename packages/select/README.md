@@ -63,9 +63,14 @@ st-option 语义属性：
 |------|------|--------|------|
 | `value` | string | 取 `label` 属性，再取插槽文本 | 选中值 |
 | `label` | string | 取插槽文本 | 闭合状态显示文本 |
+| `disabled` | boolean | 无 | 禁用该项：不可点击、方向键跳过、`aria-disabled="true"` |
 | 默认插槽 | — | — | 富内容：克隆渲染到下拉项；图标元素（svg / img / iconify-icon / `[slot="icon"]`）会同步到闭合态，文字仍显示 `label` |
 
 选项内只放纯文本时（无元素、无实际文本的空白节点不算富内容），下拉项直接显示 label/文本。
+
+**禁用选项与分组**：原生 `<option disabled>` / `<st-option disabled>` 均生效；`<optgroup label>` 的分组标题会渲染为下拉列表中的 `.group-label`（`role="group"` + `aria-label`），`<optgroup disabled>` 下所有选项继承禁用。`el.options` 数组也支持 `{ value, label, disabled, group }`。
+
+**value 应保持唯一**：组件额外记录“最近一次用户选择的下标”，重复 value 时点哪一项就选中哪一项（不会同时高亮多个），但外部 `el.value = "x"` 仍只能按值定位到第一个同值项；需要精确区分请使用唯一 value。
 
 **动态选项**：三种方式任选——`el.options = [...]`、`:options` 数据绑定，或 **o-fill 嵌套**（组件会深入容器内部收集渲染出的 `<option>` / `<st-option>`，并用 MutationObserver 跟随数据重渲染自动更新列表）：
 

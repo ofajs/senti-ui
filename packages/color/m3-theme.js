@@ -430,8 +430,18 @@ const customLines = (expandedScheme) =>
 export function themeToCss(seedHex, overrides, customs, options) {
   const { light, dark } = generateM3Theme(seedHex, overrides, options);
   const expanded = expandCustoms(customs, options);
+  return buildThemeCss(light, dark, expanded);
+}
+
+/**
+ * themeToCss / applyTheme 共用的 CSS 生成器：两条路径必须输出完全一致的文本，
+ * 否则缓存首帧（themeToCss）与动态注入（applyTheme）会出现细微差异。
+ */
+function buildThemeCss(light, dark, expanded) {
   const block = (scheme, extra) =>
-    TOKEN_NAMES.map((n) => `  ${toKebab(n)}: ${scheme[n].toLowerCase()};`).concat(customLines(extra)).join("\n");
+    TOKEN_NAMES.map((n) => `  ${toKebab(n)}: ${scheme[n].toLowerCase()};`)
+      .concat(customLines(extra))
+      .join("\n");
   return `:root,\nhtml.st-light {\n  color-scheme: light;\n${block(light, expanded.light)}\n}\n\nhtml.st-dark {\n  color-scheme: dark;\n${block(dark, expanded.dark)}\n}\n\n${darkMediaBlock(block(dark, expanded.dark), "  ")}\n`;
 }
 
@@ -450,11 +460,12 @@ function darkMediaBlock(decls, indent) {
  * @param {Object<string, string>} [overrides] 手动指定的角色颜色（见 generateM3Theme）
  * @param {Object<string, string>} [customs] 自定义颜色变量（见 themeToCss）
  * @param {{ contrast?: number|Object, contrastTone?: "deep"|"bright" }} [options] 对比度调整（见 generateM3Theme）
- * @returns {{ light: Object, dark: Object }} 生成的体系
+ * @returns {{ light: Object, dark: Object, css: string }} 生成的体系、两套 token 与 CSS 文本
  */
 export function applyTheme(seedHex, overrides, customs, options) {
   const { light, dark } = generateM3Theme(seedHex, overrides, options);
   const expanded = expandCustoms(customs, options);
+  const css = buildThemeCss(light, dark, expanded);
   // 动态 <style> 整体注入（含深色选择器）
   let tag = document.getElementById("st-dynamic-theme");
   if (!tag) {
@@ -462,10 +473,7 @@ export function applyTheme(seedHex, overrides, customs, options) {
     tag.id = "st-dynamic-theme";
     document.head.appendChild(tag);
   }
-  const m3Lines = (scheme, extraScheme, indent) =>
-    TOKEN_NAMES.map((n) => `${indent}${toKebab(n)}: ${scheme[n]};`)
-      .concat(customLines(extraScheme).map((l) => indent + l.trim()))
-      .join("\n");
-  tag.textContent = `:root,\nhtml.st-light {\n  color-scheme: light;\n${m3Lines(light, expanded.light, "  ")}\n}\nhtml.st-dark {\n  color-scheme: dark;\n${m3Lines(dark, expanded.dark, "  ")}\n}\n${darkMediaBlock(`  color-scheme: dark;\n${m3Lines(dark, expanded.dark, "  ")}`, "  ")}`;
-  return { light, dark };
+  tag.textContent = css;
+  // css 一并返回，调用方（st-color-init / 改色工具）不必再调用 themeToCss 重算色盘
+  return { light, dark, css };
 }

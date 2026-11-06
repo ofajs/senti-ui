@@ -58,7 +58,9 @@
         // <768px 底部导航（icon 上 / 文字下）；768–1023px 平板——仍在底部，item 挂 parallel（文字在右）；
         // ≥1024px 桌面——bar 挂 vertical（左侧窄 rail），item 摘 parallel（文字回到下方）
         applyMode() {
-          const w = this.ele.getBoundingClientRect().width;
+          // 布局宽度（不含祖先 transform 缩放）与 container query 的 inline-size 一致；
+          // getBoundingClientRect 在入场动画/缩放容器里会量到中间态（坑 #41）
+          const w = this.ele.clientWidth;
           this._bars?.forEach((bar) => {
             if (w >= 1024) bar.setAttribute("vertical", "");
             else bar.removeAttribute("vertical");

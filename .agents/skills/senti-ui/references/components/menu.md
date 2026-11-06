@@ -56,6 +56,7 @@
 - `change` 的 `e.target` 是切换的 `st-menu-item`，读 `selected` 判断勾选态
 - 单选：在 `change` 回调里用 ofa API 取消同组其他项（`$(item).attr("selected", null)`）
 - 只有 `checkable` 项显示勾选位；`selected` 单独使用没有视觉与 `aria-checked`
+- `selected` 是 attrs，不支持 `sync:selected`；点击切换后监听 `change` 把 `el.hasAttribute("selected")` 写回 data
 
 ## 多级子菜单
 

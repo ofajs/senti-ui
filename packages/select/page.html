@@ -39,6 +39,26 @@
   </section>
 
   <section>
+    <h3>禁用选项 / optgroup 分组</h3>
+    <st-select placeholder="含禁用项（键盘 ↑↓ 会跳过）">
+      <option value="a">A</option>
+      <option value="b" disabled>B（禁用）</option>
+      <option value="c">C</option>
+      <option value="d">D</option>
+    </st-select>
+    <st-select placeholder="optgroup 分组">
+      <optgroup label="水果">
+        <option value="apple">苹果</option>
+        <option value="banana">香蕉</option>
+      </optgroup>
+      <optgroup label="禁用组" disabled>
+        <option value="melon">甜瓜（整组禁用）</option>
+      </optgroup>
+    </st-select>
+    <p>禁用项不可点、方向键跳过；optgroup 标题会渲染为分组标题，该组 disabled 时整组继承禁用</p>
+  </section>
+
+  <section>
     <h3>value 无 value 属性的 option / 长列表滚动</h3>
     <st-select placeholder="无 value 属性">
       <option>北京</option>

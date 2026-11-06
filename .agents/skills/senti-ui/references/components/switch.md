@@ -43,6 +43,7 @@
 ## 注意事项与使用技巧
 
 - `checked` 是标签属性：JS 用 `setAttribute` / `removeAttribute`；ofa 页面绑定用 `attr:checked="expr"`
+- `checked` 是 attrs，不支持 `sync:checked`；双向场景监听 `change` 回写 data
 - 交互由内部透明原生 checkbox 承载（覆盖整个组件，点文字也能切换），Space 键盘可用
 - `color` 属性只影响开启态轨道/拇指色，未选中态恒为 outline/surface 系
 - 精致动效三件套：拇指未选中收缩/选中复原 + 平移、选中背景色过渡填满轨道（描边与底色同色过渡）、拇指内对勾描边入场

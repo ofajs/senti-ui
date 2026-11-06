@@ -63,6 +63,7 @@
 
   <script>
     import "../color/st-color-init.js";
+    import { rafThrottle } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-tooltip",
       attrs: {
@@ -137,7 +138,7 @@
         });
         this._attrObserver.observe(ele, { attributes: true, attributeFilter: ["open"] });
 
-        this._onReposition = () => this.updatePosition();
+        this._onReposition = rafThrottle(() => this.updatePosition());
         this.bindReposition = () => {
           if (this._repositionBound) return;
           window.addEventListener("resize", this._onReposition, true);

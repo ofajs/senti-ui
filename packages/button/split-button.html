@@ -184,7 +184,7 @@
 
   <script>
     import "../color/st-color-init.js";
-    import { syncAccessibleName, getDeepActiveElement } from "../a11y/a11y.js";
+    import { syncAccessibleName, getDeepActiveElement, rafThrottle } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-split-button",
       attrs: {
@@ -291,7 +291,7 @@
           this._restoreFocusOnClose = true;
           this.open = false;
         };
-        this._onReposition = () => this.updatePosition();
+        this._onReposition = rafThrottle(() => this.updatePosition());
 
         // 顶层菜单项（slot="menu" 的直接子元素）；跳过 disabled 项。
         // 注意菜单项在 light DOM：必须查 ele，不是 shadowRoot

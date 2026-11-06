@@ -28,7 +28,7 @@ site/
   docs.css         # 文档页共用的 shadow 样式表
   notes/
     index.html     # 手记目录（parent = "../layout.html"）
-    why-senti-ui.html  # 第一篇文章：为什么要开发 Senti-UI
+    behavior-and-skin.html  # 设计哲学：行为统一，VI 自由（ofa.js v5 + M3 的取舍）
   notes.css        # 手记目录与正文共用的 shadow 样式表
   app-config.js    # o-app 配置（不声明 home；pageAnime 控制真实路径切换动画）
   theme-presets.js # 主题预设：官方配色、按材质槽位记忆、切换时一并套用（页面层）
@@ -63,7 +63,7 @@ site/
 - `layout.html` 是 SCSR 的**共享父页**：header（favicon 同款标记 + SentiUI 字标 / 文档·皮肤·手记文字导航（组件目录即首页，点品牌回首页） / 三巨头材质快捷菜单 / 主题 / GitHub）、footer、以及主题与皮肤状态都在这里；子页在 `<slot>` 中渲染，切页时布局不销毁；材质切换走 `data-skin` / `setSkin()`；
 - `index.html` 声明 `export const parent = "./layout.html"`；`site/docs/layout.html` 再声明 `export const parent = "../layout.html"`，形成**多级嵌套布局**；`site/docs/` 下每个组件页声明 `export const parent = "./layout.html"`；
 - 文档左侧组件目录（`st-list` + `st-list-item`）和移动端组件目录抽屉只存在于 `site/docs/layout.html` 一处；同父页的组件互相切换时侧栏不销毁、不重排，只替换 `<slot>` 里的正文；
-- `notes/` 是独立的阅读栏目（导航名「手记」）：`index.html` 是文章目录，`why-senti-ui.html` 是第一篇设计手记；两者都 `parent = "../layout.html"`，正文页共用 `notes.css`，站内跳转用 `olink` 保持共享 header；
+- `notes/` 是独立的阅读栏目（导航名「手记」）：`index.html` 是文章目录，`behavior-and-skin.html` 是合并后的设计哲学长文，串起「行为统一 / ofa.js v5 实现 / M3 颜色减法 / 对比度 / input 去 label」；两者都 `parent = "../layout.html"`，正文页共用 `notes.css`，站内跳转用 `olink` 保持共享 header；
 - 页面切换动画**只在 `app-config.js` 的 `pageAnime` 里配置**：前进时新页从下方 16px 上移并淡入、旧页上移 16px 淡出；后退方向相反（新页从上方 16px 落下）。过渡时长不写在配置里——ofa 自动注入 `all .3s`，入场淡入、离场淡出与位移都在这次过渡里完成。两级 layout 不写任何切页动画 CSS；页面背景透明，由 layout 的固定环境光层提供底色；文档示例容器 `.demo` / `.demo-stage` / `.demo-content` 也改为半透明，Apple 下同样能透出环境光；
 - **slot 外层必须是相对容器**（`.docs-body { position: relative }`）：离场页会被 scsr 设为 `position: absolute`，没有相对容器时会相对视口定位，切换瞬间露出旧内容造成“闪一下”；
 - **环境光背景**：layout 内固定 `.ambient` 层（三个模糊色球缓慢漂移）位于页面后面；M3 / windows / shadcn 下透明度较低，Apple 下通过 `ambient-strong` 提升到 1，半透明卡片、菜单、对话框的毛玻璃才有可见内容。页面 `::slotted(o-page)` 与首页 `:host` 背景透明，否则会盖住环境光；`prefers-reduced-motion` 下停止漂移；

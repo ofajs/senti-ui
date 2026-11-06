@@ -620,12 +620,12 @@ test("组件文档首页：23 张卡片可进入独立页", async ({ page }) => 
   await waitDocPage(page, "Button");
 });
 
-test("手记：目录、首篇文章与共享 header", async ({ page }) => {
+test("手记：合并后的设计哲学文章与共享 header", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
 
   await page.goto("/site/notes/index.html", { waitUntil: "networkidle", timeout: 60_000 });
-  await page.locator(".note-card").waitFor({ state: "visible" });
+  await page.locator(".note-card").first().waitFor({ state: "visible" });
 
   const index = await page.evaluate(() => {
     const pages = [...document.querySelectorAll("o-page")];
@@ -652,17 +652,17 @@ test("手记：目录、首篇文章与共享 header", async ({ page }) => {
     { text: "手记", active: true },
   ]);
   expect(index.cards).toBe(1);
-  expect(index.href).toContain("why-senti-ui.html");
-  expect(index.heading).toBe("为什么要开发 Senti-UI");
+  expect(index.href).toContain("behavior-and-skin.html");
+  expect(index.heading).toBe("行为统一，VI 自由");
 
-  await page.locator(".note-card").click();
-  await page.waitForURL("**/site/notes/why-senti-ui.html", { timeout: 30_000 });
+  await page.locator(".note-card").first().click();
+  await page.waitForURL("**/site/notes/behavior-and-skin.html", { timeout: 30_000 });
   await page.locator(".note-page h1").waitFor({ state: "visible" });
   await page.waitForFunction(() => {
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".note-page")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".note-body h2").length === 5);
+    return !!(child && child.shadowRoot.querySelectorAll(".note-body h2").length === 4);
   });
 
   const article = await page.evaluate(() => {
@@ -675,6 +675,10 @@ test("手记：目录、首篇文章与共享 header", async ({ page }) => {
       h1: sr.querySelector(".note-hero h1").textContent.trim(),
       sections: sr.querySelectorAll(".note-body h2").length,
       principles: sr.querySelectorAll(".principles li").length,
+      codeBlocks: sr.querySelectorAll(".note-body st-code").length,
+      codeRendered: [...sr.querySelectorAll(".note-body st-code")].filter((code) =>
+        code.shadowRoot?.querySelector("code")?.textContent.trim()
+      ).length,
       body: sr.querySelector(".note-body").textContent,
       navActive: [...layout.shadowRoot.querySelectorAll(".layout-nav st-button.active")].map((b) =>
         b.textContent.trim()
@@ -684,11 +688,17 @@ test("手记：目录、首篇文章与共享 header", async ({ page }) => {
       ).length,
     };
   });
-  expect(article.title).toContain("为什么要开发 Senti-UI");
-  expect(article.h1).toBe("为什么要开发 Senti-UI");
-  expect(article.sections).toBe(5);
+  expect(article.title).toContain("行为统一，VI 自由");
+  expect(article.h1).toBe("行为统一，VI 自由");
+  expect(article.sections).toBe(4);
   expect(article.principles).toBe(3);
-  expect(article.body).toContain("更适合 AI 的前端框架");
+  expect(article.codeBlocks).toBe(2);
+  expect(article.codeRendered).toBe(2);
+  expect(article.body).toContain("ofa.js v5");
+  expect(article.body).not.toContain("为什么是 ofa.js v5");
+  expect(article.body).toContain("34 个 token");
+  expect(article.body).toContain("对比度");
+  expect(article.body).toContain("label");
   expect(article.navActive).toEqual(["手记"]);
   expect(article.headerCount).toBe(1);
 

@@ -174,6 +174,7 @@ document.querySelector("st-select").addEventListener("change", (e) => {
 ## 注意事项与使用技巧
 
 - `value` 是运行时状态：`el.value = "x"` 改选中（不派发 change）；初始选中用 `default-value`
+- 写入不存在的选项值（或选中项被动态删除）会被**清空为未选中**，不会留下“界面显示占位、表单却提交旧值”的不一致状态
 - 选项元素（`option` / `st-option`）是纯数据源：收集发生在 attached 与 slotchange/o-fill 重渲染时，**直接改已渲染选项的 `value`/`label` 属性不会生效**——动态选项用 `el.options`、`:options` 或 o-fill 嵌套
 - 富内容/多语言场景用 `st-option` + `label` 属性：插槽内容做下拉项展示，`label` 做闭合态文本（原生 `<option>` 受浏览器解析限制，内部元素可能不保真）
 - st-option 由 `select.html` 内部 `<l-m>` 自动加载，无需单独引入；`st-select` 内可混用 `<option>` 与 `<st-option>`（保持书写顺序）

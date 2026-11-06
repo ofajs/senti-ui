@@ -26,9 +26,40 @@ test("placeholder 生效：未选中时显示占位文本", async ({ page }) => 
 });
 
 test("default-value 初始化运行时选中值", async ({ page }) => {
-  expect(await page.evaluate(() => document.querySelector("#sel-default").value)).toBe("banana");
-  const text = await page.evaluate(() => document.querySelector("#sel-default").shadowRoot.textContent);
+  expect(await page.evaluate(() => document.querySelector("#sel-default").value)).toBe("b");
+  const text = await page.evaluate(
+    () => document.querySelector("#sel-default").shadowRoot.querySelector("#st-label").textContent
+  );
   expect(text).toContain("乙");
+});
+
+test("非法 value 被清空，不把不存在的值提交给表单代理", async ({ page }) => {
+  const state = await page.evaluate(async () => {
+    const el = document.querySelector("#sel-basic");
+    el.value = "not-an-option";
+    await new Promise((r) => setTimeout(r, 200));
+    const proxy = [...el.children].find((node) => node.tagName === "INPUT");
+    return {
+      value: el.value,
+      label: el.shadowRoot.querySelector("#st-label").textContent,
+      proxy: proxy?.value,
+    };
+  });
+  expect(state.value).toBe("");
+  expect(state.label).toBe("请选择");
+  expect(state.proxy).toBe("");
+});
+
+test("宿主 el.focus() / el.blur() 桥接到内部 combobox", async ({ page }) => {
+  const state = await page.evaluate(() => {
+    const el = document.querySelector("#sel-basic");
+    const control = el.shadowRoot.querySelector("#st-control");
+    el.focus();
+    const focused = el.shadowRoot.activeElement === control;
+    el.blur();
+    return { focused, blurred: el.shadowRoot.activeElement !== control };
+  });
+  expect(state).toEqual({ focused: true, blurred: true });
 });
 
 test("点击打开弹层并选择：value 更新、change 事件触发", async ({ page }) => {

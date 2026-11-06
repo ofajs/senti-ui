@@ -121,6 +121,8 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 2026-10-31 表单能力与 a11y 收尾：输入/多行/下拉/复选/开关/单选补 `name` / `required` / 原生约束校验与 `<form>` 提交（`packages/form/form-proxy.js` 的不可见 light DOM 代理控件），`st-button type=submit/reset` 代理到最近表单；select 的 combobox 移入 shadow 与 listbox 同树，tabs/nav 支持方向键，menu 触发器内部 button 也带展开状态，tooltip 用 `aria-description` 关联触发元素，tabs 指示条改用 offset 布局坐标。
 
+2026-11-06 交互与无障碍回归修复：模态层打开时把宿主分支之外的背景设为 `inert`（模态栈统一重算，dialog/drawer 共用）；dialog/drawer 的 headline 名称随文本变化更新；switch 内部控件改 `role=switch`；radio 同名分组按 form owner 隔离并补组内方向键 + roving tabindex；menu 方向键只遍历当前层菜单项、关闭后焦点归还触发器；split-button 菜单补 `role=menu` / `aria-controls` / 方向键与 Escape 捕获（不再连带关闭外层 dialog）；card 键盘只在宿主自身聚焦时激活（内部按钮 Enter/Space 不再被吞）；checkbox `indeterminate` 同步原生混合态且不再错误参与表单提交；select 非法 value 自动清空；st-input/st-textarea/st-select 的 `el.focus()` / `el.blur()` 桥接到内部控件。
+
 ## 当前状态（2026-11-05）
 
 当前 22 个模块（含 4 个双标签模块，2026-08-21 新增 slider/progress/tooltip/card/badges 五件套——参考 MUI 清单筛选引入），st-button 作为整个库设计范式的样板：

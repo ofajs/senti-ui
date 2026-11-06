@@ -56,6 +56,27 @@ test("form：required 阻断提交，组件抛 invalid 并设置 aria-invalid", 
   ).toBe("true");
 });
 
+test("form：indeterminate 复选框不提交值（原生 mixed 语义）", async ({ page }) => {
+  await ready(page);
+  const state = await page.evaluate(async () => {
+    const cb = document.querySelector("#f-agree");
+    cb.removeAttribute("checked");
+    cb.setAttribute("indeterminate", "");
+    await new Promise((r) => setTimeout(r, 200));
+    const proxy = [...cb.children].find((node) => node.tagName === "INPUT");
+    return {
+      formData: Object.fromEntries(new FormData(document.querySelector("#form")).entries()),
+      proxyChecked: proxy.checked,
+      nativeIndeterminate: cb.shadowRoot.querySelector("input").indeterminate,
+      nativeChecked: cb.shadowRoot.querySelector("input").checked,
+    };
+  });
+  expect(state.formData.agree).toBeUndefined();
+  expect(state.proxyChecked).toBe(false);
+  expect(state.nativeIndeterminate).toBe(true);
+  expect(state.nativeChecked).toBe(false);
+});
+
 test("form：reset 同步代理与可见组件", async ({ page }) => {
   await ready(page);
   await page.evaluate(() => {

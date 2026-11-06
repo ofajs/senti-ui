@@ -23,7 +23,7 @@
 |------|------|--------|------|
 | `lang` | `"html" \| "js" \| "ts" \| "css" \| "less" \| "sass"` | `"html"` | 高亮语言；兼容 `htm/xml/svg/javascript/typescript/scss` 别名 |
 | `title` | string | 无 | 顶栏文件名 / 标题；缺省显示语言名（HTML / JS / CSS…） |
-| `code` | 运行时状态（ofa data） | `null` | 代码字符串；用 `:code="..."` 或 `el.code = ...` 写入，**不是标签属性**；优先于 textarea / `<template>` |
+| `code` | 运行时状态（ofa data） | `null` | 代码字符串；用 `:code="..."` 或 `$("st-code").ele.code = ...` 写入，**不是标签属性**；优先于 textarea / `<template>` |
 | `format` | `"auto" \| "off"` | `"auto"` | 自动格式化开关；Sass 始终只做去公共缩进 |
 | `frame` | boolean | 无 | 加浏览器外壳：底色 / 边框 / 圆点 / 标题 / 复制按钮 |
 
@@ -95,10 +95,10 @@
 
 ```js
 const cssText = `.card { color: var(--md-sys-color-primary); }`;
-$("st-code").attr("code", cssText);
+$("st-code").ele.code = cssText;
 ```
 
-`code` 属性的值始终被当作文本，不会解析成 HTML，适合从接口 / 编辑器 / 数据绑定拿到的代码。
+`code` 数据的值始终被当作文本，不会解析成 HTML，适合从接口 / 编辑器 / 数据绑定拿到的代码。
 
 ## 不要这样做
 
@@ -151,7 +151,7 @@ st-code::part(copy) {
 
 - **静态源码优先用 `<textarea hidden>`**：无需手动转义 `<`，标签和 `<script>` 都原样保留
 - `<template>` 适合接受浏览器序列化（属性可能被规范成 `attr=""`）的场景
-- 动态字符串用 `:code` 绑定 / `el.code`（运行时状态，不写 attribute）
+- 动态字符串用 `:code` 绑定 / `$("st-code").ele.code`（运行时状态，不写 attribute）
 - `setAttribute("code", ...)` 无效；`code` 是 ofa data
 - **不要用直接子节点**：直接放在 `<st-code>` 下的 `<script>` 会在组件升级前执行，任何组件 JS 都无法拦截
 - `lang` 只影响高亮，不做语法校验；未知语言按 HTML 展示

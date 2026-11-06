@@ -175,6 +175,50 @@ test("list-item：嵌套子列表逐级缩进，点击区保持整行宽", async
   expect(Math.abs(geo.topWidth - geo.subWidth)).toBeLessThan(2);
 });
 
+test("list-item：非 collapsible 项的 sublist 默认展开", async ({ page }) => {
+  await page.evaluate(async () => {
+    const item = document.createElement("st-list-item");
+    item.id = "li-plain-sublist";
+    item.innerHTML =
+      '普通父项<st-list slot="sublist"><st-list-item id="li-plain-child">子项</st-list-item></st-list>';
+    document.querySelector("#list").appendChild(item);
+    await new Promise((r) => setTimeout(r, 700));
+  });
+  const state = await page.evaluate(() => {
+    const item = document.querySelector("#li-plain-sublist");
+    const collapse = item.shadowRoot.querySelector("st-collapse");
+    return {
+      collapsible: item.hasAttribute("collapsible"),
+      hide: collapse.hasAttribute("hide"),
+      height: parseFloat(collapse.style.height),
+    };
+  });
+  expect(state.collapsible).toBe(false);
+  expect(state.hide).toBe(false);
+  expect(state.height).toBeGreaterThan(0);
+});
+
+test("list-item：向已有 sublist 动态追加项时仍按层级缩进", async ({ page }) => {
+  const state = await page.evaluate(async () => {
+    const parent = document.querySelector("#li-fold");
+    parent.setAttribute("expanded", "");
+    await new Promise((r) => setTimeout(r, 400));
+    const list = parent.querySelector('st-list[slot="sublist"]');
+    const item = document.createElement("st-list-item");
+    item.id = "li-dynamic-sub";
+    item.textContent = "动态子项";
+    list.appendChild(item);
+    await new Promise((r) => setTimeout(r, 700));
+    const indent = item.shadowRoot?.querySelector(".left-indent");
+    return {
+      depth: item._stListDepth,
+      width: indent ? parseFloat(getComputedStyle(indent).width) : 0,
+    };
+  });
+  expect(state.depth).toBe(1);
+  expect(state.width).toBeCloseTo(14, 0);
+});
+
 // ---------- st-ripple 隔离 ----------
 
 test("ripple：点击只作用于被点组件，嵌套/相邻组件不串波纹", async ({ page }) => {

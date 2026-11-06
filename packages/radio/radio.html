@@ -100,7 +100,7 @@
   <script>
     import "../color/st-color-init.js";
     import { syncAccessibleName } from "../a11y/a11y.js";
-    import { createFormProxy, syncFormProxy, bindFormReset } from "../form/form-proxy.js";
+    import { createFormProxy, syncFormProxy, bindFormReset, formFor } from "../form/form-proxy.js";
     export default async () => ({
       tag: "st-radio",
       attrs: {
@@ -116,8 +116,8 @@
         checked() { this.applyState(); },
         disabled() { this.applyState(); },
         color() { this.applyState(); },
-        name() { this.syncForm?.(); },
-        form() { this.syncForm?.(); },
+        name() { this.syncGroup?.(); this.syncForm?.(); },
+        form() { this.syncGroup?.(); this.syncForm?.(); },
         value() { this.syncForm?.(); },
         required() { this.syncForm?.(); },
       },
@@ -126,24 +126,72 @@
         const sr = ele.shadowRoot;
         const input = sr.querySelector(".native");
 
-        // 交互：选中 → 同组互斥（原生 radio 分组不跨 shadow root，手动取消兄弟）
-        input.addEventListener("change", () => {
-          if (!input.checked) return;
-          ele.setAttribute("checked", "");
-          if (this.name) {
-            // 同组互斥按“树作用域”查找：document 里的同名 radio、或同一个
-            // o-page/o-app shadow root 里的同名 radio（closest(div) 会漏掉兄弟容器）
-            const scope = ele.getRootNode();
-            const selector = `st-radio[name="${CSS.escape(this.name)}"]`;
-            scope.querySelectorAll(selector).forEach((sib) => {
-              if (sib !== ele && sib.hasAttribute("checked")) {
-                sib.removeAttribute("checked");
-                if (sib._proxy) sib._proxy.checked = false;
-              }
-            });
+        // 同组项：同一个树作用域 + 同一个 form owner + 同名。
+        // 不能只按 root + name 查——两个独立 <form> 里的同名 radio 会被误互斥。
+        this._groupMembers = () => {
+          if (!this.name) return [ele];
+          const scope = ele.getRootNode();
+          const owner = formFor(ele);
+          return [...scope.querySelectorAll(`st-radio[name="${CSS.escape(this.name)}"]`)].filter(
+            (sib) => formFor(sib) === owner
+          );
+        };
+
+        // roving tabindex：组内只有选中项（无选中时为第一个可用项）进 Tab 顺序，
+        // 方向键在组内移动并选中，符合 WAI-ARIA radio group 惯例
+        this.syncGroup = () => {
+          const members = this._groupMembers();
+          if (members.length <= 1) {
+            input.tabIndex = 0;
+            return;
           }
+          const enabled = members.filter((sib) => !sib.hasAttribute("disabled"));
+          const tabbable = enabled.find((sib) => sib.hasAttribute("checked")) || enabled[0] || null;
+          members.forEach((sib) => {
+            const native = sib.shadowRoot?.querySelector(".native");
+            if (native) native.tabIndex = sib === tabbable ? 0 : -1;
+          });
+        };
+
+        // 选中自身 + 取消同组其他项 + 派发一次 composed change
+        this._selectSelf = () => {
+          if (this.disabled !== null) return;
+          input.checked = true;
+          ele.setAttribute("checked", "");
+          this._groupMembers().forEach((sib) => {
+            if (sib !== ele && sib.hasAttribute("checked")) {
+              sib.removeAttribute("checked");
+              if (sib._proxy) sib._proxy.checked = false;
+            }
+          });
           input.removeAttribute("aria-invalid");
+          this.syncGroup();
           ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
+        };
+        // 供组内其他 radio 的方向键导航调用（组件实例方法不在 DOM 元素上）
+        ele._selectSelf = this._selectSelf;
+
+        input.addEventListener("change", () => {
+          if (input.checked) this._selectSelf();
+        });
+
+        // 方向键：在组内循环移动焦点并选中（原生 radio 分组不跨 shadow root，
+        // 每个组件内只有一个 input，必须手动代理组内键盘导航）
+        input.addEventListener("keydown", (e) => {
+          if (this.disabled !== null) return;
+          const forward = e.key === "ArrowRight" || e.key === "ArrowDown";
+          const backward = e.key === "ArrowLeft" || e.key === "ArrowUp";
+          if (!forward && !backward) return;
+          const members = this._groupMembers().filter(
+            (sib) => !sib.hasAttribute("disabled") && sib.shadowRoot?.querySelector(".native")
+          );
+          if (members.length < 2) return;
+          e.preventDefault();
+          const index = Math.max(0, members.indexOf(ele));
+          const target = members[(index + (forward ? 1 : -1) + members.length) % members.length];
+          const native = target.shadowRoot.querySelector(".native");
+          native.focus();
+          target._selectSelf?.();
         });
 
         // 标签文字是 slot 内容、与原生 input 是兄弟节点，必须同步为可访问名称
@@ -201,6 +249,7 @@
 
           input.checked = this.checked !== null;
           input.disabled = this.disabled !== null;
+          this.syncGroup?.();
           this.syncForm?.();
 
           const name = this.color;

@@ -67,6 +67,7 @@ data.get("volume"); // "40"
 - `min` / `max` / `step` 是标签属性：`setAttribute` 后下一帧生效并重新约束视觉；越界的 `value` 会自动夹回范围
 - 宿主尺寸变化（隐藏→显示、容器变宽）由 ResizeObserver 自动重算，不需要手动刷新
 - 无障碍：宿主 `aria-label` / `aria-labelledby` / `title` 会同步到内部 range，作为滑块的可访问名称
+- `color` 会同时写入 `--st-slider-main` / `--st-on-accent` 一对语义色：数值气泡文字跟随 `on-角色色`，不会出现深色主题/自定义色下气泡文字与底色不配对
 
 ## 验证页面
 

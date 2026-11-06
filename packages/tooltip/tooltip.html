@@ -96,7 +96,11 @@
             this.unbindReposition?.();
           }
         },
-        content() { this.applyContent(); },
+        content() {
+          this.applyContent();
+          // 文本变化会改变气泡宽度，打开状态下要重新定位
+          if (this.open) this.updatePosition?.();
+        },
         disabled() { if (this.disabled !== null) this.open = false; },
       },
       ready() {

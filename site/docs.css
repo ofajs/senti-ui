@@ -249,6 +249,23 @@ code { font-family: ui-monospace, Menlo, monospace; }
   overflow-wrap: anywhere;
 }
 
+.snippet st-code {
+  display: block;
+  margin: 0 0 4px;
+  border-radius: 12px;
+  background: rgb(from var(--md-sys-color-surface-container-highest) r g b / 0.5);
+  overflow: hidden;
+}
+.snippet st-code::part(body) {
+  padding: 16px 18px;
+}
+.snippet st-code::part(pre) {
+  font-size: 11px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .doc-pager {
   display: flex;
   align-items: center;

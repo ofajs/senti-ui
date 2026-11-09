@@ -4,7 +4,7 @@
 
 ## 项目是什么
 
-Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Components 框架），颜色体系采用 **Google Material Design 3（M3）**。无构建、纯静态，CDN 引入即用。
+Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Components 框架），颜色体系采用 **Google Material Design 3（M3）**。无构建、纯静态，CDN 引入即用。线上官网：<https://senti.ofajs.com/site/>（组件文档 `/site/docs/`），官网源码在 `site/`。
 
 ## 核心理念（与传统组件库的本质区别）
 

@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/ofajs/senti-ui/issues"
   },
-  "homepage": "https://github.com/ofajs/senti-ui#readme",
+  "homepage": "https://senti.ofajs.com/site/",
   "devDependencies": {
     "@playwright/test": "^1.62.1",
     "http-server": "^14.1.1"

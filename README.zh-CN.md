@@ -4,6 +4,8 @@
 
 **面向 AI 的 UI 组件库**：基于 [ofa.js](https://github.com/ofajs/ofa.js)（Web Components 框架），颜色体系采用 Google Material Design 3（M3）。**无构建、纯静态，CDN 引入即用**。
 
+官网：<https://senti.ofajs.com/site/>
+
 仓库地址：<https://github.com/ofajs/senti-ui>
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
@@ -131,11 +133,13 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 
 ## 官网首页
 
+线上地址：<https://senti.ofajs.com/site/> —— 组件文档：<https://senti.ofajs.com/site/docs/>。
+
 单页聚合官网在 [`site/`](./site/index.html)：全部组件摆在一页，支持实时换肤、深浅色切换与多种材质并排对比；独立皮肤页在 [`site/skins.html`](./site/skins.html)，可选 M3 / Apple / Windows / shadcn / Cyberpunk 五套材质，顶部快捷菜单只保留三巨头材质。采用 **ofa.js v5 + scsr**（真实路径文档；加载后由 scsr 收编为 o-app 页面）。组件使用说明在 [`site/docs/`](./site/docs/index.html)：每个组件一个独立 SCSR 页，按场景拆成 4–7 组可交互示例，并附属性表、插槽 / 事件；左侧目录由二级 SCSR 父页共享，组件间切换不销毁。
 
 ```bash
 npm run dev
-# http://localhost:8642/site/
+# 本地：http://localhost:8642/site/
 ```
 
 ## AI 使用
@@ -184,7 +188,7 @@ npm test       # Playwright 端到端测试（须先 npx playwright install chro
 ```
 
 - 新增/修改组件请先阅读 [AGENTS.md](./AGENTS.md)（开发规则）与 [CONTEXT.md](./CONTEXT.md)（项目全景 + 组件索引 + ofa.js 已知坑）
-- 组件官网：`site/docs/` 二级 SCSR 布局，本地 `http://localhost:8642/site/docs/`
+- 组件官网：`site/docs/` 二级 SCSR 布局 —— 线上 <https://senti.ofajs.com/site/docs/>，本地 `http://localhost:8642/site/docs/`
 
 ## License
 

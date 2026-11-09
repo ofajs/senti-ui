@@ -4,6 +4,8 @@
 
 A **UI component library designed for AI**: built on [ofa.js](https://github.com/ofajs/ofa.js) (a Web Components framework), with a Google Material Design 3 (M3) color system. **No build step, purely static — load from CDN and use immediately.**
 
+Website: <https://senti.ofajs.com/site/>
+
 Repository: <https://github.com/ofajs/senti-ui>
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
@@ -131,11 +133,13 @@ The website adds a **theme preset** layer on top (only in `site/theme-presets.js
 
 ## Website
 
+Online: <https://senti.ofajs.com/site/> — component docs: <https://senti.ofajs.com/site/docs/>.
+
 A single-page showcase lives in [`site/`](./site/index.html), built with **SCSR** (ofa.js v5 real-path documents): every component on one page, live skin + light/dark switching, four side-by-side material previews, and a dedicated skin page at [`site/skins.html`](./site/skins.html). Each URL is a real HTML document; scsr turns it into an o-app page after load. Component docs live under [`site/docs/`](./site/docs/index.html) — one real SCSR page per component, with 4–7 scenario-based live demos, attribute tables and slots/events. The docs sidebar lives in a second-level SCSR layout, so it survives component-to-component navigation.
 
 ```bash
 npm run dev
-# http://localhost:8642/site/
+# local: http://localhost:8642/site/
 ```
 
 ## AI Usage
@@ -184,7 +188,7 @@ npm test       # Playwright e2e tests (run `npx playwright install chromium` fir
 ```
 
 - Read [AGENTS.md](./AGENTS.md) (development rules) and [CONTEXT.md](./CONTEXT.md) (project overview + component index + known ofa.js pitfalls) before adding or modifying components
-- Component docs site: `site/docs/` (nested SCSR layout), at `http://localhost:8642/site/docs/`
+- Component docs site: `site/docs/` (nested SCSR layout) — live at <https://senti.ofajs.com/site/docs/>, local at `http://localhost:8642/site/docs/`
 
 ## License
 

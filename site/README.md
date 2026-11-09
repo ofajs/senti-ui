@@ -4,7 +4,9 @@
 
 采用 **ofa.js v5 + scsr**（Symphony Client-Server Rendering）：每个 URL 都是可直接访问的真实文档，站内跳转走 o-app 路由（真实路径，非 hash），而不是 hash 路由。
 
-运行：
+线上地址：<https://senti.ofajs.com/site/>（部署在域名根路径的 `/site/` 下，组件文档为 `/site/docs/`）。
+
+本地运行：
 
 ```bash
 npm run dev
@@ -208,7 +210,7 @@ npm test
 
 ## 部署
 
-纯静态：把整个仓库（或至少 `site/` + `packages/`）放到任意静态服务器。SCSR **要求每个路径都有自己的 HTML 文件**，但**不需要任何 rewrite**；目录地址 `/site/` 由服务器补 `index.html` 即可。官网不再依赖根目录 `docs/`。`layout.html` 与 `site/docs/` 下的页面需要一起部署。CDN 只依赖 ofa.js v5。
+纯静态：把整个仓库（或至少 `site/` + `packages/`）放到任意静态服务器。SCSR **要求每个路径都有自己的 HTML 文件**，但**不需要任何 rewrite**；目录地址 `/site/` 由服务器补 `index.html` 即可。官方部署地址是 <https://senti.ofajs.com/site/>，站点按这个子路径组织所有相对链接。官网不再依赖根目录 `docs/`。`layout.html` 与 `site/docs/` 下的页面需要一起部署。CDN 只依赖 ofa.js v5。
 
 ## 新增真实页面
 

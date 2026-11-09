@@ -33,7 +33,7 @@ const waitDocPage = (page, name) =>
     { timeout: 30_000 }
   );
 
-test("官网首页：26 张卡片 / 31 个标签 / 共享 SCSR 布局，无页面错误", async ({ page }) => {
+test("官网首页：29 张卡片 / 34 个标签 / 共享 SCSR 布局，无页面错误", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
 
@@ -83,12 +83,12 @@ test("官网首页：26 张卡片 / 31 个标签 / 共享 SCSR 布局，无页�
   expect(state.sharedHeader).toBe(true);
   expect(state.heading).toBe("语义组件，任意材质。");
   expect(state.eyebrow).toContain("AI-first 前端框架");
-  expect(state.tags).toHaveLength(31);
+  expect(state.tags).toHaveLength(34);
   expect(state.notReady).toEqual([]);
   expect(state.path).toBe("/site/");
   expect(state.templateRemoved).toBe(true);
   expect(state.sections).toEqual(["top", "components", "skins", "start"]);
-  expect(state.cards).toBe(26);
+  expect(state.cards).toBe(29);
   // 首页只列三个主流平台的系统 UI；shadcn / cyberpunk 在皮肤页
   expect(state.systemUiCards).toEqual([
     "Android · Material 3",
@@ -220,7 +220,7 @@ test("从主题页切回首页：首页组件依赖随 template 重新加载", a
       select: !!sr.querySelector("st-select")?.shadowRoot,
     };
   });
-  expect(state.cards).toBe(26);
+  expect(state.cards).toBe(29);
   expect(state.missing).toEqual([]);
   expect(state.buttonGroup).toBe(true);
   expect(state.select).toBe(true);
@@ -307,7 +307,7 @@ test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 23);
+    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 26);
   });
   expect(
     await page.evaluate(
@@ -410,7 +410,7 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(state.title).toContain("Input — 组件文档");
   expect(state.header).toBe(true);
   expect(state.pages).toBe(3);
-  expect(state.sideItems).toBe(24);
+  expect(state.sideItems).toBe(27);
   expect(state.active[0]).toContain("Input");
   expect(state.headerNav).toEqual([
     { variant: "text", active: true },
@@ -573,7 +573,7 @@ test("切页不挤动内容区：阅读进度条显隐不改变页面顶边", as
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 23);
+    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 26);
   });
   const docs = await metrics();
 
@@ -583,13 +583,13 @@ test("切页不挤动内容区：阅读进度条显隐不改变页面顶边", as
   expect(docs.barTop).toBeCloseTo(docs.headerBottom, 0);
 });
 
-test("组件文档首页：23 张卡片可进入独立页", async ({ page }) => {
+test("组件文档首页：26 张卡片可进入独立页", async ({ page }) => {
   await page.goto("/site/docs/index.html", { waitUntil: "networkidle", timeout: 60_000 });
   await page.waitForFunction(() => {
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 23);
+    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 26);
   });
   const overview = await page.evaluate(() => {
     const child = [...document.querySelectorAll("o-page")].find(
@@ -604,10 +604,10 @@ test("组件文档首页：23 张卡片可进入独立页", async ({ page }) => 
       })),
     };
   });
-  expect(overview.cards).toBe(23);
+  expect(overview.cards).toBe(26);
   expect(overview.groups).toEqual([
-    { title: "基础组件 18", cards: 18 },
-    { title: "辅助组件 4", cards: 4 },
+    { title: "基础组件 20", cards: 20 },
+    { title: "辅助组件 5", cards: 5 },
     { title: "高级组件 1", cards: 1 },
   ]);
   await page.evaluate(() => {
@@ -2175,7 +2175,7 @@ test("从手记切到文档：二级 layout 的 list / drawer 依赖随父页加
     };
   });
   expect(state.listUpgraded).toBe(true);
-  expect(state.items).toBe(24);
+  expect(state.items).toBe(27);
   expect(state.firstItemHeight).toBeGreaterThan(20);
   expect(state.drawerUpgraded).toBe(true);
 

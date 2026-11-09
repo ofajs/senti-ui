@@ -151,6 +151,28 @@ const t = toast("已保存", { duration: 3000 }); // 返回 { close, el }；dura
 
 - 点 / 数字（`max` 封顶显示 `N+`）/ 文字徽标，钉在默认插槽元素右上角，pointer-events none
 
+## st-chip 筛选小片
+
+- 属性：`variant`（`assist`(默认)/`filter`/`input`）、`removable`（尾部 ✕）、`disabled`、`color`
+- `selected` 是运行时状态：ofa 页面 `sync:selected="x"` 双向绑定；纯 JS `$("sel").attr("selected", "")` / `attr("selected", null)`，读 `el.selected`
+- 事件：`click` / `change`（选中切换）/ `remove`（点 ✕，不触发 click，也不自动移除节点——收到后自己删）
+- 示例：`<st-chip variant="filter" sync:selected="picked" on:change="picked = !picked">音乐</st-chip>`
+- 键盘：assist/filter 宿主自身 role=button，Tab 可达、Enter/Space 切换；皮肤 token：`--st-chip-*`，part：`remove`
+
+## st-avatar 头像
+
+- 纯展示圆形头像；内容来源：`src` 图片 > `image` 插槽 > 默认插槽文字缩写；`alt` 自动转发宿主 `aria-label` 与内部 img
+- 属性：`src`、`alt`、`color`（默认 secondary-container 配对）；无 size 属性——`font-size` 等比或直接写 width/height
+- 示例：`<st-avatar color="primary" style="font-size: 24px;">AI</st-avatar>`
+- 皮肤 token：`--st-avatar-*`，part：`image`
+
+## st-skeleton 加载占位
+
+- 纯展示骨架占位：`shape`（`text`(默认 整行 1em)/`circle` 正圆/`rect` 大块 60px）；宽高一律原生 CSS 覆写
+- opacity 呼吸动画（1.6s 循环），prefers-reduced-motion 自动静止；数据到达后用真实内容替换节点（ofa 页面配合 `o-if` 切骨架/内容）
+- 示例：`<st-skeleton shape="circle" style="width:48px;height:48px;"></st-skeleton>`
+- 皮肤 token：`--st-skeleton-*`；无交互无事件
+
 ## st-collapse 折叠容器
 
 - 属性：`hide`（收起）；高度过渡跟随内容（ResizeObserver）

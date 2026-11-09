@@ -1,0 +1,110 @@
+<!-- st-avatar 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
+    section { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+    .code { font-family: ui-monospace, monospace; font-size: 13px; }
+    .state {
+      font-size: 13px; color: var(--md-sys-color-on-surface-variant);
+      padding: 2px 8px; border-radius: 6px;
+      background: var(--md-sys-color-surface-container-high);
+    }
+    .skin-box { padding: 16px; border-radius: 12px; border: 1px solid var(--md-sys-color-outline-variant); }
+  </style>
+
+  <section>
+    <h3>基础 — 内容来源三选一（文字缩写 / image 插槽图标 / src 图片）</h3>
+    <st-avatar>Y</st-avatar>
+    <st-avatar>Yao</st-avatar>
+    <st-avatar><svg slot="image" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5z"/></svg></st-avatar>
+    <st-avatar src="https://picsum.photos/seed/senti/64/64" alt="随机头像"></st-avatar>
+  </section>
+
+  <section>
+    <h3>color 属性 — M3 角色（primary / secondary / tertiary / error / success）</h3>
+    <st-avatar color="primary">P</st-avatar>
+    <st-avatar color="secondary">S</st-avatar>
+    <st-avatar color="tertiary">T</st-avatar>
+    <st-avatar color="error">E</st-avatar>
+    <st-avatar color="success">✓</st-avatar>
+  </section>
+
+  <section>
+    <h3>等比缩放（宿主 font-size，尺寸/文字全部联动）与直接 CSS 覆写</h3>
+    <st-avatar style="font-size: 12px;">12</st-avatar>
+    <st-avatar>14</st-avatar>
+    <st-avatar style="font-size: 20px;">20</st-avatar>
+    <st-avatar style="width: 48px; height: 48px; border-radius: 8px; font-size: 18px;">方角 48</st-avatar>
+  </section>
+
+  <section>
+    <h3>组合用法（st-badges 状态点 / st-list-item prefix）</h3>
+    <st-badges><st-avatar title="在线">Y</st-avatar></st-badges>
+    <st-list style="max-width: 280px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 12px;">
+      <st-list-item>
+        <st-avatar slot="prefix" color="primary" style="font-size: 16px;">A</st-avatar>
+        联系人 A
+        <span slot="secondary">avatar 在 prefix 插槽</span>
+      </st-list-item>
+      <st-list-item>
+        <st-avatar slot="prefix" color="tertiary" style="font-size: 16px;">B</st-avatar>
+        联系人 B
+        <span slot="secondary">尺寸随 font-size 放大</span>
+      </st-list-item>
+    </st-list>
+  </section>
+
+  <section>
+    <h3>数据绑定（attr:src / attr:color 动态切换）</h3>
+    <st-avatar attr:color="dynColor">{{dynText}}</st-avatar>
+    <st-button variant="outlined" on:click="dynColor = dynColor === 'primary' ? 'error' : 'primary'">换 color</st-button>
+    <span class="state">color：<span class="code">{{dynColor}}</span></span>
+  </section>
+
+  <section>
+    <h3>JS 主动操作（setAttribute，非 ofa 环境的写法）</h3>
+    <st-avatar id="js-avatar">J</st-avatar>
+    <st-button variant="outlined" on:click="jsSet">设置 src + alt</st-button>
+    <st-button variant="outlined" on:click="jsReset">移除 src</st-button>
+    <span class="state">结果：<span class="code">{{jsState}}</span></span>
+  </section>
+
+  <section>
+    <h3>聚焦与键盘 — 无（纯展示组件，不可聚焦，无交互语义）</h3>
+  </section>
+
+  <section>
+    <h3>皮肤展示 — data-skin="apple" 局部换肤（只改材质不改颜色）</h3>
+    <div class="skin-box" data-skin="apple">
+      <link rel="stylesheet" href="../skin/apple.css" />
+      <st-avatar>Y</st-avatar>
+      <st-avatar color="primary">P</st-avatar>
+      <st-avatar style="font-size: 20px;">大</st-avatar>
+    </div>
+  </section>
+
+  <script>
+    export default async () => ({
+      data: {
+        dynColor: "primary",
+        dynText: "绑",
+        jsState: "无",
+      },
+      proto: {
+        jsSet() {
+          const el = this.ele.shadowRoot.querySelector("#js-avatar");
+          el.setAttribute("src", "https://picsum.photos/seed/js/64/64");
+          el.setAttribute("alt", "JS 设置的头像");
+          this.jsState = "src + alt 已设";
+        },
+        jsReset() {
+          const el = this.ele.shadowRoot.querySelector("#js-avatar");
+          el.removeAttribute("src");
+          el.removeAttribute("alt");
+          this.jsState = "已移除";
+        },
+      },
+    });
+  </script>
+</template>

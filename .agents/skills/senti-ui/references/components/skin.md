@@ -119,7 +119,7 @@ CSS 变量可以继承穿透。所有规则写在 `[data-skin="名称"]` 下，�
 - 浮层：`--st-dialog-bg/border/shadow/backdrop-filter/scrim`、`--st-code-bg/header-bg/border/shadow/backdrop-filter`（frame 模式）、`--st-menu-bg/border/shadow/backdrop-filter`、`--st-card-bg/border/shadow/shadow-hover`、`--st-select-popup-bg/border/backdrop-filter`、`--st-snackbar-surface/on-surface`、`--st-tooltip-bg`、`--st-nav-bar-bg`
 - 密度：`--st-dialog-padding/gap`、`--st-code-padding/font-size`、`--st-card-padding`、`--st-menu-padding/menu-item-padding`、`--st-list-item-height/padding`、`--st-snackbar-padding`、`--st-tooltip-padding`、`--st-textarea-padding`、`--st-tab-height`、`--st-nav-item-padding`
 - 动效：`--st-motion-duration-fast/base/slow`、`--st-motion-easing`、`--st-overlay-enter/exit-duration`、`--st-dialog-enter/exit-duration`、`--st-tooltip-duration`、`--st-ripple-duration`
-- 组件形状：`--st-icon-radius`、`--st-split-min-width/padding`、`--st-checkbox-radius`、`--st-switch-radius`、`--st-radio-radius`、`--st-slider-track/thumb/tip-radius`、`--st-progress-size/thickness/radius`、`--st-tabs-indicator-*`、`--st-nav-pill-radius`、`--st-badge-radius`
+- 组件形状：`--st-icon-radius`、`--st-split-min-width/padding`、`--st-checkbox-radius`、`--st-switch-radius`、`--st-radio-radius`、`--st-slider-track/thumb/tip-radius`、`--st-progress-size/thickness/radius`、`--st-tabs-indicator-*`、`--st-nav-pill-radius`、`--st-badge-radius`、`--st-chip-height/padding/radius/bg/border/shadow/selected-bg/selected-color/state-hover/press/gap/font-size`、`--st-avatar-size/radius/font-size/bg/color`、`--st-skeleton-color/width/height/size/radius/duration`
 
 ### 颜色（组件写入，皮肤不要覆盖）
 `--st-accent` / `--st-on-accent`：`color` 属性在宿主上内联写为对应 M3 角色，皮肤只消费。
@@ -131,6 +131,8 @@ CSS 变量可以继承穿透。所有规则写在 `[data-skin="名称"]` 下，�
 | `st-button` | `state-layer` / `loader` / `control` |
 | `st-input` | `focus-ring` / `underline` / `control` |
 | `st-code` | `shell` / `header` / `title` / `copy` / `body` / `pre` / `code` |
+| `st-chip` | `remove` |
+| `st-avatar` | `image` |
 
 组件位于 `o-page` / `o-app` shadow 内时 part 不可达，跨 shadow 请用 token。
 

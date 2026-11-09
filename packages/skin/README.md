@@ -7,7 +7,7 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 种子色、error、success、深浅色主题永远保持一致。皮肤改的是“同样颜色被呈现成什么材质”，
 不是“换成另一套配色”。
 
-已接入皮肤：全部交互与表面组件——`st-button` / `st-button-group` / `st-split-button` / `st-icon-button` / `st-input` / `st-textarea` / `st-select` / `st-card` / `st-dialog` / `st-drawer` / `st-menu` / `st-list` / `st-checkbox` / `st-switch` / `st-radio` / `st-slider` / `st-progress` / `st-tabs` / `st-navigation` / `st-tooltip` / `st-snackbar` / `st-badges` / `st-code`。未加载皮肤时每个 token 都回退到组件原有默认值。
+已接入皮肤：全部交互与表面组件——`st-button` / `st-button-group` / `st-split-button` / `st-icon-button` / `st-input` / `st-textarea` / `st-select` / `st-card` / `st-dialog` / `st-drawer` / `st-menu` / `st-list` / `st-checkbox` / `st-switch` / `st-radio` / `st-slider` / `st-progress` / `st-tabs` / `st-navigation` / `st-tooltip` / `st-snackbar` / `st-badges` / `st-code` / `st-chip` / `st-avatar` / `st-skeleton`。未加载皮肤时每个 token 都回退到组件原有默认值。
 
 ## 依赖引入
 
@@ -236,6 +236,11 @@ html[data-skin="cyberpunk"] {
 | `--st-tab-height` / `--st-tab-layer-radius` / `--st-tabs-indicator-height` / `--st-tabs-indicator-radius` / `--st-tabs-border` | `3.429em` / `0.571em` / `0.143em` / `0` / `outline-variant` | 标签栏 |
 | `--st-nav-pill-radius` / `--st-nav-bar-bg` / `--st-nav-item-padding` / `--st-nav-gap` | `2em` / `surface-container` / `0.857em 1em` / `0.286em` | 导航栏 |
 | `--st-badge-radius` / `--st-badge-font-size` / `--st-badge-shadow` | `1.429em` / `0.786em` / `none` | 徽标 |
+| `--st-chip-height` / `--st-chip-padding` / `--st-chip-radius` / `--st-chip-font-size` | `2em` / `0 0.786em` / `var(--st-radius-pill)` / `14px` | chip 尺寸/内边距/圆角/字号 |
+| `--st-chip-bg` / `--st-chip-border` / `--st-chip-shadow` / `--st-chip-gap` | `surface-container-low` / `var(--st-outlined-border)` / `none` / `0.429em` | chip 底/描边/阴影/内容间距（filter 未选中默认透明底，仍消费 `--st-chip-bg`） |
+| `--st-chip-selected-bg` / `--st-chip-selected-color` / `--st-chip-state-hover` / `--st-chip-state-press` | `var(--st-accent)` 配对 / `var(--st-state-hover/press)` | chip 选中底/字与 state layer（颜色来自 `--st-accent`，皮肤不要写死颜色） |
+| `--st-avatar-size` / `--st-avatar-radius` / `--st-avatar-font-size` / `--st-avatar-bg` / `--st-avatar-color` | `2.286em` / `50%` / `0.5em` / `secondary-container` / `on-secondary-container` | 头像尺寸/圆角/文字字号/底/字 |
+| `--st-skeleton-color` / `--st-skeleton-duration` / `--st-skeleton-width` / `--st-skeleton-height` / `--st-skeleton-size` / `--st-skeleton-radius` | `surface-container-highest` / `1.6s` / `100%` / `1em` / `2.286em` / 按 shape | 骨架屏底色/呼吸时长/默认宽高（`--st-skeleton-height` rect 回退 `4.286em`、`--st-skeleton-radius` text/rect 分别回退 `0.286em`/`0.571em`） |
 
 ### 颜色（由组件写入，皮肤不要覆盖）
 
@@ -256,6 +261,8 @@ html[data-skin="cyberpunk"] {
 | `st-dialog` | `panel` | 对话框面板 |
 | `st-drawer` | `panel` / `scrim` / `headline` / `body` / `actions` | 抽屉面板、遮罩与三个插槽容器 |
 | `st-code` | `shell` / `header` / `title` / `copy` / `body` / `pre` / `code` | 代码块外壳、顶栏、复制按钮、代码区 |
+| `st-chip` | `remove` | 尾部 ✕ 清除按钮 |
+| `st-avatar` | `image` | `src` 属性渲染的内部 `<img>` |
 
 仅当组件位于 light DOM（不在 `o-page` 等 shadow 内）时，`::part()` 才可达；
 跨 shadow 场景请使用 token。

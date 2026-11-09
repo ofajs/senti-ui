@@ -1,0 +1,105 @@
+<!-- st-skeleton 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
+    section { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+    .code { font-family: ui-monospace, monospace; font-size: 13px; }
+    .state {
+      font-size: 13px; color: var(--md-sys-color-on-surface-variant);
+      padding: 2px 8px; border-radius: 6px;
+      background: var(--md-sys-color-surface-container-high);
+    }
+    .skin-box { padding: 16px; border-radius: 12px; border: 1px solid var(--md-sys-color-outline-variant); }
+    .card-frame { width: 260px; padding: 16px; border-radius: 12px; background: var(--md-sys-color-surface-container-low); display: grid; gap: 10px; }
+  </style>
+
+  <section>
+    <h3>基础 — 三形态（text 整行 / circle 正圆 / rect 大块）</h3>
+    <div style="flex: 1; min-width: 240px; display: grid; gap: 10px;">
+      <st-skeleton></st-skeleton>
+      <st-skeleton style="width: 70%;"></st-skeleton>
+      <st-skeleton style="width: 45%;"></st-skeleton>
+    </div>
+    <st-skeleton shape="circle"></st-skeleton>
+    <st-skeleton shape="rect" style="width: 180px;"></st-skeleton>
+  </section>
+
+  <section>
+    <h3>组合用法 — "联系人卡片"骨架（circle + 两行 text）</h3>
+    <div class="card-frame">
+      <div style="display:flex; gap:12px; align-items:center;">
+        <st-skeleton shape="circle" style="width:44px;height:44px;"></st-skeleton>
+        <div style="flex:1; display:grid; gap:8px;">
+          <st-skeleton style="width: 45%; height: 0.857em;"></st-skeleton>
+          <st-skeleton style="width: 85%; height: 0.786em;"></st-skeleton>
+        </div>
+      </div>
+      <st-skeleton shape="rect"></st-skeleton>
+    </div>
+  </section>
+
+  <section>
+    <h3>等比缩放与 CSS 覆写（font-size 等比 / width-height-圆角直接覆写）</h3>
+    <st-skeleton style="font-size: 12px; width: 140px;"></st-skeleton>
+    <st-skeleton style="font-size: 20px; width: 200px;"></st-skeleton>
+    <st-skeleton style="width: 120px; height: 24px; border-radius: 12px;"></st-skeleton>
+  </section>
+
+  <section>
+    <h3>数据绑定 — o-if 骨架/内容切换（模拟异步加载，1.2s 后显示内容）</h3>
+    <st-button variant="outlined" on:click="reload">重新加载</st-button>
+    <div style="min-width: 220px; display: grid; gap: 8px;">
+      <o-if :value="loading">
+        <st-skeleton style="width: 60%;"></st-skeleton>
+        <st-skeleton style="width: 90%;"></st-skeleton>
+      </o-if>
+      <o-if :value="!loading">
+        <span>加载完成的真实内容（共 {{lines}} 条）</span>
+      </o-if>
+    </div>
+  </section>
+
+  <section>
+    <h3>JS 主动操作（setAttribute 切 shape，非 ofa 环境的写法）</h3>
+    <st-skeleton id="js-skeleton" style="width: 120px; height: 60px;"></st-skeleton>
+    <st-button variant="outlined" on:click="jsShape('circle')">circle</st-button>
+    <st-button variant="outlined" on:click="jsShape('rect')">rect</st-button>
+    <st-button variant="outlined" on:click="jsShape('text')">text</st-button>
+    <span class="state">shape 属性：<span class="code">{{jsShapeState}}</span></span>
+  </section>
+
+  <section>
+    <h3>聚焦与键盘 — 无（纯展示组件，不可聚焦，无事件，读屏透明）</h3>
+    <h3 style="margin-top: 8px;">皮肤展示 — data-skin="windows" 局部换肤（只改材质不改颜色）</h3>
+    <div class="skin-box" data-skin="windows">
+      <link rel="stylesheet" href="../skin/windows.css" />
+      <st-skeleton style="width: 200px;"></st-skeleton>
+      <st-skeleton shape="circle" style="width:44px;height:44px;"></st-skeleton>
+      <st-skeleton shape="rect" style="width: 200px;"></st-skeleton>
+    </div>
+  </section>
+
+  <script>
+    export default async () => ({
+      data: {
+        loading: true,
+        lines: 3,
+        jsShapeState: "text",
+      },
+      proto: {
+        reload() {
+          this.loading = true;
+          setTimeout(() => { this.loading = false; }, 1200);
+        },
+        jsShape(shape) {
+          this.ele.shadowRoot.querySelector("#js-skeleton").setAttribute("shape", shape);
+          this.jsShapeState = shape;
+        },
+      },
+      ready() {
+        setTimeout(() => { this.loading = false; }, 1200);
+      },
+    });
+  </script>
+</template>

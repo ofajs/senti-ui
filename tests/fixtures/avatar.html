@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>avatar test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-color-init.js"></script>
+  <l-m src="/packages/avatar/avatar.html"></l-m>
+</head>
+<body>
+  <st-avatar id="av-text">Y</st-avatar>
+  <st-avatar id="av-icon"><svg slot="image" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><circle cx="12" cy="8" r="4"/></svg></st-avatar>
+  <st-avatar id="av-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="测试头像"></st-avatar>
+  <st-avatar id="av-color" color="error">E</st-avatar>
+
+  <script>
+    window.events = [];
+  </script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!--
+  st-chip — Senti-UI 筹选小片组件（基于 ofa.js）
+  语义属性：variant(assist|filter|input) / selected（filter 态选中，data 运行时状态）
+           removable（input 态清除按钮）/ disabled / color（M3 角色名）
+  视觉在 :host 上（em 尺寸），可点击时宿主自身承载交互语义（同 st-card interactive 范式），见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      position: relative; /* 波纹/state layer 的定位基准（否则绝对定位逃逸到全局） */
+      display: inline-flex;
+      align-items: center;
+      gap: var(--st-chip-gap, 0.429em);
+      box-sizing: border-box;
+      height: var(--st-chip-height, 2em);
+      padding: var(--st-chip-padding, 0 0.786em);
+      border-radius: var(--st-chip-radius, var(--st-radius-pill, 1.429em));
+      font-size: var(--st-chip-font-size, 14px);
+      font-family: inherit;
+      color: var(--md-sys-color-on-surface-variant);
+      background: var(--st-chip-bg, var(--md-sys-color-surface-container-low));
+      border: var(--st-border-width, 1px) solid var(--st-chip-border, var(--st-outlined-border, var(--md-sys-color-outline-variant)));
+      box-shadow: var(--st-chip-shadow, none);
+      user-select: none;
+      white-space: nowrap;
+      transition: background var(--st-motion-duration-base, 0.2s) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1)),
+        box-shadow var(--st-motion-duration-base, 0.2s) ease;
+    }
+    :host([variant="filter"]:not([selected])) {
+      background: var(--st-chip-bg, transparent);
+    }
+    /* filter 选中：accent 底（color 属性未设时回退 secondary-container 配对） */
+    :host([selected]) {
+      background: var(--st-chip-selected-bg, var(--st-accent, var(--md-sys-color-secondary-container)));
+      color: var(--st-chip-selected-color, var(--st-on-accent, var(--md-sys-color-on-secondary-container)));
+      border-color: transparent;
+    }
+
+    /* 可点击形态（assist / filter）：宿主承载点击/键盘/焦点（同 st-card interactive） */
+    :host([data-interactive]) {
+      cursor: pointer;
+    }
+    :host([data-interactive]:hover) .layer {
+      opacity: var(--st-chip-state-hover, var(--st-state-hover, 0.08));
+    }
+    :host([data-interactive]:active) .layer {
+      opacity: var(--st-chip-state-press, var(--st-state-press, 0.12));
+    }
+    .layer {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: currentColor;
+      opacity: 0;
+      pointer-events: none;
+      display: none;
+    }
+    :host([data-interactive]) .layer { display: block; }
+    st-ripple { display: none; }
+    :host([data-interactive]) st-ripple { display: block; }
+
+    :host([data-interactive]:focus-visible) {
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
+    }
+
+    /* disabled：整体降透明，阻断交互 */
+    :host([disabled]) {
+      cursor: default;
+      opacity: var(--st-disabled-opacity, 0.38);
+      pointer-events: none;
+    }
+
+    /* filter 勾选位：选中显示对勾（弹性入场同 checkbox） */
+    .check {
+      display: none;
+      width: 1.143em;
+      height: 1.143em;
+      margin-left: -0.357em;
+      flex: none;
+    }
+    :host([variant="filter"][selected]) .check { display: block; }
+    .check svg {
+      width: 100%;
+      height: 100%;
+      stroke: currentColor;
+      animation: st-chip-check var(--st-motion-duration-base, 0.2s) var(--st-motion-easing, cubic-bezier(0.2, 0, 0, 1)) both;
+    }
+    @keyframes st-chip-check {
+      from { transform: scale(0.4); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* 清除按钮：ghost，hover 有 state layer */
+    .remove {
+      all: unset;
+      display: none;
+      position: relative;
+      box-sizing: border-box;
+      width: 1.286em;
+      height: 1.286em;
+      margin-right: -0.429em;
+      border-radius: 50%;
+      cursor: pointer;
+      color: inherit;
+      flex: none;
+    }
+    :host([removable]) .remove { display: inline-flex; align-items: center; justify-content: center; }
+    .remove:hover { background: rgba(0, 0, 0, 0.08); }
+    .remove svg { width: 1em; height: 1em; stroke: currentColor; }
+
+    ::slotted(img), ::slotted(svg), ::slotted(iconify-icon) {
+      width: 1.286em;
+      height: 1.286em;
+      flex: none;
+    }
+    /* 前置图标在选中态跟随文字色 */
+    :host([selected]) { color: var(--st-chip-selected-color, var(--st-on-accent, var(--md-sys-color-on-secondary-container))); }
+
+    l-m { display: none; }
+
+    /* 减少动态效果：动画/过渡压到近零，同时保留 animationend 等事件语义 */
+    @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+
+  <l-m src="../ripple/ripple.html"></l-m>
+  <span class="layer"></span>
+  <slot></slot>
+  <span class="check" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12.5l4.2 4.2L19 7.5" />
+    </svg>
+  </span>
+  <slot name="suffix"></slot>
+  <button class="remove" part="remove" aria-label="移除" tabindex="-1">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round">
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  </button>
+  <st-ripple></st-ripple>
+<script>
+  import "../color/st-color-init.js";
+  export default async () => ({
+    tag: "st-chip",
+    attrs: {
+      variant: "assist",
+      removable: null,
+      disabled: null,
+      color: null,
+    },
+    // selected 是运行时状态（data）：内部点击会修改，须经 sync:selected 回写上层
+    // watch 反射到宿主属性供 CSS；MutationObserver 反向兼容 setAttribute（st-dialog open 范式）
+    data: { selected: false },
+    watch: {
+      color() { this.applyColor(); },
+      selected() {
+        // 构造期不能写宿主属性（坑 #54b），ready 后由 _reflectSelected 处理
+        if (!this._ready) return;
+        this._reflectSelected();
+        this.applyInteractive();
+      },
+      variant() { this.applyInteractive(); },
+      removable() { this.applyInteractive(); },
+      disabled() { this.applyInteractive(); },
+    },
+    ready() {
+      const ele = this.ele;
+      this._ready = false;
+      // 宿主 selected property：读写桥接到 ofa data（ofa data 不自动上宿主，同 st-slider el.value）
+      Object.defineProperty(ele, "selected", {
+        get: () => this.selected,
+        set: (v) => { this.selected = !!v; },
+      });
+      // 静态写在标签上的 selected 不经 MutationObserver，ready 时先读初始值
+      if (ele.hasAttribute("selected")) this.selected = true;
+      // 属性 → data 反向兼容：外部 setAttribute("selected", "") 同步进 data
+      this._attrObserver = new MutationObserver(() => {
+        const has = ele.hasAttribute("selected");
+        if (this.selected !== has) this.selected = has;
+      });
+      this._attrObserver.observe(ele, { attributes: true, attributeFilter: ["selected"] });
+
+      this._reflectSelected = () => {
+        if (this.selected) ele.setAttribute("selected", "");
+        else ele.removeAttribute("selected");
+        if (this.variant === "filter") ele.setAttribute("aria-pressed", String(!!this.selected));
+        else ele.removeAttribute("aria-pressed");
+      };
+
+      this.applyInteractive = () => {
+        // assist / filter 可点击（input 仅清除）；disabled 跳过聚焦
+        const interactive = this.variant !== "input" && this.disabled === null;
+        if (interactive) {
+          ele.setAttribute("data-interactive", "");
+          ele.tabIndex = 0;
+          ele.setAttribute("role", "button");
+        } else {
+          ele.removeAttribute("data-interactive");
+          ele.removeAttribute("tabindex");
+        }
+        ele.setAttribute("aria-disabled", this.disabled !== null ? "true" : "false");
+        this._reflectSelected();
+      };
+
+      // 宿主聚焦时 Enter/Space 激活（原生 button 等价行为）。
+      // 焦点在内部清除按钮上时必须放行（e.target !== ele 守卫，同 st-card）
+      ele.addEventListener("keydown", (e) => {
+        if (e.target !== ele || this.disabled !== null) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          ele.click();
+        }
+      });
+
+      // 点击切换选中（仅 filter），并派发 composed change 事件
+      ele.addEventListener("click", (e) => {
+        if (this.disabled !== null) return;
+        if (e.composedPath().includes(this._removeBtn)) return; // 清除按钮的点击不切换选中
+        if (this.variant === "filter") {
+          this.selected = !this.selected;
+          ele.dispatchEvent(new CustomEvent("change", { bubbles: true, composed: true }));
+        }
+      });
+
+      this._removeBtn = this.ele.shadowRoot.querySelector(".remove");
+      this._removeBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // 不触发宿主 click / 选中切换
+        ele.dispatchEvent(new CustomEvent("remove", { bubbles: true, composed: true }));
+      });
+
+      queueMicrotask(() => {
+        this._ready = true;
+        this.applyColor();
+        this.applyInteractive();
+      });
+    },
+    detached() {
+      this._attrObserver?.disconnect();
+    },
+    proto: {
+      // color 接受 M3 角色名（primary/secondary/tertiary/error/success…）
+      // 或 color 模块的自定义变量名；写 --st-accent / --st-on-accent，CSS 分支消费
+      // 只清自家三个属性，不误伤页面定制（坑 #46）
+      applyColor() {
+        const s = this.ele.style;
+        s.removeProperty("--st-accent");
+        s.removeProperty("--st-on-accent");
+        const name = this.color;
+        if (!name) return;
+        s.setProperty("--st-accent", `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-secondary)))`);
+        s.setProperty("--st-on-accent", `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-secondary)))`);
+      },
+    },
+  });
+</script>
+</template>

@@ -93,6 +93,11 @@
   --st-badge-radius: 0;
   --st-badge-font-size: .769em;
   --st-badge-shadow: var(--st-shadow-1);
+  --st-chip-radius: 0;
+  --st-chip-font-size: .769em;
+  --st-chip-shadow: var(--st-shadow-1);
+  --st-avatar-radius: 0;
+  --st-skeleton-duration: 1s;
   --st-dialog-radius: 0;
   --st-card-radius: 0;
   --st-nav-gap: .154em;
@@ -231,5 +236,6 @@
     --st-dialog-scrim-duration: 0s;
     --st-drawer-enter-duration: 0s;
     --st-drawer-exit-duration: 0s;
+    --st-skeleton-duration: 0s;
   }
 }

@@ -99,6 +99,9 @@
         <l-m src="../packages/tooltip/tooltip.html"></l-m>
         <l-m src="../packages/card/card.html"></l-m>
         <l-m src="../packages/badges/badges.html"></l-m>
+        <l-m src="../packages/chip/chip.html"></l-m>
+        <l-m src="../packages/avatar/avatar.html"></l-m>
+        <l-m src="../packages/skeleton/skeleton.html"></l-m>
         <l-m src="../packages/collapse/collapse.html"></l-m>
         <l-m src="../packages/list/list.html"></l-m>
         <l-m src="../packages/menu/menu.html"></l-m>
@@ -1380,14 +1383,14 @@
         <p class="eyebrow"><span class="dot"></span>ofa.js v5 · AI-first 前端框架 · zero build</p>
         <h1>语义组件，<br /><span class="grad">任意材质。</span></h1>
         <p class="lead">
-          22 个模块、31 个标签，全部可交互。属性只表达语义，颜色只走 M3，材质交给皮肤。
+          25 个模块、34 个标签，全部可交互。属性只表达语义，颜色只走 M3，材质交给皮肤。
           下面每一张卡片都是真实组件，不是截图。
         </p>
       </div>
       <div class="intro-side">
         <div class="intro-stats">
-          <div><strong>22</strong><span>组件模块</span></div>
-          <div><strong>31</strong><span>自定义标签</span></div>
+          <div><strong>25</strong><span>组件模块</span></div>
+          <div><strong>34</strong><span>自定义标签</span></div>
           <div><strong>3</strong><span>内置材质</span></div>
           <div><strong>0</strong><span>构建步骤</span></div>
         </div>
@@ -1403,7 +1406,7 @@
     <section class="catalog" id="components">
       <div class="catalog-head">
         <div>
-          <p class="section-kicker">CATALOG / 26 CARDS</p>
+          <p class="section-kicker">CATALOG / 29 CARDS</p>
           <h2>所有组件</h2>
           <p class="catalog-desc">卡片里的组件可以直接点、输入、开合；每张卡片右下角 <iconify-icon icon="mdi:arrow-top-right"></iconify-icon> 进入该组件的完整文档与验收页。</p>
         </div>
@@ -1480,6 +1483,53 @@
           <div class="comp-foot">
             <div class="comp-id"><h3>Badges</h3><code>st-badges</code></div>
             <a class="comp-link" href="./docs/badges.html" rel="noreferrer" aria-label="Badges 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <div class="row">
+              <st-chip>帮助</st-chip>
+              <st-chip variant="filter" selected>音乐</st-chip>
+              <st-chip variant="input" removable>标签 A</st-chip>
+              <st-chip variant="filter" color="success" selected>通过</st-chip>
+            </div>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Chip</h3><code>st-chip</code></div>
+            <a class="comp-link" href="./docs/chip.html" rel="noreferrer" aria-label="Chip 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <div class="row">
+              <st-avatar>Y</st-avatar>
+              <st-avatar color="primary">AI</st-avatar>
+              <st-avatar color="tertiary"><iconify-icon slot="image" icon="mdi:account"></iconify-icon></st-avatar>
+              <st-avatar src="https://picsum.photos/seed/senti-avatar/64/64" alt="随机头像"></st-avatar>
+              <st-badges color="success"><st-avatar title="在线">Y</st-avatar></st-badges>
+            </div>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Avatar</h3><code>st-avatar</code></div>
+            <a class="comp-link" href="./docs/avatar.html" rel="noreferrer" aria-label="Avatar 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <div class="row" style="flex: 1; align-items: center; gap: 14px;">
+              <st-skeleton shape="circle" style="width: 32px; height: 32px; flex: none;"></st-skeleton>
+              <div style="flex: 1; display: grid; gap: 8px; max-width: 180px;">
+                <st-skeleton style="width: 55%; height: 0.857em;"></st-skeleton>
+                <st-skeleton style="width: 90%; height: 0.786em;"></st-skeleton>
+              </div>
+            </div>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Skeleton</h3><code>st-skeleton</code></div>
+            <a class="comp-link" href="./docs/skeleton.html" rel="noreferrer" aria-label="Skeleton 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 

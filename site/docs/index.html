@@ -69,7 +69,7 @@
               <p class="doc-kicker">DOCS / COMPONENTS</p>
               <h1>组件文档</h1>
               <p class="doc-lead">
-                23 个文档页、31 个标签的独立使用说明。按职责分为基础组件、辅助组件与高级组件：
+                26 个文档页、34 个标签的独立使用说明。按职责分为基础组件、辅助组件与高级组件：
                 每个组件一页，按场景拆分多组可交互示例，并附属性表、插槽 / 事件与示例代码。
                 header 与左侧组件目录由父页共享，切换组件时只替换右侧正文。
               </p>
@@ -78,7 +78,7 @@
               <header class="docs-group-head">
                 <div>
                   <p class="docs-group-kicker">FOUNDATION</p>
-                  <h2>基础组件 <span>18</span></h2>
+                  <h2>基础组件 <span>20</span></h2>
                 </div>
                 <p class="docs-group-desc">构成页面骨架与完整业务流程：动作、表单、反馈、内容与导航。</p>
               </header>
@@ -188,6 +188,20 @@
             <p>徽标：小圆点 / 数字封顶 / 文字徽标，钉在默认插槽元素右上角，pointer-events: none。</p>
             <span class="more">查看用法 <iconify-icon icon="mdi:arrow-right"></iconify-icon></span>
           </st-card>
+          <st-card interactive class="docs-card" on:click="goDoc('chip')">
+            <span class="cat">内容</span>
+            <h2>Chip</h2>
+            <code>st-chip</code>
+            <p>筛选小片：M3 assist / filter / input 三形态；filter 可选中带勾选位，input 可移除，color 语义换色。</p>
+            <span class="more">查看用法 <iconify-icon icon="mdi:arrow-right"></iconify-icon></span>
+          </st-card>
+          <st-card interactive class="docs-card" on:click="goDoc('avatar')">
+            <span class="cat">内容</span>
+            <h2>Avatar</h2>
+            <code>st-avatar</code>
+            <p>纯展示圆形头像：文字缩写 / 图片 / 图标三种来源；无 size 属性，font-size 等比缩放。</p>
+            <span class="more">查看用法 <iconify-icon icon="mdi:arrow-right"></iconify-icon></span>
+          </st-card>
           <st-card interactive class="docs-card" on:click="goDoc('list')">
             <span class="cat">内容</span>
             <h2>List</h2>
@@ -216,9 +230,9 @@
               <header class="docs-group-head">
                 <div>
                   <p class="docs-group-kicker">ENHANCEMENT</p>
-                  <h2>辅助组件 <span>4</span></h2>
+                  <h2>辅助组件 <span>5</span></h2>
                 </div>
-                <p class="docs-group-desc">不单独承担业务流程，用来在基础组件之上做锦上添花：折叠、提示、波纹与命令式工具。</p>
+                <p class="docs-group-desc">不单独承担业务流程，用来在基础组件之上做锦上添花：折叠、提示、波纹、加载占位与命令式工具。</p>
               </header>
               <div class="docs-cards">
           <st-card interactive class="docs-card" on:click="goDoc('collapse')">
@@ -240,6 +254,13 @@
             <h2>Ripple</h2>
             <code>st-ripple</code>
             <p>点击波纹。放在 position: relative 的父元素里即可；st-button 与 interactive 卡片已内嵌。</p>
+            <span class="more">查看用法 <iconify-icon icon="mdi:arrow-right"></iconify-icon></span>
+          </st-card>
+          <st-card interactive class="docs-card" on:click="goDoc('skeleton')">
+            <span class="cat">辅助</span>
+            <h2>Skeleton</h2>
+            <code>st-skeleton</code>
+            <p>加载占位：text / circle / rect 三形态灰块呼吸动画；prefers-reduced-motion 自动静止。</p>
             <span class="more">查看用法 <iconify-icon icon="mdi:arrow-right"></iconify-icon></span>
           </st-card>
           <st-card interactive class="docs-card" on:click="goDoc('tools')">

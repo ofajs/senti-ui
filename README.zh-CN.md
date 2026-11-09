@@ -68,7 +68,7 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 | Icon-button 图标按钮 | `st-icon-button` | `.../packages/button/icon-button.html` |
 | Input 单行输入框 | `st-input` | `.../packages/input/input.html` |
 | Textarea 多行输入框 | `st-textarea` | `.../packages/textarea/textarea.html` |
-| Select 单选下拉框 | `st-select` | `.../packages/select/select.html` |
+| Select 单选下拉框 | `st-select` / `st-option` | `.../packages/select/select.html` |
 | Dialog 对话框 | `st-dialog` | `.../packages/dialog/dialog.html` |
 | Drawer 侧边抽屉 | `st-drawer` | `.../packages/drawer/drawer.html` |
 | Dialog 命令式工具 | `alert/confirm/prompt` | `import alert from ".../packages/dialog/alert.js"` 等 |
@@ -82,11 +82,15 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 | Tooltip 提示 | `st-tooltip` | `.../packages/tooltip/tooltip.html` |
 | Card 卡片 | `st-card` | `.../packages/card/card.html` |
 | Badges 徽标 | `st-badges` | `.../packages/badges/badges.html` |
+| Chip 筛选小片 | `st-chip` | `.../packages/chip/chip.html` |
+| Avatar 头像 | `st-avatar` | `.../packages/avatar/avatar.html` |
+| Skeleton 加载占位 | `st-skeleton` | `.../packages/skeleton/skeleton.html` |
 | Collapse 折叠容器 | `st-collapse` | `.../packages/collapse/collapse.html` |
 | List 列表 | `st-list` / `st-list-item` | `.../packages/list/list.html` |
 | Menu 下拉菜单 | `st-menu` / `st-menu-item` | `.../packages/menu/menu.html` |
+| Context-menu 命令式工具 | `contextMenu` | `import contextMenu from ".../packages/menu/context-menu.js"` |
 | Tabs 标签栏 | `st-tab-bar` / `st-tab-item` | `.../packages/tabs/tab-bar.html` |
-| Navigation 导航栏 | `st-nav-bar` / `st-nav-item` | `.../packages/navigation/nav-bar.html` |
+| Navigation 导航栏 / 布局 | `st-nav-bar` / `st-nav-item` / `st-nav-layout` | `.../packages/navigation/nav-bar.html` + `.../packages/navigation/nav-layout.html` |
 | Ripple 波纹 | `st-ripple` | `.../packages/ripple/ripple.html` |
 | Code 代码块 | `st-code` | `.../packages/code/code.html` |
 

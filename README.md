@@ -66,7 +66,7 @@ Traditional component libraries offer lots of "convenience presets" for humans (
 | Icon button | `st-icon-button` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/icon-button.html` |
 | Input | `st-input` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/input/input.html` |
 | Textarea | `st-textarea` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/textarea/textarea.html` |
-| Select | `st-select` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/select/select.html` |
+| Select | `st-select` / `st-option` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/select/select.html` |
 | Dialog | `st-dialog` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/dialog.html` |
 | Drawer | `st-drawer` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/drawer/drawer.html` |
 | Dialog imperative utils | `alert/confirm/prompt` | `import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/alert.js"` etc. |
@@ -80,11 +80,15 @@ Traditional component libraries offer lots of "convenience presets" for humans (
 | Tooltip | `st-tooltip` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tooltip/tooltip.html` |
 | Card | `st-card` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/card/card.html` |
 | Badges | `st-badges` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/badges/badges.html` |
+| Chip | `st-chip` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/chip/chip.html` |
+| Avatar | `st-avatar` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/avatar/avatar.html` |
+| Skeleton | `st-skeleton` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skeleton/skeleton.html` |
 | Collapse | `st-collapse` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/collapse/collapse.html` |
 | List | `st-list` / `st-list-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/list/list.html` |
 | Menu | `st-menu` / `st-menu-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/menu/menu.html` |
+| Context menu imperative util | `contextMenu` | `import contextMenu from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/menu/context-menu.js"` |
 | Tabs | `st-tab-bar` / `st-tab-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tabs/tab-bar.html` |
-| Navigation bar | `st-nav-bar` / `st-nav-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-bar.html` |
+| Navigation bar / layout | `st-nav-bar` / `st-nav-item` / `st-nav-layout` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-bar.html` + `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-layout.html` |
 | Ripple | `st-ripple` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/ripple/ripple.html` |
 | Code | `st-code` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/code/code.html` |
 

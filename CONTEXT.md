@@ -166,7 +166,7 @@ Senti-UI 是一个**面向 AI 的 UI 组件库**，基于 **ofa.js**（Web Compo
 
 所有踩坑记录已**逐条拆分**到 [pitfall/](./pitfall/README.md)，一条一个文件；组件代码与文档里的 `坑 #N`（如「坑 #18」「坑 #43」）对应 `pitfall/` 下同编号文件。历史重复号已用 `a` / `b` 区分（见索引的「编号约定」）。
 
-- [ofa.js / 组件（48 条）](./pitfall/README.md#ofajs) —— 属性与模板绑定、watch 时序、shadow DOM、皮肤 token、SCSR / 路由等
+- [ofa.js / 组件（49 条）](./pitfall/README.md#ofajs) —— 属性与模板绑定、watch 时序、shadow DOM、皮肤 token、SCSR / 路由等
 - [测试 / 验证（17 条）](./pitfall/README.md#testing) —— Playwright、皮肤异步加载、CSS 过渡帧、无障碍验证等（#27–#38 为借测试发现的组件时序 / 样式坑）
 
 改组件前优先读这几条高频坑：

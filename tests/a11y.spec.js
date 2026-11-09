@@ -295,11 +295,42 @@ test.describe("已确认行为回归", () => {
     expect(state.centered).toBe(true);
     expect(state.hidden).toBe("false");
     expect(state.above).toBe(true);
-    expect(await page.evaluate(() => {
-      const tip = document.querySelector("#tip-basic");
-      const trigger = tip.querySelector("st-button");
-      return trigger.shadowRoot.querySelector("button").getAttribute("aria-description");
-    })).toBe("提示内容");
+    // 触发元素是 st-button：它可能晚于 st-tooltip 升级，内部原生控件出现后
+    // tooltip 才会把 aria-description 同步过去，所以这里必须等终值
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const tip = document.querySelector("#tip-basic");
+          const trigger = tip.querySelector("st-button");
+          return trigger.shadowRoot?.querySelector("button")?.getAttribute("aria-description");
+        })
+      )
+      .toBe("提示内容");
+  });
+
+  test("tooltip：触发元素晚于 tooltip 升级时仍同步 aria-description", async ({ page }) => {
+    // 模拟 l-m 顺序 / 慢网络：st-button 的定义晚于 st-tooltip 的 ready（超过 600ms 定时器）
+    await page.route("**/packages/button/button.html", async (route) => {
+      await new Promise((r) => setTimeout(r, 1200));
+      await route.continue();
+    });
+    await page.goto("/tests/fixtures/newcomp.html");
+    await waitForShadow(page, "#tip-basic");
+    expect(
+      await page.evaluate(
+        () => !!document.querySelector("#tip-basic st-button").shadowRoot
+      )
+    ).toBe(false);
+
+    await page.evaluate(() => document.querySelector("#tip-basic").setAttribute("open", ""));
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const trigger = document.querySelector("#tip-basic st-button");
+          return trigger.shadowRoot?.querySelector("button")?.getAttribute("aria-description");
+        })
+      )
+      .toBe("提示内容");
   });
 
   test("slider：隐藏后显示会重新计算，min/max 变更即时生效", async ({ page }) => {

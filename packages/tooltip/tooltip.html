@@ -107,6 +107,7 @@
       ready() {
         const ele = this.ele;
         const sr = ele.shadowRoot;
+        this._descWaits = new WeakSet();
         this.applyContent = () => {
           const text = this.content || "";
           sr.querySelector(".bubble").textContent = text;
@@ -118,6 +119,14 @@
               const target = el.shadowRoot?.querySelector("button, input, textarea, a[href]") || el;
               if (text) target.setAttribute("aria-description", text);
               else target.removeAttribute("aria-description");
+              // 触发元素可能晚于 tooltip 定义（l-m 顺序 / 慢网络）：升级后内部原生控件
+              // 才出现，这时要再同步一次；WeakSet 防止 whenDefined 已 resolve 时反复调度
+              if (text && !el.shadowRoot && el.localName.includes("-") && !this._descWaits.has(el)) {
+                this._descWaits.add(el);
+                customElements.whenDefined(el.localName).then(() => {
+                  requestAnimationFrame(() => this.applyContent?.());
+                });
+              }
             });
         };
         this.applyContent();

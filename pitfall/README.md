@@ -7,7 +7,7 @@
 
 ## 编号约定
 
-- ID 一旦分配就不再改号；新增坑取当前最大号 +1（目前从 **#62** 开始）。
+- ID 一旦分配就不再改号；新增坑取当前最大号 +1（目前从 **#63** 开始）。
 - 文件名 = `{ID}-{slug}.md`，slug 用简短的英文 kebab-case。
 - 历史编号 `#54` / `#55` / `#59` 各重复出现两次，拆分为 `a` / `b`：旧引用 `坑 #54` → `54a`、`坑 #55` → `55a`、`坑 #59` → `59a`（皮肤 token）；`pageAnime` 条目是 `59b`。
 
@@ -18,7 +18,7 @@
 3. 更新本索引对应的分组表格。
 4. 在代码注释或文档里用 `坑 #N`（或相对链接）引用；**不要再把正文追加回 CONTEXT.md**。
 
-## <a id="ofajs"></a>ofa.js / 组件（48 条）
+## <a id="ofajs"></a>ofa.js / 组件（49 条）
 
 | ID | 主题 | 文件 |
 | --- | --- | --- |
@@ -94,4 +94,5 @@
 | `#38` | ofa 组件 document.createElement 动态创建可能不升级 | [38-createelement-not-upgraded.md](./38-createelement-not-upgraded.md) |
 | `#48` | 皮肤切换是异步的：`setSkin()` 只改 `data-skin`，对应 CSS 还要网络加载 | [48-skin-switch-async-css.md](./48-skin-switch-async-css.md) |
 | `#61` | 带 CSS transition 的属性，poll 到一个中间阈值后立刻读终值仍会读到过渡帧 | [61-poll-final-value-not-mid-transition.md](./61-poll-final-value-not-mid-transition.md) |
+| `#62` | 等待子组件升级不要只靠固定定时器，用 `customElements.whenDefined` | [62-when-defined-not-fixed-timer.md](./62-when-defined-not-fixed-timer.md) |
 

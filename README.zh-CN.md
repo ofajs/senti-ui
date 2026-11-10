@@ -2,7 +2,7 @@
 
 [**English**](./README.md)
 
-**面向 AI 的 UI 组件库**：基于 [ofa.js](https://github.com/ofajs/ofa.js)（Web Components 框架），颜色体系采用 Google Material Design 3（M3）。**无构建、纯静态，CDN 引入即用**。
+**面向 AI 的 UI 组件库**：行为统一，VI 自由。基于 [ofa.js](https://github.com/ofajs/ofa.js) v5（Web Components），颜色体系采用 Google Material Design 3（M3）。**无构建、纯静态，CDN 引入即用**。
 
 官网：<https://senti.ofajs.com/site/>
 
@@ -19,17 +19,31 @@
 [![No Build](https://img.shields.io/badge/build-none-2ea44f?label=no%20build)](https://github.com/ofajs/senti-ui)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/ofajs/senti-ui/pulls)
 
-## 设计理念（与传统组件库的区别）
+## 设计理念：行为统一，VI 自由
 
-传统组件库为人设计大量"便利预设"（`size="small"` 这类枚举）。Senti-UI 认为 AI 直接写 style/CSS 更精确灵活，预设只是多余的记忆负担，因此：
+用框架省下组件开发时间，也常顺带接受它的设计语言。Senti-UI 把这两件事拆开：**交互契约固定，视觉交给页面**。组件可以长得不一样，行为必须一样——按钮怎么禁用、输入框怎么报错、菜单怎么关闭、弹窗打开后焦点怎么归还。视觉则通过原生 CSS 与皮肤暴露。
 
-- **属性只表达语义**（`disabled` / `loading` / M3 规范内的 `variant` / `color` 语义色引用），没有 size 类预设，也没有 `--st-*` 样式代理变量
-- **外观直接用原生 CSS 属性定制**——组件视觉全部定义在 `:host` 上，`<st-button style="height:32px; border-radius:8px">` 直接生效
-- **尺寸默认值全用 em**——只改 `font-size` 即整体等比缩放
-- **颜色永不写死**，一律消费 `--md-sys-color-*` M3 角色变量，自动适配深浅色主题
-- **材质可换，颜色不换**——皮肤只改形状与材质（圆角、密度、描边、毛玻璃、动效），M3 角色色始终生效；组件的标签与属性完全不变
-- **`color` 属性是语义引用**：值是 M3 角色名或 color 工具里定义的自定义变量名（如 `color="brand"` 消费 `--brand/--on-brand`），与 color 工具联动实现一键换色
-- **文档写给 AI 读**：自包含、结构化、只含事实
+AI 让重新写一个组件变得便宜，但让所有组件保持同一种行为，仍然是贵的那部分。
+
+- **行为是共用的**：标签、属性、插槽、事件、状态在所有项目里一致。键盘、焦点、禁用、事件穿透、表单提交与可访问名称属于组件契约，不交给每个页面即兴决定。
+- **VI 是自己的**：属性只表达语义（`disabled` / `loading` / M3 规范内的 `variant` / `color` 语义引用），没有 size 类预设。外观直接写原生 CSS，组件视觉定义在 `:host` 上，`<st-button style="height:32px; border-radius:8px">` 直接生效。
+- **`--st-*` 只属于皮肤作者**：使用者不拿尺寸代理变量。圆角、密度、描边、阴影、毛玻璃、焦点环与动效是皮肤声明的材质 token；颜色永远不放进这里。
+- **尺寸默认值用 em**：改 `font-size` 即整体等比缩放；需要非等比尺寸时，仍可单独覆写任一 CSS 属性。
+- **借 M3 的关系，不借全部 token**：只保留 34 个 `--md-sys-color-*`——5 个角色（primary / secondary / tertiary / error / success）各 4 个配对 token，共 20 个，加 14 个中性色；`success` 是 M3 核心规范之外的扩展角色。`background`、`surface-tint`、`scrim`、`shadow`、`surface-dim`、`surface-bright` 这些名字被有意去掉：现有角色已经承担，或本身就是固定值。`color` 属性的值是角色名或自定义变量名（如 `color="brand"` 消费 `--brand/--on-brand`）。
+- **对比度属于配色，不属于皮肤**：`contrast` 范围 -1 ~ 1（可整体或按角色设置），保持色相重新取 tone；深色模式用 `contrastTone: "deep" | "bright"` 决定角色色向暗压还是向亮提。皮肤只改材质，换肤不改变颜色关系。
+- **label 是页面排版**：`st-input` 有意不内置 M3 浮动标签。视觉 label 由页面组合；屏幕阅读器需要的名称通过 `aria-label` / `aria-labelledby` 交给内部原生 input。这样同一个字段才能放进 M3、Apple、Windows 11 与 shadcn 的不同表单排版。
+- **文档写给 AI 读**：自包含、结构化、只含事实。
+
+层与层保持分离：color 模块管角色关系，皮肤管材质，页面管排版与 label，组件管交互行为。
+
+```html
+<div class="field">
+  <span class="field-label">邮箱</span>
+  <st-input type="email" aria-label="邮箱" placeholder="you@example.com"></st-input>
+</div>
+```
+
+更完整的取舍见手记 [《行为统一，VI 自由》](./site/notes/behavior-and-skin.html)。
 
 ## 快速开始
 
@@ -113,7 +127,7 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 
 ## 主题定制
 
-[M3 颜色体系生成器](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），支持核心四角色 + 扩展角色 success 覆盖、自定义变量（自动展开 `--brand` / `--on-brand` 等配对 token），以及**对比度调整**（-1 ~ 1 + deep/bright 方向，可整体或按角色设置；正值用于霓虹 / 游戏类主题，负值用于可爱 / 柔和主题）。配置存 localStorage——在工具里调好配色，同域所有引入 `st-color-init.js` 的页面自动跟随（一键换色）。
+[M3 颜色体系生成器](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) 从种子色生成完整浅色/深色 M3 体系（`--md-sys-color-*`），支持核心四角色 + 扩展角色 success 覆盖、自定义变量（自动展开 `--brand` / `--on-brand` 等配对 token），以及**对比度调整**（`contrast`，-1 ~ 1，可整体或按角色设置；正值用于霓虹 / 游戏类主题，负值用于可爱 / 柔和主题），深色模式还可用 `contrastTone: "deep" | "bright"` 决定提亮或压暗方向。对比度属于配色，不属于皮肤。配置存 localStorage——在工具里调好配色，同域所有引入 `st-color-init.js` 的页面自动跟随（一键换色）。
 
 需要手动控制时：
 
@@ -139,7 +153,7 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 
 线上地址：<https://senti.ofajs.com/site/> —— 组件文档：<https://senti.ofajs.com/site/docs/>。
 
-单页聚合官网在 [`site/`](./site/index.html)：全部组件摆在一页，支持实时换肤、深浅色切换与多种材质并排对比；独立皮肤页在 [`site/skins.html`](./site/skins.html)，可选 M3 / Apple / Windows / shadcn / Cyberpunk 五套材质，顶部快捷菜单只保留三巨头材质。采用 **ofa.js v5 + scsr**（真实路径文档；加载后由 scsr 收编为 o-app 页面）。组件使用说明在 [`site/docs/`](./site/docs/index.html)：每个组件一个独立 SCSR 页，按场景拆成 4–7 组可交互示例，并附属性表、插槽 / 事件；左侧目录由二级 SCSR 父页共享，组件间切换不销毁。
+单页聚合官网在 [`site/`](./site/index.html)：全部组件摆在一页，支持实时换肤、深浅色切换与三张平台预览卡并排对比；独立皮肤页在 [`site/skins.html`](./site/skins.html)，可选 M3 / Apple / Windows / shadcn / Cyberpunk 五套材质，顶部快捷菜单只保留三巨头材质。采用 **ofa.js v5 + scsr**（真实路径文档；加载后由 scsr 收编为 o-app 页面）。组件使用说明在 [`site/docs/`](./site/docs/index.html)：每个组件一个独立 SCSR 页，按场景拆成 4–7 组可交互示例，并附属性表、插槽 / 事件；左侧目录由二级 SCSR 父页共享，组件间切换不销毁。
 
 ```bash
 npm run dev

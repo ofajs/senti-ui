@@ -2,7 +2,7 @@
 
 [**中文文档**](./README.zh-CN.md)
 
-A **UI component library designed for AI**: built on [ofa.js](https://github.com/ofajs/ofa.js) (a Web Components framework), with a Google Material Design 3 (M3) color system. **No build step, purely static — load from CDN and use immediately.**
+An **AI-first UI component library**: behavior stays fixed, visual identity is yours. Built on [ofa.js](https://github.com/ofajs/ofa.js) v5 (Web Components), with a Google Material Design 3 (M3) color system. **No build step, purely static — load from CDN and use immediately.**
 
 Website: <https://senti.ofajs.com/site/>
 
@@ -19,17 +19,31 @@ Repository: <https://github.com/ofajs/senti-ui>
 [![No Build](https://img.shields.io/badge/build-none-2ea44f?label=no%20build)](https://github.com/ofajs/senti-ui)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/ofajs/senti-ui/pulls)
 
-## Design Philosophy (what makes it different from traditional libraries)
+## Design Philosophy: Behavior Unified, Visual Identity Free
 
-Traditional component libraries offer lots of "convenience presets" for humans (enums like `size="small"`). Senti-UI believes AI writes style/CSS directly with more precision and flexibility — presets are just an unnecessary memory burden. Therefore:
+A framework saves component development time, but it also makes you accept its design language. Senti-UI separates the two: **the interaction contract is fixed; the visual identity belongs to the page.** Components may look different, but they must behave the same — how a button disables, how a field reports an error, how a menu closes, where focus returns after a dialog. Visuals are exposed through plain CSS and skins.
 
-- **Attributes express semantics only** (`disabled` / `loading` / M3-spec `variant` / the `color` semantic reference) — no size presets, no `--st-*` style proxy variables
-- **Appearance is customized with plain native CSS properties** — component visuals live entirely on `:host`, so `<st-button style="height:32px; border-radius:8px">` just works
-- **Size defaults use em units** — change `font-size` to scale the whole component proportionally
-- **Colors are never hard-coded** — always consume `--md-sys-color-*` M3 role variables, adapting to light/dark themes automatically
-- **Material is swappable, color is not** — skins change shape/material (radius, density, borders, blur, motion) while all M3 roles stay intact; components never change their tags or attributes
-- **The `color` attribute is a semantic reference**: its value is an M3 role name or a custom variable name defined in the color tool (e.g. `color="brand"` consumes `--brand/--on-brand`), enabling one-click re-theming via the color tool
-- **Documentation written for AI**: self-contained, structured, facts only
+AI makes rebuilding a component cheap; keeping its behavior consistent is still the expensive part.
+
+- **Behavior is shared**: tags, attributes, slots, events and state stay the same across projects. Keyboard, focus, disabled state, event composition, form submission and accessible names are part of the contract, not something to improvise per screen.
+- **Visual identity is yours**: attributes express semantics only (`disabled` / `loading` / M3-spec `variant` / the `color` semantic reference) — no size presets. Appearance is written as plain native CSS; component visuals live on `:host`, so `<st-button style="height:32px; border-radius:8px">` just works.
+- **`--st-*` belongs to skin authors**: users do not get sizing proxy variables. Radius, density, borders, shadows, blur, focus rings and motion are material tokens declared by skins; colors never live there.
+- **Size defaults use em units**: change `font-size` to scale the whole component proportionally; override any individual CSS property when you need a non-proportional size.
+- **Borrow M3's relationships, not every token**: only 34 `--md-sys-color-*` tokens remain — 5 roles (primary / secondary / tertiary / error / success) × 4 paired tokens, plus 14 neutrals; `success` is an extension beyond M3's core spec. Names such as `background`, `surface-tint`, `scrim`, `shadow`, `surface-dim` and `surface-bright` are intentionally dropped because existing roles cover them or they are fixed. The `color` attribute takes a role name or a custom variable name (e.g. `color="brand"` consumes `--brand/--on-brand`).
+- **Contrast is a color capability, not a skin token**: `contrast` ranges from -1 to 1 (globally or per role) and re-picks tones while preserving hue; in dark mode `contrastTone: "deep" | "bright"` decides whether role colors go darker or brighter. Skins change material only and never change color relationships.
+- **Labels are page layout**: `st-input` deliberately ships without M3's floating label. The visual label is composed by the page; the accessible name is provided to the internal native input via `aria-label` / `aria-labelledby`. That is what lets the same field fit M3, Apple, Windows 11 and shadcn form layouts.
+- **Documentation written for AI**: self-contained, structured, facts only.
+
+The layers stay separate: the color module owns role relationships, skins own material, the page owns layout and labels, and components own interaction behavior.
+
+```html
+<div class="field">
+  <span class="field-label">Email</span>
+  <st-input type="email" aria-label="Email" placeholder="you@example.com"></st-input>
+</div>
+```
+
+For the longer rationale, see [Behavior Unified, Visual Identity Free](./site/notes/behavior-and-skin.html).
 
 ## Quick Start
 
@@ -113,7 +127,7 @@ Full docs (attribute tables, slots, events, default value lists) live in each pa
 
 ## Theming
 
-The [M3 color generator](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) generates a full light/dark M3 system (`--md-sys-color-*`) from a seed color, with overrides for the core four roles + the extended `success` role, custom variables (auto-expanded into paired tokens like `--brand` / `--on-brand`), and a **contrast adjustment** (-1 to 1, globally or per role; positive for neon/game themes, negative for soft/cute themes). The configuration is stored in localStorage — once set in the tool, every page on the same origin that includes `st-color-init.js` follows automatically (one-click re-theming).
+The [M3 color generator](https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/color/index.html) generates a full light/dark M3 system (`--md-sys-color-*`) from a seed color, with overrides for the core four roles + the extended `success` role, custom variables (auto-expanded into paired tokens like `--brand` / `--on-brand`), and a **contrast adjustment** (`contrast`, -1 to 1, globally or per role; positive for neon/game themes, negative for soft/cute themes) with a dark-mode direction (`contrastTone: "deep" | "bright"`). Contrast is part of the palette, not the skin. The configuration is stored in localStorage — once set in the tool, every page on the same origin that includes `st-color-init.js` follows automatically (one-click re-theming).
 
 For manual control:
 
@@ -139,7 +153,7 @@ The website adds a **theme preset** layer on top (only in `site/theme-presets.js
 
 Online: <https://senti.ofajs.com/site/> — component docs: <https://senti.ofajs.com/site/docs/>.
 
-A single-page showcase lives in [`site/`](./site/index.html), built with **SCSR** (ofa.js v5 real-path documents): every component on one page, live skin + light/dark switching, four side-by-side material previews, and a dedicated skin page at [`site/skins.html`](./site/skins.html). Each URL is a real HTML document; scsr turns it into an o-app page after load. Component docs live under [`site/docs/`](./site/docs/index.html) — one real SCSR page per component, with 4–7 scenario-based live demos, attribute tables and slots/events. The docs sidebar lives in a second-level SCSR layout, so it survives component-to-component navigation.
+A single-page showcase lives in [`site/`](./site/index.html), built with **SCSR** (ofa.js v5 real-path documents): every component on one page, live skin + light/dark switching, three side-by-side platform previews, and a dedicated skin page at [`site/skins.html`](./site/skins.html). Each URL is a real HTML document; scsr turns it into an o-app page after load. Component docs live under [`site/docs/`](./site/docs/index.html) — one real SCSR page per component, with 4–7 scenario-based live demos, attribute tables and slots/events. The docs sidebar lives in a second-level SCSR layout, so it survives component-to-component navigation.
 
 ```bash
 npm run dev

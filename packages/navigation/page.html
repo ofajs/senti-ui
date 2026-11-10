@@ -17,6 +17,15 @@
 
   <div class="panel">当前页：{{currentLabel}}</div>
 
+  <h3>横向模式（bar 横向 + item 各自 parallel，文字在右）</h3>
+  <st-nav-bar>
+    <st-nav-item parallel attr:active="topCurrent === 0" on:click="selectTop(0)"><span slot="icon">🏠</span>首页</st-nav-item>
+    <st-nav-item parallel attr:active="topCurrent === 1" on:click="selectTop(1)"><span slot="icon">🔍</span>发现</st-nav-item>
+    <st-nav-item parallel attr:active="topCurrent === 2" on:click="selectTop(2)"><span slot="icon">👤</span>我的</st-nav-item>
+  </st-nav-bar>
+
+  <div class="panel">当前横向项：{{topLabel}}</div>
+
   <h3>纵向导航（侧栏 / rail，st-nav-bar vertical）</h3>
   <st-nav-bar vertical style="justify-self: start; width: fit-content;">
     <st-nav-item attr:active="railCurrent === 0" on:click="selectRail(0)"><span slot="icon">📥</span>收件箱</st-nav-item>
@@ -78,6 +87,8 @@
       data: {
         current: 0,
         labels: ["首页", "发现", "发布", "我的"],
+        topCurrent: 0,
+        topLabels: ["首页", "发现", "我的"],
         railCurrent: 0,
         railLabels: ["收件箱", "标签", "已发送"],
         layoutCurrent: 0,
@@ -91,6 +102,12 @@
         },
         select(i) {
           this.current = i;
+        },
+        get topLabel() {
+          return this.topLabels[this.topCurrent] || "";
+        },
+        selectTop(i) {
+          this.topCurrent = i;
         },
         get railLabel() {
           return this.railLabels[this.railCurrent] || "";

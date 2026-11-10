@@ -208,6 +208,7 @@ const id = await contextMenu(e, [{ id: "copy", label: "复制" }, { separator: t
 
 - 插槽：`nav`（放 `st-nav-bar`）+ 默认（内容区，可滚动）；高度依赖外部给定（如 `height: 100vh`）
 - 形态属性分属两层：`vertical` 在 `st-nav-bar` 上（子项排列方向），`parallel` 在各 `st-nav-item` 上（文字在 icon 右、active 整行药丸），两者独立组合
+- 单独用横向顶部导航：`st-nav-bar` 保持默认横向，每个 `st-nav-item` 加 `parallel`（icon 左 / 文字右、active 整行药丸）；不需要 `st-nav-layout`
 - 按布局容器**自身宽度**（container query）三档切换：`<768px` 底部导航 / `768–1023px` 平板——仍在底部、各 item 自动挂 `parallel`（横排）/ `≥1024px` 左侧窄 rail——bar 自动挂 `vertical`、item 摘 `parallel`（icon 上/文字下）
 - 单独用纵向导航：`<st-nav-bar vertical>` 即可
 - 引入：`<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-layout.html"></l-m>`

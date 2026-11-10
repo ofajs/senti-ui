@@ -1,6 +1,6 @@
 # st-nav-bar / st-nav-item / st-nav-layout 导航组件
 
-基于 ofa.js 的导航组件族（M3）：`st-nav-bar` + `st-nav-item` 底部导航栏（可切纵向侧栏模式），`st-nav-layout` 响应式布局容器。子项写在 light DOM 的 `st-nav-item`，`active` 属性标记当前项（由外部逻辑切换）；药丸形高亮背景自动动画跟随 active 项（M3 emphasized 0.3s）。
+基于 ofa.js 的导航组件族（M3）：`st-nav-bar` + `st-nav-item` 导航栏——横向可做底部导航或顶部导航（item 加 `parallel`），也可切纵向侧栏 / 抽屉；`st-nav-layout` 响应式布局容器。子项写在 light DOM 的 `st-nav-item`，`active` 属性标记当前项（由外部逻辑切换）；药丸形高亮背景自动动画跟随 active 项（M3 emphasized 0.3s）。
 
 ## 依赖引入（使用前必须）
 
@@ -18,7 +18,7 @@
 |------|------|--------|------|
 | `vertical` | boolean | 无 | 子项排列方向：横向一行（默认，底部导航栏）/ 纵向一列（侧栏/rail） |
 
-只控制 bar 自身排列方向，**不会修改子项**；item 文字位置由各 item 自己的 `parallel` 属性决定，两者独立组合：默认（底部 + 文字在下）、`vertical`（侧栏 + 文字在下）、item 加 `parallel`（文字在右）、`vertical` + item `parallel`（抽屉形态）。
+只控制 bar 自身排列方向，**不会修改子项**；item 文字位置由各 item 自己的 `parallel` 属性决定，两者独立组合：默认（底部 + 文字在下）、`vertical`（侧栏 + 文字在下）、item 加 `parallel`（横向顶部导航：文字在右、active 覆盖整行）、`vertical` + item `parallel`（抽屉形态）。
 
 ### st-nav-item
 
@@ -72,11 +72,18 @@
 ## 示例
 
 ```html
-<!-- 底部导航 -->
+<!-- 底部导航：bar 横向，item 默认（icon 上 / 文字下） -->
 <st-nav-bar>
   <st-nav-item active><span slot="icon">🏠</span>首页</st-nav-item>
   <st-nav-item><span slot="icon">🔍</span>发现</st-nav-item>
   <st-nav-item><span slot="icon">👤</span>我的</st-nav-item>
+</st-nav-bar>
+
+<!-- 横向顶部导航：bar 保持默认横向，每个 item 加 parallel（icon 左 / 文字右，active 覆盖整行） -->
+<st-nav-bar>
+  <st-nav-item parallel active><span slot="icon">🏠</span>首页</st-nav-item>
+  <st-nav-item parallel><span slot="icon">🔍</span>发现</st-nav-item>
+  <st-nav-item parallel><span slot="icon">👤</span>我的</st-nav-item>
 </st-nav-bar>
 
 <!-- 纵向侧栏（手动，常配合固定定位使用） -->
@@ -103,6 +110,7 @@
 - 底部导航场景给宿主加 `position: fixed; bottom: 0; left: 0; right: 0`
 - disabled 项原生阻断点击；icon 用 `slot="icon"`（24px 建议尺寸）
 - `vertical` 写在 `st-nav-bar`（排列方向），`parallel` 写在各 `st-nav-item` 上（文字位置），分属两层不要写错
+- 横向顶部导航不需要 `st-nav-layout`：`st-nav-bar` 保持默认，给每个 `st-nav-item` 加 `parallel` 即可；不要给 bar 加 `vertical`
 - `st-nav-layout` 会按断点自动修正两者（bar 的 `vertical` + 各 item 的 `parallel`）；手动使用时无需 layout
 - `st-nav-layout` 的高度依赖外部给定（`height: 100vh` / flex 子项等），`height: 100%` 不生效时空高
 - `st-nav-layout` 断点看的是**布局容器自身宽度**（container query），不是视口宽度——放在窄面板里即使窗口很宽也走底部形态

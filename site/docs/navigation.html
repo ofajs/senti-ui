@@ -70,7 +70,7 @@
             <header class="doc-hero">
               <p class="doc-kicker">导航 · 18 / 22</p>
               <h1>Navigation <code>st-nav-bar</code></h1>
-              <p class="doc-lead">三个组件分工明确：st-nav-bar 控制排列方向，st-nav-item 控制文字位置与选中态，st-nav-layout 按自身宽度在底部导航、横排导航与左侧 rail 之间切换。active 始终由外部切换。</p>
+              <p class="doc-lead">三个组件分工明确：st-nav-bar 控制排列方向，st-nav-item 控制文字位置与选中态，st-nav-layout 按自身宽度在底部导航、横排导航与左侧 rail 之间切换。active 始终由外部切换；不套 layout 时，给每个 item 加 parallel 就能直接得到横向模式。</p>
               <div class="doc-links">
                 <a href="../index.html">组件目录</a>
                 <a href="https://github.com/ofajs/senti-ui/blob/main/packages/navigation/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
@@ -179,6 +179,32 @@
                 </div>
 
                 <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
+              </div>
+            </section>
+
+            <section class="doc-section">
+              <h2>横向模式（顶部导航）：icon 在左、文字在右</h2>
+              <p class="doc-section-lead">不套 st-nav-layout，直接给每个 st-nav-item 加 parallel，同时保持 st-nav-bar 默认的横向排列：item 变成 icon 左 / 文字右的整行药丸，active 背景覆盖 icon + 文字，适合顶部导航或横向分段导航。parallel 是 item 级属性，bar 不需要加 vertical 或其他开关。</p>
+              <div class="demo">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo7 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-nav-bar + item[parallel]</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo7')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo7 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo7 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" style="gap: 12px;" attr:hidden="codeView.demo7">
+                  <st-nav-bar style="width: 100%;">
+                    <st-nav-item parallel attr:active="topTab === 0" on:click="topSelect(0)"><iconify-icon slot="icon" icon="mdi:home-outline"></iconify-icon>首页</st-nav-item>
+                    <st-nav-item parallel attr:active="topTab === 1" on:click="topSelect(1)"><iconify-icon slot="icon" icon="mdi:magnify"></iconify-icon>发现</st-nav-item>
+                    <st-nav-item parallel attr:active="topTab === 2" on:click="topSelect(2)"><iconify-icon slot="icon" icon="mdi:account-outline"></iconify-icon>我的</st-nav-item>
+                  </st-nav-bar>
+                  <span class="demo-note">当前：{{topName}} · parallel 让每个 item 的 active 药丸覆盖整行（icon + 文字）</span>
+                </div>
+                <st-code class="demo-code" attr:hidden="!codeView.demo7" lang="html" :code="demo7Code"></st-code>
               </div>
             </section>
 
@@ -310,7 +336,7 @@
                   <tbody>
                     <tr><td><code>vertical</code></td><td>boolean</td><td>无</td><td>st-nav-bar：子项纵向排列（rail / 抽屉）</td></tr>
                     <tr><td><code>active</code></td><td>boolean</td><td>无</td><td>st-nav-item：当前项，药丸背景跟随</td></tr>
-                    <tr><td><code>parallel</code></td><td>boolean</td><td>无</td><td>st-nav-item：文字在 icon 右侧，active 覆盖整行</td></tr>
+                    <tr><td><code>parallel</code></td><td>boolean</td><td>无</td><td>st-nav-item：文字在 icon 右侧，active 覆盖整行；横向 bar + 全部 item parallel 即顶部导航</td></tr>
                     <tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>st-nav-item：0.38 透明度，阻断点击与键盘</td></tr>
                     <tr><td><code>style</code></td><td>原生 CSS</td><td>无</td><td>用 font-size 缩放；background 等直接覆写</td></tr>
                   </tbody>
@@ -323,6 +349,7 @@
                   <li>事件：item 的 click 原生冒泡（composed）；disabled 项不派发。</li>
                   <li>键盘：Tab 聚焦、Enter / Space 激活；focus-visible 有焦点环。</li>
                   <li>形态分两层：<code>vertical</code> 写 bar，<code>parallel</code> 写 item，不要写错。</li>
+                  <li>横向顶部导航：<code>st-nav-bar</code> 保持默认横向，每个 <code>st-nav-item</code> 加 <code>parallel</code>；不要用 <code>vertical</code>，也不需要 <code>st-nav-layout</code>。</li>
                   <li>st-nav-layout 断点：<code>&lt;768px</code> 底部 / <code>768–1023px</code> 底部横排 / <code>≥1024px</code> 左侧 rail；按容器自身宽度判断。</li>
                   <li>st-nav-layout 的高度依赖外部给定（如 <code>height: 100vh</code>），<code>height: 100%</code> 无父高时为空。</li>
                   <li>st-nav-layout 建议只放一个 st-nav-bar；bar 的底色可在宿主上覆盖。</li>
@@ -339,13 +366,14 @@
 
         export default async () => ({
           data: {
-            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false, demo6: false },
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false, demo6: false, demo7: false },
             demo1Code: "<st-nav-bar style=\"width: 100%;\">\n                    <st-nav-item attr:active=\"navTab === 0\" on:click=\"selectNav(0)\"><iconify-icon slot=\"icon\" icon=\"mdi:home-outline\"></iconify-icon>首页</st-nav-item>\n                    <st-nav-item attr:active=\"navTab === 1\" on:click=\"selectNav(1)\"><iconify-icon slot=\"icon\" icon=\"mdi:magnify\"></iconify-icon>发现</st-nav-item>\n                    <st-nav-item attr:active=\"navTab === 2\" on:click=\"selectNav(2)\">\n                      <span slot=\"icon\" style=\"position: relative;\"><iconify-icon icon=\"mdi:bell-outline\"></iconify-icon><span style=\"position: absolute; top: -4px; right: -8px; min-width: 13px; height: 13px; padding: 0 3px; border-radius: 7px; background: var(--md-sys-color-error); color: var(--md-sys-color-on-error); font-size: 9px; line-height: 13px; text-align: center;\">3</span></span>\n                      消息\n                    </st-nav-item>\n                    <st-nav-item attr:active=\"navTab === 3\" on:click=\"selectNav(3)\"><span slot=\"icon\">👤</span>我的</st-nav-item>\n                  </st-nav-bar>\n                  <span class=\"demo-note\">当前：{{navName}} · 药丸背景会平滑移动到选中项</span>",
             demo2Code: "<div style=\"width: 100%;\">\n                    <span class=\"demo-label\">默认 14px</span>\n                    <st-nav-bar style=\"width: 100%; margin-top: 6px;\">\n                      <st-nav-item attr:active=\"sizeTabA === 0\" on:click=\"sizeTabA = 0\"><iconify-icon slot=\"icon\" icon=\"mdi:inbox-arrow-down\"></iconify-icon>收件箱</st-nav-item>\n                      <st-nav-item attr:active=\"sizeTabA === 1\" on:click=\"sizeTabA = 1\"><span slot=\"icon\">🏷️</span>标签</st-nav-item>\n                      <st-nav-item attr:active=\"sizeTabA === 2\" on:click=\"sizeTabA = 2\"><iconify-icon slot=\"icon\" icon=\"mdi:send\"></iconify-icon>已发送</st-nav-item>\n                    </st-nav-bar>\n                  </div>\n                  <div style=\"width: 100%;\">\n                    <span class=\"demo-label\">font-size: 12px · 自定义底色</span>\n                    <st-nav-bar style=\"width: 100%; margin-top: 6px; font-size: 12px; background: var(--md-sys-color-surface-container-high); border-radius: 16px; overflow: hidden;\">\n                      <st-nav-item attr:active=\"sizeTabB === 0\" on:click=\"sizeTabB = 0\"><iconify-icon slot=\"icon\" icon=\"mdi:inbox-arrow-down\"></iconify-icon>收件箱</st-nav-item>\n                      <st-nav-item attr:active=\"sizeTabB === 1\" on:click=\"sizeTabB = 1\"><span slot=\"icon\">🏷️</span>标签</st-nav-item>\n                      <st-nav-item attr:active=\"sizeTabB === 2\" on:click=\"sizeTabB = 2\"><iconify-icon slot=\"icon\" icon=\"mdi:send\"></iconify-icon>已发送</st-nav-item>\n                    </st-nav-bar>\n                  </div>",
             demo3Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">rail：bar vertical</span>\n                    <st-nav-bar vertical style=\"width: fit-content; border-radius: 16px; overflow: hidden;\">\n                      <st-nav-item attr:active=\"railTab === 0\" on:click=\"railTab = 0\"><iconify-icon slot=\"icon\" icon=\"mdi:inbox-arrow-down\"></iconify-icon>收件箱</st-nav-item>\n                      <st-nav-item attr:active=\"railTab === 1\" on:click=\"railTab = 1\"><span slot=\"icon\">🏷️</span>标签</st-nav-item>\n                      <st-nav-item attr:active=\"railTab === 2\" on:click=\"railTab = 2\"><iconify-icon slot=\"icon\" icon=\"mdi:send\"></iconify-icon>已发送</st-nav-item>\n                    </st-nav-bar>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">抽屉：vertical + parallel</span>\n                    <st-nav-bar vertical style=\"width: fit-content; border-radius: 16px; overflow: hidden;\">\n                      <st-nav-item parallel attr:active=\"drawerTab === 0\" on:click=\"drawerTab = 0\"><iconify-icon slot=\"icon\" icon=\"mdi:inbox-arrow-down\"></iconify-icon>收件箱</st-nav-item>\n                      <st-nav-item parallel attr:active=\"drawerTab === 1\" on:click=\"drawerTab = 1\"><span slot=\"icon\">🏷️</span>标签</st-nav-item>\n                      <st-nav-item parallel attr:active=\"drawerTab === 2\" on:click=\"drawerTab = 2\"><iconify-icon slot=\"icon\" icon=\"mdi:send\"></iconify-icon>已发送</st-nav-item>\n                    </st-nav-bar>\n                  </div>",
             demo4Code: "<st-nav-bar style=\"width: 100%;\">\n                    <st-nav-item attr:active=\"disTab === 0\" on:click=\"disSelect(0)\"><iconify-icon slot=\"icon\" icon=\"mdi:home-outline\"></iconify-icon>首页</st-nav-item>\n                    <st-nav-item attr:active=\"disTab === 1\" on:click=\"disSelect(1)\"><iconify-icon slot=\"icon\" icon=\"mdi:magnify\"></iconify-icon>发现</st-nav-item>\n                    <st-nav-item disabled><iconify-icon slot=\"icon\" icon=\"mdi:message-text\"></iconify-icon>聊天</st-nav-item>\n                    <st-nav-item disabled><iconify-icon slot=\"icon\" icon=\"mdi:cog\"></iconify-icon>设置</st-nav-item>\n                  </st-nav-bar>\n                  <span class=\"demo-note\">当前：{{disName}} · 可用项点击 {{disClicks}} 次（点禁用项不增加）</span>",
             demo5Code: "<div style=\"width: 100%;\">\n                    <span class=\"demo-label\">跟随文档栏宽度（当前容器）</span>\n                    <st-nav-layout style=\"height: 300px; margin-top: 6px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 16px; overflow: hidden;\">\n                      <st-nav-bar slot=\"nav\">\n                        <st-nav-item attr:active=\"layoutTab === 0\" on:click=\"layoutTab = 0\"><iconify-icon slot=\"icon\" icon=\"mdi:home-outline\"></iconify-icon>首页</st-nav-item>\n                        <st-nav-item attr:active=\"layoutTab === 1\" on:click=\"layoutTab = 1\"><iconify-icon slot=\"icon\" icon=\"mdi:magnify\"></iconify-icon>发现</st-nav-item>\n                        <st-nav-item attr:active=\"layoutTab === 2\" on:click=\"layoutTab = 2\"><span slot=\"icon\">👤</span>我的</st-nav-item>\n                      </st-nav-bar>\n                      <div style=\"padding: 18px; height: 100%; box-sizing: border-box; overflow: auto;\">\n                        <span class=\"demo-label\">内容区（默认插槽）</span>\n                        <div style=\"margin-top: 6px; font-size: 17px; font-weight: 700;\">{{layoutName}}</div>\n                        <p style=\"margin: 8px 0 0; color: var(--md-sys-color-on-surface-variant); font-size: 12.5px; line-height: 1.75;\">容器宽 768–1023px 时导航仍在底部，但 item 自动切横排、选中整行药丸背景；缩到 768px 以下回到 icon 上 / 文字下。</p>\n                      </div>\n                    </st-nav-layout>\n                  </div>\n                  <div style=\"width: 100%;\">\n                    <span class=\"demo-label\">宽容器 1040px：自动变左侧 rail（可横向滚动查看）</span>\n                    <div style=\"width: 100%; overflow-x: auto; margin-top: 6px; padding-bottom: 4px;\">\n                      <div style=\"width: 1040px;\">\n                        <st-nav-layout style=\"height: 300px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 16px; overflow: hidden;\">\n                          <st-nav-bar slot=\"nav\">\n                            <st-nav-item attr:active=\"wideTab === 0\" on:click=\"wideTab = 0\"><iconify-icon slot=\"icon\" icon=\"mdi:inbox-arrow-down\"></iconify-icon>收件箱</st-nav-item>\n                            <st-nav-item attr:active=\"wideTab === 1\" on:click=\"wideTab = 1\"><span slot=\"icon\">🏷️</span>标签</st-nav-item>\n                            <st-nav-item attr:active=\"wideTab === 2\" on:click=\"wideTab = 2\"><iconify-icon slot=\"icon\" icon=\"mdi:send\"></iconify-icon>已发送</st-nav-item>\n                          </st-nav-bar>\n                          <div style=\"padding: 18px; height: 100%; box-sizing: border-box; overflow: auto;\">\n                            <span class=\"demo-label\">容器宽度 ≥ 1024px</span>\n                            <div style=\"margin-top: 6px; font-size: 17px; font-weight: 700;\">{{wideName}}</div>\n                            <p style=\"margin: 8px 0 0; color: var(--md-sys-color-on-surface-variant); font-size: 12.5px; line-height: 1.75;\">导航已移到左侧窄 rail，宽度跟随内容而不是占满屏宽；bar 自动获得 vertical，item 自动摘掉 parallel。</p>\n                            <p style=\"margin: 8px 0 0; color: var(--md-sys-color-on-surface-variant); font-size: 12.5px; line-height: 1.75;\">判定依据是布局容器自身宽度，所以把应用放进窄面板时，即使窗口很宽也仍然走底部形态。</p>\n                          </div>\n                        </st-nav-layout>\n                      </div>\n                      <span class=\"demo-note\" style=\"grid-column: 1 / -1;\">演示容器固定 1040px（超过卡片宽度），可横向滚动查看完整 rail。</span>\n                    </div>\n                  </div>",
             demo6Code: "<div style=\"position: relative; width: 100%; max-width: 380px; height: 340px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 20px; overflow: hidden; background: var(--md-sys-color-surface);\">\n                    <div style=\"position: absolute; inset: 0 0 84px; overflow: auto; padding: 18px;\">\n                      <span class=\"demo-label\">当前页面</span>\n                      <div style=\"margin-top: 6px; font-size: 19px; font-weight: 700;\">{{appName}}</div>\n                      <p style=\"margin: 8px 0 0; color: var(--md-sys-color-on-surface-variant); font-size: 12.5px; line-height: 1.75;\">{{appText}}</p>\n                    </div>\n                    <st-nav-bar style=\"position: absolute; left: 0; right: 0; bottom: 0;\">\n                      <st-nav-item attr:active=\"appTab === 0\" on:click=\"appTab = 0\"><iconify-icon slot=\"icon\" icon=\"mdi:home-outline\"></iconify-icon>首页</st-nav-item>\n                      <st-nav-item attr:active=\"appTab === 1\" on:click=\"appTab = 1\"><iconify-icon slot=\"icon\" icon=\"mdi:magnify\"></iconify-icon>发现</st-nav-item>\n                      <st-nav-item attr:active=\"appTab === 2\" on:click=\"appTab = 2\"><iconify-icon slot=\"icon\" icon=\"mdi:bell-outline\"></iconify-icon>消息</st-nav-item>\n                      <st-nav-item attr:active=\"appTab === 3\" on:click=\"appTab = 3\"><span slot=\"icon\">👤</span>我的</st-nav-item>\n                    </st-nav-bar>\n                  </div>\n                  <span class=\"demo-note\">点击底部导航切换内容；生产环境用 position: fixed 并给主内容留出导航高度。</span>",
+            demo7Code: "<st-nav-bar style=\"width: 100%;\">\n                    <st-nav-item parallel attr:active=\"topTab === 0\" on:click=\"topSelect(0)\"><iconify-icon slot=\"icon\" icon=\"mdi:home-outline\"></iconify-icon>首页</st-nav-item>\n                    <st-nav-item parallel attr:active=\"topTab === 1\" on:click=\"topSelect(1)\"><iconify-icon slot=\"icon\" icon=\"mdi:magnify\"></iconify-icon>发现</st-nav-item>\n                    <st-nav-item parallel attr:active=\"topTab === 2\" on:click=\"topSelect(2)\"><iconify-icon slot=\"icon\" icon=\"mdi:account-outline\"></iconify-icon>我的</st-nav-item>\n                  </st-nav-bar>",
             navTab: 0,
             sizeTabA: 0,
             sizeTabB: 0,
@@ -356,6 +384,7 @@
             layoutTab: 0,
             wideTab: 0,
             appTab: 0,
+            topTab: 0,
           },
           proto: {
             toggleCode(key) {
@@ -376,6 +405,9 @@
             get appName() {
               return ["首页", "发现", "消息", "我的"][this.appTab] || "";
             },
+            get topName() {
+              return ["首页", "发现", "我的"][this.topTab] || "";
+            },
             get appText() {
               return [
                 "首页汇总今天的任务、动态与推荐内容；底部导航保持固定，滚动只发生在内容区。",
@@ -383,6 +415,9 @@
                 "消息页把未读提醒集中在一起；角标可以放在 icon 插槽里的原生元素上。",
                 "我的页面收纳账户与设置入口；st-nav-bar 只负责外观与交互语义。",
               ][this.appTab] || "";
+            },
+            topSelect(i) {
+              this.topTab = i;
             },
             selectNav(i) {
               this.navTab = i;

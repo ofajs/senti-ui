@@ -4,6 +4,8 @@
 
 **面向 AI 的 UI 组件库**：基于 [ofa.js](https://github.com/ofajs/ofa.js)（Web Components 框架），颜色体系采用 Google Material Design 3（M3）。**无构建、纯静态，CDN 引入即用**。
 
+官网：<https://senti.ofajs.com/site/>
+
 仓库地址：<https://github.com/ofajs/senti-ui>
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
@@ -66,8 +68,9 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 | Icon-button 图标按钮 | `st-icon-button` | `.../packages/button/icon-button.html` |
 | Input 单行输入框 | `st-input` | `.../packages/input/input.html` |
 | Textarea 多行输入框 | `st-textarea` | `.../packages/textarea/textarea.html` |
-| Select 单选下拉框 | `st-select` | `.../packages/select/select.html` |
+| Select 单选下拉框 | `st-select` / `st-option` | `.../packages/select/select.html` |
 | Dialog 对话框 | `st-dialog` | `.../packages/dialog/dialog.html` |
+| Drawer 侧边抽屉 | `st-drawer` | `.../packages/drawer/drawer.html` |
 | Dialog 命令式工具 | `alert/confirm/prompt` | `import alert from ".../packages/dialog/alert.js"` 等 |
 | Checkbox 复选框 | `st-checkbox` | `.../packages/checkbox/checkbox.html` |
 | Switch 开关 | `st-switch` | `.../packages/switch/switch.html` |
@@ -79,16 +82,21 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 | Tooltip 提示 | `st-tooltip` | `.../packages/tooltip/tooltip.html` |
 | Card 卡片 | `st-card` | `.../packages/card/card.html` |
 | Badges 徽标 | `st-badges` | `.../packages/badges/badges.html` |
+| Chip 筛选小片 | `st-chip` | `.../packages/chip/chip.html` |
+| Avatar 头像 | `st-avatar` | `.../packages/avatar/avatar.html` |
+| Skeleton 加载占位 | `st-skeleton` | `.../packages/skeleton/skeleton.html` |
 | Collapse 折叠容器 | `st-collapse` | `.../packages/collapse/collapse.html` |
 | List 列表 | `st-list` / `st-list-item` | `.../packages/list/list.html` |
 | Menu 下拉菜单 | `st-menu` / `st-menu-item` | `.../packages/menu/menu.html` |
+| Context-menu 命令式工具 | `contextMenu` | `import contextMenu from ".../packages/menu/context-menu.js"` |
 | Tabs 标签栏 | `st-tab-bar` / `st-tab-item` | `.../packages/tabs/tab-bar.html` |
-| Navigation 导航栏 | `st-nav-bar` / `st-nav-item` | `.../packages/navigation/nav-bar.html` |
+| Navigation 导航栏 / 布局 | `st-nav-bar` / `st-nav-item` / `st-nav-layout` | `.../packages/navigation/nav-bar.html` + `.../packages/navigation/nav-layout.html` |
 | Ripple 波纹 | `st-ripple` | `.../packages/ripple/ripple.html` |
+| Code 代码块 | `st-code` | `.../packages/code/code.html` |
 
 ## 关键使用模式
 
-- **运行时状态不是标签属性**——`st-input`/`st-select`/`st-slider` 的 `value`，`st-dialog`/`st-tooltip` 的 `open` 等是运行时状态：JS 用 `el.value` / `el.open` 读写，`setAttribute("value")` 无效（初始值用 `default-value` 标签属性）
+- **运行时状态不是标签属性**——`st-input`/`st-select`/`st-slider` 的 `value`，`st-dialog`/`st-drawer`/`st-tooltip` 的 `open` 等是运行时状态：JS 用 `el.value` / `el.open` 读写，`setAttribute("value")` 无效（初始值用 `default-value` 标签属性）
 - **布尔属性的 JS 修改必须用 `setAttribute` / `removeAttribute`**——直接改 property 不触发更新
 - 命令式工具即用即毁，返回 Promise，对齐原生语义：
 
@@ -129,11 +137,13 @@ CDN 前缀统一为 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui`，下表引入�
 
 ## 官网首页
 
+线上地址：<https://senti.ofajs.com/site/> —— 组件文档：<https://senti.ofajs.com/site/docs/>。
+
 单页聚合官网在 [`site/`](./site/index.html)：全部组件摆在一页，支持实时换肤、深浅色切换与多种材质并排对比；独立皮肤页在 [`site/skins.html`](./site/skins.html)，可选 M3 / Apple / Windows / shadcn / Cyberpunk 五套材质，顶部快捷菜单只保留三巨头材质。采用 **ofa.js v5 + scsr**（真实路径文档；加载后由 scsr 收编为 o-app 页面）。组件使用说明在 [`site/docs/`](./site/docs/index.html)：每个组件一个独立 SCSR 页，按场景拆成 4–7 组可交互示例，并附属性表、插槽 / 事件；左侧目录由二级 SCSR 父页共享，组件间切换不销毁。
 
 ```bash
 npm run dev
-# http://localhost:8642/site/
+# 本地：http://localhost:8642/site/
 ```
 
 ## AI 使用
@@ -182,7 +192,7 @@ npm test       # Playwright 端到端测试（须先 npx playwright install chro
 ```
 
 - 新增/修改组件请先阅读 [AGENTS.md](./AGENTS.md)（开发规则）与 [CONTEXT.md](./CONTEXT.md)（项目全景 + 组件索引 + ofa.js 已知坑）
-- 组件官网：`site/docs/` 二级 SCSR 布局，本地 `http://localhost:8642/site/docs/`
+- 组件官网：`site/docs/` 二级 SCSR 布局 —— 线上 <https://senti.ofajs.com/site/docs/>，本地 `http://localhost:8642/site/docs/`
 
 ## License
 

@@ -1,0 +1,98 @@
+<!--
+  st-avatar — Senti-UI 头像组件（基于 ofa.js，纯展示）
+  语义属性：src（图片地址）/ alt / color（M3 角色名）
+  内容来源三选一：src 图片 > image 插槽（img/icon 自由元素）> 默认插槽文字缩写
+  尺寸即原生 CSS（width/height/font-size），无 size 类属性，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      width: var(--st-avatar-size, 2.286em);
+      height: var(--st-avatar-size, 2.286em);
+      border-radius: var(--st-avatar-radius, 50%);
+      overflow: hidden;
+      flex: none;
+      font-size: 14px;
+      font-family: inherit;
+      font-weight: 500;
+      background: var(--st-avatar-bg, var(--md-sys-color-secondary-container));
+      color: var(--st-avatar-color, var(--md-sys-color-on-secondary-container));
+      user-select: none;
+    }
+
+    /* 文字缩写：随头像尺寸等比（0.5em = 7px@14px 宿主字号） */
+    .text {
+      font-size: var(--st-avatar-font-size, 0.5em);
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+
+    /* src 图片铺满圆内 */
+    .img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    :host([src]) .img { display: block; }
+    :host([src]) .text { display: none; }
+
+    ::slotted(img), ::slotted(svg), ::slotted(iconify-icon) {
+      width: 0.857em;
+      height: 0.857em;
+    }
+
+    l-m { display: none; }
+  </style>
+
+  <img class="img" part="image" alt="" />
+  <slot name="image"></slot>
+  <span class="text" id="st-avatar-text"><slot></slot></span>
+
+  <script>
+    import "../color/st-color-init.js";
+    export default async () => ({
+      tag: "st-avatar",
+      attrs: {
+        src: null,
+        alt: null,
+        color: null,
+      },
+      watch: {
+        src() { this.applyState(); },
+        alt() { this.applyState(); },
+        color() { this.applyState(); },
+      },
+      ready() {
+        this.applyState();
+      },
+      proto: {
+        // watch 初始化也会触发一次（坑 #27），apply 无副作用，天然安全。
+        // src 优先；color 换角色配色（默认 secondary-container 配对）；
+        // alt 同时转发给内部 img 与宿主 aria-label
+        applyState() {
+          const sr = this.ele.shadowRoot;
+          const img = sr.querySelector(".img");
+          if (this.src !== null) img.src = this.src;
+          else img.removeAttribute("src"); // 空 src 会发起对页面自身的请求
+          img.alt = this.alt ?? "";
+          if (this.alt) this.ele.setAttribute("aria-label", this.alt);
+          else this.ele.removeAttribute("aria-label");
+          const name = this.color;
+          const eleStyle = this.ele.style;
+          if (name) {
+            eleStyle.setProperty("--st-avatar-bg", `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-secondary-container)))`);
+            eleStyle.setProperty("--st-avatar-color", `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-secondary-container)))`);
+          } else {
+            eleStyle.removeProperty("--st-avatar-bg");
+            eleStyle.removeProperty("--st-avatar-color");
+          }
+        },
+      },
+    });
+  </script>
+</template>

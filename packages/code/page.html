@@ -1,0 +1,139 @@
+<!-- st-code 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; max-width: 880px; }
+    section { display: flex; flex-direction: column; gap: 16px; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); }
+    .state { font-size: 13px; color: var(--md-sys-color-on-surface-variant); font-family: ui-monospace, monospace; }
+    .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .skin-stage { padding: 16px; border-radius: 12px; background: var(--md-sys-color-surface-container); }
+  </style>
+
+  <link rel="stylesheet" href="../skin/apple.css" />
+
+  <section>
+    <h3>HTML（frame 浏览器外壳 + template 内的 script 不会执行）</h3>
+    <st-code lang="html" frame title="index.html">
+      <template>
+        <div class="card">
+          <h2>Hello</h2>
+        </div>
+        <script>alert("这段脚本不会执行")</script>
+      </template>
+    </st-code>
+  </section>
+
+  <section>
+    <h3>JavaScript（默认无外壳，只做高亮 / 格式化）</h3>
+    <st-code lang="js">
+      <template>
+        const greet = (name) => {
+          const message = `Hello, ${name}!`;
+          return message;
+        };
+
+        console.log(greet("Senti"));
+      </template>
+    </st-code>
+  </section>
+
+  <section>
+    <h3>TypeScript</h3>
+    <st-code lang="ts">
+      <template>
+        type User = { id: number; name: string };
+
+        const users: User[] = [];
+        function first(): User | null {
+          return users[0] ?? null;
+        }
+      </template>
+    </st-code>
+  </section>
+
+  <section>
+    <h3>CSS / Less / Sass</h3>
+    <st-code lang="css">
+      <template>
+        .card {
+          color: var(--md-sys-color-primary);
+          border-radius: 12px;
+        }
+      </template>
+    </st-code>
+    <st-code lang="less">
+      <template>
+        @brand: #0061a4;
+        .card {
+          color: @brand;
+          &:hover { color: lighten(@brand, 10%); }
+        }
+      </template>
+    </st-code>
+    <st-code lang="sass">
+      <template>
+        $brand: #0061a4
+        .card
+          color: $brand
+          &:hover
+            color: darken($brand, 10%)
+      </template>
+    </st-code>
+  </section>
+
+  <section>
+    <h3>动态 code 数据 + copy 事件</h3>
+    <st-code id="dynamic-code" lang="js" frame title="dynamic.js" :code="dynamicCode" on:copy="onCopy"></st-code>
+    <div class="row">
+      <st-button variant="outlined" on:click="pickSample">换一段代码</st-button>
+      <span class="state">copy 次数：{{copyCount}}</span>
+    </div>
+  </section>
+
+  <section>
+    <h3>非 M3 皮肤（data-skin="apple"）</h3>
+    <div class="skin-stage" data-skin="apple">
+      <st-code lang="css" frame title="apple.css">
+        <template>
+          .card {
+            background: color-mix(in srgb, var(--md-sys-color-surface) 50%, transparent);
+            backdrop-filter: blur(18px);
+          }
+        </template>
+      </st-code>
+    </div>
+  </section>
+
+  <section>
+    <h3>长代码滚动（max-height）</h3>
+    <st-code lang="js" frame title="long.js" style="--st-code-max-height: 10em;">
+      <template>
+        const rows = Array.from({ length: 40 }, (_, i) => ({
+          id: i,
+          label: `Row ${i + 1}`,
+        }));
+
+        console.log(rows.length);
+      </template>
+    </st-code>
+  </section>
+
+  <script>
+    export default async () => ({
+      data: {
+        copyCount: 0,
+        dynamicCode: 'const answer = 42;',
+      },
+      proto: {
+        onCopy() {
+          this.copyCount += 1;
+        },
+        pickSample() {
+          this.dynamicCode = this.copyCount % 2
+            ? 'const message = "Hello, Senti";'
+            : 'const answer = 42;';
+        },
+      },
+    });
+  </script>
+</template>

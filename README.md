@@ -4,6 +4,8 @@
 
 A **UI component library designed for AI**: built on [ofa.js](https://github.com/ofajs/ofa.js) (a Web Components framework), with a Google Material Design 3 (M3) color system. **No build step, purely static — load from CDN and use immediately.**
 
+Website: <https://senti.ofajs.com/site/>
+
 Repository: <https://github.com/ofajs/senti-ui>
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
@@ -64,8 +66,9 @@ Traditional component libraries offer lots of "convenience presets" for humans (
 | Icon button | `st-icon-button` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/icon-button.html` |
 | Input | `st-input` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/input/input.html` |
 | Textarea | `st-textarea` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/textarea/textarea.html` |
-| Select | `st-select` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/select/select.html` |
+| Select | `st-select` / `st-option` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/select/select.html` |
 | Dialog | `st-dialog` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/dialog.html` |
+| Drawer | `st-drawer` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/drawer/drawer.html` |
 | Dialog imperative utils | `alert/confirm/prompt` | `import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/alert.js"` etc. |
 | Checkbox | `st-checkbox` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/checkbox/checkbox.html` |
 | Switch | `st-switch` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/switch/switch.html` |
@@ -77,18 +80,23 @@ Traditional component libraries offer lots of "convenience presets" for humans (
 | Tooltip | `st-tooltip` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tooltip/tooltip.html` |
 | Card | `st-card` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/card/card.html` |
 | Badges | `st-badges` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/badges/badges.html` |
+| Chip | `st-chip` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/chip/chip.html` |
+| Avatar | `st-avatar` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/avatar/avatar.html` |
+| Skeleton | `st-skeleton` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/skeleton/skeleton.html` |
 | Collapse | `st-collapse` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/collapse/collapse.html` |
 | List | `st-list` / `st-list-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/list/list.html` |
 | Menu | `st-menu` / `st-menu-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/menu/menu.html` |
+| Context menu imperative util | `contextMenu` | `import contextMenu from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/menu/context-menu.js"` |
 | Tabs | `st-tab-bar` / `st-tab-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tabs/tab-bar.html` |
-| Navigation bar | `st-nav-bar` / `st-nav-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-bar.html` |
+| Navigation bar / layout | `st-nav-bar` / `st-nav-item` / `st-nav-layout` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-bar.html` + `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-layout.html` |
 | Ripple | `st-ripple` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/ripple/ripple.html` |
+| Code | `st-code` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/code/code.html` |
 
 Full docs (attribute tables, slots, events, default value lists) live in each package's `README.md` (e.g. `.../packages/button/README.md`).
 
 ## Key Usage Patterns
 
-- **Runtime state is not a tag attribute** — `value` on `st-input`/`st-select`/`st-slider`, `open` on `st-dialog`/`st-tooltip` etc. are runtime state: read/write via `el.value` / `el.open` in JS (`setAttribute("value")` has no effect; use the `default-value` tag attribute for initial values)
+- **Runtime state is not a tag attribute** — `value` on `st-input`/`st-select`/`st-slider`, `open` on `st-dialog`/`st-drawer`/`st-tooltip` etc. are runtime state: read/write via `el.value` / `el.open` in JS (`setAttribute("value")` has no effect; use the `default-value` tag attribute for initial values)
 - **Boolean attributes must be toggled via attributes** (`$("el").attr("disabled", "")` to set, `attr("disabled", null)` to remove) — assigning properties directly does not trigger updates
 - Imperative utils are promise-based and align with native semantics:
 
@@ -129,11 +137,13 @@ The website adds a **theme preset** layer on top (only in `site/theme-presets.js
 
 ## Website
 
+Online: <https://senti.ofajs.com/site/> — component docs: <https://senti.ofajs.com/site/docs/>.
+
 A single-page showcase lives in [`site/`](./site/index.html), built with **SCSR** (ofa.js v5 real-path documents): every component on one page, live skin + light/dark switching, four side-by-side material previews, and a dedicated skin page at [`site/skins.html`](./site/skins.html). Each URL is a real HTML document; scsr turns it into an o-app page after load. Component docs live under [`site/docs/`](./site/docs/index.html) — one real SCSR page per component, with 4–7 scenario-based live demos, attribute tables and slots/events. The docs sidebar lives in a second-level SCSR layout, so it survives component-to-component navigation.
 
 ```bash
 npm run dev
-# http://localhost:8642/site/
+# local: http://localhost:8642/site/
 ```
 
 ## AI Usage
@@ -182,7 +192,7 @@ npm test       # Playwright e2e tests (run `npx playwright install chromium` fir
 ```
 
 - Read [AGENTS.md](./AGENTS.md) (development rules) and [CONTEXT.md](./CONTEXT.md) (project overview + component index + known ofa.js pitfalls) before adding or modifying components
-- Component docs site: `site/docs/` (nested SCSR layout), at `http://localhost:8642/site/docs/`
+- Component docs site: `site/docs/` (nested SCSR layout) — live at <https://senti.ofajs.com/site/docs/>, local at `http://localhost:8642/site/docs/`
 
 ## License
 

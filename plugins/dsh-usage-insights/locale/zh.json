@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "用量与费用",
+    "description": "在左侧栏查看 DeepSeek 与 GLM Coding Plan 的 token 用量、缓存命中、费用或套餐积分，包含今日、近 7 天、近 30 天与本月的图表分析。"
+  }
+}

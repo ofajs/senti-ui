@@ -85,3 +85,22 @@ test("toast：多条堆叠、color 换色、duration 0 手动关闭", async ({ p
   await page.waitForTimeout(400);
   expect(await page.evaluate(() => document.querySelectorAll(".st-toast").length)).toBe(1);
 });
+
+test("toast：窄屏下保留右侧安全边距，不贴边溢出", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.evaluate(async () => {
+    await window.toast({
+      message: "这是一条特别长的提示消息，用来测试窄屏幕下是否保留右侧边距、不会顶到视口边缘。",
+      duration: 0,
+    });
+  });
+  await page.waitForSelector(".st-toast");
+  await page.waitForTimeout(350);
+  const geo = await page.evaluate(() => {
+    const t = document.querySelector(".st-toast").getBoundingClientRect();
+    return { left: t.left, right: t.right, innerWidth, scrollWidth: document.documentElement.scrollWidth };
+  });
+  expect(geo.left).toBeGreaterThanOrEqual(10);
+  expect(geo.right).toBeLessThanOrEqual(geo.innerWidth - 10);
+  expect(geo.scrollWidth).toBeLessThanOrEqual(geo.innerWidth);
+});

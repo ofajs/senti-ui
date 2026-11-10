@@ -68,6 +68,10 @@
   --st-badge-radius: 999px;
   --st-badge-font-size: .786em;
   --st-badge-shadow: none;
+  --st-chip-radius: .286em; /* 4px Fluent */
+  --st-chip-shadow: none;
+  --st-avatar-radius: 50%;
+  --st-skeleton-duration: 1.5s;
   --st-dialog-radius: .571em;
   --st-card-radius: .571em;
   --st-nav-gap: .143em;
@@ -114,6 +118,16 @@
   --st-dialog-enter-duration: 200ms;
   --st-dialog-exit-duration: 150ms;
   --st-dialog-scrim-duration: 200ms;
+  /* 抽屉：沿用 Fluent 的细描边与低透明度表面 */
+  --st-drawer-bg: color-mix(in srgb, var(--md-sys-color-surface-container-low) 94%, transparent);
+  --st-drawer-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
+  --st-drawer-radius: var(--st-dialog-radius);
+  --st-drawer-shadow: var(--st-shadow-3);
+  --st-drawer-backdrop-filter: none;
+  --st-drawer-scrim: var(--st-dialog-scrim);
+  --st-drawer-scrim-filter: var(--st-dialog-scrim-filter);
+  --st-drawer-enter-duration: 200ms;
+  --st-drawer-exit-duration: 150ms;
   --st-menu-bg: rgb(from var(--md-sys-color-surface-container) r g b / 0.72);
   --st-menu-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
   --st-menu-backdrop-filter: blur(30px) saturate(120%);
@@ -139,6 +153,8 @@
   /* 密度 */
   --st-dialog-padding: 1.143em;
   --st-dialog-gap: .714em;
+  --st-drawer-padding: 1.143em;
+  --st-drawer-gap: .714em;
   --st-menu-padding: .214em;
   --st-menu-item-padding: .5em .571em;
   --st-card-padding: .857em;
@@ -162,4 +178,36 @@
   /* 字体：Segoe UI Variable 优先，缺失时退回 Segoe UI / 系统栈 */
   --st-font: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
   --st-letter-spacing: normal;
+}
+
+[data-skin="windows"] {
+  --st-code-bg: color-mix(in srgb, var(--md-sys-color-surface-container-highest) 94%, transparent);
+  --st-code-header-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 96%, transparent);
+  --st-code-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
+  --st-code-radius: .571em;
+  --st-code-shadow: var(--st-shadow-2);
+  --st-code-padding: .857em;
+  --st-code-font-size: .857em;
+  --st-code-backdrop-filter: none;
+}
+
+/* 减少动态效果：皮肤 token 统一归零，组件未单独处理时也即时到位 */
+@media (prefers-reduced-motion: reduce) {
+  [data-skin] {
+    --st-motion-duration: 0s;
+    --st-motion-duration-fast: 0s;
+    --st-motion-duration-base: 0s;
+    --st-motion-duration-slow: 0s;
+    --st-overlay-enter-duration: 0s;
+    --st-overlay-exit-duration: 0s;
+    --st-tooltip-duration: 0s;
+    --st-ripple-duration: 0s;
+    --st-progress-duration: 0s;
+    --st-dialog-enter-duration: 0s;
+    --st-dialog-exit-duration: 0s;
+    --st-dialog-scrim-duration: 0s;
+    --st-drawer-enter-duration: 0s;
+    --st-drawer-exit-duration: 0s;
+    --st-skeleton-duration: 0s;
+  }
 }

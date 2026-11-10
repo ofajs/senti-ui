@@ -14,27 +14,49 @@
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `align` | `"left" \| "right"` | `"right"` | 面板与触发器的水平对齐 |
+| `keep-open` | boolean | 无 | 点击菜单项后不自动关闭；用于多选 / 勾选菜单 |
 
 ## 运行时状态（st-menu）
 
-- `open`：**ofa data，非标签属性**。JS 控制用 `el.open`（ofa 实例）或真实点击 trigger 切换；面板打开时点击菜单项/外部/Escape 自动关闭。
+- `open`：**ofa data，非标签属性**。JS 控制用 `el.open`（ofa 实例）或真实点击 trigger 切换；面板打开时点击菜单项/外部/Escape 自动关闭（`keep-open` 时菜单项点击不关）。
 
 ## 事件（st-menu）
 
 - `open` / `close`：面板打开/关闭时派发（`bubbles` + `composed`）
-- 菜单项点击：`st-menu-item` 的 `click` 正常冒泡，面板监听后自动关闭
+- `change`（st-menu-item）：`checkable` 项切换 `selected` 时派发（`bubbles` + `composed`）
+- 菜单项点击：`st-menu-item` 的 `click` 正常冒泡，面板监听后自动关闭（`keep-open` 时除外）
 
 ## 语义属性（st-menu-item）
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断点击 |
+| `checkable` | boolean | 无 | 可勾选项：显示勾选位、`role="menuitemcheckbox"`、`aria-checked` |
+| `selected` | boolean | 无 | 勾选状态；点击 checkable 项自动切换并派发 change，也可外部控制 |
 
 ## 插槽（st-menu-item）
 
 - `prefix` / 默认（文字）/ `suffix`（快捷键提示等）/ `sub-menu`（放 `st-menu` 子菜单，见下文）
 
 分隔线：菜单项之间放原生 `<hr>`。
+
+## 可勾选菜单项（checkable / selected）
+
+`checkable` 显示勾选位，`selected` 控制勾选；点击自动切换并派发 `change`。默认点完关闭菜单，多选场景给 `st-menu` 加 `keep-open`。
+
+```html
+<st-menu keep-open on:change="onCheck">
+  <st-button slot="trigger" variant="outlined">视图 ▾</st-button>
+  <st-menu-item checkable selected>网格</st-menu-item>
+  <st-menu-item checkable>列表</st-menu-item>
+  <st-menu-item checkable>紧凑</st-menu-item>
+</st-menu>
+```
+
+- `change` 的 `e.target` 是切换的 `st-menu-item`，读 `selected` 判断勾选态
+- 单选：在 `change` 回调里用 ofa API 取消同组其他项（`$(item).attr("selected", null)`）
+- 只有 `checkable` 项显示勾选位；`selected` 单独使用没有视觉与 `aria-checked`
+- `selected` 是 attrs，不支持 `sync:selected`；点击切换后监听 `change` 把 `el.hasAttribute("selected")` 写回 data
 
 ## 多级子菜单
 
@@ -165,6 +187,6 @@ onCtx(e) {
 
 `index.html`（直接访问 `/packages/menu/`）。
 
-- 无障碍：panel `role="menu"`、item 原生按钮 `role="menuitem"`；触发器自动 `aria-haspopup` / `aria-expanded`；Escape 捕获阶段只关最内层
+- 无障碍：panel `role="menu"`、item 原生按钮 `role="menuitem"`；触发器自动 `aria-haspopup` / `aria-expanded`；↑/↓/Home/End 只在当前层菜单项间移动（不会落到隐藏子菜单项）；Escape 捕获阶段只关最内层，Escape / 选中项关闭后焦点归还触发器
 
 - 触发器及内部原生 button 均带 `aria-haspopup` / `aria-expanded`；↑/↓/Home/End 移动焦点。

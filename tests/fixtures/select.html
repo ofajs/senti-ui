@@ -11,12 +11,28 @@
   <st-select id="sel-basic" placeholder="请选择">
     <option value="apple">苹果</option>
     <option value="banana">香蕉</option>
+    <option value="durian" disabled>榴莲（禁用）</option>
     <option value="cherry">樱桃</option>
   </st-select>
-  <st-select id="sel-default" default-value="banana" placeholder="请选择">
+  <st-select id="sel-default" default-value="b" placeholder="请选择">
     <option value="a">甲</option>
     <option value="b">乙</option>
   </st-select>
+  <st-select id="sel-group" placeholder="分组">
+    <optgroup label="水果">
+      <option value="apple">苹果</option>
+      <option value="banana">香蕉</option>
+    </optgroup>
+    <optgroup label="禁用组" disabled>
+      <option value="melon">甜瓜</option>
+    </optgroup>
+  </st-select>
+
+  <st-select id="sel-duplicate" placeholder="重复值">
+    <option value="same">A</option>
+    <option value="same">B</option>
+  </st-select>
+
   <st-select id="sel-disabled" disabled placeholder="禁用">
     <option value="x">X</option>
   </st-select>

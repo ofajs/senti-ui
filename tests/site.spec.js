@@ -33,7 +33,7 @@ const waitDocPage = (page, name) =>
     { timeout: 30_000 }
   );
 
-test("官网首页：25 张卡片 / 29 个标签 / 共享 SCSR 布局，无页面错误", async ({ page }) => {
+test("官网首页：29 张卡片 / 34 个标签 / 共享 SCSR 布局，无页面错误", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
 
@@ -83,12 +83,12 @@ test("官网首页：25 张卡片 / 29 个标签 / 共享 SCSR 布局，无页�
   expect(state.sharedHeader).toBe(true);
   expect(state.heading).toBe("语义组件，任意材质。");
   expect(state.eyebrow).toContain("AI-first 前端框架");
-  expect(state.tags).toHaveLength(29);
+  expect(state.tags).toHaveLength(34);
   expect(state.notReady).toEqual([]);
   expect(state.path).toBe("/site/");
   expect(state.templateRemoved).toBe(true);
   expect(state.sections).toEqual(["top", "components", "skins", "start"]);
-  expect(state.cards).toBe(25);
+  expect(state.cards).toBe(29);
   // 首页只列三个主流平台的系统 UI；shadcn / cyberpunk 在皮肤页
   expect(state.systemUiCards).toEqual([
     "Android · Material 3",
@@ -220,7 +220,7 @@ test("从主题页切回首页：首页组件依赖随 template 重新加载", a
       select: !!sr.querySelector("st-select")?.shadowRoot,
     };
   });
-  expect(state.cards).toBe(25);
+  expect(state.cards).toBe(29);
   expect(state.missing).toEqual([]);
   expect(state.buttonGroup).toBe(true);
   expect(state.select).toBe(true);
@@ -307,7 +307,7 @@ test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 21);
+    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 26);
   });
   expect(
     await page.evaluate(
@@ -389,8 +389,8 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
         active: b.classList.contains("active"),
       })),
       sidebar: !!dsr.querySelector(".docs-side"),
-      picker: !!dsr.querySelector(".docs-picker"),
-      pickerValue: dsr.querySelector(".docs-picker").value,
+      mobileNav: !!dsr.querySelector(".docs-nav-trigger"),
+      mobileNavLabel: dsr.querySelector(".docs-nav-trigger")?.textContent.replace(/\s+/g, " ").trim(),
       progress: !!layout.shadowRoot.querySelector(".read-progress st-progress"),
       h1: sr.querySelector("h1").textContent.trim(),
       apiRows: sr.querySelectorAll(".api tbody tr").length,
@@ -410,7 +410,7 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(state.title).toContain("Input — 组件文档");
   expect(state.header).toBe(true);
   expect(state.pages).toBe(3);
-  expect(state.sideItems).toBe(22);
+  expect(state.sideItems).toBe(27);
   expect(state.active[0]).toContain("Input");
   expect(state.headerNav).toEqual([
     { variant: "text", active: true },
@@ -418,8 +418,8 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
     { variant: "text", active: false },
   ]);
   expect(state.sidebar).toBe(true);
-  expect(state.picker).toBe(true);
-  expect(state.pickerValue).toBe("input");
+  expect(state.mobileNav).toBe(true);
+  expect(state.mobileNavLabel).toContain("Input");
   expect(state.progress).toBe(true);
   expect(state.h1).toBe("Input st-input");
   expect(state.apiRows).toBeGreaterThan(2);
@@ -457,7 +457,10 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
       active: [...docs.shadowRoot.querySelectorAll(".docs-side st-list-item.active")].map((x) =>
         x.textContent.replace(/\s+/g, " ").trim()
       ),
-      pickerValue: docs.shadowRoot.querySelector(".docs-picker").value,
+      mobileNavLabel: docs.shadowRoot
+        .querySelector(".docs-nav-trigger")
+        ?.textContent.replace(/\s+/g, " ")
+        .trim(),
       // pageAnime 三态由 app-config.js 注入 o-page 内联样式，过渡由 ofa 注入（all .3s）
       transitionProperty: getComputedStyle(child).transitionProperty,
       transitionDuration: getComputedStyle(child).transitionDuration,
@@ -469,7 +472,7 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(after.pages).toBe(3);
   expect(after.sidebars).toBe(1);
   expect(after.active[0]).toContain("Slider");
-  expect(after.pickerValue).toBe("slider");
+  expect(after.mobileNavLabel).toContain("Slider");
   // 上移淡入 = pageAnime 的 transform + opacity，过渡时长来自 ofa
   expect(after.transitionProperty).toBe("all");
   expect(after.transitionDuration).toBe("0.3s");
@@ -490,6 +493,50 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   await waitDocPage(page, "Dialog");
   expect(await page.evaluate(() => [...document.querySelectorAll("o-page")].length)).toBe(3);
   expect(errors).toEqual([]);
+});
+
+test("移动端文档：组件目录收进左侧抽屉，替代小 select", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/site/docs/input.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await waitDocPage(page, "Input");
+
+  await expect(page.locator(".docs-side")).toBeHidden();
+  await expect(page.locator(".docs-mobile-nav")).toBeVisible();
+  await expect(page.locator(".docs-picker")).toHaveCount(0);
+
+  const trigger = page.locator("st-button.docs-nav-trigger");
+  await expect(trigger).toContainText("Input");
+  await trigger.click();
+
+  const drawer = page.locator("st-drawer.docs-nav-drawer");
+  await expect(drawer).toHaveAttribute("open", "");
+  await expect(drawer).toBeVisible();
+  await expect(
+    drawer.locator("st-list-item").filter({ hasText: "Input" })
+  ).toHaveClass(/active/);
+
+  await drawer.locator("st-list-item").filter({ hasText: "Drawer" }).click();
+  await expect(page).toHaveURL(/\/site\/docs\/drawer\.html$/);
+  await expect(drawer).not.toHaveAttribute("open", "");
+  await expect(trigger).toContainText("Drawer");
+
+  // 上下页在移动端改为两张等宽纵向卡片，箭头不能挤到独立一行
+  const links = page.locator(".doc-pager .pager-link");
+  await expect(links).toHaveCount(2);
+  const pager = await page.evaluate(() => {
+    const pagerEl = [...document.querySelectorAll("o-page")]
+      .find((op) => op.shadowRoot?.querySelector(".doc-page"))
+      ?.shadowRoot.querySelector(".doc-pager");
+    return {
+      direction: getComputedStyle(pagerEl).flexDirection,
+      widths: [...pagerEl.querySelectorAll(".pager-link")].map(
+        (el) => el.getBoundingClientRect().width
+      ),
+    };
+  });
+  expect(pager.direction).toBe("column");
+  expect(Math.abs(pager.widths[0] - pager.widths[1])).toBeLessThan(2);
+  expect(pager.widths[0]).toBeGreaterThan(300);
 });
 
 test("切页不挤动内容区：阅读进度条显隐不改变页面顶边", async ({ page }) => {
@@ -526,7 +573,7 @@ test("切页不挤动内容区：阅读进度条显隐不改变页面顶边", as
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 21);
+    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 26);
   });
   const docs = await metrics();
 
@@ -536,13 +583,13 @@ test("切页不挤动内容区：阅读进度条显隐不改变页面顶边", as
   expect(docs.barTop).toBeCloseTo(docs.headerBottom, 0);
 });
 
-test("组件文档首页：21 张卡片可进入独立页", async ({ page }) => {
+test("组件文档首页：26 张卡片可进入独立页", async ({ page }) => {
   await page.goto("/site/docs/index.html", { waitUntil: "networkidle", timeout: 60_000 });
   await page.waitForFunction(() => {
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 21);
+    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 26);
   });
   const overview = await page.evaluate(() => {
     const child = [...document.querySelectorAll("o-page")].find(
@@ -557,10 +604,11 @@ test("组件文档首页：21 张卡片可进入独立页", async ({ page }) => 
       })),
     };
   });
-  expect(overview.cards).toBe(21);
+  expect(overview.cards).toBe(26);
   expect(overview.groups).toEqual([
-    { title: "基础组件 17", cards: 17 },
-    { title: "辅助组件 4", cards: 4 },
+    { title: "基础组件 20", cards: 20 },
+    { title: "辅助组件 5", cards: 5 },
+    { title: "高级组件 1", cards: 1 },
   ]);
   await page.evaluate(() => {
     const child = [...document.querySelectorAll("o-page")].find(
@@ -572,12 +620,12 @@ test("组件文档首页：21 张卡片可进入独立页", async ({ page }) => 
   await waitDocPage(page, "Button");
 });
 
-test("手记：目录、首篇文章与共享 header", async ({ page }) => {
+test("手记：合并后的设计哲学文章与共享 header", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
 
   await page.goto("/site/notes/index.html", { waitUntil: "networkidle", timeout: 60_000 });
-  await page.locator(".note-card").waitFor({ state: "visible" });
+  await page.locator(".note-card").first().waitFor({ state: "visible" });
 
   const index = await page.evaluate(() => {
     const pages = [...document.querySelectorAll("o-page")];
@@ -604,17 +652,17 @@ test("手记：目录、首篇文章与共享 header", async ({ page }) => {
     { text: "手记", active: true },
   ]);
   expect(index.cards).toBe(1);
-  expect(index.href).toContain("why-senti-ui.html");
-  expect(index.heading).toBe("为什么要开发 Senti-UI");
+  expect(index.href).toContain("behavior-and-skin.html");
+  expect(index.heading).toBe("行为统一，VI 自由");
 
-  await page.locator(".note-card").click();
-  await page.waitForURL("**/site/notes/why-senti-ui.html", { timeout: 30_000 });
+  await page.locator(".note-card").first().click();
+  await page.waitForURL("**/site/notes/behavior-and-skin.html", { timeout: 30_000 });
   await page.locator(".note-page h1").waitFor({ state: "visible" });
   await page.waitForFunction(() => {
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".note-page")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".note-body h2").length === 5);
+    return !!(child && child.shadowRoot.querySelectorAll(".note-body h2").length === 4);
   });
 
   const article = await page.evaluate(() => {
@@ -627,6 +675,10 @@ test("手记：目录、首篇文章与共享 header", async ({ page }) => {
       h1: sr.querySelector(".note-hero h1").textContent.trim(),
       sections: sr.querySelectorAll(".note-body h2").length,
       principles: sr.querySelectorAll(".principles li").length,
+      codeBlocks: sr.querySelectorAll(".note-body st-code").length,
+      codeRendered: [...sr.querySelectorAll(".note-body st-code")].filter((code) =>
+        code.shadowRoot?.querySelector("code")?.textContent.trim()
+      ).length,
       body: sr.querySelector(".note-body").textContent,
       navActive: [...layout.shadowRoot.querySelectorAll(".layout-nav st-button.active")].map((b) =>
         b.textContent.trim()
@@ -636,11 +688,17 @@ test("手记：目录、首篇文章与共享 header", async ({ page }) => {
       ).length,
     };
   });
-  expect(article.title).toContain("为什么要开发 Senti-UI");
-  expect(article.h1).toBe("为什么要开发 Senti-UI");
-  expect(article.sections).toBe(5);
+  expect(article.title).toContain("行为统一，VI 自由");
+  expect(article.h1).toBe("行为统一，VI 自由");
+  expect(article.sections).toBe(4);
   expect(article.principles).toBe(3);
-  expect(article.body).toContain("更适合 AI 的前端框架");
+  expect(article.codeBlocks).toBe(2);
+  expect(article.codeRendered).toBe(2);
+  expect(article.body).toContain("ofa.js v5");
+  expect(article.body).not.toContain("为什么是 ofa.js v5");
+  expect(article.body).toContain("34 个 token");
+  expect(article.body).toContain("对比度");
+  expect(article.body).toContain("label");
   expect(article.navActive).toEqual(["手记"]);
   expect(article.headerCount).toBe(1);
 
@@ -679,6 +737,152 @@ test("首页卡片进入对应组件文档，header 保持共享", async ({ page
   expect(state.pages).toBe(3);
   expect(state.sharedHeader).toBe(true);
   expect(state.active[0]).toContain("Button");
+});
+
+test("首页 Drawer 卡片：打开抽屉并 Escape 关闭", async ({ page }) => {
+  await page.goto("/site/", { waitUntil: "networkidle", timeout: 60_000 });
+  await waitHome(page);
+  await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp")
+    );
+    const card = [...child.shadowRoot.querySelectorAll(".comp")].find(
+      (el) => el.querySelector(".comp-id h3")?.textContent.trim() === "Drawer"
+    );
+    card.querySelector(".comp-preview st-button").click();
+  });
+  await page.waitForFunction(
+    () => {
+      const child = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp")
+      );
+      return child.shadowRoot.querySelector("st-drawer")?.hasAttribute("open");
+    },
+    null,
+    { timeout: 10_000 }
+  );
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(
+    () => {
+      const child = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".comp")
+      );
+      return !child.shadowRoot.querySelector("st-drawer")?.hasAttribute("open");
+    },
+    null,
+    { timeout: 10_000 }
+  );
+});
+
+test("Button 文档：每个示例代码由 st-code 高亮渲染", async ({ page }) => {
+  await page.goto("/site/docs/button.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await page.waitForFunction(
+    () => {
+      const child = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+      );
+      return child?.shadowRoot.querySelectorAll("st-code").length === 7;
+    },
+    null,
+    { timeout: 30_000 }
+  );
+  const state = await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    const codes = [...child.shadowRoot.querySelectorAll("st-code")];
+    return {
+      count: codes.length,
+      tokens: codes.map((c) => c.shadowRoot.querySelectorAll("code span").length),
+      first: codes[0].shadowRoot.querySelector("code").textContent,
+      loads: codes.every((c) => c.shadowRoot.querySelector("code").textContent.length > 10),
+    };
+  });
+  expect(state.count).toBe(7);
+  expect(state.tokens.every((n) => n > 5)).toBe(true);
+  expect(state.first).toContain("<st-button>Filled</st-button>");
+  expect(state.loads).toBe(true);
+
+  // 每个 demo 都能切到代码模式
+  await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    child.shadowRoot.querySelectorAll(".demo .demo-code-toggle").forEach((btn) => {
+      btn.shadowRoot.querySelector(".native").click();
+    });
+  });
+  await page.waitForTimeout(200);
+  const modes = await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    return [...child.shadowRoot.querySelectorAll(".demo")].map((demo) => ({
+      stage: getComputedStyle(demo.querySelector(".demo-stage")).display,
+      code: getComputedStyle(demo.querySelector(".demo-code")).display,
+      label: demo.querySelector(".live").textContent.trim(),
+      toggle: demo.querySelector(".demo-code-toggle").textContent.replace(/\s+/g, " ").trim(),
+      codeText: demo.querySelector("st-code").shadowRoot.querySelector("code").textContent,
+    }));
+  });
+  expect(modes).toHaveLength(7);
+  for (const mode of modes) {
+    expect(mode.stage).toBe("none");
+    expect(mode.code).toBe("block");
+    expect(mode.label).toBe("CODE");
+    expect(mode.toggle).toContain("查看示例");
+  }
+  expect(modes[0].codeText).toContain('<st-button variant="outlined">Outlined</st-button>');
+  expect(modes[1].codeText).toContain("Disabled");
+  expect(modes[1].codeText).toContain("Loading");
+  expect(modes[1].codeText).toContain("startTask");
+  expect(modes[2].codeText).toContain('color="primary"');
+  expect(modes[2].codeText).toContain('color="tertiary"');
+  expect(modes[3].codeText).toContain("Default 14px");
+  expect(modes[4].codeText).toContain("full-width");
+  expect(modes[5].codeText).toContain('menu-align="left"');
+  expect(modes[6].codeText).toContain("🔒");
+});
+
+test("Code 文档：5 个案例切换代码模式显示用法源码", async ({ page }) => {
+  await page.goto("/site/docs/code.html", { waitUntil: "networkidle", timeout: 60_000 });
+  await page.waitForFunction(
+    () => {
+      const child = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+      );
+      return child?.shadowRoot.querySelectorAll(".demo-code-toggle").length === 5;
+    },
+    null,
+    { timeout: 30_000 }
+  );
+  await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    child.shadowRoot.querySelectorAll(".demo-code-toggle").forEach((btn) => {
+      btn.shadowRoot.querySelector(".native").click();
+    });
+  });
+  await page.waitForTimeout(300);
+  const modes = await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    return [...child.shadowRoot.querySelectorAll(".doc-section .demo")].map((demo) => ({
+      stage: getComputedStyle(demo.querySelector(".demo-stage")).display,
+      code: getComputedStyle(demo.querySelector(".demo-code")).display,
+      label: demo.querySelector(".live").textContent.trim(),
+      text: demo.querySelector(".demo-code").shadowRoot.querySelector("code").textContent,
+    }));
+  });
+  expect(modes).toHaveLength(5);
+  for (const mode of modes) {
+    expect(mode.stage).toBe("none");
+    expect(mode.code).toBe("block");
+    expect(mode.label).toBe("CODE");
+    expect(mode.text).toContain("<st-code");
+  }
 });
 
 test("Ripple 文档：并列示例只触发被点的波纹（o-page 内绑定最近父元素）", async ({ page }) => {
@@ -1037,6 +1241,9 @@ test("切换材质时对比度回到该主题的默认值", async ({ page }) => 
   await page.evaluate(() => localStorage.clear());
   await page.reload();
   await page.locator(".skin-card").first().waitFor({ state: "visible" });
+  await page.waitForFunction(() => typeof window.__site?.setThemeMode === "function", null, {
+    timeout: 15_000,
+  });
 
   const useTheme = async (name) => {
     await page
@@ -1141,6 +1348,9 @@ test("切换主题保留全局深浅模式（Cyberpunk 深色优先）", async (
   await page.evaluate(() => localStorage.clear());
   await page.reload();
   await page.locator(".skin-card").first().waitFor({ state: "visible" });
+  await page.waitForFunction(() => typeof window.__site?.setThemeMode === "function", null, {
+    timeout: 15_000,
+  });
 
   const useTheme = (name, id) => {
     const card = page.locator(".skin-card").filter({ hasText: name });
@@ -1416,6 +1626,34 @@ test("共享 header：皮肤菜单切换全站材质并持久化", async ({ page
     .toBe("m3");
 });
 
+test("移动端：横向导航收进右侧抽屉，可进入文档并高亮当前栏目", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/site/index.html");
+  await page.waitForTimeout(1200);
+
+  // 移动端隐藏横向导航，改由右侧抽屉承载
+  await expect(page.locator(".layout-nav")).toBeHidden();
+  const toggle = page.locator("st-icon-button.nav-toggle");
+  await expect(toggle).toBeVisible();
+
+  const drawer = page.locator("st-drawer.mobile-drawer");
+  await toggle.click();
+  await expect(drawer).toHaveAttribute("open", "");
+  await expect(drawer).toHaveAttribute("side", "right");
+  await expect(drawer).toBeVisible();
+  const docsItem = drawer.locator("st-button").filter({ hasText: "文档" });
+  await docsItem.click();
+  await expect(page).toHaveURL(/\/site\/docs\/index\.html$/);
+  await page.waitForTimeout(600);
+
+  // 导航后抽屉关闭；重新打开时“文档”为当前栏目
+  await expect(drawer).not.toHaveAttribute("open", "");
+  await toggle.click();
+  await expect(docsItem).toHaveClass(/active/);
+  await page.keyboard.press("Escape");
+  await expect(drawer).not.toHaveAttribute("open", "");
+});
+
 test("官网环境光：Apple 毛玻璃下增强，M3/windows/shadcn 保持低调", async ({ page }) => {
   await page.goto("/site/index.html");
   await page.waitForTimeout(1500);
@@ -1559,14 +1797,14 @@ test("文档侧栏按使用频率排序：Ripple 等低频组件靠后", async (
     );
     const sr = docs.shadowRoot;
     return {
-      groups: [...sr.querySelectorAll(".side-group")].map((el) => el.textContent.trim()),
+      groups: [...sr.querySelectorAll(".docs-side .side-group")].map((el) => el.textContent.trim()),
       items: [...sr.querySelectorAll(".docs-side st-list-item")].map((el) =>
         el.textContent.replace(/\s+/g, " ").trim()
       ),
     };
   });
-  expect(state.groups).toEqual(["基础", "表单", "反馈", "内容", "导航", "辅助"]);
-  const labels = state.items.map((x) => x.replace(/^(概览|Button|Input|Textarea|Select|Checkbox|Switch|Radio|Slider|Dialog|Menu|Snackbar|Progress|Card|Badges|List|Tabs|Navigation|Collapse|Tooltip|Ripple|Command tools).*$/, "$1"));
+  expect(state.groups).toEqual(["基础", "表单", "反馈", "内容", "导航", "辅助", "高级"]);
+  const labels = state.items.map((x) => x.replace(/^(概览|Button|Input|Textarea|Select|Checkbox|Switch|Radio|Slider|Dialog|Menu|Snackbar|Progress|Card|Badges|List|Tabs|Navigation|Collapse|Tooltip|Ripple|Command tools|Code).*$/, "$1"));
   expect(labels[0]).toBe("概览");
   expect(labels[1]).toBe("Button");
   expect(labels.indexOf("Ripple")).toBeGreaterThan(labels.indexOf("Navigation"));
@@ -1886,7 +2124,7 @@ test("皮肤页：可用色块变量按角色分组展示白天 / 黑夜，色�
   expect(luminance(backPanels[0])).toBeGreaterThan(luminance(backPanels[1]));
 });
 
-test("从手记切到文档：二级 layout 的 list / select 依赖随父页加载", async ({ page }) => {
+test("从手记切到文档：二级 layout 的 list / drawer 依赖随父页加载", async ({ page }) => {
   await page.goto("/site/notes/index.html", { waitUntil: "networkidle", timeout: 60_000 });
   await page.waitForFunction(() =>
     [...document.querySelectorAll("o-page")].some(
@@ -1928,18 +2166,18 @@ test("从手记切到文档：二级 layout 的 list / select 依赖随父页加
     const sr = docs.shadowRoot;
     const list = sr.querySelector(".docs-side st-list");
     const item = sr.querySelector(".docs-side st-list-item");
-    const picker = sr.querySelector(".docs-picker");
+    const drawer = sr.querySelector(".docs-nav-drawer");
     return {
       listUpgraded: !!list?.shadowRoot,
       items: sr.querySelectorAll(".docs-side st-list-item").length,
       firstItemHeight: item?.getBoundingClientRect().height || 0,
-      pickerUpgraded: !!picker?.shadowRoot,
+      drawerUpgraded: !!drawer?.shadowRoot,
     };
   });
   expect(state.listUpgraded).toBe(true);
-  expect(state.items).toBe(22);
+  expect(state.items).toBe(27);
   expect(state.firstItemHeight).toBeGreaterThan(20);
-  expect(state.pickerUpgraded).toBe(true);
+  expect(state.drawerUpgraded).toBe(true);
 
   // 目标文档页自己的组件依赖也必须在 template 内：从手记进入时按钮组 / 分裂按钮要能升级
   await page.evaluate(() => {

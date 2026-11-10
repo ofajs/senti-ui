@@ -49,4 +49,5 @@
 
 `index.html`（直接访问 `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/card/`）。
 
-- 无障碍：interactive 卡片宿主自身是 `role="button"` / `tabindex="0"`，名称取卡片文字或 `aria-label`；卡内按钮/链接不再被覆盖层挡住（若不需要整卡可点，优先去掉 interactive，避免 button 嵌套）
+- 键盘：Enter/Space 只在卡片宿主自身聚焦时激活卡片；焦点在内部按钮/链接上时放行给内部控件
+- 无障碍：interactive 卡片宿主自身是 `role="button"` / `tabindex="0"`，名称取卡片文字（内容变化自动跟随）或 `aria-label`；卡内按钮/链接不再被覆盖层挡住（若不需要整卡可点，优先去掉 interactive，避免 button 嵌套）

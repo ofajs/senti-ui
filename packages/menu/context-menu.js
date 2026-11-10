@@ -67,16 +67,18 @@ const buildItems = (items) =>
     return el;
   });
 
-const contextMenu = async (source, items) => {
+const contextMenu = async (source, items, extraItems) => {
+  // 必须在任何 await 之前消费事件：等组件加载完再 preventDefault 已经晚于
+  // 浏览器派发默认右键菜单（首次调用尤其明显）
+  if (source && typeof source.clientX === "number") source.preventDefault?.();
   await ensureDeps();
-  // 定位来源：事件对象（右键 event）或显式坐标 { x, y }
+  // 定位来源：事件对象（右键 event）或显式坐标 { x, y }；也兼容旧的三参调用
   let x, y;
   if (typeof source === "number") {
     x = source;
     y = items;
-    items = arguments[2] ?? []; // eslint-disable-line
+    items = extraItems ?? []; // eslint-disable-line
   } else if (source && typeof source.clientX === "number") {
-    source.preventDefault?.(); // 阻止浏览器默认右键菜单
     x = source.clientX;
     y = source.clientY;
   } else {

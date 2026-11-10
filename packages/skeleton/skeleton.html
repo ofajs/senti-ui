@@ -1,0 +1,63 @@
+<!--
+  st-skeleton — Senti-UI 加载占位组件（基于 ofa.js，纯展示）
+  语义属性：shape(text|circle|rect) / shape 决定默认宽高与圆角；宽高一律原生 CSS 覆写
+  pulse 呼吸动画消费 --st-motion / --st-skeleton token，prefers-reduced-motion 自动静止，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: block;
+      box-sizing: border-box;
+      /* text：默认整行文字占位 */
+      width: var(--st-skeleton-width, 100%);
+      height: var(--st-skeleton-height, 1em);
+      border-radius: var(--st-skeleton-radius, 0.286em);
+      font-size: 14px;
+      background: var(--st-skeleton-color, var(--md-sys-color-surface-container-highest));
+      animation: st-skeleton-pulse var(--st-skeleton-duration, var(--st-motion-duration-long, 1.6s)) var(--st-motion-easing, ease-in-out) infinite;
+    }
+    :host([shape="circle"]) {
+      display: inline-block;
+      width: var(--st-skeleton-size, 2.286em);
+      height: var(--st-skeleton-size, 2.286em);
+      border-radius: 50%;
+      vertical-align: middle;
+    }
+    :host([shape="rect"]) {
+      height: var(--st-skeleton-height, 4.286em);
+      border-radius: var(--st-skeleton-radius, 0.571em);
+    }
+
+    @keyframes st-skeleton-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+
+    l-m { display: none; }
+
+    /* 减少动态效果：动画压到近零后停在第一帧（不闪烁），同时保留事件语义 */
+    @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+
+  <script>
+    import "../color/st-color-init.js";
+    export default async () => ({
+      tag: "st-skeleton",
+      attrs: {
+        shape: "text",
+      },
+      watch: {
+        shape() {},
+      },
+      ready() {},
+    });
+  </script>
+</template>

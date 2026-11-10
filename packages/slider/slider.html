@@ -83,7 +83,7 @@
       text-align: center;
       white-space: nowrap;
       background: var(--st-slider-main, var(--md-sys-color-primary));
-      color: var(--md-sys-color-on-primary);
+      color: var(--st-on-accent, var(--md-sys-color-on-primary));
       opacity: 0;
       pointer-events: none;
       transition: opacity var(--st-motion-duration, 0.15s) ease;
@@ -125,6 +125,17 @@
     }
 
     l-m { display: none; }
+
+    /* 减少动态效果：动画/过渡压到近零，同时保留 animationend 等事件语义 */
+    @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 
   <input class="native" type="range" tabindex="0">
@@ -136,6 +147,7 @@
   <script>
     import "../color/st-color-init.js";
     import { syncAccessibleName } from "../a11y/a11y.js";
+    import { createFormProxy, syncFormProxy, bindFormReset } from "../form/form-proxy.js";
     export default async () => ({
       tag: "st-slider",
       attrs: {
@@ -145,6 +157,9 @@
         defaultValue: null,
         disabled: null,
         color: null,
+        name: null,
+        form: null,
+        required: null,
       },
       data: {
         // value 是运行时状态（ofa data，非标签属性）：attached 时由 default-value 初始化
@@ -157,6 +172,9 @@
         min() { this.applyState(); },
         max() { this.applyState(); },
         step() { this.applyState(); },
+        name() { this.syncForm?.(); },
+        form() { this.syncForm?.(); },
+        required() { this.syncForm?.(); },
       },
       ready() {
         const ele = this.ele;
@@ -169,9 +187,37 @@
           set: (v) => { this.value = String(v); },
         });
 
+        // 表单代理：ofa 自定义元素没有 formAssociated，用 light DOM 原生 range
+        // 承担 name/value/required/min/max/step 与 FormData 提交
+        const proxy = createFormProxy(ele, "range");
+        this._proxy = proxy;
+        this.syncForm = () => {
+          syncFormProxy(proxy, {
+            type: "range",
+            name: this.name,
+            form: ele.getAttribute("form"),
+            value: input.value,
+            disabled: this.disabled !== null,
+            required: this.required !== null,
+            min: input.min,
+            max: input.max,
+            step: input.step,
+          });
+          if (this.required !== null) input.setAttribute("aria-required", "true");
+          else input.removeAttribute("aria-required");
+        };
+        this.syncForm();
+        proxy.addEventListener("invalid", (e) => {
+          e.preventDefault();
+          input.setAttribute("aria-invalid", "true");
+          ele.dispatchEvent(new Event("invalid", { bubbles: true, composed: true }));
+        });
+
         // 原生 range 承载拖拽与键盘；input 实时反馈，change（松手/键盘提交）单独派发
         input.addEventListener("input", () => {
           this.value = input.value;
+          input.removeAttribute("aria-invalid");
+          this.syncForm?.();
           ele.dispatchEvent(new Event("input", { bubbles: true, composed: true }));
         });
         input.addEventListener("change", () => {
@@ -189,8 +235,17 @@
 
         this.applyState();
         this.applyColor();
-        // 内部 range 的可访问名称来自宿主 aria-label / title
         this._a11yCleanup = syncAccessibleName(ele, input);
+        // 原生 form.reset() 后回到 default-value（缺省时回到 min）
+        this._resetCleanup = bindFormReset(ele, () => {
+          const dv = ele.getAttribute("default-value");
+          const next = dv !== null ? dv : this.min ?? "0";
+          this.value = String(next);
+          input.value = String(next);
+          input.removeAttribute("aria-invalid");
+          this.applyVisual();
+          this.syncForm?.();
+        });
         // 宿主尺寸变化（隐藏→显示、窗口缩放、容器变宽）时重算几何
         this._resizeObserver = new ResizeObserver(() => this.applyVisual());
         this._resizeObserver.observe(ele);
@@ -200,6 +255,7 @@
       detached() {
         this._resizeObserver?.disconnect();
         this._a11yCleanup?.();
+        this._resetCleanup?.();
       },
       proto: {
         applyState() {
@@ -220,6 +276,7 @@
           const sr = this.ele.shadowRoot;
           const input = sr.querySelector(".native");
           if (this.value !== null) input.value = this.value;
+          this.syncForm?.();
           const min = Number(input.min || 0);
           const max = Number(input.max || 100);
           const v = Math.min(Math.max(Number(input.value || min), min), max);
@@ -242,15 +299,23 @@
           tip.style.left = thumbLeft + "px";
           tip.textContent = input.value;
         },
-        // color 接受 M3 角色名：设置 --st-slider-main（激活段/拇指/气泡/三角一处联动），
-        // 气泡文字恒用 on-primary（气泡底是纯角色色）
+        // color 接受 M3 角色名：设置 --st-slider-main / --st-on-accent 一对语义色，
+        // 激活段/拇指/气泡/三角一处联动；气泡文字必须用配对的 on-角色色
         applyColor() {
           const name = this.color;
-          this.ele.style.setProperty(
+          const s = this.ele.style;
+          if (!name) {
+            s.removeProperty("--st-slider-main");
+            s.removeProperty("--st-on-accent");
+            return;
+          }
+          s.setProperty(
             "--st-slider-main",
-            name
-              ? `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
-              : "var(--md-sys-color-primary)"
+            `var(--md-sys-color-${name}, var(--${name}, var(--md-sys-color-primary)))`
+          );
+          s.setProperty(
+            "--st-on-accent",
+            `var(--md-sys-color-on-${name}, var(--on-${name}, var(--md-sys-color-on-primary)))`
           );
         },
       },

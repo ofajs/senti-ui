@@ -11,7 +11,7 @@
  * - 每个材质的配色存在 `st-theme-palettes`，M3 的槽位承接用户原本的颜色
  */
 
-import { applyTheme, normalizeContrast, themeToCss } from "../packages/color/m3-theme.js";
+import { applyTheme, normalizeContrast } from "../packages/color/m3-theme.js";
 import { getThemeMode, setThemeMode } from "../packages/color/st-theme-mode.js";
 import { getSkin, setSkin } from "../packages/skin/st-skin.js";
 
@@ -123,13 +123,10 @@ const writeActiveConfig = (config) => {
   const normalized = normalizeColorConfig(config);
   const customs = Object.fromEntries(normalized.customs.map((c) => [c.name, c.color]));
   const options = { contrast: normalized.contrast };
-  applyTheme(normalized.seed, normalized.overrides, customs, options);
+  const { css } = applyTheme(normalized.seed, normalized.overrides, customs, options);
   try {
     localStorage.setItem(COLOR_KEY, JSON.stringify(normalized));
-    localStorage.setItem(
-      CSS_KEY,
-      themeToCss(normalized.seed, normalized.overrides, customs, options)
-    );
+    localStorage.setItem(CSS_KEY, css);
   } catch {}
   return normalized;
 };

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chip — 组件文档 — Senti-UI</title>
+  <meta name="description" content="Chip（st-chip）用法：筛选小片：M3 assist / filter / input 三形态，filter 可选中、input 可移除，color 语义换色。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="canonical" href="https://senti.ofajs.com/site/docs/chip" />
+  <meta property="og:url" content="https://senti.ofajs.com/site/docs/chip" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../../packages/skin/cyberpunk.css" />
+  <link rel="stylesheet" href="../../packages/skin/windows.css" />
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+    .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
+    .nojs h1 { margin: 0 0 12px; font-size: 32px; }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>Chip</h1>
+      <p>组件文档的示例与目录需要 JavaScript；也可以回到首页或查看 GitHub 源码。</p>
+      <p><a href="../index.html">组件目录</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+    </div>
+  </noscript>
+
+  <o-app src="../app-config.js">
+    <template page>
+      <!-- 依赖放在 template 内：SCSR 切页时目标页 body 里的 <l-m> 不会执行 -->
+      <l-m src="../../packages/chip/chip.html"></l-m>
+      <l-m src="../../packages/button/button.html"></l-m>
+
+      <link rel="stylesheet" href="../docs.css" />
+
+          <article class="doc-page">
+            <header class="doc-hero">
+              <p class="doc-kicker">内容 · 16 / 26</p>
+              <h1>Chip <code>st-chip</code></h1>
+              <p class="doc-lead">筛选小片：紧凑的入口 / 筛选 / 标签元素。assist 可点击、filter 点击切换选中（带勾选位）、input 带 ✕ 可移除。可点击形态宿主自身承载键盘与焦点语义。</p>
+              <div class="doc-links">
+                <a href="../index.html">组件目录</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/chip/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
+              </div>
+            </header>
+
+            <section class="doc-section">
+              <h2>三种形态</h2>
+              <p class="doc-section-lead">assist 是可点击入口；filter 点击切换选中，选中时显示对勾并换容器色；input 不可点击，只提供 ✕ 移除（点击 ✕ 派发 <code>remove</code>，节点由使用方删除）。</p>
+              <div class="demo">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>variant</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo1">
+                  <st-chip>帮助</st-chip>
+                  <st-chip variant="filter">音乐</st-chip>
+                  <st-chip variant="filter" selected>已选音乐</st-chip>
+                  <st-chip variant="input" removable on:remove="countRemove">标签 A</st-chip>
+                  <st-chip variant="filter" disabled>禁用</st-chip>
+                  <st-chip variant="filter" selected disabled>禁用+选中</st-chip>
+                  <span class="demo-note">remove 次数：{{rmCount}}</span>
+                </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
+              </div>
+            </section>
+
+            <section class="doc-section">
+              <h2>color 语义换色</h2>
+              <p class="doc-section-lead">color 作用于 filter 选中态：默认是 secondary-container 配对，设置后换成对应角色的容器配对色；与换色工具联动。</p>
+              <div class="demo">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>color</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo2">
+                  <st-chip variant="filter" color="primary" selected>primary</st-chip>
+                  <st-chip variant="filter" color="secondary" selected>secondary</st-chip>
+                  <st-chip variant="filter" color="tertiary" selected>tertiary</st-chip>
+                  <st-chip variant="filter" color="error" selected>error</st-chip>
+                  <st-chip variant="filter" color="success" selected>success</st-chip>
+                </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
+              </div>
+            </section>
+
+            <section class="doc-section">
+              <h2>selected 是运行时状态</h2>
+              <p class="doc-section-lead">filter 的 <code>selected</code> 会被内部点击修改，用 <code>sync:selected</code> 双向绑定回写页面数据；外部翻转数据，chip 立即跟随。</p>
+              <div class="demo">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>sync:selected</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo3">
+                  <div class="row">
+                    <st-chip variant="filter" sync:selected="picked" on:change="picked = !picked">同步选中</st-chip>
+                    <st-button variant="outlined" on:click="picked = !picked">外部翻转</st-button>
+                    <span class="demo-note" style="width: auto;">picked = {{picked}}</span>
+                  </div>
+                  <span class="demo-note">双向链路：点 chip 或点按钮，两边状态保持一致。change 事件 composed，可在宿主直接监听。</span>
+                </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
+              </div>
+            </section>
+
+            <section class="doc-section">
+              <h2>键盘与组合</h2>
+              <p class="doc-section-lead">assist / filter 由宿主自身承载 role=button / tabindex，Tab 可达、Enter / Space 切换选中，focus 有可见焦圈；前置图标与 suffix 计数随意组合。</p>
+              <div class="demo">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>插槽 / 键盘</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo4">
+                  <div class="row" style="flex-wrap: wrap;">
+                    <st-chip><iconify-icon icon="mdi:magnify"></iconify-icon>搜索</st-chip>
+                    <st-chip variant="input" removable>消息<span slot="suffix">12</span></st-chip>
+                    <st-chip variant="filter" selected style="font-size: 20px;">20px 等比</st-chip>
+                  </div>
+                  <div class="row" style="flex-wrap: wrap;">
+                    <st-chip id="chip-kbd" variant="filter">键盘可达</st-chip>
+                    <st-button variant="outlined" on:click="focusChip">聚焦此 chip</st-button>
+                    <span class="demo-note" style="width: auto;">聚焦后按 Enter / Space 切换</span>
+                  </div>
+                </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
+              </div>
+            </section>
+
+            <div class="doc-cols">
+              <div class="doc-block">
+                <h3>属性</h3>
+                <table class="api">
+                  <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>variant</code></td><td>assist | filter | input</td><td>assist</td><td>M3 三形态：入口 / 可选中 / 可移除</td></tr>
+                    <tr><td><code>selected</code></td><td>运行时状态（data）</td><td>false</td><td>filter 选中；<code>sync:selected</code> 或 <code>el.selected</code> 读写</td></tr>
+                    <tr><td><code>removable</code></td><td>boolean</td><td>无</td><td>显示尾部 ✕，点击派发 remove</td></tr>
+                    <tr><td><code>disabled</code></td><td>boolean</td><td>无</td><td>降透明、阻断交互与聚焦</td></tr>
+                    <tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>secondary-container 配对</td><td>选中态配色</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="doc-block">
+                <h3>事件 / 注意</h3>
+                <ul class="api-list">
+                  <li>事件：<code>click</code> / <code>change</code>（filter 切换）/ <code>remove</code>（✕），均 composed。</li>
+                  <li>点 ✕ 不触发 chip 的 click 与选中切换；组件不自动移除节点。</li>
+                  <li>可点击形态宿主自身 role=button；input 形态不参与 Tab。</li>
+                  <li>尺寸默认值全 em：<code>font-size</code> 等比缩放；皮肤 token <code>--st-chip-*</code>，part：<code>remove</code>。</li>
+                  <li>不参与 <code>&lt;form&gt;</code> 提交（无表单代理）。</li>
+                </ul>
+              </div>
+            </div>
+
+            <nav class="doc-pager" aria-label="上下篇">
+              <a class="pager-link" olink href="./badges.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Badges</a><a class="pager-link pager-next" olink href="./avatar.html"><span>下一页</span>Avatar <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
+            </nav>
+          </article>
+      <script>
+        export const parent = "./layout.html";
+
+        export default async () => ({
+          data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false },
+            rmCount: 0,
+            picked: false,
+            demo1Code: "<st-chip>帮助</st-chip>\n<st-chip variant=\"filter\">音乐</st-chip>\n<st-chip variant=\"filter\" selected>已选音乐</st-chip>\n<st-chip variant=\"input\" removable on:remove=\"countRemove\">标签 A</st-chip>\n<st-chip variant=\"filter\" disabled>禁用</st-chip>\n<st-chip variant=\"filter\" selected disabled>禁用+选中</st-chip>",
+            demo2Code: "<st-chip variant=\"filter\" color=\"primary\" selected>primary</st-chip>\n<st-chip variant=\"filter\" color=\"secondary\" selected>secondary</st-chip>\n<st-chip variant=\"filter\" color=\"tertiary\" selected>tertiary</st-chip>\n<st-chip variant=\"filter\" color=\"error\" selected>error</st-chip>\n<st-chip variant=\"filter\" color=\"success\" selected>success</st-chip>",
+            demo3Code: "<st-chip variant=\"filter\" sync:selected=\"picked\" on:change=\"picked = !picked\">同步选中</st-chip>\n<st-button variant=\"outlined\" on:click=\"picked = !picked\">外部翻转</st-button>\n<span>picked = {{picked}}</span>",
+            demo4Code: "<st-chip><iconify-icon icon=\"mdi:magnify\"></iconify-icon>搜索</st-chip>\n<st-chip variant=\"input\" removable>消息<span slot=\"suffix\">12</span></st-chip>\n<st-chip variant=\"filter\" selected style=\"font-size: 20px;\">20px 等比</st-chip>\n\n<!-- 键盘：宿主自身 role=button，Tab 可达 -->\n<st-chip variant=\"filter\">键盘可达</st-chip>",
+          },
+          proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
+            countRemove() {
+              this.rmCount += 1;
+            },
+            focusChip() {
+              // 可点击形态焦点由宿主自身承载
+              this.ele.shadowRoot.querySelector("#chip-kbd").focus();
+            },
+          },
+        });
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin, getSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = Object.assign(window.__site || {}, { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu });
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!--
+  st-drawer — 侧边抽屉组件（基于 ofa.js）
+  语义属性：open（显示）/ auto-close（点遮罩或 Escape 关闭）/ side（left | right）
+  结构：宿主为全屏遮罩层，面板贴在左侧或右侧（part="panel"），见 README.md
+-->
+<template component>
+  <style>
+    /* 宿主是覆盖全屏的遮罩容器；关闭时用 visibility 隐藏（保留动画），
+       visibility:hidden 同时把内部控件移出 Tab 顺序，不需要额外的 inert。 */
+    :host {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: block;
+      visibility: hidden;
+      pointer-events: none;
+      box-sizing: border-box;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    :host([open]),
+    :host([closing]) {
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    /* 遮罩：与 dialog 共用同一套 scrim token，叠加时观感一致 */
+    .scrim {
+      position: absolute;
+      inset: 0;
+      background: var(--st-drawer-scrim, var(--st-dialog-scrim, rgb(0 0 0 / 0.28)));
+      -webkit-backdrop-filter: var(
+        --st-drawer-scrim-filter,
+        var(--st-dialog-scrim-filter, blur(2px))
+      );
+      backdrop-filter: var(
+        --st-drawer-scrim-filter,
+        var(--st-dialog-scrim-filter, blur(2px))
+      );
+      opacity: 0;
+      transition: opacity var(--st-drawer-exit-duration, 0.2s) ease;
+    }
+    :host([open]) .scrim {
+      opacity: 1;
+      transition-duration: var(--st-drawer-enter-duration, 0.28s);
+    }
+
+    /* 面板：默认贴左，side="right" 贴右；宽度/圆角/底色可用 ::part(panel) 覆盖 */
+    .panel {
+      position: absolute;
+      inset: 0 auto 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--st-drawer-gap, 1.14em);
+      box-sizing: border-box;
+      width: min(22.86em, 88vw); /* 320px @ 14px */
+      max-width: 100%;
+      padding: var(--st-drawer-padding, 1.43em);
+      border: 0 solid var(--st-drawer-border, var(--md-sys-color-outline-variant));
+      border-right-width: var(--st-border-width, 1px);
+      border-radius: 0 var(--st-drawer-radius, var(--st-radius-lg, 1.143em))
+        var(--st-drawer-radius, var(--st-radius-lg, 1.143em)) 0;
+      background: var(--st-drawer-bg, var(--md-sys-color-surface-container-low));
+      color: var(--md-sys-color-on-surface);
+      box-shadow: var(--st-drawer-shadow, var(--st-shadow-2, none));
+      -webkit-backdrop-filter: var(--st-drawer-backdrop-filter, none);
+      backdrop-filter: var(--st-drawer-backdrop-filter, none);
+      transform: translateX(-100%);
+      transition: transform var(--st-drawer-exit-duration, 0.2s)
+        cubic-bezier(0.2, 0, 0, 1);
+    }
+    :host([side="right"]) .panel {
+      inset: 0 0 0 auto;
+      border-right-width: 0;
+      border-left-width: var(--st-border-width, 1px);
+      border-radius: var(--st-drawer-radius, var(--st-radius-lg, 1.143em)) 0 0
+        var(--st-drawer-radius, var(--st-radius-lg, 1.143em));
+      transform: translateX(100%);
+    }
+    :host([open]) .panel {
+      transform: none;
+      transition-duration: var(--st-drawer-enter-duration, 0.28s);
+    }
+    /* 焦点由面板内部可交互元素承载（各自有 focus ring），容器本身不画圈 */
+    .panel:focus { outline: none; }
+
+    .headline { flex: none; }
+    ::slotted([slot="headline"]) {
+      margin: 0;
+      font-size: 1.143em; /* 16px */
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    /* 正文区超高时内部滚动，headline / actions 固定 */
+    .body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      overscroll-behavior: contain;
+      line-height: 1.7;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .actions {
+      flex: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.571em;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      :host { transition: none; }
+      .scrim,
+      .panel { transition-duration: 0.01ms; }
+    }
+  </style>
+
+  <div class="scrim" part="scrim"></div>
+  <div class="panel" part="panel" tabindex="-1">
+    <div class="headline" part="headline"><slot name="headline"></slot></div>
+    <div class="body" part="body"><slot></slot></div>
+    <div class="actions" part="actions"><slot name="actions"></slot></div>
+  </div>
+
+  <script>
+    import "../color/st-color-init.js";
+    import {
+      lockScroll,
+      unlockScroll,
+      getDeepActiveElement,
+      trapTab,
+      pushModal,
+      removeModal,
+      isTopModal,
+    } from "../a11y/a11y.js";
+
+    export default async () => ({
+      tag: "st-drawer",
+      attrs: {
+        autoClose: null,
+        side: "left",
+      },
+      data: {
+        // open 是运行时状态（data，非标签属性）：内部交互关闭（auto-close）改 this.open，
+        // 经 sync:open 双向绑定自动回写上层；外部也可用 setAttribute/removeAttribute
+        open: false,
+      },
+      watch: {
+        open() {
+          const ele = this.ele;
+          const isOpen = this.open === true;
+          // data → 属性反射（供 :host([open]) CSS 选择器）
+          if (isOpen) ele.setAttribute("open", "");
+          else ele.removeAttribute("open");
+          clearTimeout(this._closingTimer);
+
+          if (isOpen) {
+            this._wasOpen = true;
+            ele.removeAttribute("closing");
+            // 记录 opener 供关闭后归还焦点，锁背景滚动，把焦点移入面板容器
+            this._prevFocus = getDeepActiveElement();
+            pushModal(ele);
+            lockScroll();
+            requestAnimationFrame(() => {
+              if (this.open === true) ele.shadowRoot.querySelector(".panel").focus();
+            });
+          } else if (this._wasOpen) {
+            // data watch 初始化也会以初始值 false 触发一次，用 _wasOpen 区分（坑 #27）
+            this._wasOpen = false;
+            removeModal(ele);
+            unlockScroll();
+            // 保留 closing 态播完滑出动画再隐藏（visibility 由 CSS 控制）
+            ele.setAttribute("closing", "");
+            this._closingTimer = setTimeout(() => ele.removeAttribute("closing"), 250);
+            this._restoreFocus?.();
+          }
+        },
+      },
+      ready() {
+        const ele = this.ele;
+        const sr = ele.shadowRoot;
+
+        // 模态语义；延后到构造结束，避免自定义元素构造期 setAttribute 抛错（坑 #54b）
+        queueMicrotask(() => {
+          ele.setAttribute("role", "dialog");
+          ele.setAttribute("aria-modal", "true");
+        });
+
+        // 用 headline 文本做可访问名称（作者显式 aria-label / aria-labelledby 优先）
+        const headlineSlot = sr.querySelector('slot[name="headline"]');
+        this._syncLabel = () => {
+          // 作者显式设置的 label 优先；只有“我们自动写的那一个”才跟随 headline 更新
+          if (ele.hasAttribute("aria-labelledby")) return;
+          const current = ele.getAttribute("aria-label");
+          if (current && (!this._autoLabel || current !== this._autoLabelText)) return;
+          const text = headlineSlot
+            .assignedElements()
+            .map((node) => node.textContent.trim())
+            .filter(Boolean)
+            .join(" ");
+          this._autoLabel = !!text;
+          this._autoLabelText = text;
+          if (text) ele.setAttribute("aria-label", text);
+          else ele.removeAttribute("aria-label");
+        };
+        // slotchange 不会因已分配节点的文本变化而触发，额外观察节点自身
+        this._observeHeadline = () => {
+          this._headlineObserver?.disconnect();
+          this._headlineObserver = new MutationObserver(() => this._syncLabel());
+          headlineSlot
+            .assignedElements()
+            .forEach((node) =>
+              this._headlineObserver.observe(node, {
+                childList: true,
+                subtree: true,
+                characterData: true,
+              })
+            );
+        };
+        headlineSlot.addEventListener("slotchange", () => {
+          this._observeHeadline();
+          this._syncLabel();
+        });
+        this._observeHeadline();
+        queueMicrotask(() => this._syncLabel());
+
+        // 关闭后把焦点还给打开它的元素
+        this._restoreFocus = () => {
+          const target = this._prevFocus;
+          this._prevFocus = null;
+          if (target && target.isConnected) target.focus();
+        };
+
+        // 属性 → data 兼容路径：标签裸属性 / 外部 setAttribute 同样有效
+        if (ele.hasAttribute("open")) this.open = true;
+        this._attrObserver = new MutationObserver(() => {
+          const attrOpen = ele.hasAttribute("open");
+          if (attrOpen !== (this.open === true)) this.open = attrOpen;
+        });
+        this._attrObserver.observe(ele, { attributes: true, attributeFilter: ["open"] });
+
+        // headline / actions 未分发内容时隐藏对应区块，避免空区块参与 gap 布局
+        ["headline", "actions"].forEach((name) => {
+          const slot = sr.querySelector(`slot[name="${name}"]`);
+          const wrap = slot.parentElement;
+          const sync = () => {
+            const has = slot.assignedNodes().length > 0;
+            wrap.style.display = has ? "" : "none";
+          };
+          slot.addEventListener("slotchange", sync);
+          sync();
+        });
+
+        // 点击遮罩关闭（受 auto-close 约束）
+        sr.querySelector(".scrim").addEventListener("click", () => this.closeSelf());
+
+        // Escape 只关最上层，Tab 在抽屉内循环；用冒泡阶段让 select/menu 先消费 Escape
+        this._onKeydown = (e) => {
+          if (this.open !== true || !isTopModal(ele)) return;
+          if (e.key === "Escape") {
+            if (this.autoClose !== null) {
+              e.stopImmediatePropagation();
+              this.closeSelf();
+            }
+            return;
+          }
+          if (e.key === "Tab") {
+            if (!trapTab(ele, e)) {
+              e.preventDefault();
+              sr.querySelector(".panel").focus();
+            }
+          }
+        };
+        document.addEventListener("keydown", this._onKeydown);
+
+        // 焦点守卫：Tab 从最后一个元素离开或程序化 focus 逃逸时拉回面板
+        this._onFocusIn = (e) => {
+          if (this.open !== true || !isTopModal(ele)) return;
+          if (!e.composedPath().includes(ele)) {
+            e.stopPropagation();
+            sr.querySelector(".panel").focus();
+          }
+        };
+        document.addEventListener("focusin", this._onFocusIn, true);
+      },
+      detached() {
+        clearTimeout(this._closingTimer);
+        document.removeEventListener("keydown", this._onKeydown);
+        document.removeEventListener("focusin", this._onFocusIn, true);
+        this._attrObserver?.disconnect();
+        this._headlineObserver?.disconnect();
+        if (removeModal(this.ele)) unlockScroll();
+      },
+      proto: {
+        // 关闭（仅在 auto-close 时允许交互触发），并派发 close 事件供外部监听。
+        // 改 this.open（data）：sync:open 的上层绑定自动同步
+        closeSelf() {
+          if (this.autoClose === null || this.open !== true) return;
+          this.open = false;
+          this.ele.dispatchEvent(new Event("close", { bubbles: true, composed: true }));
+        },
+      },
+    });
+  </script>
+</template>

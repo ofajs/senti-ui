@@ -1,0 +1,133 @@
+<!-- st-chip 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
+    section { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+    .code { font-family: ui-monospace, monospace; font-size: 13px; }
+    .state {
+      font-size: 13px; color: var(--md-sys-color-on-surface-variant);
+      padding: 2px 8px; border-radius: 6px;
+      background: var(--md-sys-color-surface-container-high);
+    }
+    .skin-box { padding: 16px; border-radius: 12px; border: 1px solid var(--md-sys-color-outline-variant); }
+  </style>
+
+  <section>
+    <h3>基础 — 三形态（assist / filter 默认+选中 / input 可移除 / disabled / disabled+selected）</h3>
+    <st-chip>帮助</st-chip>
+    <st-chip variant="filter">音乐</st-chip>
+    <st-chip variant="filter" selected>已选音乐</st-chip>
+    <st-chip variant="input" removable on:remove="onRemove">标签 A</st-chip>
+    <st-chip variant="filter" disabled>禁用</st-chip>
+    <st-chip variant="filter" selected disabled>禁用+选中</st-chip>
+    <span class="state">remove 事件次数：<span class="code">{{rmCount}}</span></span>
+  </section>
+
+  <section>
+    <h3>color 属性 — 选中态换角色（primary / secondary / tertiary / error / success）</h3>
+    <st-chip variant="filter" color="primary" selected>primary</st-chip>
+    <st-chip variant="filter" color="secondary" selected>secondary</st-chip>
+    <st-chip variant="filter" color="tertiary" selected>tertiary</st-chip>
+    <st-chip variant="filter" color="error" selected>error</st-chip>
+    <st-chip variant="filter" color="success" selected>success</st-chip>
+  </section>
+
+  <section>
+    <h3>插槽（前置图标 / suffix 尾部计数）+ 前缀插槽图标尺寸</h3>
+    <st-chip>🔍 搜索</st-chip>
+    <st-chip variant="input" removable>消息 <span slot="suffix">12</span></st-chip>
+    <st-chip variant="filter" selected>✅ 已确认</st-chip>
+  </section>
+
+  <section>
+    <h3>等比缩放（宿主 font-size，高度/圆角/内边距全部联动）</h3>
+    <st-chip variant="filter" style="font-size: 12px;">12px</st-chip>
+    <st-chip variant="filter" selected>14px（默认）</st-chip>
+    <st-chip variant="filter" selected style="font-size: 20px;">20px</st-chip>
+  </section>
+
+  <section>
+    <h3>CSS 覆盖（原生 style 属性直接生效）</h3>
+    <st-chip style="height: 40px; border-radius: 8px; font-weight: 600;">圆角 8px + 高 40px</st-chip>
+    <st-chip variant="filter" selected style="background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);">覆写选中底色</st-chip>
+  </section>
+
+  <section>
+    <h3>事件监听（click / change / remove，配可见计数）</h3>
+    <st-chip variant="filter" on:click="onClick" on:change="onChange">点我切换</st-chip>
+    <st-chip variant="input" removable on:remove="onRemoveEvent">可移除</st-chip>
+    <span class="state">click：<span class="code">{{clickCount}}</span>｜change：<span class="code">{{changeCount}}</span>｜remove：<span class="code">{{removeCount}}</span>｜selected：<span class="code">{{selState}}</span></span>
+  </section>
+
+  <section>
+    <h3>数据绑定（sync:selected 双向绑定，页面数据驱动）</h3>
+    <st-chip variant="filter" sync:selected="picked" on:change="picked = !picked">同步选中</st-chip>
+    <st-button variant="outlined" on:click="picked = !picked">外部翻转 picked</st-button>
+    <span class="state">picked 数据：<span class="code">{{picked}}</span></span>
+  </section>
+
+  <section>
+    <h3>JS 主动操作（setAttribute / el.selected，非 ofa 环境的写法）</h3>
+    <st-chip id="js-chip" variant="filter">JS 控制</st-chip>
+    <st-button variant="outlined" on:click="jsSelect">选中（setAttribute）</st-button>
+    <st-button variant="outlined" on:click="jsDeselect">取消（removeAttribute）</st-button>
+    <st-button variant="outlined" on:click="jsRead">读取 el.selected</st-button>
+    <span class="state">结果：<span class="code">{{jsState}}</span></span>
+  </section>
+
+  <section>
+    <h3>聚焦与键盘（焦点在宿主上，Tab 可达、Enter/Space 切换选中，focus 有可见焦圈）</h3>
+    <st-chip id="focus-chip" variant="filter">键盘可达</st-chip>
+    <st-button variant="outlined" on:click="focusChip">聚焦此 chip</st-button>
+    <span class="state">聚焦后按 <span class="code">Enter</span> / <span class="code">Space</span> 切换选中</span>
+  </section>
+
+  <section>
+    <h3>皮肤展示 — data-skin="shadcn" 局部换肤（只改材质不改颜色）</h3>
+    <div class="skin-box" data-skin="shadcn">
+      <link rel="stylesheet" href="../skin/shadcn.css" />
+      <st-chip>扁平 assist</st-chip>
+      <st-chip variant="filter" selected>扁平选中</st-chip>
+      <st-chip variant="input" removable>扁平可移除</st-chip>
+    </div>
+  </section>
+
+  <script>
+    export default async () => ({
+      data: {
+        rmCount: 0,
+        clickCount: 0,
+        changeCount: 0,
+        removeCount: 0,
+        selState: "未选中",
+        picked: false,
+        jsState: "无",
+      },
+      proto: {
+        onRemove() { this.rmCount += 1; },
+        onClick() { this.clickCount += 1; },
+        onChange(e) {
+          this.changeCount += 1;
+          this.selState = e.target.selected ? "选中" : "未选中";
+        },
+        onRemoveEvent() { this.removeCount += 1; },
+        jsSelect() {
+          this.ele.shadowRoot.querySelector("#js-chip").setAttribute("selected", "");
+          this.jsState = "selected";
+        },
+        jsDeselect() {
+          this.ele.shadowRoot.querySelector("#js-chip").removeAttribute("selected");
+          this.jsState = "无";
+        },
+        jsRead() {
+          this.jsState = String(this.ele.shadowRoot.querySelector("#js-chip").selected);
+        },
+        focusChip() {
+          // 可点击形态焦点由宿主自身承载（role=button / tabindex=0）
+          this.ele.shadowRoot.querySelector("#focus-chip").focus();
+        },
+      },
+    });
+  </script>
+</template>

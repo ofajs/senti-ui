@@ -93,11 +93,12 @@
 
   <script>
     import "../color/st-color-init.js";
-    import { getDeepActiveElement } from "../a11y/a11y.js";
+    import { getDeepActiveElement, rafThrottle } from "../a11y/a11y.js";
     export default async () => ({
       tag: "st-menu",
       attrs: {
         align: "right",
+        keepOpen: null,
       },
       data: {
         open: false,
@@ -135,6 +136,8 @@
             // 关闭：级联关闭所有仍打开的子菜单，再做退出过渡隐藏。
             // 面板 display:none 会连带隐藏 fixed 的子菜单面板，这里同步清状态避免重开时残留。
             // 注意：_openSubs 里存的是原生元素，open 必须经 $() 包装对象写（原生赋值不进 ofa data）
+            const restoreFocus = this._restoreFocusOnClose === true;
+            this._restoreFocusOnClose = false;
             for (const sub of [...this._openSubs]) $(sub).open = false;
             this._anchorPoint = null;
             panel.classList.add("closing");
@@ -144,6 +147,8 @@
               panel.classList.remove("closing");
             }, 180);
             this.unbindDocEvents();
+            // Escape / 选中项关闭后把焦点还给触发器，避免焦点停在隐藏面板里掉到 body
+            if (restoreFocus) this._focusTrigger?.();
             this.ele.dispatchEvent(new Event("close", { bubbles: true, composed: true }));
           }
         },
@@ -173,6 +178,21 @@
         triggerSlot.addEventListener("slotchange", syncTrigger);
         syncTrigger();
 
+        // 关闭时把焦点还给触发器（组件触发器则落到其内部原生控件）；
+        // 子菜单没有 trigger，回退到所在的 st-menu-item
+        this._focusTrigger = () => {
+          for (const el of triggerSlot.assignedElements()) {
+            const target =
+              el.shadowRoot?.querySelector("button, input, textarea, a[href], [tabindex]") || el;
+            if (typeof target.focus === "function") {
+              target.focus();
+              return;
+            }
+          }
+          const item = ele.closest("st-menu-item");
+          item?.shadowRoot?.querySelector(".native")?.focus();
+        };
+
         // 点击触发器切换。子菜单模式下 click 也要停掉冒泡：
         // 否则会冒到父级面板的"点击即关闭"监听，把父菜单一起关掉
         sr.querySelector(".trigger").addEventListener("click", (e) => {
@@ -184,7 +204,10 @@
         // 菜单内任意点击后自动关闭（不阻止冒泡，菜单项 click 正常传出）；
         // 点击子菜单里的菜单项时，冒泡到这里的正是"整链关闭"语义
         sr.querySelector(".panel").addEventListener("click", () => {
-          if (this.open) this.open = false;
+          if (this.open && this.keepOpen === null) {
+            this._restoreFocusOnClose = true;
+            this.open = false;
+          }
         });
 
         // 追踪仍打开的后代子菜单（open/close 事件 composed 冒泡到宿主）
@@ -206,6 +229,7 @@
         this._onDocPointerDown = (e) => {
           // 坑 #21：composed 事件必须用 composedPath 判断，contains 会误判
           if (e.composedPath().includes(ele)) return;
+          this._restoreFocusOnClose = false;
           this.open = false;
         };
         this._onDocKeydown = (e) => {
@@ -213,16 +237,35 @@
           // 捕获阶段消费掉事件，避免同一次 Escape 把外层 dialog 也关掉
           if (e.key === "Escape" && this.open && !this._openSubs.size) {
             e.stopPropagation();
+            this._restoreFocusOnClose = true;
             this.open = false;
           }
         };
-        this._onReposition = () => this.updatePosition();
+        // 滚动/resize 可能一帧内触发多次，合并为一次定位
+        this._onReposition = rafThrottle(() => this.updatePosition());
+
+        // 判断 item 是否属于当前菜单面板（而不是 sub-menu 里的后代项）。
+        // 直接 querySelectorAll 会把隐藏子菜单的项也算进来，方向键会把焦点
+        // 丢给 display:none 面板里的按钮而卡住。
+        const isOwnItem = (item) => {
+          let node = item.parentNode;
+          while (node) {
+            if (node === ele) return true;
+            if (node.nodeType === 11 && node.host) {
+              node = node.host;
+              continue;
+            }
+            if (node.nodeType === 1 && node.tagName === "ST-MENU") return false;
+            node = node.parentNode;
+          }
+          return false;
+        };
 
         // 菜单键盘模型：↑/↓/Home/End 在菜单项之间移动焦点（子菜单自己处理，父级让位）
         this._onMenuKeydown = (e) => {
           if (!this.open || this._openSubs.size) return;
           const items = [...ele.querySelectorAll("st-menu-item")]
-            .filter((item) => !item.hasAttribute("disabled"))
+            .filter((item) => isOwnItem(item) && !item.hasAttribute("disabled"))
             .map((item) => item.shadowRoot?.querySelector(".native"))
             .filter(Boolean);
           if (!items.length) return;

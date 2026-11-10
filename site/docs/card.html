@@ -6,6 +6,8 @@
   <title>Card — 组件文档 — Senti-UI</title>
   <meta name="description" content="Card（st-card）用法：卡片容器：elevated / filled / outlined 三类型；interactive 时整卡可点并带波纹。" />
   <meta name="theme-color" content="#0061A4" />
+  <link rel="canonical" href="https://senti.ofajs.com/site/docs/card" />
+  <meta property="og:url" content="https://senti.ofajs.com/site/docs/card" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
   <script type="module">
     import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
@@ -66,7 +68,7 @@
 
           <article class="doc-page">
             <header class="doc-hero">
-              <p class="doc-kicker">内容 · 13 / 21</p>
+              <p class="doc-kicker">内容 · 14 / 22</p>
               <h1>Card <code>st-card</code></h1>
               <p class="doc-lead">卡片容器：elevated / filled / outlined 三种类型，内容用默认插槽自由组合。interactive 让整卡可点并带波纹、hover 抬升与键盘焦点环。</p>
               <div class="doc-links">
@@ -79,8 +81,17 @@
               <h2>三种 variant</h2>
               <p class="doc-section-lead">elevated 用 level 1 阴影，filled 用更深的容器底色，outlined 用描边与透明底。三者共享同一套 em 尺寸，只改变材质。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>variant</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>variant</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo1">
                   <div class="demo-cell">
                     <span class="demo-label">elevated（默认）</span>
                     <st-card style="width: 100%;">
@@ -103,25 +114,26 @@
                     </st-card>
                   </div>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-card&gt;
-  &lt;strong&gt;Elevated&lt;/strong&gt;
-  &lt;p&gt;默认类型，level 1 阴影。&lt;/p&gt;
-&lt;/st-card&gt;
 
-&lt;st-card variant="filled"&gt;...&lt;/st-card&gt;
-&lt;st-card variant="outlined"&gt;...&lt;/st-card&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>interactive：整卡可点</h2>
               <p class="doc-section-lead">加 interactive 后整张卡成为按钮：hover 抬升、按下有波纹，Tab 可聚焦、Enter / Space 可激活。选择类场景用一张卡表达一个选项。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>interactive + click</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>interactive + click</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo2">
                   <st-card interactive on:click="pick('基础版')" style="width: 100%;">
                     <strong style="font-size: 14px;">基础版</strong>
                     <p style="margin: 6px 0 10px; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);">个人项目与原型验证，包含 1 个工作区。</p>
@@ -138,34 +150,27 @@
                     <span style="font-size: 11px; color: var(--md-sys-color-primary);">{{picked === '企业版' ? '✓ 已选择' : '点击选择'}}</span>
                   </st-card>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
               </div>
               <p class="doc-section-lead" style="margin-top: 8px;">已选择：{{picked}} · 累计点击 {{picks}} 次。卡内不要放按钮等交互元素，否则点击内部按钮也会冒泡成整卡点击。</p>
-              <details class="snippet">
-                <summary>示例代码（选择卡）</summary>
-                <pre><code>&lt;st-card interactive on:click="pick('团队版')"&gt;
-  &lt;strong&gt;团队版&lt;/strong&gt;
-  &lt;p&gt;多人协作与权限管理。&lt;/p&gt;
-&lt;/st-card&gt;
-
-&lt;script&gt;
-  export default async () =&gt; ({
-    data: { picked: "（未选择）" },
-    proto: {
-      pick(name) {
-        this.picked = name;
-      },
-    },
-  });
-&lt;/script&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>标题、正文与操作区</h2>
               <p class="doc-section-lead">卡片没有固定的 header / footer 插槽，用普通元素组合即可。操作按钮放在内容末尾，非 interactive 卡片里的按钮点击不会触发整卡行为。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>内容自由组合</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>内容自由组合</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo3">
                   <st-card style="width: 100%;">
                     <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
                       <strong style="font-size: 14px;">团队邀请</strong>
@@ -187,29 +192,26 @@
                     </div>
                   </st-card>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-card style="width: 100%;"&gt;
-  &lt;div style="display: flex; justify-content: space-between;"&gt;
-    &lt;strong&gt;团队邀请&lt;/strong&gt;
-    &lt;st-badges value="3" color="primary"&gt;待处理&lt;/st-badges&gt;
-  &lt;/div&gt;
-  &lt;p&gt;有 3 位成员等待加入。&lt;/p&gt;
-  &lt;div style="display: flex; justify-content: flex-end; gap: 6px;"&gt;
-    &lt;st-button variant="text"&gt;稍后&lt;/st-button&gt;
-    &lt;st-button&gt;查看邀请&lt;/st-button&gt;
-  &lt;/div&gt;
-&lt;/st-card&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>媒体区与底部操作</h2>
               <p class="doc-section-lead">媒体区用负 margin 铺满卡片宽度：<code>margin: -1em -1em 12px</code> 配合 <code>width: calc(100% + 2em)</code>，顶部圆角与卡片保持一致。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>media + footer</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>media + footer</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo4">
                   <st-card variant="outlined" style="width: 100%;">
                     <div style="height: 110px; margin: -1em -1em 12px; border-radius: 0.75em 0.75em 0 0; background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-tertiary-container));"></div>
                     <span class="demo-label">设计 · 12 篇文章</span>
@@ -228,29 +230,26 @@
                     <p style="margin: 10px 0 0; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);">把媒体区换成 <code>&lt;img&gt;</code> 时，记得同时设置 <code>display: block</code> 与相同的负 margin。</p>
                   </st-card>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（媒体铺满）</summary>
-                <pre><code>&lt;st-card variant="outlined"&gt;
-  &lt;img
-    src="/cover.jpg"
-    alt="封面"
-    style="display: block; width: calc(100% + 2em); height: 110px;
-           margin: -1em -1em 12px; object-fit: cover;
-           border-radius: 0.75em 0.75em 0 0;"
-  /&gt;
-  &lt;strong&gt;界面设计系统&lt;/strong&gt;
-  &lt;p&gt;从颜色、字号到组件间距的统一规范。&lt;/p&gt;
-&lt;/st-card&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>卡片网格</h2>
               <p class="doc-section-lead">用原生 grid 排卡片，配合 interactive 做成入口矩阵。网格宽度由父容器决定，卡片本身写 <code>width: 100%</code> 即可。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>grid + interactive</code></div>
-                <div class="demo-stage grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo5 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>grid + interactive</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo5')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo5 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo5 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));" attr:hidden="codeView.demo5">
                   <st-card interactive on:click="pick('数据看板')" style="width: 100%;">
                     <div style="font-size: 20px;">📊</div>
                     <strong style="display: block; margin-top: 6px; font-size: 13px;">数据看板</strong>
@@ -272,22 +271,26 @@
                     <span style="font-size: 11px; color: var(--md-sys-color-on-surface-variant);">发票与用量</span>
                   </st-card>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo5" lang="html" :code="demo5Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（网格）</summary>
-                <pre><code>&lt;div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;"&gt;
-  &lt;st-card interactive on:click="pick('数据看板')"&gt;...&lt;/st-card&gt;
-  &lt;st-card interactive on:click="pick('成员管理')"&gt;...&lt;/st-card&gt;
-&lt;/div&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>原生 CSS 定制</h2>
               <p class="doc-section-lead">宽高、圆角、内边距、底色和阴影都直接写原生 CSS。内边距与圆角用 em，只改 font-size 就能整体缩放卡片内部的间距。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>style + font-size</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo6 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>style + font-size</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo6')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo6 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo6 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo6">
                   <st-card style="width: 100%; font-size: 12px;">
                     <strong>12px 字号</strong>
                     <p style="margin: 4px 0 0; color: var(--md-sys-color-on-surface-variant);">padding 与圆角随 em 缩小。</p>
@@ -301,15 +304,9 @@
                     <p style="margin: 4px 0 0; color: var(--md-sys-color-on-surface-variant);">直接覆盖 border-radius、padding 与 background。</p>
                   </st-card>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo6" lang="html" :code="demo6Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-card style="font-size: 12px;"&gt;...&lt;/st-card&gt;
-&lt;st-card style="border-radius: 1.429em; padding: 1.43em;"&gt;...&lt;/st-card&gt;
-&lt;st-card variant="outlined" style="background: var(--md-sys-color-surface-container-low);"&gt;
-  ...
-&lt;/st-card&gt;</code></pre>
-              </details>
             </section>
 
             <div class="doc-cols">
@@ -344,10 +341,20 @@
 
         export default async () => ({
           data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false, demo6: false },
+            demo1Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">elevated（默认）</span>\n                    <st-card style=\"width: 100%;\">\n                      <strong style=\"font-size: 14px;\">Elevated</strong>\n                      <p style=\"margin: 6px 0 0; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);\">level 1 阴影 + surface-container-low 底色，适合页面主内容块。</p>\n                    </st-card>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">filled</span>\n                    <st-card variant=\"filled\" style=\"width: 100%;\">\n                      <strong style=\"font-size: 14px;\">Filled</strong>\n                      <p style=\"margin: 6px 0 0; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);\">surface-container-highest 底色、无阴影，适合并列的信息卡。</p>\n                    </st-card>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">outlined</span>\n                    <st-card variant=\"outlined\" style=\"width: 100%;\">\n                      <strong style=\"font-size: 14px;\">Outlined</strong>\n                      <p style=\"margin: 6px 0 0; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);\">outline-variant 描边、透明底，最轻量，适合密集列表。</p>\n                    </st-card>\n                  </div>",
+            demo2Code: "<st-card interactive on:click=\"pick('基础版')\" style=\"width: 100%;\">\n                    <strong style=\"font-size: 14px;\">基础版</strong>\n                    <p style=\"margin: 6px 0 10px; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);\">个人项目与原型验证，包含 1 个工作区。</p>\n                    <span style=\"font-size: 11px; color: var(--md-sys-color-primary);\">{{picked === '基础版' ? '✓ 已选择' : '点击选择'}}</span>\n                  </st-card>\n                  <st-card interactive on:click=\"pick('团队版')\" style=\"width: 100%;\">\n                    <strong style=\"font-size: 14px;\">团队版</strong>\n                    <p style=\"margin: 6px 0 10px; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);\">多人协作与权限管理，包含 10 个工作区。</p>\n                    <span style=\"font-size: 11px; color: var(--md-sys-color-primary);\">{{picked === '团队版' ? '✓ 已选择' : '点击选择'}}</span>\n                  </st-card>\n                  <st-card interactive on:click=\"pick('企业版')\" style=\"width: 100%;\">\n                    <strong style=\"font-size: 14px;\">企业版</strong>\n                    <p style=\"margin: 6px 0 10px; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);\">单点登录、审计与专属支持，工作区不限。</p>\n                    <span style=\"font-size: 11px; color: var(--md-sys-color-primary);\">{{picked === '企业版' ? '✓ 已选择' : '点击选择'}}</span>\n                  </st-card>",
+            demo3Code: "<st-card style=\"width: 100%;\">\n                    <div style=\"display: flex; align-items: center; justify-content: space-between; gap: 10px;\">\n                      <strong style=\"font-size: 14px;\">团队邀请</strong>\n                      <span style=\"padding: 2px 8px; border-radius: 999px; background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); font-size: 11px;\">3 待处理</span>\n                    </div>\n                    <p style=\"margin: 8px 0 0; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);\">有 3 位成员等待加入「设计系统」团队，邀请将在 7 天后过期。</p>\n                    <div style=\"display: flex; justify-content: flex-end; gap: 6px; margin-top: 14px;\">\n                      <st-button variant=\"text\">稍后</st-button>\n                      <st-button on:click=\"picks += 1\">查看邀请</st-button>\n                    </div>\n                  </st-card>\n                  <st-card variant=\"filled\" style=\"width: 100%;\">\n                    <strong style=\"font-size: 14px;\">存储空间</strong>\n                    <p style=\"margin: 8px 0 4px; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);\">已使用 6.4 GB，共 10 GB。</p>\n                    <st-progress value=\"64\" style=\"width: 100%; margin: 4px 0 12px;\"></st-progress>\n                    <div style=\"display: flex; align-items: center; justify-content: space-between; gap: 8px;\">\n                      <span style=\"font-size: 11px; color: var(--md-sys-color-on-surface-variant);\">64% 已使用</span>\n                      <st-button variant=\"text\">升级空间</st-button>\n                    </div>\n                  </st-card>",
+            demo4Code: "<st-card variant=\"outlined\" style=\"width: 100%;\">\n                    <div style=\"height: 110px; margin: -1em -1em 12px; border-radius: 0.75em 0.75em 0 0; background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-tertiary-container));\"></div>\n                    <span class=\"demo-label\">设计 · 12 篇文章</span>\n                    <strong style=\"display: block; margin-top: 4px; font-size: 14px;\">界面设计系统</strong>\n                    <p style=\"margin: 6px 0 0; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);\">从颜色、字号到组件间距的统一规范，附可复用 token 表。</p>\n                  </st-card>\n                  <st-card variant=\"filled\" style=\"width: 100%;\">\n                    <div style=\"height: 110px; margin: -1em -1em 12px; border-radius: 0.75em 0.75em 0 0; background: linear-gradient(135deg, var(--md-sys-color-secondary-container), var(--md-sys-color-surface-container-highest));\"></div>\n                    <div style=\"display: flex; align-items: center; justify-content: space-between; gap: 8px;\">\n                      <div>\n                        <strong style=\"display: block; font-size: 14px;\">秋季摄影</strong>\n                        <span style=\"font-size: 11px; color: var(--md-sys-color-on-surface-variant);\">24 张照片 · 更新于昨天</span>\n                      </div>\n                      <st-icon-button variant=\"tonal\" title=\"收藏\"><iconify-icon icon=\"mdi:star-outline\"></iconify-icon></st-icon-button>\n                    </div>\n                    <p style=\"margin: 10px 0 0; font-size: 12px; line-height: 1.65; color: var(--md-sys-color-on-surface-variant);\">把媒体区换成 <code>&lt;img&gt;</code> 时，记得同时设置 <code>display: block</code> 与相同的负 margin。</p>\n                  </st-card>",
+            demo5Code: "<st-card interactive on:click=\"pick('数据看板')\" style=\"width: 100%;\">\n                    <div style=\"font-size: 20px;\">📊</div>\n                    <strong style=\"display: block; margin-top: 6px; font-size: 13px;\">数据看板</strong>\n                    <span style=\"font-size: 11px; color: var(--md-sys-color-on-surface-variant);\">实时指标与趋势</span>\n                  </st-card>\n                  <st-card interactive on:click=\"pick('成员管理')\" style=\"width: 100%;\">\n                    <div style=\"font-size: 20px;\">👥</div>\n                    <strong style=\"display: block; margin-top: 6px; font-size: 13px;\">成员管理</strong>\n                    <span style=\"font-size: 11px; color: var(--md-sys-color-on-surface-variant);\">角色与权限</span>\n                  </st-card>\n                  <st-card interactive on:click=\"pick('自动化')\" style=\"width: 100%;\">\n                    <iconify-icon icon=\"mdi:cog\" style=\"font-size:20px\"></iconify-icon>\n                    <strong style=\"display: block; margin-top: 6px; font-size: 13px;\">自动化</strong>\n                    <span style=\"font-size: 11px; color: var(--md-sys-color-on-surface-variant);\">定时任务与触发器</span>\n                  </st-card>\n                  <st-card interactive on:click=\"pick('账单')\" style=\"width: 100%;\">\n                    <div style=\"font-size: 20px;\">🧾</div>\n                    <strong style=\"display: block; margin-top: 6px; font-size: 13px;\">账单</strong>\n                    <span style=\"font-size: 11px; color: var(--md-sys-color-on-surface-variant);\">发票与用量</span>\n                  </st-card>",
+            demo6Code: "<st-card style=\"width: 100%; font-size: 12px;\">\n                    <strong>12px 字号</strong>\n                    <p style=\"margin: 4px 0 0; color: var(--md-sys-color-on-surface-variant);\">padding 与圆角随 em 缩小。</p>\n                  </st-card>\n                  <st-card variant=\"filled\" style=\"width: 100%; font-size: 16px;\">\n                    <strong>16px 字号</strong>\n                    <p style=\"margin: 4px 0 0; color: var(--md-sys-color-on-surface-variant);\">内边距与圆角同步放大。</p>\n                  </st-card>\n                  <st-card variant=\"outlined\" style=\"width: 100%; border-radius: 1.429em; padding: 1.43em; background: var(--md-sys-color-surface-container-low);\">\n                    <strong>自定义圆角与底色</strong>\n                    <p style=\"margin: 4px 0 0; color: var(--md-sys-color-on-surface-variant);\">直接覆盖 border-radius、padding 与 background。</p>\n                  </st-card>",
             picked: "（未选择）",
             picks: 0,
           },
           proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
             pick(name) {
               this.picked = name;
               this.picks += 1;

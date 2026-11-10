@@ -25,7 +25,7 @@
 
 ## st-split-button 分裂按钮
 
-- 主区 click 冒泡做主操作 + 箭头区开合菜单（菜单项用 `st-menu-item`）
+- 主区 click 冒泡做主操作 + 箭头区开合菜单（菜单项用 `st-menu-item`）；菜单面板 `role=menu`，↑/↓ 移动焦点，Escape 只关菜单
 - `open` 为运行时状态，支持 `sync:open` / `attr("open", "")`；`menu-label` 可改箭头区可访问名称
 
 ## st-icon-button 图标按钮
@@ -78,13 +78,37 @@ await alert("完成"); // true/null
 
 - 坑：不要放在有 transform/filter 的祖先内
 
+## st-drawer 侧边抽屉
+
+- **结构**：宿主是全屏遮罩（fixed），面板在 shadow 内 `part="panel"`；默认左侧滑入，`side="right"` 改为右侧滑入
+- 属性：`auto-close`（遮罩点击 / Escape 关闭并派发 `close`）、`side`（`left`(默认) / `right`）
+- **`open` 是运行时状态**：ofa 页面用 `sync:open="xxx"` 双向绑定（auto-close 关闭自动回写）；纯 JS 用 `$("st-drawer").attr("open", "") / attr("open", null)`
+- 插槽：`headline` / 默认 / `actions`（空区块自动隐藏；正文区超高时内部滚动）
+- 焦点：`role="dialog"` + `aria-modal`，打开移入面板、Tab 焦点陷阱、关闭归还焦点、背景滚动锁；与 st-dialog 共用模态栈，Escape 只关最上层
+- 面板定制：`st-drawer::part(panel) { width: 360px; }`；part：`panel` / `scrim` / `headline` / `body` / `actions`
+- 皮肤 token：`--st-drawer-bg` / `--st-drawer-radius` / `--st-drawer-border` / `--st-drawer-shadow` / `--st-drawer-padding` / `--st-drawer-gap` / `--st-drawer-backdrop-filter` / `--st-drawer-scrim` / `--st-drawer-scrim-filter` / `--st-drawer-enter-duration` / `--st-drawer-exit-duration`
+
+```html
+<st-drawer sync:open="drawerOpen" auto-close side="left">
+  <h2 slot="headline">导航</h2>
+  <p>抽屉内容</p>
+  <div slot="actions">
+    <st-button variant="text" on:click="drawerOpen = false">关闭</st-button>
+  </div>
+</st-drawer>
+```
+
+完整属性表、默认值与示例见 [components/drawer.md](./components/drawer.md)。
+
 ## st-checkbox / st-switch / st-radio 表单选择类
 
 统一范式：内部透明原生 input 承载点击/Space/焦点，变更后反射回宿主属性并派发 `change`（composed）。
 
-- 属性：`checked`（checkbox 另有 `indeterminate`）、`color`（选中态换角色色）、`disabled`
-- radio：同组互斥依赖**同一父容器**内的同 `name` 兄弟
+- 属性：`checked`（checkbox 另有 `indeterminate`，混合态不参与表单提交）、`color`（选中态换角色色）、`disabled`
+- radio：同组互斥按**同一树作用域 + 同一 form owner** 的同 `name` 隔离；组内 roving tabindex + 方向键移动/选中
+- switch 内部原生控件带 `role="switch"`
 - 用法：`<st-checkbox checked on:change="...">`；JS 用 `$("st-checkbox").attr("checked", "") / attr("checked", null)`
+- `checked` / `selected` / `expanded` 是 attrs：内部交互只能 setAttribute/removeAttribute，无法回写 `sync:`；双向场景监听 `change`，把 `el.hasAttribute(...)` 写回 data
 
 ## st-snackbar 消息条
 
@@ -100,10 +124,11 @@ const t = toast("已保存", { duration: 3000 }); // 返回 { close, el }；dura
 
 ## st-slider 滑块
 
-- 属性：`min`/`max`/`step`（默认 0/100/1，转发原生 range）、`default-value`、`disabled`、`color`
+- 属性：`min`/`max`/`step`（默认 0/100/1，转发原生 range）、`default-value`、`disabled`、`color`、`name`/`form`（原生表单）
 - **`value` 是运行时状态**（`el.value`；ofa 页面绑定 `attr:value`）
 - 事件：`input`（拖动实时）、`change`（松手/键盘提交），均 composed
 - 键盘：Tab 聚焦、`←/→` 步进、`Home/End` 到两端；拖动/聚焦显示数值气泡
+- 表单：`name` + `form` 进 `FormData`，`reset` 回 `default-value` / `min`；`required` 对 range 无实际约束
 
 ## st-progress 进度
 
@@ -114,8 +139,8 @@ const t = toast("已保存", { duration: 3000 }); // 返回 { close, el }；dura
 
 - 属性：`content`（纯文本，防注入）、`disabled`
 - **`open` 是运行时状态**（`sync:open` / setAttribute 兼容）
-- 悬停或聚焦触发器显示；气泡 fixed 自动上下翻转；触发器需可聚焦（如 st-button）
-- 不承载关键信息（触屏无悬停）
+- 悬停、聚焦或触屏长按 500ms 显示；点外部 / Escape 关闭；气泡 fixed 自动上下翻转；触发器需可聚焦（如 st-button）
+- 不承载关键信息
 
 ## st-card 卡片
 
@@ -125,6 +150,28 @@ const t = toast("已保存", { duration: 3000 }); // 返回 { close, el }；dura
 ## st-badges 徽标
 
 - 点 / 数字（`max` 封顶显示 `N+`）/ 文字徽标，钉在默认插槽元素右上角，pointer-events none
+
+## st-chip 筛选小片
+
+- 属性：`variant`（`assist`(默认)/`filter`/`input`）、`removable`（尾部 ✕）、`disabled`、`color`
+- `selected` 是运行时状态：ofa 页面 `sync:selected="x"` 双向绑定；纯 JS `$("sel").attr("selected", "")` / `attr("selected", null)`，读 `el.selected`
+- 事件：`click` / `change`（选中切换）/ `remove`（点 ✕，不触发 click，也不自动移除节点——收到后自己删）
+- 示例：`<st-chip variant="filter" sync:selected="picked" on:change="picked = !picked">音乐</st-chip>`
+- 键盘：assist/filter 宿主自身 role=button，Tab 可达、Enter/Space 切换；皮肤 token：`--st-chip-*`，part：`remove`
+
+## st-avatar 头像
+
+- 纯展示圆形头像；内容来源：`src` 图片 > `image` 插槽 > 默认插槽文字缩写；`alt` 自动转发宿主 `aria-label` 与内部 img
+- 属性：`src`、`alt`、`color`（默认 secondary-container 配对）；无 size 属性——`font-size` 等比或直接写 width/height
+- 示例：`<st-avatar color="primary" style="font-size: 24px;">AI</st-avatar>`
+- 皮肤 token：`--st-avatar-*`，part：`image`
+
+## st-skeleton 加载占位
+
+- 纯展示骨架占位：`shape`（`text`(默认 整行 1em)/`circle` 正圆/`rect` 大块 60px）；宽高一律原生 CSS 覆写
+- opacity 呼吸动画（1.6s 循环），prefers-reduced-motion 自动静止；数据到达后用真实内容替换节点（ofa 页面配合 `o-if` 切骨架/内容）
+- 示例：`<st-skeleton shape="circle" style="width:48px;height:48px;"></st-skeleton>`
+- 皮肤 token：`--st-skeleton-*`；无交互无事件
 
 ## st-collapse 折叠容器
 
@@ -139,10 +186,11 @@ const t = toast("已保存", { duration: 3000 }); // 返回 { close, el }；dura
 
 ## st-menu / st-menu-item 下拉菜单
 
-- `st-menu` 属性：`align`（`right`(默认)/`left`，面板与触发器水平对齐）；插槽：`trigger`（触发器）+ light DOM 菜单项 `st-menu-item`
+- `st-menu` 属性：`align`（`right`(默认)/`left`，面板与触发器水平对齐）、`keep-open`（点击项后不关，用于多选）；插槽：`trigger`（触发器）+ light DOM 菜单项 `st-menu-item`
 - `open` 运行时状态；面板 fixed 定位 JS 计算（翻转避让视口）
-- 点外部 / Escape / 选中自动关闭；事件 `open` / `close`
-- item 属性：`disabled`；菜单文字直接写在 item 内
+- 点外部 / Escape / 选中自动关闭（`keep-open` 时点项不关）；事件 `open` / `close` / `change`
+- item 属性：`disabled`、`checkable`、`selected`；菜单文字直接写在 item 内
+- 可勾选菜单：`<st-menu-item checkable selected>`，点击切换 `selected` 并派发 `change`；`role=menuitemcheckbox` + `aria-checked`
 - 多级子菜单：`st-menu` 放在 item 的 `sub-menu` 插槽内，箭头自动显示、hover 展开、选中任意项整链关闭
 - 右键菜单：`openAt(x, y)`（ofa 页面在 `on:contextmenu` 里 `e.preventDefault()` 后调）；面板自动翻转避让视口
 - `contextMenu` 命令式工具（无需预引入）：`await contextMenu(e, [{id,label,prefix,suffix,disabled,children},{separator:true}])` → 点击的叶子项 id / 取消 null，菜单挂 body 用完即毁；移动端 `contextMenu.longPress(el, items, onSelect)` 长按 500ms 呼出（触屏子菜单为点击开合，无 hover）
@@ -168,6 +216,13 @@ const id = await contextMenu(e, [{ id: "copy", label: "复制" }, { separator: t
 
 - 点击波纹，放在 `position: relative` 的父元素内使用，波纹色 currentColor
 - st-button 等已内嵌，无需重复添加
+
+## st-code 代码块
+
+- 属性：`lang`（`html`(默认)/`js`/`ts`/`css`/`less`/`sass`）、`title`、`code`、`format`（`auto`(默认)/`off`）、`frame`（浏览器外壳；默认只有代码）
+- 源码用 `<textarea hidden>`（RCDATA，推荐）、`<template>`（惰性但会序列化）或 `code` 属性 / `:code`；不要直接放 light DOM 子节点（script 会执行）
+- 自动格式化：HTML/JS/TS/CSS/Less 走内置 js-beautify；Sass 只去公共缩进；复制按钮内置，复制后派发 `copy`
+- 颜色走 M3 角色；皮肤 token：`--st-code-*`；part：`shell` / `header` / `title` / `copy` / `body` / `pre` / `code`
 
 ## st-theme-mode 全局主题模式工具（无需预引入）
 

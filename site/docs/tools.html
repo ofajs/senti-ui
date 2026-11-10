@@ -6,6 +6,8 @@
   <title>Command tools — 组件文档 — Senti-UI</title>
   <meta name="description" content="Command tools（toast · alert · confirm · prompt）用法：命令式工具：Promise 化、用完即毁。基于 st-snackbar / st-dialog，可在任意 JS 中调用。" />
   <meta name="theme-color" content="#0061A4" />
+  <link rel="canonical" href="https://senti.ofajs.com/site/docs/tools" />
+  <meta property="og:url" content="https://senti.ofajs.com/site/docs/tools" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
   <script type="module">
     import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
@@ -66,7 +68,7 @@
 
           <article class="doc-page">
             <header class="doc-hero">
-              <p class="doc-kicker">辅助 · 21 / 21</p>
+              <p class="doc-kicker">辅助 · 22 / 22</p>
               <h1>Command tools <code>toast · alert · confirm · prompt</code></h1>
               <p class="doc-lead">五个命令式工具：toast、alert、confirm、prompt、contextMenu。直接在 JS 里 import 调用，Promise 拿返回值，用完即销毁，不需要在模板里预置组件。</p>
               <div class="doc-links">
@@ -81,178 +83,148 @@
               <h2>toast：即用消息</h2>
               <p class="doc-section-lead">默认 3s 自动消失，固定在视口左下角并向下堆叠。传对象可以换颜色、改时长；duration: 0 表示不自动关闭，只能点 ✕ 或调用返回的 close()。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>toast(message | options)</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>toast(message | options)</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo1">
                   <st-button variant="outlined" on:click="toastBasic">默认 toast</st-button>
                   <st-button variant="outlined" on:click="toastSuccess">成功色 · 4s</st-button>
                   <st-button variant="outlined" on:click="toastSticky">不自动关闭</st-button>
                   <st-button variant="text" on:click="closeToast">close() 关闭</st-button>
                   <span class="demo-note">结果：{{toastResult}}</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>import toast from "/packages/snackbar/toast.js";
-
-toast("已保存到草稿");                       // 默认 3s
-toast({ message: "同步完成", color: "success", duration: 4000 });
-
-const t = await toast({ message: "点 ✕ 关闭", duration: 0 });
-t.close();                                    // 手动关闭，幂等
-// 返回 { close, el }</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>alert：只有一个确认键</h2>
               <p class="doc-section-lead">确认返回 true；点遮罩或按 Escape 返回 null。参数支持字符串简写，也可以用对象补标题与按钮文案。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>await alert()</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>await alert()</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo2">
                   <st-button on:click="alertString">alert("操作成功")</st-button>
                   <st-button variant="outlined" on:click="alertObject">alert({ title, message })</st-button>
                   <span class="demo-note">结果：{{alertResult}} · 关闭方式不同，返回值是 true 或 null</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>import alert from "/packages/dialog/alert.js";
 
-const ok = await alert("操作成功");          // true
-await alert({
-  title: "提示",
-  message: "密码已重置，请用新密码登录。",
-  ok: "知道了",
-});
-// 点遮罩 / Escape → null</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>confirm：确认、取消与危险操作</h2>
               <p class="doc-section-lead">确认返回 true，取消返回 false，点遮罩或按 Escape 返回 null。危险操作把 color 设为 error，主按钮会使用错误色。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>await confirm()</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>await confirm()</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo3">
                   <st-button color="error" on:click="confirmDanger">删除（危险色）</st-button>
                   <st-button variant="outlined" on:click="confirmPlain">退出编辑（字符串简写）</st-button>
                   <st-button variant="text" on:click="confirmPublish">发布文章</st-button>
                   <span class="demo-note">结果：{{confirmResult}} · 注意 false 与 null 是两种不同结果</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（错误色）</summary>
-                <pre><code>import confirm from "/packages/dialog/confirm.js";
-
-const ok = await confirm({
-  title: "确认删除",
-  message: "删除后不可恢复。",
-  yes: "删除",
-  cancel: "取消",
-  color: "error",
-});
-
-if (ok === true) {
-  // 执行删除
-} else if (ok === false) {
-  // 用户点了取消
-} else {
-  // 点遮罩 / Escape
-}</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>prompt：输入并返回结果</h2>
               <p class="doc-section-lead">确认返回输入值（字符串，可能为空串），取消、遮罩或 Escape 返回 null。输入框会自动聚焦并全选默认值，Enter 提交。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>await prompt()</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>await prompt()</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo4">
                   <st-button on:click="promptBasic">重命名</st-button>
                   <st-button variant="outlined" on:click="promptPrefill">带默认值</st-button>
                   <st-button variant="text" on:click="promptString">字符串简写</st-button>
                   <span class="demo-note">结果：{{promptResult}} · 空输入会返回空串，不是 null</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>import prompt from "/packages/dialog/prompt.js";
-
-const name = await prompt({
-  title: "重命名",
-  message: "输入新的项目名称",
-  placeholder: "项目名称",
-  value: "官网改版",          // 预填并全选
-});
-
-if (name !== null) {
-  // name 是字符串
-}</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>contextMenu：右键菜单</h2>
               <p class="doc-section-lead">传事件或坐标与 items 数组，菜单挂在 body 上定位并自动翻转避让视口。选中的叶子项 id 即返回值；点空白或按 Escape 返回 null，禁用项不可选。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>await contextMenu(e, items)</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo5 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>await contextMenu(e, items)</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo5')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo5 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo5 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo5">
                   <div class="ctx-mini" on:contextmenu="openCtx">在这里点右键：基础菜单</div>
                   <div class="ctx-mini" on:contextmenu="openCtxNested">在这里点右键：子菜单 + 分隔线</div>
                   <span class="demo-note">结果：{{ctxResult}} · 取消返回 null</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（含子菜单）</summary>
-                <pre><code>import contextMenu from "/packages/menu/context-menu.js";
 
-const id = await contextMenu(event, [
-  { id: "copy", label: "复制", prefix: "⧉", suffix: "⌘C" },
-  { id: "rename", label: "重命名", prefix: "✏" },
-  { separator: true },
-  {
-    id: "export",
-    label: "导出为",
-    children: [
-      { id: "pdf", label: "PDF" },
-      { id: "md", label: "Markdown" },
-    ],
-  },
-  { id: "delete", label: "删除", disabled: true },
-]);
-// id → "copy" / "pdf" 等；取消 → null</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo5" lang="html" :code="demo5Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>组合成完整流程</h2>
               <p class="doc-section-lead">命令式工具可以直接串起来：先 confirm 拿决定，再按结果 toast；或 prompt 拿到名称后写回数据。这样不需要在模板里维护对话框的 open 状态。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>confirm → toast</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo6 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>confirm → toast</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo6')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo6 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo6 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo6">
                   <st-button color="error" on:click="flowDelete">删除项目</st-button>
                   <st-button variant="outlined" on:click="flowRename">重命名项目</st-button>
                   <span class="demo-note">流程结果：{{flowResult}}</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo6" lang="html" :code="demo6Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（confirm → toast）</summary>
-                <pre><code>import confirm from "/packages/dialog/confirm.js";
-import toast from "/packages/snackbar/toast.js";
-
-const ok = await confirm({
-  title: "删除项目",
-  message: "“官网改版”会被移入回收站。",
-  yes: "删除",
-  color: "error",
-});
-
-if (ok === true) {
-  toast({ message: "已删除项目", color: "success" });
-} else {
-  toast("已取消");
-}</code></pre>
-              </details>
             </section>
 
             <div class="doc-cols">
@@ -282,7 +254,7 @@ if (ok === true) {
             </div>
 
             <nav class="doc-pager" aria-label="上下篇">
-              <a class="pager-link" olink href="./ripple.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Ripple</a><div class="pager-empty"></div>
+              <a class="pager-link" olink href="./skeleton.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Skeleton</a><a class="pager-link pager-next" olink href="./code.html"><span>下一页</span>Code <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
             </nav>
           </article>
       <script>
@@ -290,6 +262,13 @@ if (ok === true) {
 
         export default async () => ({
           data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false, demo6: false },
+            demo1Code: "<st-button variant=\"outlined\" on:click=\"toastBasic\">默认 toast</st-button>\n                  <st-button variant=\"outlined\" on:click=\"toastSuccess\">成功色 · 4s</st-button>\n                  <st-button variant=\"outlined\" on:click=\"toastSticky\">不自动关闭</st-button>\n                  <st-button variant=\"text\" on:click=\"closeToast\">close() 关闭</st-button>\n                  <span class=\"demo-note\">结果：{{toastResult}}</span>",
+            demo2Code: "<st-button on:click=\"alertString\">alert(\"操作成功\")</st-button>\n                  <st-button variant=\"outlined\" on:click=\"alertObject\">alert({ title, message })</st-button>\n                  <span class=\"demo-note\">结果：{{alertResult}} · 关闭方式不同，返回值是 true 或 null</span>",
+            demo3Code: "<st-button color=\"error\" on:click=\"confirmDanger\">删除（危险色）</st-button>\n                  <st-button variant=\"outlined\" on:click=\"confirmPlain\">退出编辑（字符串简写）</st-button>\n                  <st-button variant=\"text\" on:click=\"confirmPublish\">发布文章</st-button>\n                  <span class=\"demo-note\">结果：{{confirmResult}} · 注意 false 与 null 是两种不同结果</span>",
+            demo4Code: "<st-button on:click=\"promptBasic\">重命名</st-button>\n                  <st-button variant=\"outlined\" on:click=\"promptPrefill\">带默认值</st-button>\n                  <st-button variant=\"text\" on:click=\"promptString\">字符串简写</st-button>\n                  <span class=\"demo-note\">结果：{{promptResult}} · 空输入会返回空串，不是 null</span>",
+            demo5Code: "<div class=\"ctx-mini\" on:contextmenu=\"openCtx\">在这里点右键：基础菜单</div>\n                  <div class=\"ctx-mini\" on:contextmenu=\"openCtxNested\">在这里点右键：子菜单 + 分隔线</div>\n                  <span class=\"demo-note\">结果：{{ctxResult}} · 取消返回 null</span>",
+            demo6Code: "<st-button color=\"error\" on:click=\"flowDelete\">删除项目</st-button>\n                  <st-button variant=\"outlined\" on:click=\"flowRename\">重命名项目</st-button>\n                  <span class=\"demo-note\">流程结果：{{flowResult}}</span>",
             toastResult: "（未调用）",
             alertResult: "（未调用）",
             confirmResult: "（未调用）",
@@ -298,6 +277,9 @@ if (ok === true) {
             flowResult: "（未调用）",
           },
           proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
             async toastBasic() {
               if (!window.__site) return;
               await window.__site.toast("已保存到草稿");

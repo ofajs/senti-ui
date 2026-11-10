@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avatar — 组件文档 — Senti-UI</title>
+  <meta name="description" content="Avatar（st-avatar）用法：纯展示圆形头像：文字缩写 / 图片 / 图标三种内容来源，color 语义换色，font-size 等比缩放。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="canonical" href="https://senti.ofajs.com/site/docs/avatar" />
+  <meta property="og:url" content="https://senti.ofajs.com/site/docs/avatar" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../../packages/skin/cyberpunk.css" />
+  <link rel="stylesheet" href="../../packages/skin/windows.css" />
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+    .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
+    .nojs h1 { margin: 0 0 12px; font-size: 32px; }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>Avatar</h1>
+      <p>组件文档的示例与目录需要 JavaScript；也可以回到首页或查看 GitHub 源码。</p>
+      <p><a href="../index.html">组件目录</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+    </div>
+  </noscript>
+
+  <o-app src="../app-config.js">
+    <template page>
+      <!-- 依赖放在 template 内：SCSR 切页时目标页 body 里的 <l-m> 不会执行 -->
+      <l-m src="../../packages/avatar/avatar.html"></l-m>
+      <l-m src="../../packages/button/button.html"></l-m>
+      <l-m src="../../packages/badges/badges.html"></l-m>
+      <l-m src="../../packages/list/list.html"></l-m>
+
+      <link rel="stylesheet" href="../docs.css" />
+
+          <article class="doc-page">
+            <header class="doc-hero">
+              <p class="doc-kicker">内容 · 17 / 26</p>
+              <h1>Avatar <code>st-avatar</code></h1>
+              <p class="doc-lead">纯展示圆形头像：内容来源 src 图片 > image 插槽 > 默认插槽文字缩写。无 size 属性——改 font-size 整体等比缩放，或直接写 width / height。</p>
+              <div class="doc-links">
+                <a href="../index.html">组件目录</a>
+                <a href="https://github.com/ofajs/senti-ui/blob/main/packages/avatar/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
+              </div>
+            </header>
+
+            <section class="doc-section">
+              <h2>三种内容来源</h2>
+              <p class="doc-section-lead">文字缩写自动居中；<code>image</code> 插槽放 svg / img / iconify-icon；<code>src</code> 图片优先级最高并铺满圆内，<code>alt</code> 自动转发为宿主 aria-label。</p>
+              <div class="demo">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>src / 插槽</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo1">
+                  <st-avatar>Y</st-avatar>
+                  <st-avatar>Yao</st-avatar>
+                  <st-avatar><iconify-icon slot="image" icon="mdi:account"></iconify-icon></st-avatar>
+                  <st-avatar src="https://picsum.photos/seed/senti-docs/64/64" alt="随机头像"></st-avatar>
+                  <span class="demo-note">src 设置后覆盖插槽内容；alt 同时供读屏使用。</span>
+                </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
+              </div>
+            </section>
+
+            <section class="doc-section">
+              <h2>color 语义换色</h2>
+              <p class="doc-section-lead">默认 secondary-container 配对；color 写 M3 角色名或自定义变量名，底色与文字自动配对，与换色工具联动。</p>
+              <div class="demo">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>color</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo2">
+                  <st-avatar color="primary">P</st-avatar>
+                  <st-avatar color="secondary">S</st-avatar>
+                  <st-avatar color="tertiary">T</st-avatar>
+                  <st-avatar color="error">E</st-avatar>
+                  <st-avatar color="success">✓</st-avatar>
+                </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
+              </div>
+            </section>
+
+            <section class="doc-section">
+              <h2>尺寸：font-size 等比与直接覆写</h2>
+              <p class="doc-section-lead">没有 size 属性。改宿主 font-size（默认 32px@14px）整体等比缩放；需要非等比尺寸时直接写 width / height / border-radius。</p>
+              <div class="demo">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>font-size / width</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo3">
+                  <st-avatar style="font-size: 12px;">12</st-avatar>
+                  <st-avatar>14</st-avatar>
+                  <st-avatar style="font-size: 20px;">20</st-avatar>
+                  <st-avatar style="font-size: 28px;">28</st-avatar>
+                  <st-avatar style="width: 48px; height: 48px; border-radius: 8px; font-size: 18px;">方角 48</st-avatar>
+                </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
+              </div>
+            </section>
+
+            <section class="doc-section">
+              <h2>组合用法</h2>
+              <p class="doc-section-lead">与 <code>st-list-item</code> 的 prefix 插槽组合做联系人列表；与 <code>st-badges</code> 组合钉在线状态点。</p>
+              <div class="demo">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>list / badges</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo4">
+                  <st-list style="width: 100%; max-width: 420px;">
+                    <st-list-item button>
+                      <st-avatar slot="prefix" color="primary" style="font-size: 16px;">A</st-avatar>
+                      联系人 A<span slot="secondary">avatar 在 prefix 插槽</span>
+                    </st-list-item>
+                    <st-list-item button>
+                      <st-avatar slot="prefix" color="tertiary" style="font-size: 16px;">B</st-avatar>
+                      联系人 B<span slot="secondary">尺寸随 font-size 放大</span>
+                    </st-list-item>
+                  </st-list>
+                  <div class="row">
+                    <st-badges color="success"><st-avatar title="在线">Y</st-avatar></st-badges>
+                    <span class="demo-note" style="width: auto;">badges 贴角圆点做在线标记</span>
+                  </div>
+                </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
+              </div>
+            </section>
+
+            <div class="doc-cols">
+              <div class="doc-block">
+                <h3>属性</h3>
+                <table class="api">
+                  <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>src</code></td><td>url</td><td>无</td><td>图片地址，优先级高于插槽</td></tr>
+                    <tr><td><code>alt</code></td><td>string</td><td>无</td><td>替代文本，转发宿主 aria-label 与内部 img</td></tr>
+                    <tr><td><code>color</code></td><td>M3 角色名 / 自定义变量名</td><td>secondary-container 配对</td><td>底色与文字自动配对</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="doc-block">
+                <h3>插槽 / 注意</h3>
+                <ul class="api-list">
+                  <li>插槽：默认文字缩写；<code>image</code> 放 svg / img / iconify-icon（自动 0.857em）。</li>
+                  <li>纯展示不可聚焦；装饰性头像加 <code>aria-hidden="true"</code>，有含义写 <code>alt</code>。</li>
+                  <li>默认 <code>2.286em</code>（32px@14px）正圆，文字 <code>0.5em</code>；皮肤 token <code>--st-avatar-*</code>，part：<code>image</code>。</li>
+                  <li>图片加载失败无兜底占位，重要场景自行在 image 插槽处理。</li>
+                </ul>
+              </div>
+            </div>
+
+            <nav class="doc-pager" aria-label="上下篇">
+              <a class="pager-link" olink href="./chip.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Chip</a><a class="pager-link pager-next" olink href="./list.html"><span>下一页</span>List <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
+            </nav>
+          </article>
+      <script>
+        export const parent = "./layout.html";
+
+        export default async () => ({
+          data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false },
+            demo1Code: "<st-avatar>Y</st-avatar>\n<st-avatar>Yao</st-avatar>\n<st-avatar><iconify-icon slot=\"image\" icon=\"mdi:account\"></iconify-icon></st-avatar>\n<st-avatar src=\"...png\" alt=\"用户头像\"></st-avatar>",
+            demo2Code: "<st-avatar color=\"primary\">P</st-avatar>\n<st-avatar color=\"secondary\">S</st-avatar>\n<st-avatar color=\"tertiary\">T</st-avatar>\n<st-avatar color=\"error\">E</st-avatar>\n<st-avatar color=\"success\">✓</st-avatar>",
+            demo3Code: "<st-avatar style=\"font-size: 12px;\">12</st-avatar>\n<st-avatar>14</st-avatar>\n<st-avatar style=\"font-size: 28px;\">28</st-avatar>\n<!-- 非等比：直接覆写 -->\n<st-avatar style=\"width: 48px; height: 48px; border-radius: 8px; font-size: 18px;\">方角 48</st-avatar>",
+            demo4Code: "<st-list-item button>\n  <st-avatar slot=\"prefix\" color=\"primary\" style=\"font-size: 16px;\">A</st-avatar>\n  联系人 A<span slot=\"secondary\">副文本</span>\n</st-list-item>\n\n<!-- badges 在线标记 -->\n<st-badges color=\"success\"><st-avatar title=\"在线\">Y</st-avatar></st-badges>",
+          },
+          proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
+          },
+        });
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin, getSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = Object.assign(window.__site || {}, { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu });
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

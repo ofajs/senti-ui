@@ -6,6 +6,8 @@
   <title>Select — 组件文档 — Senti-UI</title>
   <meta name="description" content="Select（st-select）用法：单选下拉框。选项写在 light DOM：原生 option 或 st-option 富内容；键盘全支持。" />
   <meta name="theme-color" content="#0061A4" />
+  <link rel="canonical" href="https://senti.ofajs.com/site/docs/select" />
+  <meta property="og:url" content="https://senti.ofajs.com/site/docs/select" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
   <script type="module">
     import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
@@ -66,7 +68,7 @@
 
           <article class="doc-page">
             <header class="doc-hero">
-              <p class="doc-kicker">表单 · 4 / 21</p>
+              <p class="doc-kicker">表单 · 4 / 22</p>
               <h1>Select <code>st-select</code></h1>
               <p class="doc-lead">单选下拉框。选项写在 light DOM：原生 option 或 st-option 富内容；也支持 :options 动态数组。键盘、弹层翻转和 change 回显都已内建。</p>
               <div class="doc-links">
@@ -79,8 +81,17 @@
               <h2>基础用法与两种 variant</h2>
               <p class="doc-section-lead">选项直接写在组件内部，组件只把它们当数据源，读取后自绘下拉列表。placeholder 只在未选中时显示；初始选中用 <code>default-value</code>，不要给 option 写 selected。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-select / option</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-select / option</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo1">
                   <div class="demo-cell">
                     <span class="demo-label">outlined</span>
                     <st-select placeholder="请选择水果" on:change="onFruit">
@@ -107,24 +118,26 @@
                   </div>
                 </div>
                 <span class="demo-note" style="grid-column: 1 / -1;">最近选中：{{fruit}}</span>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-select placeholder="请选择水果" on:change="onFruit"&gt;
-  &lt;option value="apple"&gt;苹果&lt;/option&gt;
-  &lt;option value="banana"&gt;香蕉&lt;/option&gt;
-&lt;/st-select&gt;
 
-&lt;st-select variant="filled" default-value="banana"&gt;...&lt;/st-select&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>disabled 与校验色</h2>
               <p class="doc-section-lead">disabled 会降到 0.38 透明度并关闭弹层，点击与键盘都不再响应。<code>color</code> 控制 focus 描边 / 底线色，用来表达 error、success 等校验结果；未设置时回退 primary。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled / color</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>disabled / color</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo2">
                   <div class="demo-cell">
                     <span class="demo-label">disabled</span>
                     <st-select placeholder="禁用状态" disabled>
@@ -151,20 +164,26 @@
                     </st-select>
                   </div>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-select placeholder="禁用状态" disabled&gt;...&lt;/st-select&gt;
-&lt;st-select color="error" placeholder="必选项"&gt;...&lt;/st-select&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>长列表与键盘</h2>
               <p class="doc-section-lead">列表最高 15em，超出内部滚动。打开后 ↑↓ 循环移动激活项并自动滚到可见，Home / End 跳首尾，Enter / Space 选中，Escape / Tab 关闭；下方空间不足时弹层会自动向上翻转。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>键盘 / 滚动</code></div>
-                <div class="demo-stage block">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>键盘 / 滚动</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo3">
                   <st-select placeholder="长列表：试试 ↑ ↓ / Home / End" style="width: 100%; max-width: 360px;" on:change="onPick">
                     <option value="1">选项 01</option>
                     <option value="2">选项 02</option>
@@ -181,23 +200,26 @@
                   </st-select>
                   <span class="demo-note">最近选中：{{lastPick}}</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-select placeholder="长列表"&gt;
-  &lt;option value="1"&gt;选项 01&lt;/option&gt;
-  &lt;option value="2"&gt;选项 02&lt;/option&gt;
-  &lt;option value="3"&gt;选项 03&lt;/option&gt;
-&lt;/st-select&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>富内容选项与 st-option</h2>
               <p class="doc-section-lead">原生 option 内可嵌 span / b，子元素会被克隆到下拉项；闭合态默认只显示纯文本。复杂或双语内容推荐 <code>st-option</code>：插槽负责下拉项，<code>label</code> 属性决定闭合态文字；插槽里的图标（svg / img / iconify-icon / <code>slot="icon"</code>）会同步显示在闭合态。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-option / label</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-option / label</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo4">
                   <div class="demo-cell">
                     <span class="demo-label">原生 option 富内容</span>
                     <st-select placeholder="选择水果">
@@ -215,22 +237,26 @@
                     </st-select>
                   </div>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-select default-value="relay"&gt;
-  &lt;st-option value="direct" label="直连"&gt;&lt;iconify-icon icon="mdi:flash"&gt;&lt;/iconify-icon&gt; 直连 Direct&lt;/st-option&gt;
-  &lt;st-option value="relay" label="邀请码"&gt;&lt;iconify-icon icon="mdi:key-variant"&gt;&lt;/iconify-icon&gt; 邀请码 Invite code&lt;/st-option&gt;
-&lt;/st-select&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>:options 动态选项</h2>
               <p class="doc-section-lead">数据驱动时优先用 <code>:options</code> 绑定数组（<code>[{ value, label }]</code>），组件会重建列表并保留当前选中值。数组内容变化时给 data 赋新数组即可；纯 JS 场景也可以用 <code>el.options = [...]</code>。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>:options</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo5 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>:options</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo5')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo5 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo5 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo5">
                   <div class="demo-cell">
                     <span class="demo-label">cities</span>
                     <st-select :options="cities" placeholder=":options 数据绑定" on:change="onCity"></st-select>
@@ -245,30 +271,26 @@
                   </div>
                 </div>
                 <span class="demo-note" style="grid-column: 1 / -1;">选中城市：{{city}}</span>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-select :options="cities" placeholder="请选择城市"&gt;&lt;/st-select&gt;
 
-&lt;script&gt;
-  export default async () =&gt; ({
-    data: {
-      cities: [
-        { value: "bj", label: "北京" },
-        { value: "sh", label: "上海" },
-      ],
-    },
-  });
-&lt;/script&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo5" lang="html" :code="demo5Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>宽度、字号与 change 回显</h2>
               <p class="doc-section-lead">尺寸默认值都以 em 计，改 <code>font-size</code> 等比缩放；宽度、高度、圆角直接用原生 CSS。<code>change</code> 只在用户选中时派发，回调里 <code>e.target.value</code> 已是新值。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>style / change</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo6 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>style / change</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo6')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo6 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo6 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo6">
                   <div class="demo-cell">
                     <span class="demo-label">font-size: 12px</span>
                     <st-select style="font-size: 12px;" placeholder="小号 12px" on:change="onPick">
@@ -295,13 +317,9 @@
                   </div>
                 </div>
                 <span class="demo-note" style="grid-column: 1 / -1;">最近选中：{{lastPick}}</span>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo6" lang="html" :code="demo6Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-select style="font-size: 12px;" placeholder="小号"&gt;...&lt;/st-select&gt;
-&lt;st-select style="width: 280px;" placeholder="固定宽度"&gt;...&lt;/st-select&gt;
-&lt;st-select style="height: 48px; border-radius: 12px;"&gt;...&lt;/st-select&gt;</code></pre>
-              </details>
             </section>
 
             <div class="doc-cols">
@@ -340,6 +358,13 @@
 
         export default async () => ({
           data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false, demo6: false },
+            demo1Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">outlined</span>\n                    <st-select placeholder=\"请选择水果\" on:change=\"onFruit\">\n                      <option value=\"apple\">苹果</option>\n                      <option value=\"banana\">香蕉</option>\n                      <option value=\"cherry\">樱桃</option>\n                    </st-select>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">filled + 初始选中</span>\n                    <st-select variant=\"filled\" default-value=\"banana\" on:change=\"onFruit\">\n                      <option value=\"apple\">苹果</option>\n                      <option value=\"banana\">香蕉</option>\n                      <option value=\"cherry\">樱桃</option>\n                    </st-select>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">无 value 的 option</span>\n                    <st-select placeholder=\"城市\" on:change=\"onFruit\">\n                      <option>北京</option>\n                      <option>上海</option>\n                      <option>广州</option>\n                    </st-select>\n                  </div>",
+            demo2Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">disabled</span>\n                    <st-select placeholder=\"禁用状态\" disabled>\n                      <option value=\"a\">选项 A</option>\n                    </st-select>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">disabled + filled</span>\n                    <st-select variant=\"filled\" default-value=\"a\" disabled>\n                      <option value=\"a\">已选中但不可改</option>\n                    </st-select>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">color=\"error\"</span>\n                    <st-select color=\"error\" placeholder=\"必选项，尚未选择\">\n                      <option value=\"a\">选项 A</option>\n                      <option value=\"b\">选项 B</option>\n                    </st-select>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">color=\"success\"</span>\n                    <st-select color=\"success\" default-value=\"ok\">\n                      <option value=\"ok\">校验通过</option>\n                    </st-select>\n                  </div>",
+            demo3Code: "<st-select placeholder=\"长列表：试试 ↑ ↓ / Home / End\" style=\"width: 100%; max-width: 360px;\" on:change=\"onPick\">\n                    <option value=\"1\">选项 01</option>\n                    <option value=\"2\">选项 02</option>\n                    <option value=\"3\">选项 03</option>\n                    <option value=\"4\">选项 04</option>\n                    <option value=\"5\">选项 05</option>\n                    <option value=\"6\">选项 06</option>\n                    <option value=\"7\">选项 07</option>\n                    <option value=\"8\">选项 08</option>\n                    <option value=\"9\">选项 09</option>\n                    <option value=\"10\">选项 10</option>\n                    <option value=\"11\">选项 11</option>\n                    <option value=\"12\">选项 12</option>\n                  </st-select>\n                  <span class=\"demo-note\">最近选中：{{lastPick}}</span>",
+            demo4Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">原生 option 富内容</span>\n                    <st-select placeholder=\"选择水果\">\n                      <option value=\"apple\"><span style=\"margin-right: 8px;\">🍎</span><b>苹果</b> Apple</option>\n                      <option value=\"banana\"><span style=\"margin-right: 8px;\">🍌</span><b>香蕉</b> Banana</option>\n                      <option value=\"cherry\"><span style=\"margin-right: 8px;\">🍒</span><b>樱桃</b> Cherry</option>\n                    </st-select>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">st-option + label</span>\n                    <st-select default-value=\"relay\" placeholder=\"选择部署方式\">\n                      <st-option value=\"direct\" label=\"直连\"><iconify-icon icon=\"mdi:flash\" style=\"margin-right:8px\"></iconify-icon><b>直连</b> Direct</st-option>\n                      <st-option value=\"relay\" label=\"邀请码\"><iconify-icon icon=\"mdi:key-variant\" style=\"margin-right:8px\"></iconify-icon><b>邀请码</b> <span style=\"opacity: 0.62;\">Invite code</span></st-option>\n                      <st-option label=\"无 value（取 label）\">缺省 value 演示</st-option>\n                    </st-select>\n                  </div>",
+            demo5Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">cities</span>\n                    <st-select :options=\"cities\" placeholder=\":options 数据绑定\" on:change=\"onCity\"></st-select>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">extendedCities</span>\n                    <st-select :options=\"extendedCities\" placeholder=\"另一组城市数据\" on:change=\"onCity\"></st-select>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">修改数据源</span>\n                    <st-button variant=\"outlined\" on:click=\"swapCities\">换一组城市</st-button>\n                  </div>",
+            demo6Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">font-size: 12px</span>\n                    <st-select style=\"font-size: 12px;\" placeholder=\"小号 12px\" on:change=\"onPick\">\n                      <option value=\"high\">高优先级</option>\n                      <option value=\"mid\">中优先级</option>\n                      <option value=\"low\">低优先级</option>\n                    </st-select>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">width: 280px</span>\n                    <st-select style=\"width: 280px;\" placeholder=\"固定宽度 280px\" on:change=\"onPick\">\n                      <option value=\"high\">高优先级</option>\n                      <option value=\"mid\">中优先级</option>\n                      <option value=\"low\">低优先级</option>\n                    </st-select>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">height + 圆角</span>\n                    <st-select variant=\"filled\" style=\"height: 48px; border-radius: 12px;\" default-value=\"mid\" on:change=\"onPick\">\n                      <option value=\"high\">高优先级</option>\n                      <option value=\"mid\">中优先级</option>\n                      <option value=\"low\">低优先级</option>\n                    </st-select>\n                  </div>",
             fruit: "（未选择）",
             city: "（未选择）",
             lastPick: "（未选择）",
@@ -362,6 +387,9 @@
             ],
           },
           proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
             onFruit(e) {
               this.fruit = e.target.value;
             },

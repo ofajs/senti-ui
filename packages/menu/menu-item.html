@@ -57,6 +57,28 @@
     .prefix { margin-right: 0.857em; }
     .suffix { margin-left: 0.857em; color: var(--md-sys-color-on-surface-variant); }
 
+    /* checkable 的勾选位：只在该 item 上保留，避免所有菜单项统一缩进 */
+    .check {
+      display: none;
+      width: 1.143em;
+      height: 1.143em;
+      margin-right: 0.571em;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      color: var(--md-sys-color-primary);
+    }
+    :host([checkable]) .check { display: flex; }
+    .check svg {
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity var(--st-motion-duration, 0.15s) ease,
+        transform var(--st-motion-duration, 0.15s) ease;
+    }
+    :host([selected]) .check svg { opacity: 1; transform: none; }
+
     /* sub-menu 插槽：仅作子菜单宿主的挂载点，不占布局
        （子菜单面板是 fixed 定位，宿主自身零尺寸） */
     .submenu {
@@ -102,6 +124,17 @@
     }
 
     l-m { display: none; }
+
+    /* 减少动态效果：动画/过渡压到近零，同时保留 animationend 等事件语义 */
+    @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 
   <l-m src="../ripple/ripple.html"></l-m>
@@ -110,6 +143,15 @@
   <button class="native" type="button" role="menuitem"></button>
   <div class="item">
     <span class="layer"></span>
+    <span class="check" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+        <path d="M0 0h24v24H0z" fill="none" />
+        <path
+          fill="currentColor"
+          d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"
+        />
+      </svg>
+    </span>
     <div class="prefix"><slot name="prefix"></slot></div>
     <div class="label"><slot></slot></div>
     <div class="suffix"><slot name="suffix"></slot></div>
@@ -133,9 +175,13 @@
       tag: "st-menu-item",
       attrs: {
         disabled: null,
+        checkable: null,
+        selected: null,
       },
       watch: {
         disabled() { this.applyDisabled(); },
+        checkable() { this.applyState?.(); },
+        selected() { this.applyState?.(); },
       },
       ready() {
         const ele = this.ele;
@@ -148,6 +194,16 @@
           native.setAttribute("aria-disabled", this.disabled !== null ? "true" : "false");
         };
         this.applyDisabled();
+        this.applyState = () => {
+          const checkable = this.checkable !== null;
+          native.setAttribute("role", checkable ? "menuitemcheckbox" : "menuitem");
+          if (checkable) {
+            native.setAttribute("aria-checked", this.selected !== null ? "true" : "false");
+          } else {
+            native.removeAttribute("aria-checked");
+          }
+        };
+        this.applyState();
         this._a11yCleanup = syncAccessibleName(ele, native, {
           fromSlot: true,
           excludeSlots: ["sub-menu"],
@@ -187,6 +243,16 @@
           if (e.composedPath().includes(this._subEle)) return;
           e.stopPropagation();
           $(this._subEle).open = !$(this._subEle).open;
+        });
+
+        // checkable：点击切换 selected（attr，可被外部 :selected 覆盖），
+        // 并派发 composed change；是否关闭菜单由父级 st-menu 的 keep-open 决定
+        ele.addEventListener("click", () => {
+          if (this.checkable === null || this.disabled !== null || this._subEle) return;
+          const next = !ele.hasAttribute("selected");
+          ele.toggleAttribute("selected", next);
+          native.setAttribute("aria-checked", next ? "true" : "false");
+          ele.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
         });
       },
       detached() {

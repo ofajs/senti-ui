@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>行为统一，VI 自由 — 手记 — Senti-UI</title>
+  <meta name="description" content="Senti-UI 基于 ofa.js v5 与 Material Design 3：只固定组件行为，把颜色、材质和排版留给页面。一篇讲清 M3 颜色减法、对比度和 input 去 label 的设计手记。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="canonical" href="https://senti.ofajs.com/site/notes/behavior-and-skin" />
+  <meta property="og:url" content="https://senti.ofajs.com/site/notes/behavior-and-skin" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../../packages/skin/cyberpunk.css" />
+  <link rel="stylesheet" href="../../packages/skin/windows.css" />
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+    .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
+    .nojs h1 { margin: 0 0 12px; font-size: 32px; }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>行为统一，VI 自由</h1>
+      <p>手记正文需要 JavaScript；也可以回到手记目录或查看 GitHub 源码。</p>
+      <p><a href="./index.html">手记</a> · <a href="../index.html">组件目录</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+    </div>
+  </noscript>
+
+  <o-app src="../app-config.js">
+    <template page>
+      <l-m src="../../packages/button/button.html"></l-m>
+      <l-m src="../../packages/select/select.html"></l-m>
+      <l-m src="../../packages/button/button-group.html"></l-m>
+      <l-m src="../../packages/button/icon-button.html"></l-m>
+      <l-m src="../../packages/menu/menu.html"></l-m>
+      <l-m src="../../packages/tooltip/tooltip.html"></l-m>
+      <l-m src="../../packages/progress/progress.html"></l-m>
+      <l-m src="../../packages/code/code.html"></l-m>
+
+      <link rel="stylesheet" href="../notes.css" />
+
+      <article class="note-page">
+        <header class="note-hero">
+          <p class="kicker">NOTES · 01 / DESIGN</p>
+          <h1>行为统一，VI 自由</h1>
+          <p class="lead">
+            过去用框架省下组件开发时间，也顺便接受了它的设计语言。AI 让重新开发变得划算之后，
+            缺的是一套不会随风格漂移的组件使用方式。
+          </p>
+          <div class="note-meta">
+            <span class="tag">设计哲学</span>
+            <span>2026-11-06</span>
+            <span class="divider" aria-hidden="true"></span>
+            <span>约 5 分钟</span>
+          </div>
+        </header>
+
+        <div class="note-body">
+          <p>
+            过去开发一个应用，选一套开源前端框架，主要图省时间：按钮、表单、弹窗都是现成的。
+            代价是接受它的设计语言——圆角、间距、阴影、状态反馈，整套审美一起进来。
+            换主题通常只能改颜色，结构还是框架的。
+          </p>
+          <p>
+            AI 改变了成本结构，组件可以重新写。但能写出来不等于写得一致：按钮学一套、
+            菜单学另一套、表单校验又是第三种。单页看没问题，项目一大，交互习惯就开始分裂。
+          </p>
+          <p>
+            Senti-UI 的答案只有一句：<strong>行为统一，VI 自由</strong>。
+            它用 ofa.js v5 写成一组 Web Components，不需要构建；这篇手记记录它落地时的判断：
+            为什么需要组件底座，以及 M3 的颜色和组件结构各自保留到什么程度。
+          </p>
+
+          <h2><span class="num">01</span>缺的不是组件，是统一的行为</h2>
+          <p>
+            组件可以长得不一样，行为必须一样：按钮怎么禁用、输入框怎么报错、菜单怎么关闭、
+            弹窗打开后焦点怎么还。如果这些细节每次都由 AI 即兴决定，团队就要反复 review
+            本应标准化的地方。
+          </p>
+          <p>
+            所以 Senti-UI 只固定组件的使用方式：标签、属性、插槽、事件和状态在所有项目里保持一致。
+            视觉则通过原生 CSS 和皮肤暴露。风格可以定制，习惯不应该。
+          </p>
+          <blockquote>
+            <p>行为是共用的，VI 是自己的。</p>
+            <cite>Senti-UI 的基本假设</cite>
+          </blockquote>
+
+          <h2><span class="num">02</span>颜色：借 M3 的关系，不借全部 token</h2>
+          <p>
+            M3 最有价值的不是某一种圆角，而是颜色之间的关系：种子色生成角色，
+            每个角色自带 <code>on-*</code> 和 <code>*-container</code> 配对，
+            前景与背景由 tone 规则保证可读性，浅色与深色共用同一套变量。
+          </p>
+          <p>
+            最终只保留 <strong>34 个 token</strong>：5 个角色
+            （primary / secondary / tertiary / error / success）各带 4 个配对，共 20 个；
+            中性色 14 个，覆盖页面底色、五层容器、描边和反色。
+            相比 M3 常见的完整 token 表，<code>background</code> / <code>on-background</code>
+            已由 <code>surface</code> / <code>on-surface</code> 承担，
+            <code>surface-tint</code> 与 <code>primary</code> 同色，
+            <code>scrim</code> / <code>shadow</code> 是固定黑，
+            <code>surface-dim</code> / <code>surface-bright</code> 与五层
+            <code>surface-container</code> 近似——这些名字都没有保留。
+            另外补了一个 M3 核心规范之外的角色 <code>success</code>，表单校验和状态反馈需要它。
+          </p>
+          <p>
+            减法不是为了少写几行 CSS，而是因为每个 token 名字都是一次 API 承诺。
+            名字越多，越容易在相近变量之间选错；重复变量还会制造两个事实来源，改主题时总有一个地方被漏掉。
+            自定义颜色也按同样规则自动展开成四配对，不需要手工维护四份色值。
+          </p>
+          <p>
+            M3 的 tone 表以“和谐”为目标，适合大多数产品，但霓虹、游戏主题会觉得深色角色色太粉彩，
+            可爱、柔和主题又会觉得标准对比太硬。Senti-UI 在色相不变的前提下增加了一个
+            <code>contrast</code> 参数，范围 <code>-1</code> 到 <code>1</code>：
+            正值为角色色重新取更深的 tone，并把深色表面压到近黑；负值让表面与文字靠拢、描边变柔。
+            它也可以按角色分别设置，只加强 primary 或只收紧 neutral。
+          </p>
+          <p>
+            提高对比度时，深色模式还有方向：洋红、紫靠饱和度出效果，用 <code>deep</code> 把 tone 往下压；
+            荧光绿、黄、青靠亮度出效果，用 <code>bright</code> 往上提。
+            实现上必须从色盘或源色按目标 tone 重新取色，不能平移已经生成的 token——
+            深色角色色在 tone 80 时色度已被色域裁掉，平移只会得到发灰的同色。
+            <code>contrast</code> 属于配色，不属于皮肤；皮肤只改材质，换肤不应该改变颜色的对比关系。
+          </p>
+          <st-code lang="js" frame format="off" title="theme.js">
+            <textarea hidden>
+import { applyTheme } from "../packages/color/m3-theme.js";
+
+applyTheme("#D6FE78", {}, {}, {
+  contrast: 1,
+  contrastTone: "bright",
+});
+            </textarea>
+          </st-code>
+
+          <h2><span class="num">03</span>组件：把排版留给页面</h2>
+          <p>
+            组件保留的是交互契约：键盘、焦点、禁用、事件穿透、表单提交、可访问名称。
+            这些在 Apple、Windows、shadcn 里都必须成立，是共性。
+            外观只做三件事：语义用属性、样式用原生 CSS、材质交给皮肤。
+          </p>
+          <p>
+            M3 的浮动标签很经典，但它不是“一个 label 属性”，而是一整套结构：
+            预留高度、浮动动画、错误态颜色、与 supporting text 的间距。把它内置进输入框，
+            等于让每个使用该输入框的页面都接受 M3 的表单排版。而 Apple 常用字段上方说明，
+            Windows 11 和 shadcn 也通常把 label 放在控件外。皮肤只能改材质，改不了结构，
+            最后只能由使用者绕过组件。
+          </p>
+          <p>
+            所以 <code>st-input</code> 只保留字段本身：outlined / filled、placeholder、前后缀、
+            <code>color</code> 语义色、焦点与校验行为。
+            <strong>label 不再是组件的默认模式，而是页面排版的一部分。</strong>
+          </p>
+          <st-code lang="html" frame format="off" title="field.html">
+            <textarea hidden>
+<div class="field">
+  <span class="field-label">邮箱</span>
+  <st-input
+    type="email"
+    aria-label="邮箱"
+    placeholder="you@example.com"
+  ></st-input>
+</div>
+            </textarea>
+          </st-code>
+          <p>
+            视觉 label 由页面布局控制；屏幕阅读器需要的名称通过
+            <code>aria-label</code> / <code>aria-labelledby</code> 提供给内部原生 input。
+            代价是要标准 M3 浮动标签时得自己组合，但同一个字段因此能放进 M3 的厚边框、
+            Apple 的毛玻璃、Windows 的紧凑表单和 shadcn 的扁平布局。
+          </p>
+
+          <h2><span class="num">04</span>边界：一套 VI 的接入顺序</h2>
+          <p>
+            最后，库、页面与皮肤各管一层，接入一套新 VI 的流程可以很短：
+          </p>
+          <ol class="principles">
+            <li>
+              <b>01 / 定 VI</b>
+              <span>先确定主色、字体、圆角、密度与材质倾向，而不是先选一个现成框架。</span>
+            </li>
+            <li>
+              <b>02 / 写皮肤</b>
+              <span>颜色映射到 M3 角色，圆角、密度、描边和模糊写进皮肤 token。</span>
+            </li>
+            <li>
+              <b>03 / 用组件</b>
+              <span>后续页面只使用 <code>st-*</code>，不再重复实现按钮、表单和弹窗。</span>
+            </li>
+          </ol>
+          <p>
+            风格差异被压缩到一份很小的皮肤代码里，使用习惯完全一致。之后新增页面，
+            AI 不需要重新学习另一套组件，也不会因为换了页面就换一种交互方式。
+          </p>
+          <p>
+            这就是 Senti-UI 不追求固定“一套好看设计”的原因。它更像 AI 的组件底座：
+            行为稳定，样式随 VI 变化。
+          </p>
+          <blockquote>
+            <p>组件可以重写，习惯不应该。</p>
+            <cite>Senti-UI 的设计前提</cite>
+          </blockquote>
+        </div>
+
+        <nav class="note-foot" aria-label="文章导航">
+          <span class="end">NOTES · 01 END</span>
+          <a olink href="./index.html"><iconify-icon icon="mdi:arrow-left"></iconify-icon> 返回手记</a>
+          <a olink href="../index.html">组件目录</a>
+          <a olink href="../skins.html">皮肤系统</a>
+        </nav>
+      </article>
+
+      <script>
+        export const parent = "../layout.html";
+
+        export default async () => ({});
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin, getSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = Object.assign(window.__site || {}, { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu });
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

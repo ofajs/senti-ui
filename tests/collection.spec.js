@@ -103,6 +103,51 @@ test("menu：点击外部关闭，Escape 关闭，禁用项不可点", async ({ 
   expect(await page.evaluate(() => window.events)).not.toContain("mi-x");
 });
 
+test("menu：checkable / selected 切换、aria-checked 与 keep-open", async ({ page }) => {
+  await page.waitForFunction(() => document.querySelector("#menu-check")?.shadowRoot);
+  const panelOpen = () =>
+    page.evaluate(
+      () =>
+        getComputedStyle(document.querySelector("#menu-check").shadowRoot.querySelector(".panel"))
+          .display === "block"
+    );
+  const itemState = (id) =>
+    page.evaluate((sel) => {
+      const el = document.querySelector(sel);
+      const native = el.shadowRoot.querySelector(".native");
+      return {
+        selected: el.hasAttribute("selected"),
+        role: native.getAttribute("role"),
+        checked: native.getAttribute("aria-checked"),
+      };
+    }, id);
+
+  await page.locator("#menu-check-trigger").click();
+  await page.waitForTimeout(300);
+  expect((await itemState("#mi-check2")).checked).toBe("true");
+
+  await page.locator("#mi-check").click({ force: true });
+  await page.waitForTimeout(200);
+  const checked = await itemState("#mi-check");
+  expect(checked).toEqual({ selected: true, role: "menuitemcheckbox", checked: "true" });
+  expect(await panelOpen()).toBe(true); // keep-open
+  expect(await page.evaluate(() => window.events)).toContain("change:mi-check");
+
+  await page.locator("#mi-check").click({ force: true });
+  await page.waitForTimeout(200);
+  expect((await itemState("#mi-check")).selected).toBe(false);
+  expect((await itemState("#mi-check")).checked).toBe("false");
+
+  // disabled 的 checkable 项不可切换
+  await page.locator("#mi-check3").click({ force: true }).catch(() => {});
+  await page.waitForTimeout(100);
+  expect((await itemState("#mi-check3")).selected).toBe(false);
+
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(200);
+  expect(await panelOpen()).toBe(false);
+});
+
 test("list-item：嵌套子列表逐级缩进，点击区保持整行宽", async ({ page }) => {
   const box = await page.locator("#li-fold").boundingBox();
   await page.mouse.click(box.x + box.width / 2, box.y + 15);
@@ -128,6 +173,50 @@ test("list-item：嵌套子列表逐级缩进，点击区保持整行宽", async
   // 点击区仍是整行宽（未被 margin 挤压）
   expect(geo.topWidth).toBeGreaterThan(300);
   expect(Math.abs(geo.topWidth - geo.subWidth)).toBeLessThan(2);
+});
+
+test("list-item：非 collapsible 项的 sublist 默认展开", async ({ page }) => {
+  await page.evaluate(async () => {
+    const item = document.createElement("st-list-item");
+    item.id = "li-plain-sublist";
+    item.innerHTML =
+      '普通父项<st-list slot="sublist"><st-list-item id="li-plain-child">子项</st-list-item></st-list>';
+    document.querySelector("#list").appendChild(item);
+    await new Promise((r) => setTimeout(r, 700));
+  });
+  const state = await page.evaluate(() => {
+    const item = document.querySelector("#li-plain-sublist");
+    const collapse = item.shadowRoot.querySelector("st-collapse");
+    return {
+      collapsible: item.hasAttribute("collapsible"),
+      hide: collapse.hasAttribute("hide"),
+      height: parseFloat(collapse.style.height),
+    };
+  });
+  expect(state.collapsible).toBe(false);
+  expect(state.hide).toBe(false);
+  expect(state.height).toBeGreaterThan(0);
+});
+
+test("list-item：向已有 sublist 动态追加项时仍按层级缩进", async ({ page }) => {
+  const state = await page.evaluate(async () => {
+    const parent = document.querySelector("#li-fold");
+    parent.setAttribute("expanded", "");
+    await new Promise((r) => setTimeout(r, 400));
+    const list = parent.querySelector('st-list[slot="sublist"]');
+    const item = document.createElement("st-list-item");
+    item.id = "li-dynamic-sub";
+    item.textContent = "动态子项";
+    list.appendChild(item);
+    await new Promise((r) => setTimeout(r, 700));
+    const indent = item.shadowRoot?.querySelector(".left-indent");
+    return {
+      depth: item._stListDepth,
+      width: indent ? parseFloat(getComputedStyle(indent).width) : 0,
+    };
+  });
+  expect(state.depth).toBe(1);
+  expect(state.width).toBeCloseTo(14, 0);
 });
 
 // ---------- st-ripple 隔离 ----------

@@ -136,7 +136,7 @@
   </div>
 
 
-  <h3>浮层：菜单 / 对话框 / 选择器</h3>
+  <h3>浮层：菜单 / 对话框 / 抽屉 / 选择器</h3>
   <div class="stage">
     <div class="row">
       <st-menu>
@@ -146,6 +146,7 @@
         <st-menu-item disabled><span slot="prefix">⌫</span>删除</st-menu-item>
       </st-menu>
       <st-button variant="outlined" on:click="dialogOpen = true">打开对话框</st-button>
+      <st-button variant="outlined" on:click="drawerOpen = true">打开抽屉</st-button>
       <st-select placeholder="选择城市">
         <option value="sh">上海</option>
         <option value="bj">北京</option>
@@ -157,7 +158,7 @@
     </div>
     <p class="note">
       所有浮层共用 <span class="code">--st-menu-*</span> / <span class="code">--st-dialog-*</span> /
-      <span class="code">--st-select-popup-*</span>：M3 是实色分层，Apple 是半透明毛玻璃，Windows 是 Mica 表面 + Acrylic 浮层，shadcn 是扁平细描边。
+      <span class="code">--st-drawer-*</span> / <span class="code">--st-select-popup-*</span>：M3 是实色分层，Apple 是半透明毛玻璃，Windows 是 Mica 表面 + Acrylic 浮层，shadcn 是扁平细描边。
     </p>
   </div>
 
@@ -219,6 +220,14 @@
     </div>
   </st-dialog>
 
+  <st-drawer sync:open="drawerOpen" auto-close side="left">
+    <h2 slot="headline">皮肤下的抽屉</h2>
+    <p>面板底色、毛玻璃、描边、圆角、阴影和滑入时长都来自 <span class="code">--st-drawer-*</span>；颜色仍来自 M3 角色。</p>
+    <div slot="actions">
+      <st-button variant="text" on:click="drawerOpen = false">关闭</st-button>
+    </div>
+  </st-drawer>
+
   <h3>怎么切换</h3>
   <pre><code>&lt;!-- 方式一：跑起来切换（持久化到 localStorage，同源全站跟随） --&gt;
 &lt;script type="module"&gt;
@@ -241,6 +250,7 @@
       data: {
         skin: "m3",
         dialogOpen: false,
+        drawerOpen: false,
         skins: [
           { id: "m3", label: "M3 材质" },
           { id: "apple", label: "Apple 毛玻璃" },

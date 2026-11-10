@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>skeleton test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-color-init.js"></script>
+  <l-m src="/packages/skeleton/skeleton.html"></l-m>
+</head>
+<body>
+  <st-skeleton id="sk-text"></st-skeleton>
+  <st-skeleton id="sk-circle" shape="circle"></st-skeleton>
+  <st-skeleton id="sk-rect" shape="rect" style="width: 180px;"></st-skeleton>
+  <st-skeleton id="sk-custom" style="width: 120px; height: 24px; border-radius: 12px;"></st-skeleton>
+
+  <script>
+    window.events = [];
+  </script>
+</body>
+</html>

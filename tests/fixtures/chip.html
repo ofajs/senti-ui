@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>chip test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-color-init.js"></script>
+  <l-m src="/packages/chip/chip.html"></l-m>
+  <l-m src="/packages/button/button.html"></l-m>
+</head>
+<body>
+  <st-chip id="ch-assist">帮助</st-chip>
+  <st-chip id="ch-filter" variant="filter">音乐</st-chip>
+  <st-chip id="ch-filter-selected" variant="filter" selected>已选</st-chip>
+  <st-chip id="ch-input" variant="input" removable>标签 A</st-chip>
+  <st-chip id="ch-disabled" variant="filter" disabled>禁用</st-chip>
+  <st-chip id="ch-color" variant="filter" selected color="error">错误</st-chip>
+  <st-chip id="ch-removable-clickable" variant="filter" removable>可移除可选</st-chip>
+
+  <script>
+    window.events = [];
+    document.querySelectorAll("st-chip").forEach((el) => {
+      ["click", "change", "remove"].forEach((t) =>
+        el.addEventListener(t, () => window.events.push({ id: el.id, type: t }))
+      );
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!-- st-drawer 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host { display: grid; gap: 24px; padding: 40px; align-content: start; }
+    section { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    h3 { margin: 0; font-size: 14px; color: var(--md-sys-color-on-surface-variant); width: 100%; }
+    .hint { margin: 0; width: 100%; font-size: 13px; line-height: 1.7; color: var(--md-sys-color-on-surface-variant); }
+    .code { font-family: ui-monospace, monospace; }
+    .skin-demo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      padding: 16px;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: 14px;
+      box-sizing: border-box;
+    }
+    /* 面板定制：原生 ::part() 选择器 */
+    st-drawer.wide::part(panel) { width: min(30em, 92vw); }
+    st-drawer.paper::part(panel) {
+      background: var(--md-sys-color-surface-container);
+      border-radius: 0;
+    }
+  </style>
+
+  <section>
+    <h3>方向：左 / 右</h3>
+    <st-button variant="outlined" on:click="openDrawer('left')">左侧抽屉</st-button>
+    <st-button variant="outlined" on:click="openDrawer('right')">右侧抽屉</st-button>
+  </section>
+
+  <section>
+    <h3>受控与 auto-close</h3>
+    <st-button variant="outlined" on:click="openDrawer('auto')">auto-close（遮罩 / Escape）</st-button>
+    <st-button variant="outlined" on:click="openDrawer('wide')">Wide 面板（::part(panel)）</st-button>
+    <st-button variant="outlined" on:click="openDrawer('small')">font-size 12px（等比缩放）</st-button>
+    <p class="hint">
+      close 事件计数：<span class="code">{{closeCount}}</span>（仅交互关闭 +1，外部改 open 不派发）
+    </p>
+  </section>
+
+  <section>
+    <h3>非 M3 皮肤（data-skin="shadcn"，皮肤 token 通过 DOM 继承）</h3>
+    <div class="skin-demo" data-skin="shadcn">
+      <st-button variant="outlined" on:click="openDrawer('skin')">打开 shadcn 抽屉</st-button>
+      <span class="hint" style="width: auto;">抽屉面板会继承这里的 --st-radius-* / --st-shadow-* 等皮肤 token</span>
+      <st-drawer sync:open="openState.skin" auto-close side="left">
+        <h2 slot="headline">shadcn 抽屉</h2>
+        <p>面板圆角、描边、阴影来自 shadcn 皮肤；颜色仍来自 M3 角色变量。</p>
+        <div slot="actions">
+          <st-button variant="text" on:click="closeDrawer('skin')">关闭</st-button>
+        </div>
+      </st-drawer>
+    </div>
+  </section>
+
+  <st-drawer class="wide" sync:open="openState.left" side="left">
+    <h2 slot="headline">左侧抽屉</h2>
+    <p>默认从左侧滑入，占满视口高度。正文区超高时内部滚动，headline / actions 固定。</p>
+    <div slot="actions">
+      <st-button variant="text" on:click="closeDrawer('left')">关闭</st-button>
+      <st-button on:click="closeDrawer('left')">知道了</st-button>
+    </div>
+  </st-drawer>
+
+  <st-drawer class="paper" sync:open="openState.right" side="right">
+    <h2 slot="headline">右侧抽屉</h2>
+    <p><span class="code">side="right"</span> 会让面板贴右，从右侧滑入；内侧圆角与描边自动镜像。</p>
+    <div slot="actions">
+      <st-button variant="text" on:click="closeDrawer('right')">取消</st-button>
+      <st-button on:click="closeDrawer('right')">保存</st-button>
+    </div>
+  </st-drawer>
+
+  <st-drawer sync:open="openState.auto" auto-close side="left" on:close="onAutoClose">
+    <h2 slot="headline">auto-close 抽屉</h2>
+    <p>点击遮罩或按 Escape 关闭，并派发 close 事件。</p>
+    <div slot="actions">
+      <st-button variant="text" on:click="closeDrawer('auto')">关闭</st-button>
+    </div>
+  </st-drawer>
+
+  <st-drawer class="wide" sync:open="openState.wide" auto-close side="right">
+    <h2 slot="headline">Wide 面板</h2>
+    <p>宽度通过 <span class="code">st-drawer.wide::part(panel) { width: min(30em, 92vw) }</span> 覆盖。</p>
+    <div slot="actions">
+      <st-button variant="text" on:click="closeDrawer('wide')">关闭</st-button>
+    </div>
+  </st-drawer>
+
+  <st-drawer sync:open="openState.small" auto-close side="left" style="font-size: 12px;">
+    <h2 slot="headline">12px 缩放</h2>
+    <p>宿主 <span class="code">font-size: 12px</span>，面板 padding / 圆角 / 宽度全部等比缩小。</p>
+    <div slot="actions">
+      <st-button variant="text" on:click="closeDrawer('small')">关闭</st-button>
+    </div>
+  </st-drawer>
+
+  <section>
+    <h3>聚焦与键盘</h3>
+    <p class="hint">
+      打开后焦点移入面板容器；Tab / Shift+Tab 在抽屉内循环；Escape 关闭（需 auto-close）。
+      与 st-dialog 同时打开时，Escape 只关最上层（两者共用模态栈）。
+    </p>
+  </section>
+
+  <script>
+    export default async () => ({
+      data: {
+        closeCount: 0,
+        openState: { left: false, right: false, auto: false, wide: false, small: false, skin: false },
+      },
+      proto: {
+        openDrawer(name) {
+          this.openState[name] = true;
+        },
+        closeDrawer(name) {
+          this.openState[name] = false;
+        },
+        onAutoClose() {
+          this.closeCount += 1;
+        },
+      },
+    });
+  </script>
+</template>

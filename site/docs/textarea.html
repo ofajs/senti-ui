@@ -6,6 +6,8 @@
   <title>Textarea — 组件文档 — Senti-UI</title>
   <meta name="description" content="Textarea（st-textarea）用法：多行输入框，与 st-input 同范式；可用 autosize 跟随内容自动撑开。" />
   <meta name="theme-color" content="#0061A4" />
+  <link rel="canonical" href="https://senti.ofajs.com/site/docs/textarea" />
+  <meta property="og:url" content="https://senti.ofajs.com/site/docs/textarea" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
   <script type="module">
     import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
@@ -66,7 +68,7 @@
 
           <article class="doc-page">
             <header class="doc-hero">
-              <p class="doc-kicker">表单 · 3 / 21</p>
+              <p class="doc-kicker">表单 · 3 / 22</p>
               <h1>Textarea <code>st-textarea</code></h1>
               <p class="doc-lead">多行输入框，与 st-input 同一套语义与材质。高度由 rows、autosize 或原生 height 决定；value 是运行时状态，字符统计与受控回显都走页面 data。</p>
               <div class="doc-links">
@@ -79,8 +81,17 @@
               <h2>两种 variant 与初始值</h2>
               <p class="doc-section-lead">outlined 与 filled 的区别只在边框和底色。多行内容用 <code>default-value</code> 预填，换行会原样进入内部 textarea；拖拽手柄默认关闭，高度由 rows 控制而不是用户拖拽。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-textarea</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-textarea</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo1">
                   <div class="demo-cell">
                     <span class="demo-label">outlined</span>
                     <st-textarea rows="3" placeholder="写点什么……"></st-textarea>
@@ -90,21 +101,26 @@
                     <st-textarea variant="filled" rows="3" default-value="第一行内容&#10;第二行内容&#10;第三行内容"></st-textarea>
                   </div>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-textarea rows="3" placeholder="写点什么……"&gt;&lt;/st-textarea&gt;
-&lt;st-textarea variant="filled" rows="3"
-  default-value="第一行&#10;第二行&#10;第三行"&gt;&lt;/st-textarea&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>rows 与固定高度</h2>
               <p class="doc-section-lead"><code>rows</code> 转发给内部 textarea，行高为 1.7em；它是可见行数，不是最大行数。需要精确高度时直接写 <code>height</code>，宽高都接受任何原生长度单位。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>rows / height</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>rows / height</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo2">
                   <div class="demo-cell">
                     <span class="demo-label">rows=2</span>
                     <st-textarea rows="2" placeholder="两行高度"></st-textarea>
@@ -118,21 +134,26 @@
                     <st-textarea style="height: 140px;" placeholder="固定高度 140px"></st-textarea>
                   </div>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-textarea rows="2" placeholder="两行高度"&gt;&lt;/st-textarea&gt;
-&lt;st-textarea rows="6" placeholder="六行高度"&gt;&lt;/st-textarea&gt;
-&lt;st-textarea style="height: 140px;" placeholder="固定高度"&gt;&lt;/st-textarea&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>autosize 自适应高度</h2>
               <p class="doc-section-lead">加上 <code>autosize</code> 后高度跟随内容撑开，此时 <code>rows</code> 变成最小高度。输入、程序改值、外部字号变化都会重新计算；不需要再手写 scrollHeight 逻辑。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>autosize</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>autosize</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo3">
                   <div class="demo-cell">
                     <span class="demo-label">空内容，rows=2 为最小高度</span>
                     <st-textarea autosize rows="2" placeholder="输入回车换行，高度会自动增长"></st-textarea>
@@ -142,20 +163,26 @@
                     <st-textarea autosize variant="filled" default-value="autosize 会按内容测高。&#10;第二行。&#10;第三行，输入更多行继续变高。"></st-textarea>
                   </div>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-textarea autosize rows="2"
-  placeholder="输入回车换行，高度自动增长"&gt;&lt;/st-textarea&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>disabled / readonly / color</h2>
               <p class="doc-section-lead">disabled 阻断聚焦和输入并降到 0.38 透明度；readonly 仍可聚焦、可复制。错误态与成功态用 <code>color</code> 表达，聚焦时描边 / 底线和 caret 使用对应角色色。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled / readonly / color</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>disabled / readonly / color</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo4">
                   <div class="demo-cell">
                     <span class="demo-label">disabled</span>
                     <st-textarea default-value="不可编辑的内容" disabled></st-textarea>
@@ -173,21 +200,26 @@
                     <st-textarea color="success" default-value="校验通过"></st-textarea>
                   </div>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-textarea default-value="不可编辑" disabled&gt;&lt;/st-textarea&gt;
-&lt;st-textarea default-value="只读内容" readonly&gt;&lt;/st-textarea&gt;
-&lt;st-textarea color="error" default-value="这段内容不合法"&gt;&lt;/st-textarea&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>受控值与字数统计</h2>
               <p class="doc-section-lead">用 <code>sync:value</code> 双向绑定 data，再在 <code>on:input</code> 里更新字数，就能做实时统计。程序改值同样走 data：填入模板和清空都不需要直接操作内部 textarea。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>:value / on:input</code></div>
-                <div class="demo-stage block">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo5 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>:value / on:input</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo5')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo5 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo5 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo5">
                   <div style="display: grid; gap: 10px; width: 100%; max-width: 460px;">
                     <st-textarea id="draft-ta" sync:value="draft" on:input="onDraft" rows="4" placeholder="输入内容，字数实时统计"></st-textarea>
                     <div class="row" style="justify-content: flex-start;">
@@ -197,31 +229,26 @@
                     </div>
                   </div>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（字数统计）</summary>
-                <pre><code>&lt;st-textarea sync:value="draft" on:input="onDraft"&gt;&lt;/st-textarea&gt;
-&lt;span&gt;字数统计&lt;/span&gt;
 
-&lt;script&gt;
-  export default async () =&gt; ({
-    data: { draft: "", charCount: 0 },
-    proto: {
-      onDraft(e) {
-        this.charCount = e.target.value.length;
-      },
-    },
-  });
-&lt;/script&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo5" lang="html" :code="demo5Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>字号缩放与圆角</h2>
               <p class="doc-section-lead">与 input 一样，默认尺寸都用 em。只改宿主的 <code>font-size</code>，内边距、行高、圆角会一起缩放；单独覆写 width / border-radius 也可以。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>font-size / width / radius</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo6 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>font-size / width / radius</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo6')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo6 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo6 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo6">
                   <div class="demo-cell">
                     <span class="demo-label">12px</span>
                     <st-textarea style="font-size: 12px;" rows="2" placeholder="小号 12px"></st-textarea>
@@ -235,13 +262,9 @@
                     <st-textarea style="width: 100%; border-radius: 1em;" rows="2" placeholder="border-radius: 1em"></st-textarea>
                   </div>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo6" lang="html" :code="demo6Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-textarea style="font-size: 12px;" rows="2"&gt;&lt;/st-textarea&gt;
-&lt;st-textarea style="font-size: 16px;" rows="2"&gt;&lt;/st-textarea&gt;
-&lt;st-textarea style="border-radius: 1em;"&gt;&lt;/st-textarea&gt;</code></pre>
-              </details>
             </section>
 
             <div class="doc-cols">
@@ -282,10 +305,20 @@
 
         export default async () => ({
           data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false, demo6: false },
+            demo1Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">outlined</span>\n                    <st-textarea rows=\"3\" placeholder=\"写点什么……\"></st-textarea>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">filled + 多行初始值</span>\n                    <st-textarea variant=\"filled\" rows=\"3\" default-value=\"第一行内容&#10;第二行内容&#10;第三行内容\"></st-textarea>\n                  </div>",
+            demo2Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">rows=2</span>\n                    <st-textarea rows=\"2\" placeholder=\"两行高度\"></st-textarea>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">rows=6</span>\n                    <st-textarea rows=\"6\" placeholder=\"六行高度\"></st-textarea>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">height: 140px</span>\n                    <st-textarea style=\"height: 140px;\" placeholder=\"固定高度 140px\"></st-textarea>\n                  </div>",
+            demo3Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">空内容，rows=2 为最小高度</span>\n                    <st-textarea autosize rows=\"2\" placeholder=\"输入回车换行，高度会自动增长\"></st-textarea>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">预置三行，初始即撑开</span>\n                    <st-textarea autosize variant=\"filled\" default-value=\"autosize 会按内容测高。&#10;第二行。&#10;第三行，输入更多行继续变高。\"></st-textarea>\n                  </div>",
+            demo4Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">disabled</span>\n                    <st-textarea default-value=\"不可编辑的内容\" disabled></st-textarea>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">readonly</span>\n                    <st-textarea default-value=\"只读内容，可以聚焦并复制\" readonly></st-textarea>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">color=\"error\"</span>\n                    <st-textarea color=\"error\" default-value=\"这段内容不合法\"></st-textarea>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">color=\"success\"</span>\n                    <st-textarea color=\"success\" default-value=\"校验通过\"></st-textarea>\n                  </div>",
+            demo5Code: "<div style=\"display: grid; gap: 10px; width: 100%; max-width: 460px;\">\n                    <st-textarea id=\"draft-ta\" sync:value=\"draft\" on:input=\"onDraft\" rows=\"4\" placeholder=\"输入内容，字数实时统计\"></st-textarea>\n                    <div class=\"row\" style=\"justify-content: flex-start;\">\n                      <st-button variant=\"outlined\" on:click=\"fillDraft\">填入模板</st-button>\n                      <st-button variant=\"text\" on:click=\"clearDraft\">清空</st-button>\n                      <span class=\"demo-note\" style=\"width: auto; text-align: left;\">{{charCount}} 字 · value = {{draft ? draft : '（空）'}}</span>\n                    </div>\n                  </div>",
+            demo6Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">12px</span>\n                    <st-textarea style=\"font-size: 12px;\" rows=\"2\" placeholder=\"小号 12px\"></st-textarea>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">16px</span>\n                    <st-textarea style=\"font-size: 16px;\" rows=\"2\" placeholder=\"大号 16px\"></st-textarea>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">width + 圆角</span>\n                    <st-textarea style=\"width: 100%; border-radius: 1em;\" rows=\"2\" placeholder=\"border-radius: 1em\"></st-textarea>\n                  </div>",
             draft: "Senti-UI 的多行输入框，支持受控值与字数统计。",
             charCount: 27,
           },
           proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
             onDraft(e) {
               this.charCount = e.target.value.length;
             },

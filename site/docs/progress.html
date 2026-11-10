@@ -6,6 +6,8 @@
   <title>Progress — 组件文档 — Senti-UI</title>
   <meta name="description" content="Progress（st-progress）用法：进度：线形 / 环形 × 确定 / 不定。缺省 value 自动视为不定。" />
   <meta name="theme-color" content="#0061A4" />
+  <link rel="canonical" href="https://senti.ofajs.com/site/docs/progress" />
+  <meta property="og:url" content="https://senti.ofajs.com/site/docs/progress" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
   <script type="module">
     import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
@@ -66,7 +68,7 @@
 
           <article class="doc-page">
             <header class="doc-hero">
-              <p class="doc-kicker">反馈 · 12 / 21</p>
+              <p class="doc-kicker">反馈 · 13 / 22</p>
               <h1>Progress <code>st-progress</code></h1>
               <p class="doc-lead">线形与环形两种形态，确定值与不定进度两种模式。value 是普通属性，配合 attr:value 即可随数据实时变化；缺省 value 会自动进入不定状态。</p>
               <div class="doc-links">
@@ -79,8 +81,17 @@
               <h2>确定进度：线形与环形</h2>
               <p class="doc-section-lead">value 取值 0–100，超出范围会被夹到边界。线形默认占满可用宽度，环形固定 40px 直径；两者都能放在网格或卡片里单独使用。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>value + circular</code></div>
-                <div class="demo-stage grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>value + circular</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));" attr:hidden="codeView.demo1">
                   <div class="demo-cell">
                     <span class="demo-label">线形 · 36%</span>
                     <st-progress value="36" style="width: 100%;"></st-progress>
@@ -98,22 +109,26 @@
                     <st-progress circular value="100"></st-progress>
                   </div>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-progress value="36"&gt;&lt;/st-progress&gt;
 
-&lt;!-- 环形：40px 直径，stroke 随 font-size 缩放 --&gt;
-&lt;st-progress circular value="36"&gt;&lt;/st-progress&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>运行时更新 value</h2>
               <p class="doc-section-lead">value 是标签属性，页面里用 attr:value 绑定 data 数字。值变化时确定态有 0.3s 平滑过渡，线形和环形会同步变化。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>attr:value</code></div>
-                <div class="demo-stage block">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>attr:value</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo2">
                   <st-progress attr:value="progress" style="width: 100%; max-width: 460px;"></st-progress>
                   <div class="row">
                     <st-progress circular attr:value="progress"></st-progress>
@@ -124,32 +139,26 @@
                   </div>
                   <span class="demo-note">progress = {{progress}}% · 模拟上传会从 0 递增到 100</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（attr:value 绑定）</summary>
-                <pre><code>&lt;st-progress attr:value="progress"&gt;&lt;/st-progress&gt;
-&lt;st-progress circular attr:value="progress"&gt;&lt;/st-progress&gt;
-&lt;st-button on:click="step(10)"&gt;+10&lt;/st-button&gt;
 
-&lt;script&gt;
-  export default async () =&gt; ({
-    data: { progress: 36 },
-    proto: {
-      step(delta) {
-        this.progress = Math.max(0, Math.min(100, this.progress + delta));
-      },
-    },
-  });
-&lt;/script&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>不定进度</h2>
               <p class="doc-section-lead">设置 indeterminate 后忽略 value，线形显示循环滑块，环形显示旋转弧线。不写 value 也会自动视为不定，适合还不知道总进度的场景。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>indeterminate</code></div>
-                <div class="demo-stage block">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>indeterminate</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo3">
                   <st-progress indeterminate style="width: 100%; max-width: 420px;"></st-progress>
                   <st-progress style="width: 100%; max-width: 420px;"></st-progress>
                   <div class="row">
@@ -159,23 +168,26 @@
                   </div>
                   <span class="demo-note">上面两条线形分别是「indeterminate」与「省略 value」；环形同样支持 color。</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-progress indeterminate&gt;&lt;/st-progress&gt;
-&lt;st-progress&gt;&lt;/st-progress&gt; &lt;!-- 没有 value 同样视为不定 --&gt;
-&lt;st-progress circular indeterminate color="success"&gt;&lt;/st-progress&gt;
 
-&lt;!-- 系统开启“减少动态效果”时，动画时长会自动趋零 --&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>尺寸与高度</h2>
               <p class="doc-section-lead">线形轨道高 0.286em，环形直径 2.857em；改 font-size 就能整体等比缩放，线形宽度仍由 width 或父容器决定。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>font-size / width</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>font-size / width</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo4">
                   <div class="demo-cell">
                     <span class="demo-label">线形 · 10 像素</span>
                     <st-progress value="55" style="font-size: 10px; width: 100%;"></st-progress>
@@ -201,23 +213,26 @@
                     <st-progress circular value="55" style="font-size: 24px;"></st-progress>
                   </div>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-progress value="55" style="font-size: 20px; width: 100%;"&gt;&lt;/st-progress&gt;
-&lt;st-progress circular value="55" style="font-size: 24px;"&gt;&lt;/st-progress&gt;
 
-&lt;!-- 线形宽度用原生 width 控制 --&gt;
-&lt;st-progress value="55" style="width: 160px;"&gt;&lt;/st-progress&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>color 语义换色</h2>
               <p class="doc-section-lead">color 接受 M3 角色名（primary / secondary / tertiary / error / success）或 color 工具里的自定义变量名。默认使用 primary，切换种子色时整站进度条一起变化。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>color</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo5 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>color</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo5')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo5 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo5 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo5">
                   <div class="demo-cell">
                     <span class="demo-label">primary（默认）</span>
                     <st-progress value="70" style="width: 100%;"></st-progress>
@@ -243,21 +258,26 @@
                     <st-progress circular value="70" color="success"></st-progress>
                   </div>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo5" lang="html" :code="demo5Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-progress value="70" color="success"&gt;&lt;/st-progress&gt;
-&lt;st-progress value="70" color="error"&gt;&lt;/st-progress&gt;
-&lt;st-progress circular value="70" color="tertiary"&gt;&lt;/st-progress&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>场景：同步队列</h2>
               <p class="doc-section-lead">多个进度条共享一组 data，每个任务用 attr:value 绑定自己的数值，颜色表达任务状态。按钮推进后可以观察平滑过渡。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>任务列表</code></div>
-                <div class="demo-stage block">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo6 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>任务列表</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo6')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo6 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo6 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo6">
                   <div style="display: grid; gap: 14px; width: 100%; max-width: 540px;">
                     <div style="display: grid; gap: 6px;">
                       <div style="display: flex; justify-content: space-between; gap: 10px; align-items: baseline;">
@@ -287,24 +307,9 @@
                   </div>
                   <span class="demo-note">三个进度分别绑定 photo / backup / scan；推进任务每次各加一截，到 100 停止。</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（多任务）</summary>
-                <pre><code>&lt;st-progress attr:value="photo"&gt;&lt;/st-progress&gt;
-&lt;st-progress attr:value="backup" color="success"&gt;&lt;/st-progress&gt;
 
-&lt;script&gt;
-  export default async () =&gt; ({
-    data: { photo: 45, backup: 80 },
-    proto: {
-      advance() {
-        this.photo = Math.min(this.photo + 12, 100);
-        this.backup = Math.min(this.backup + 8, 100);
-      },
-    },
-  });
-&lt;/script&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo6" lang="html" :code="demo6Code"></st-code>
+              </div>
             </section>
 
             <div class="doc-cols">
@@ -341,12 +346,22 @@
 
         export default async () => ({
           data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false, demo6: false },
+            demo1Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">线形 · 36%</span>\n                    <st-progress value=\"36\" style=\"width: 100%;\"></st-progress>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">环形 · 36%</span>\n                    <st-progress circular value=\"36\"></st-progress>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">线形 · 100%</span>\n                    <st-progress value=\"100\" style=\"width: 100%;\"></st-progress>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">环形 · 100%</span>\n                    <st-progress circular value=\"100\"></st-progress>\n                  </div>",
+            demo2Code: "<st-progress attr:value=\"progress\" style=\"width: 100%; max-width: 460px;\"></st-progress>\n                  <div class=\"row\">\n                    <st-progress circular attr:value=\"progress\"></st-progress>\n                    <st-button variant=\"outlined\" on:click=\"step(-10)\">−10</st-button>\n                    <st-button variant=\"outlined\" on:click=\"step(10)\">+10</st-button>\n                    <st-button variant=\"text\" on:click=\"reset\">重置</st-button>\n                    <st-button variant=\"text\" on:click=\"simulate\">模拟上传</st-button>\n                  </div>\n                  <span class=\"demo-note\">progress = {{progress}}% · 模拟上传会从 0 递增到 100</span>",
+            demo3Code: "<st-progress indeterminate style=\"width: 100%; max-width: 420px;\"></st-progress>\n                  <st-progress style=\"width: 100%; max-width: 420px;\"></st-progress>\n                  <div class=\"row\">\n                    <st-progress circular indeterminate></st-progress>\n                    <st-progress circular indeterminate color=\"success\"></st-progress>\n                    <st-progress circular indeterminate color=\"error\" style=\"font-size: 20px;\"></st-progress>\n                  </div>\n                  <span class=\"demo-note\">上面两条线形分别是「indeterminate」与「省略 value」；环形同样支持 color。</span>",
+            demo4Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">线形 · 10 像素</span>\n                    <st-progress value=\"55\" style=\"font-size: 10px; width: 100%;\"></st-progress>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">线形 · 20 像素</span>\n                    <st-progress value=\"55\" style=\"font-size: 20px; width: 100%;\"></st-progress>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">窄容器 160 像素</span>\n                    <st-progress value=\"55\" style=\"width: 160px; max-width: 100%;\"></st-progress>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">环形 · 10 像素</span>\n                    <st-progress circular value=\"55\" style=\"font-size: 10px;\"></st-progress>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">环形 · 14 像素</span>\n                    <st-progress circular value=\"55\"></st-progress>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">环形 · 24 像素</span>\n                    <st-progress circular value=\"55\" style=\"font-size: 24px;\"></st-progress>\n                  </div>",
+            demo5Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">primary（默认）</span>\n                    <st-progress value=\"70\" style=\"width: 100%;\"></st-progress>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">success</span>\n                    <st-progress value=\"70\" color=\"success\" style=\"width: 100%;\"></st-progress>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">error</span>\n                    <st-progress value=\"70\" color=\"error\" style=\"width: 100%;\"></st-progress>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">tertiary</span>\n                    <st-progress value=\"70\" color=\"tertiary\" style=\"width: 100%;\"></st-progress>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">环形 · error</span>\n                    <st-progress circular value=\"70\" color=\"error\"></st-progress>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">环形 · success</span>\n                    <st-progress circular value=\"70\" color=\"success\"></st-progress>\n                  </div>",
+            demo6Code: "<div style=\"display: grid; gap: 14px; width: 100%; max-width: 540px;\">\n                    <div style=\"display: grid; gap: 6px;\">\n                      <div style=\"display: flex; justify-content: space-between; gap: 10px; align-items: baseline;\">\n                        <span class=\"demo-label\">照片同步</span>\n                        <span style=\"font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; color: var(--md-sys-color-on-surface-variant);\">{{photo}}%</span>\n                      </div>\n                      <st-progress attr:value=\"photo\" style=\"width: 100%;\"></st-progress>\n                    </div>\n                    <div style=\"display: grid; gap: 6px;\">\n                      <div style=\"display: flex; justify-content: space-between; gap: 10px; align-items: baseline;\">\n                        <span class=\"demo-label\">云盘备份</span>\n                        <span style=\"font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; color: var(--md-sys-color-on-surface-variant);\">{{backup}}%</span>\n                      </div>\n                      <st-progress attr:value=\"backup\" color=\"success\" style=\"width: 100%;\"></st-progress>\n                    </div>\n                    <div style=\"display: grid; gap: 6px;\">\n                      <div style=\"display: flex; justify-content: space-between; gap: 10px; align-items: baseline;\">\n                        <span class=\"demo-label\">病毒扫描</span>\n                        <span style=\"font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; color: var(--md-sys-color-on-surface-variant);\">{{scan}}%</span>\n                      </div>\n                      <st-progress attr:value=\"scan\" color=\"tertiary\" style=\"width: 100%;\"></st-progress>\n                    </div>\n                  </div>\n                  <div class=\"row\">\n                    <st-button variant=\"outlined\" on:click=\"advance\">推进任务</st-button>\n                    <st-button variant=\"text\" on:click=\"clearTasks\">清零</st-button>\n                  </div>\n                  <span class=\"demo-note\">三个进度分别绑定 photo / backup / scan；推进任务每次各加一截，到 100 停止。</span>",
             progress: 36,
             photo: 45,
             backup: 80,
             scan: 20,
           },
           proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
             step(delta) {
               this.progress = Math.max(0, Math.min(100, this.progress + delta));
             },

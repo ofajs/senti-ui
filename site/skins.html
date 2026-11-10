@@ -15,6 +15,8 @@
     content="主题同页对比：Android Material 3 / Apple 毛玻璃 / Microsoft Windows 11 / shadcn 扁平 / Cyberpunk 霓虹终端，每套带官方配色与独立颜色记忆。"
   />
   <meta name="theme-color" content="#0061A4" />
+  <link rel="canonical" href="https://senti.ofajs.com/site/skins" />
+  <meta property="og:url" content="https://senti.ofajs.com/site/skins" />
   <link
     rel="icon"
     href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E"
@@ -1454,7 +1456,7 @@
                 contrastTone: this.contrastTone,
               };
               const generated = api.generateM3Theme(seed, overrides, options);
-              api.applyTheme(seed, overrides, customsObj, options);
+              const applied = api.applyTheme(seed, overrides, customsObj, options);
               this.syncContrastPct();
               this.refreshToneGuides();
               const auto = generated.light;
@@ -1635,10 +1637,7 @@
                     contrastTone: this.contrastTone,
                   })
                 );
-                localStorage.setItem(
-                  "st-theme-css",
-                  api.themeToCss(seed, overrides, customsObj, options)
-                );
+                localStorage.setItem("st-theme-css", applied.css);
                 this.colorStatus = "已应用，并保存到本域配色。";
               }
             },

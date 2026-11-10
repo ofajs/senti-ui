@@ -113,6 +113,45 @@ test("split-button：Escape / 点外部关闭，disabled 阻断", async ({ page 
   expect(disabled).toEqual({ main: true, caret: true });
 });
 
+test("split-button：菜单语义 / 方向键 / Escape 焦点归还", async ({ page }) => {
+  await ready(page);
+  await page.locator("#split .caret-zone").click();
+  await page.waitForTimeout(200);
+  expect(
+    await page.evaluate(() => {
+      const sr = document.querySelector("#split").shadowRoot;
+      const panel = sr.querySelector(".panel");
+      return {
+        role: panel.getAttribute("role"),
+        controls: sr.querySelector(".caret-zone").getAttribute("aria-controls"),
+        panelId: panel.id,
+      };
+    })
+  ).toEqual({ role: "menu", controls: "st-split-menu", panelId: "st-split-menu" });
+
+  await page.keyboard.press("ArrowDown");
+  await page.waitForTimeout(100);
+  expect(
+    await page.evaluate(() => {
+      let a = document.activeElement;
+      while (a?.shadowRoot?.activeElement) a = a.shadowRoot.activeElement;
+      return a?.getAttribute("aria-label");
+    })
+  ).toBe("发送到邮箱");
+
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(300);
+  expect(
+    await page.evaluate(() => {
+      const sr = document.querySelector("#split").shadowRoot;
+      return {
+        displayed: getComputedStyle(sr.querySelector(".panel")).display,
+        focusOnCaret: sr.activeElement === sr.querySelector(".caret-zone"),
+      };
+    })
+  ).toEqual({ displayed: "none", focusOnCaret: true });
+});
+
 test("split-button：color 属性按 variant 分派（outlined 前景为角色色）", async ({ page }) => {
   await ready(page);
   await page.evaluate(() => {

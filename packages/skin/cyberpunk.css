@@ -2,7 +2,7 @@
  * cyberpunk.css — Cyberpunk（霓虹终端 / 夜城）皮肤
  *
  * 只改材质：零圆角、等宽字、细描边、霓虹外发光、方形开关/滑块拇指、
- * 快速动效与 CRT 扫描线高光；颜色仍然全部来自 M3 角色变量
+ * 快速动效；颜色仍然全部来自 M3 角色变量
  * （--md-sys-color-*），所以种子色、error、success、深浅色主题继续生效。
  *
  * 赛博朋克的“霓虹”来自配色，不来自皮肤：换成荧光绿/洋红等种子色并配深色主题，
@@ -71,12 +71,10 @@
     0 0 26px -10px color-mix(in srgb, var(--md-sys-color-primary) 60%, transparent);
   --st-shadow-thumb: 0 0 0 1px color-mix(in srgb, var(--md-sys-color-primary) 55%, transparent);
   --st-backdrop-filter: none;
-  /* CRT 扫描线：只作用在 filled / outlined 控件的表面 */
-  --st-sheen: repeating-linear-gradient(
-    0deg,
-    color-mix(in srgb, var(--md-sys-color-on-primary) 7%, transparent) 0 1px,
-    transparent 1px 4px
-  );
+  /* 表面保持干净：不叠 CRT 扫描线。1px / 4px 的高频横纹在按钮这类
+     小面积实色控件上会显脏，也会和文字抢注意力。需要复古屏幕质感时，
+     可在页面层用 html[data-skin="cyberpunk"] 覆盖 --st-sheen（见 README）。 */
+  --st-sheen: none;
 
   /* 焦点：1px 外扩霓虹环 + 5px 外发光 */
   --st-focus-ring-width: 1px;
@@ -95,6 +93,11 @@
   --st-badge-radius: 0;
   --st-badge-font-size: .769em;
   --st-badge-shadow: var(--st-shadow-1);
+  --st-chip-radius: 0;
+  --st-chip-font-size: .769em;
+  --st-chip-shadow: var(--st-shadow-1);
+  --st-avatar-radius: 0;
+  --st-skeleton-duration: 1s;
   --st-dialog-radius: 0;
   --st-card-radius: 0;
   --st-nav-gap: .154em;
@@ -146,6 +149,16 @@
   --st-dialog-enter-duration: 160ms;
   --st-dialog-exit-duration: 120ms;
   --st-dialog-scrim-duration: 140ms;
+  /* 抽屉：零圆角终端面板，主色描边 + 皮肤霓虹阴影 */
+  --st-drawer-bg: color-mix(in srgb, var(--md-sys-color-surface-container-low) 96%, transparent);
+  --st-drawer-border: color-mix(in srgb, var(--md-sys-color-primary) 55%, transparent);
+  --st-drawer-radius: var(--st-dialog-radius);
+  --st-drawer-shadow: var(--st-shadow-2);
+  --st-drawer-backdrop-filter: none;
+  --st-drawer-scrim: var(--st-dialog-scrim);
+  --st-drawer-scrim-filter: var(--st-dialog-scrim-filter);
+  --st-drawer-enter-duration: 160ms;
+  --st-drawer-exit-duration: 120ms;
   --st-menu-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 96%, transparent);
   --st-menu-border: color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
   --st-menu-backdrop-filter: none;
@@ -171,6 +184,8 @@
   /* 密度 */
   --st-dialog-padding: 1.231em;
   --st-dialog-gap: .923em;
+  --st-drawer-padding: 1.231em;
+  --st-drawer-gap: .923em;
   --st-card-padding: .923em;
   --st-menu-padding: .231em;
   --st-menu-item-padding: .615em .692em;
@@ -191,4 +206,36 @@
   --st-overlay-exit-duration: 90ms;
   --st-tooltip-duration: 80ms;
   --st-ripple-duration: 240ms;
+}
+
+[data-skin="cyberpunk"] {
+  --st-code-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 96%, transparent);
+  --st-code-header-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 96%, transparent);
+  --st-code-border: color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
+  --st-code-radius: 0;
+  --st-code-shadow: var(--st-shadow-1);
+  --st-code-padding: .923em;
+  --st-code-font-size: .857em;
+  --st-code-backdrop-filter: none;
+}
+
+/* 减少动态效果：皮肤 token 统一归零，组件未单独处理时也即时到位 */
+@media (prefers-reduced-motion: reduce) {
+  [data-skin] {
+    --st-motion-duration: 0s;
+    --st-motion-duration-fast: 0s;
+    --st-motion-duration-base: 0s;
+    --st-motion-duration-slow: 0s;
+    --st-overlay-enter-duration: 0s;
+    --st-overlay-exit-duration: 0s;
+    --st-tooltip-duration: 0s;
+    --st-ripple-duration: 0s;
+    --st-progress-duration: 0s;
+    --st-dialog-enter-duration: 0s;
+    --st-dialog-exit-duration: 0s;
+    --st-dialog-scrim-duration: 0s;
+    --st-drawer-enter-duration: 0s;
+    --st-drawer-exit-duration: 0s;
+    --st-skeleton-duration: 0s;
+  }
 }

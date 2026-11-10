@@ -44,7 +44,7 @@ Senti-UI 基于 ofa.js。在 ofa 页面（`<o-page>` / `<o-app>`）内用模板�
 - **st-select 弹层在 shadow 内**，被 `overflow: hidden` 祖先裁剪时会截断，注意放置位置
 - **`<st-icon-button>` 无文字，必须配 `title` / `aria-label`**
 - **st-card 内放按钮等交互元素时不要加 `interactive`**——点内部按钮会同时冒泡出卡片 click
-- **radio 互斥依赖同一父容器**——同组 `<st-radio name="x">` 必须放在同一个直接父容器下（name 分组不跨 shadow root，由组件查同父兄弟实现）
+- **radio 互斥按 name + 同一 form owner**——同组 `<st-radio name="x">` 不再要求同一父容器；原生 name 分组不跨 shadow root，由组件在同一树作用域内查同名项并比较表单归属，两个独立 `<form>` 互不影响
 - **st-tab-item / st-nav-item 的 active 切换由外部逻辑处理**（组件只把 click 冒泡出来并做指示条动画）
 - 合成事件测试：`dispatchEvent(new PointerEvent(...))` 跨 shadow 边界要带 `{ composed: true }`，否则宿主监听收不到（真实用户操作无此问题）
 - `document.createElement` 动态创建的 senti-ui 组件可能不升级（无 shadowRoot），动态实例优先页面预置元素或轮询就绪

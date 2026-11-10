@@ -1,6 +1,6 @@
 {
   "name": "senti-ui",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Senti-UI — an AI-first component library built on ofa.js with Material Design 3 color system",
   "type": "module",
   "scripts": {
@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/ofajs/senti-ui/issues"
   },
-  "homepage": "https://github.com/ofajs/senti-ui#readme",
+  "homepage": "https://senti.ofajs.com/site/",
   "devDependencies": {
     "@playwright/test": "^1.62.1",
     "http-server": "^14.1.1"

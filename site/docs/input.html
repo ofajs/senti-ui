@@ -6,6 +6,8 @@
   <title>Input — 组件文档 — Senti-UI</title>
   <meta name="description" content="Input（st-input）用法：单行输入框：outlined / filled、前后缀、语义色校验态。value 是运行时状态。" />
   <meta name="theme-color" content="#0061A4" />
+  <link rel="canonical" href="https://senti.ofajs.com/site/docs/input" />
+  <meta property="og:url" content="https://senti.ofajs.com/site/docs/input" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
   <script type="module">
     import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
@@ -66,7 +68,7 @@
 
           <article class="doc-page">
             <header class="doc-hero">
-              <p class="doc-kicker">表单 · 2 / 21</p>
+              <p class="doc-kicker">表单 · 2 / 22</p>
               <h1>Input <code>st-input</code></h1>
               <p class="doc-lead">单行输入框：outlined / filled 两种类型，前后缀插槽与原生 type。value 是运行时状态，初始值用 default-value；focus 描边与 caret 由 color 语义色控制。</p>
               <div class="doc-links">
@@ -79,8 +81,17 @@
               <h2>两种 variant</h2>
               <p class="doc-section-lead">outlined 有完整一圈描边，适合常规表单；filled 用容器底色加底边线，视觉更轻。两者共享同一套高度、内边距与 focus 动画，只切换材质。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-input</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-input</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo1">
                   <div class="demo-cell">
                     <span class="demo-label">outlined</span>
                     <st-input placeholder="you@example.com"><iconify-icon slot="prefix" icon="mdi:email-outline"></iconify-icon></st-input>
@@ -94,23 +105,26 @@
                     <st-input placeholder="搜索组件"><iconify-icon slot="prefix" icon="mdi:magnify"></iconify-icon><iconify-icon slot="suffix" icon="mdi:keyboard-return"></iconify-icon></st-input>
                   </div>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-input placeholder="you@example.com"&gt;
-  &lt;iconify-icon slot="prefix" icon="mdi:email-outline"&gt;&lt;/iconify-icon&gt;
-&lt;/st-input&gt;
 
-&lt;st-input variant="filled" default-value="已填充的内容"&gt;&lt;/st-input&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>尺寸、宽度与圆角</h2>
               <p class="doc-section-lead">尺寸类默认值都用 em：默认高 2.857em、最小宽 13.571em。只改 <code>font-size</code> 就能整体等比缩放，宽度和圆角直接用原生 CSS 覆写。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>font-size / width / border-radius</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>font-size / width / border-radius</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo2">
                   <div class="demo-cell">
                     <span class="demo-label">12px</span>
                     <st-input style="font-size: 12px;" placeholder="小号 12px"></st-input>
@@ -132,23 +146,26 @@
                     <st-input variant="filled" style="border-radius: 999px; border: 1px solid var(--md-sys-color-outline); padding: 0 1.429em;" placeholder="pill filled"></st-input>
                   </div>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-input style="font-size: 12px;" placeholder="小号"&gt;&lt;/st-input&gt;
-&lt;st-input style="width: 320px;" placeholder="固定宽度"&gt;&lt;/st-input&gt;
-&lt;st-input variant="filled"
-  style="border-radius: 999px; border: 1px solid var(--md-sys-color-outline);"
-  placeholder="pill"&gt;&lt;/st-input&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>type 与前后缀操作</h2>
               <p class="doc-section-lead"><code>type</code> 原样转发给内部 input，密码、邮箱、数字等原生行为都可直接用。前后缀既能放图标，也能放可点击操作；密码可见切换由页面数据驱动 type，不经过组件内部状态。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>type / prefix / suffix</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>type / prefix / suffix</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo3">
                   <div class="demo-cell">
                     <span class="demo-label">email</span>
                     <st-input type="email" placeholder="you@example.com"><iconify-icon slot="prefix" icon="mdi:email-outline"></iconify-icon></st-input>
@@ -165,21 +182,26 @@
                   </div>
                 </div>
                 <span class="demo-note" style="grid-column: 1 / -1;">密码当前为{{showPwd ? '明文' : '隐藏'}}状态 · number 保留原生步进与校验</span>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码（密码可见切换）</summary>
-                <pre><code>&lt;st-input attr:type="showPwd ? 'text' : 'password'" default-value="senti-ui"&gt;
-  &lt;span slot="suffix" on:click="showPwd = !showPwd"&gt;显示 / 隐藏&lt;/span&gt;
-&lt;/st-input&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>disabled 与 readonly</h2>
               <p class="doc-section-lead">disabled 降低到 0.38 透明度、阻断聚焦与输入；readonly 仍可聚焦、可选中复制，只是不可修改。布尔属性在 ofa 页面里用 <code>attr:</code> 绑定，静态场景直接写裸属性。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled / readonly</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>disabled / readonly</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo4">
                   <div class="demo-cell">
                     <span class="demo-label">disabled</span>
                     <st-input default-value="不可编辑" disabled></st-input>
@@ -193,21 +215,26 @@
                     <st-input default-value="只读内容，可聚焦复制" readonly></st-input>
                   </div>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-input default-value="不可编辑" disabled&gt;&lt;/st-input&gt;
-&lt;st-input variant="filled" placeholder="禁用填充态" disabled&gt;&lt;/st-input&gt;
-&lt;st-input default-value="只读内容" readonly&gt;&lt;/st-input&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>color 语义色与校验态</h2>
               <p class="doc-section-lead"><code>color</code> 接受 M3 角色名（primary / error / success 等）或 color 工具里的自定义变量名，控制 caret 与 focus 描边。它只表达语义，不会改变未聚焦时的普通边框；校验时把结果写进 data 即可。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>color / 实时校验</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo5 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>color / 实时校验</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo5')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo5 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo5 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo5">
                   <div class="demo-cell">
                     <span class="demo-label">error</span>
                     <st-input color="error" default-value="必填项不能为空"></st-input>
@@ -222,34 +249,26 @@
                   </div>
                 </div>
                 <span class="demo-note" style="grid-column: 1 / -1;">{{emailHint}}</span>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（动态校验）</summary>
-                <pre><code>&lt;st-input attr:color="emailColor" on:input="checkEmail"
-  placeholder="输入邮箱"&gt;&lt;/st-input&gt;
-&lt;span&gt;校验提示&lt;/span&gt;
 
-&lt;script&gt;
-  export default async () =&gt; ({
-    data: { emailColor: "", emailHint: "输入邮箱开始校验" },
-    proto: {
-      checkEmail(e) {
-        const ok = e.target.value.includes("@");
-        this.emailColor = ok ? "success" : "error";
-        this.emailHint = ok ? "格式有效" : "邮箱格式不正确";
-      },
-    },
-  });
-&lt;/script&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo5" lang="html" :code="demo5Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>受控值与 focus() / blur()</h2>
               <p class="doc-section-lead">页面里用 <code>sync:value</code> 把 data 与运行时值双向绑定；<code>focus()</code> / <code>blur()</code> 是组件方法，清空只需把 data 置空。这样值始终是唯一数据源，不需要直接碰内部原生 input。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>:value / on:input / methods</code></div>
-                <div class="demo-stage block">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo6 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>:value / on:input / methods</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo6')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo6 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo6 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo6">
                   <div style="display: grid; gap: 10px; width: 100%; max-width: 420px;">
                     <st-input id="query-input" sync:value="query" placeholder="输入关键字，值会同步到下方"></st-input>
                     <div class="row" style="justify-content: flex-start;">
@@ -260,21 +279,9 @@
                     <span class="demo-note" style="text-align: left;">value = {{query ? query : '（空）'}} · 状态：{{focusState}}</span>
                   </div>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（受控 + 方法）</summary>
-                <pre><code>&lt;st-input sync:value="query" placeholder="输入关键字"&gt;&lt;/st-input&gt;
-&lt;st-button on:click="clearQuery"&gt;清空&lt;/st-button&gt;
 
-&lt;script&gt;
-  export default async () =&gt; ({
-    data: { query: "" },
-    proto: {
-      clearQuery() { this.query = ""; },
-    },
-  });
-&lt;/script&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo6" lang="html" :code="demo6Code"></st-code>
+              </div>
             </section>
 
             <div class="doc-cols">
@@ -314,6 +321,13 @@
 
         export default async () => ({
           data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false, demo6: false },
+            demo1Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">outlined</span>\n                    <st-input placeholder=\"you@example.com\"><iconify-icon slot=\"prefix\" icon=\"mdi:email-outline\"></iconify-icon></st-input>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">filled + 初始值</span>\n                    <st-input variant=\"filled\" default-value=\"已填充的内容\"></st-input>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">前后缀插槽</span>\n                    <st-input placeholder=\"搜索组件\"><iconify-icon slot=\"prefix\" icon=\"mdi:magnify\"></iconify-icon><iconify-icon slot=\"suffix\" icon=\"mdi:keyboard-return\"></iconify-icon></st-input>\n                  </div>",
+            demo2Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">12px</span>\n                    <st-input style=\"font-size: 12px;\" placeholder=\"小号 12px\"></st-input>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">14px（默认）</span>\n                    <st-input placeholder=\"默认 14px\"></st-input>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">18px</span>\n                    <st-input style=\"font-size: 18px;\" placeholder=\"大号 18px\"></st-input>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">固定宽度</span>\n                    <st-input style=\"width: 320px;\" placeholder=\"width: 320px\"></st-input>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">pill 圆角</span>\n                    <st-input variant=\"filled\" style=\"border-radius: 999px; border: 1px solid var(--md-sys-color-outline); padding: 0 1.429em;\" placeholder=\"pill filled\"></st-input>\n                  </div>",
+            demo3Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">email</span>\n                    <st-input type=\"email\" placeholder=\"you@example.com\"><iconify-icon slot=\"prefix\" icon=\"mdi:email-outline\"></iconify-icon></st-input>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">number</span>\n                    <st-input type=\"number\" default-value=\"42\"><span slot=\"prefix\">#</span></st-input>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">password + 可见切换</span>\n                    <st-input attr:type=\"showPwd ? 'text' : 'password'\" default-value=\"senti-ui\" placeholder=\"密码\">\n                      <span slot=\"suffix\" on:click=\"showPwd = !showPwd\" style=\"cursor: pointer; user-select: none;\">{{showPwd ? '🙈' : '👁'}}</span>\n                    </st-input>\n                  </div>",
+            demo4Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">disabled</span>\n                    <st-input default-value=\"不可编辑\" disabled></st-input>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">disabled + filled</span>\n                    <st-input variant=\"filled\" placeholder=\"禁用填充态\" disabled></st-input>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">readonly</span>\n                    <st-input default-value=\"只读内容，可聚焦复制\" readonly></st-input>\n                  </div>",
+            demo5Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">error</span>\n                    <st-input color=\"error\" default-value=\"必填项不能为空\"></st-input>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">success</span>\n                    <st-input color=\"success\" default-value=\"校验通过\"></st-input>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">实时邮箱校验</span>\n                    <st-input attr:color=\"emailColor\" on:input=\"checkEmail\" placeholder=\"输入邮箱试试\"></st-input>\n                  </div>",
+            demo6Code: "<div style=\"display: grid; gap: 10px; width: 100%; max-width: 420px;\">\n                    <st-input id=\"query-input\" sync:value=\"query\" placeholder=\"输入关键字，值会同步到下方\"></st-input>\n                    <div class=\"row\" style=\"justify-content: flex-start;\">\n                      <st-button variant=\"outlined\" on:click=\"focusQuery\">focus()</st-button>\n                      <st-button variant=\"outlined\" on:click=\"blurQuery\">blur()</st-button>\n                      <st-button variant=\"text\" on:click=\"clearQuery\">清空</st-button>\n                    </div>\n                    <span class=\"demo-note\" style=\"text-align: left;\">value = {{query ? query : '（空）'}} · 状态：{{focusState}}</span>\n                  </div>",
             showPwd: false,
             emailColor: "",
             emailHint: "输入邮箱开始校验",
@@ -321,6 +335,9 @@
             focusState: "未聚焦",
           },
           proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
             checkEmail(e) {
               const v = e.target.value.trim();
               if (!v) {

@@ -7,7 +7,7 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 种子色、error、success、深浅色主题永远保持一致。皮肤改的是“同样颜色被呈现成什么材质”，
 不是“换成另一套配色”。
 
-已接入皮肤：全部交互与表面组件——`st-button` / `st-button-group` / `st-split-button` / `st-icon-button` / `st-input` / `st-textarea` / `st-select` / `st-card` / `st-dialog` / `st-menu` / `st-list` / `st-checkbox` / `st-switch` / `st-radio` / `st-slider` / `st-progress` / `st-tabs` / `st-navigation` / `st-tooltip` / `st-snackbar` / `st-badges`。未加载皮肤时每个 token 都回退到组件原有默认值。
+已接入皮肤：全部交互与表面组件——`st-button` / `st-button-group` / `st-split-button` / `st-icon-button` / `st-input` / `st-textarea` / `st-select` / `st-card` / `st-dialog` / `st-drawer` / `st-menu` / `st-list` / `st-checkbox` / `st-switch` / `st-radio` / `st-slider` / `st-progress` / `st-tabs` / `st-navigation` / `st-tooltip` / `st-snackbar` / `st-badges` / `st-code` / `st-chip` / `st-avatar` / `st-skeleton`。未加载皮肤时每个 token 都回退到组件原有默认值。
 
 ## 依赖引入
 
@@ -31,11 +31,23 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 - `apple`：半透明毛玻璃 + 连续圆角
 - `windows`：Windows 11 / Fluent——4px 控件、8px 表面、Segoe UI、Mica 表面与 Acrylic 浮层
 - `shadcn`：6px 扁平细描边
-- `cyberpunk`：零圆角、等宽字、霓虹描边与外发光、方形开关/滑块拇指、CRT 扫描线；建议配深色主题和霓虹种子色
+- `cyberpunk`：零圆角、等宽字、霓虹描边与外发光、方形开关/滑块拇指；默认不叠 CRT 扫描线；建议配深色主题和霓虹种子色
 
 `windows` 的材质分工：常驻表面（卡片 / 对话框 / 输入框）用 Mica——高不透明度的着色底，不预先模糊正文；菜单 / 下拉 / 气泡等浮层用 Acrylic——半透明底 + `blur(30px)`。控件圆角 4px、表面圆角 8px，图标按钮是 4px 方形而不是圆形。
 
 `cyberpunk` 的霓虹来自 M3 角色：描边与外发光全部用 `color-mix(primary …)` 组合，所以 `color="error"`、换种子色、深浅色切换都会跟着变。皮肤本身不提供“深色”或具体颜色（洋红 / 荧光绿），那属于配色和主题模式（`setThemeMode("dark")` + 种子色）。
+
+`cyberpunk` 默认不在按钮表面叠 CRT 扫描线：1px / 4px 的高频横纹在小面积实色控件上会显脏，还会和文字抢注意力。需要复古屏幕质感时，可在页面层用更高优先级覆盖 `--st-sheen`；它只影响消费该 token 的按钮 / 图标按钮：
+
+```css
+html[data-skin="cyberpunk"] {
+  --st-sheen: repeating-linear-gradient(
+    0deg,
+    color-mix(in srgb, var(--md-sys-color-on-primary) 4%, transparent) 0 1px,
+    transparent 1px 7px
+  );
+}
+```
 
 官网的皮肤页把“材质”当成完整主题：每套材质带官方配色（M3 蓝 `#0061A4` / Apple iOS 蓝 `#007AFF` / Windows 蓝 `#0078D4` / shadcn zinc `#18181B` / Cyberpunk 荧光绿 `#D6FE78`），由页面层的 `site/theme-presets.js` 在切换时一起套用，并按材质把颜色与深浅模式存进 `st-theme-palettes`，切回来时恢复。卡片里的官方配色预览是局部 CSS 变量，不影响全站。包内的 `setSkin("cyberpunk")` 仍然只换材质。
 
@@ -113,6 +125,13 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 | `--st-dialog-bg` / `--st-dialog-border` | `surface-container-high` / `transparent` | 对话框面板 |
 | `--st-dialog-shadow` | `var(--st-shadow-4)` | 对话框阴影 |
 | `--st-dialog-backdrop-filter` / `--st-dialog-scrim` | `blur(2px)` / `rgb(0 0 0 / .28)` | 面板毛玻璃 / 遮罩 |
+| `--st-drawer-bg` / `--st-drawer-border` | `surface-container-low` / `outline-variant` | 抽屉面板底/内边描边 |
+| `--st-drawer-radius` | `var(--st-radius-lg)` | 抽屉内侧圆角 |
+| `--st-drawer-shadow` | `var(--st-shadow-2)` | 抽屉阴影 |
+| `--st-drawer-backdrop-filter` / `--st-drawer-scrim` | `none` / `var(--st-dialog-scrim)` | 抽屉面板毛玻璃 / 遮罩（未单独设置时沿用 dialog 遮罩） |
+| `--st-code-bg` / `--st-code-header-bg` | `surface-container-highest` / `surface-container-high` | 代码块主体 / 顶栏（仅 `frame` 模式） |
+| `--st-code-border` / `--st-code-radius` / `--st-code-shadow` | `transparent` / `var(--st-radius-md)` / `var(--st-shadow-1)` | 代码块描边 / 圆角 / 阴影 |
+| `--st-code-backdrop-filter` | `none` | 代码块毛玻璃 |
 | `--st-menu-bg` / `--st-menu-border` | `surface-container` / `transparent` | 菜单与 split-button 面板 |
 | `--st-menu-shadow` / `--st-menu-backdrop-filter` | `var(--st-shadow-3)` / `none` | 菜单材质 |
 | `--st-card-bg` / `--st-card-border` | `surface-container-low` / `transparent` | 卡片（filled/outlined 另有 `--st-card-filled-bg` / `--st-card-outlined-bg`） |
@@ -182,6 +201,8 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 | `--st-overlay-enter-duration` / `--st-overlay-exit-duration` | `200ms` / `150ms` | 菜单/下拉开合 |
 | `--st-dialog-enter-duration` / `--st-dialog-exit-duration` / `--st-dialog-scrim-duration` | `300ms` / `200ms` / `250ms` | 对话框与遮罩开合 |
 | `--st-dialog-scrim-filter` | `blur(2px)` | 遮罩毛玻璃 |
+| `--st-drawer-enter-duration` / `--st-drawer-exit-duration` | `280ms` / `200ms` | 抽屉滑入 / 滑出 |
+| `--st-drawer-scrim-filter` | `var(--st-dialog-scrim-filter)` | 抽屉遮罩毛玻璃 |
 | `--st-tooltip-duration` | `150ms` | 提示入场 |
 | `--st-ripple-duration` | `350ms` | 波纹扩散 |
 
@@ -190,6 +211,8 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 | Token | M3 默认 | 说明 |
 |-------|---------|------|
 | `--st-dialog-padding` / `--st-dialog-gap` | `1.43em` / `1.14em` | 对话框内边距/区块间距 |
+| `--st-drawer-padding` / `--st-drawer-gap` | `1.43em` / `1.14em` | 抽屉内边距/区块间距 |
+| `--st-code-padding` / `--st-code-font-size` | `1em` / `0.857em` | 代码块内边距 / 字号 |
 | `--st-card-padding` | `1em` | 卡片内边距 |
 | `--st-menu-padding` / `--st-menu-item-padding` | `0.286em` / `0.714em 0.857em` | 菜单/菜单项 |
 | `--st-menu-item-radius` | `0.571em` | 菜单项圆角 |
@@ -213,6 +236,11 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 | `--st-tab-height` / `--st-tab-layer-radius` / `--st-tabs-indicator-height` / `--st-tabs-indicator-radius` / `--st-tabs-border` | `3.429em` / `0.571em` / `0.143em` / `0` / `outline-variant` | 标签栏 |
 | `--st-nav-pill-radius` / `--st-nav-bar-bg` / `--st-nav-item-padding` / `--st-nav-gap` | `2em` / `surface-container` / `0.857em 1em` / `0.286em` | 导航栏 |
 | `--st-badge-radius` / `--st-badge-font-size` / `--st-badge-shadow` | `1.429em` / `0.786em` / `none` | 徽标 |
+| `--st-chip-height` / `--st-chip-padding` / `--st-chip-radius` / `--st-chip-font-size` | `2em` / `0 0.786em` / `var(--st-radius-pill)` / `14px` | chip 尺寸/内边距/圆角/字号 |
+| `--st-chip-bg` / `--st-chip-border` / `--st-chip-shadow` / `--st-chip-gap` | `surface-container-low` / `var(--st-outlined-border)` / `none` / `0.429em` | chip 底/描边/阴影/内容间距（filter 未选中默认透明底，仍消费 `--st-chip-bg`） |
+| `--st-chip-selected-bg` / `--st-chip-selected-color` / `--st-chip-state-hover` / `--st-chip-state-press` | `var(--st-accent)` 配对 / `var(--st-state-hover/press)` | chip 选中底/字与 state layer（颜色来自 `--st-accent`，皮肤不要写死颜色） |
+| `--st-avatar-size` / `--st-avatar-radius` / `--st-avatar-font-size` / `--st-avatar-bg` / `--st-avatar-color` | `2.286em` / `50%` / `0.5em` / `secondary-container` / `on-secondary-container` | 头像尺寸/圆角/文字字号/底/字 |
+| `--st-skeleton-color` / `--st-skeleton-duration` / `--st-skeleton-width` / `--st-skeleton-height` / `--st-skeleton-size` / `--st-skeleton-radius` | `surface-container-highest` / `1.6s` / `100%` / `1em` / `2.286em` / 按 shape | 骨架屏底色/呼吸时长/默认宽高（`--st-skeleton-height` rect 回退 `4.286em`、`--st-skeleton-radius` text/rect 分别回退 `0.286em`/`0.571em`） |
 
 ### 颜色（由组件写入，皮肤不要覆盖）
 
@@ -231,6 +259,10 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 | `st-button` | `state-layer` / `loader` / `control` | hover 叠层 / loading spinner / 内部原生 button |
 | `st-input` | `focus-ring` / `underline` / `control` | 内嵌焦点环 / filled 底线 / 内部原生 input |
 | `st-dialog` | `panel` | 对话框面板 |
+| `st-drawer` | `panel` / `scrim` / `headline` / `body` / `actions` | 抽屉面板、遮罩与三个插槽容器 |
+| `st-code` | `shell` / `header` / `title` / `copy` / `body` / `pre` / `code` | 代码块外壳、顶栏、复制按钮、代码区 |
+| `st-chip` | `remove` | 尾部 ✕ 清除按钮 |
+| `st-avatar` | `image` | `src` 属性渲染的内部 `<img>` |
 
 仅当组件位于 light DOM（不在 `o-page` 等 shadow 内）时，`::part()` 才可达；
 跨 shadow 场景请使用 token。
@@ -281,6 +313,9 @@ applyTheme("#D6FE78", {}, {}, {
   需要跟随语义色的组合请用数值 token（如 `--st-fill-alpha`）或在组件端组合。
 - **切换皮肤是异步的**：`setSkin()` 改完 `data-skin` 后浏览器还要加载对应 CSS；
   已知固定皮肤时用静态 `<link>` + `<html data-skin>` 可避免首帧闪切。
+- **减少动态效果**：所有带动效的组件在 `prefers-reduced-motion: reduce` 下把动画/过渡压到
+  近零（保留 `animationend` 等事件）；五套皮肤同时把 `--st-*-duration` token 归零，
+  自定义皮肤若新增时长 token 也要在该媒体查询里归零。
 - **新增组件接入皮肤**：视觉属性写成 `var(--st-xxx, 旧默认值)`；颜色仍走
   `--md-sys-color-*`；`color` 属性通过 `--st-accent` 传递；需要外部定制的内部元素加 `part`；
   在本文档补 token/part 行，并在验收页加皮肤下的展示。

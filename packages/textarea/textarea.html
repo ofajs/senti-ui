@@ -129,6 +129,17 @@
       overflow: hidden;
       height: auto;
     }
+
+    /* 减少动态效果：动画/过渡压到近零，同时保留 animationend 等事件语义 */
+    @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 
   <span class="outline-ring"></span>
@@ -198,6 +209,9 @@
         const ta = this.ele.shadowRoot.querySelector(".native");
         const ele = this.ele;
         ta.readOnly = this.readonly !== null;
+        // 宿主本身不可聚焦，桥接 focus/blur 到内部 textarea
+        ele.focus = () => ta.focus();
+        ele.blur = () => ta.blur();
         // attached 时读取 default-value 属性作为初始值写入 data.value
         const dv = ele.getAttribute("default-value");
         ta.value = dv === null ? "" : dv;

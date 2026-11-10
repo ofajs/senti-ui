@@ -193,7 +193,7 @@ API 签名：
 |------|------|
 | `generateM3Theme(seedHex, overrides?, options?)` | 种子色 → `{ light, dark }` 两套 token 表；`options.contrast` / `options.contrastTone` 见上 |
 | `themeToCss(seedHex, overrides?, customs?, options?)` | → CSS 文本（`:root` + `html.st-dark` 两个块，可保存为静态 CSS） |
-| `applyTheme(seedHex, overrides?, customs?, options?)` | 生成并动态注入当前文档（含媒体查询深色跟随） |
+| `applyTheme(seedHex, overrides?, customs?, options?)` | 生成并动态注入当前文档（含媒体查询深色跟随）；返回 `{ light, dark, css }`，`css` 可直接复用于缓存/静态输出 |
 | `expandCustoms(customs, options?)` | `{ brand: "#FF0000" }` → 四配对 token 的 `{ light, dark }` |
 | `generateTonalPalettes(seedHex \| roleColors)` | 种子色 → 标准五条音调盘（Primary / Secondary / Tertiary / Neutral / Neutral variant）；传角色色对象 → 当前实际角色色（含覆盖）及自定义变量的音调盘（标准角色用 Primary / Secondary / Tertiary / Error / Success 标签，自定义键用变量名作标签）；每条含 0–100 的 14 个 tone |
 

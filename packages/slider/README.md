@@ -17,6 +17,28 @@
 | `default-value` | string | 无 | 初始值（标签属性，attached 时读取一次） |
 | `disabled` | boolean | 无 | 禁用：0.38 透明度、阻断交互 |
 | `color` | M3 角色名 / 自定义变量名 | 无 | 激活轨道与拇指换角色色（默认 primary） |
+| `name` | string | 无 | 表单字段名，提交到 `FormData` |
+| `form` | string | 无 | 关联到指定 `id` 的 form（原生 `form` 属性语义） |
+| `required` | boolean | 无 | 转发给原生 range 代理；**range 始终有值，实际不会触发 invalid** |
+
+## 表单（原生 form）
+
+支持 `name` / `form`，可放进原生 `<form>`：提交时以 `value` 写入 `FormData`，`reset` 回到 `default-value`（缺省时回到 `min`）。
+
+```html
+<form>
+  <st-slider name="volume" default-value="40"></st-slider>
+  <st-button type="submit">保存</st-button>
+  <st-button type="reset">重置</st-button>
+</form>
+```
+
+```js
+const data = new FormData(form);
+data.get("volume"); // "40"
+```
+
+组件内部用 `packages/form/form-proxy.js` 的不可见原生 range 代理承载表单语义；`required` 是原生 range 的无效约束（range 始终有值），保留仅为 API 对齐。
 
 ## 运行时状态
 
@@ -40,10 +62,12 @@
 ## 注意事项与使用技巧
 
 - `value` 是运行时状态：JS 用 `el.value`，`setAttribute("value")` 无效
+- 表单：`name` + `form` 生效；`reset` 回到 `default-value` / `min`。`required` 不会触发 invalid（原生 range 始终有值）
 - 键盘：Tab 聚焦（焦圈画在拇指上）、`←/→` 步进、`Home/End` 到两端
 - `min` / `max` / `step` 是标签属性：`setAttribute` 后下一帧生效并重新约束视觉；越界的 `value` 会自动夹回范围
 - 宿主尺寸变化（隐藏→显示、容器变宽）由 ResizeObserver 自动重算，不需要手动刷新
 - 无障碍：宿主 `aria-label` / `aria-labelledby` / `title` 会同步到内部 range，作为滑块的可访问名称
+- `color` 会同时写入 `--st-slider-main` / `--st-on-accent` 一对语义色：数值气泡文字跟随 `on-角色色`，不会出现深色主题/自定义色下气泡文字与底色不配对
 
 ## 验证页面
 

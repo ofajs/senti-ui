@@ -150,7 +150,7 @@ document.querySelector("st-input").addEventListener("input", (e) => {
 - 本组件消费的主要 token：`--st-height` / `--st-font-size` / `--st-font` / `--st-letter-spacing` / `--st-field-radius` / `--st-field-padding` / `--st-border-width` / `--st-field-bg` / `--st-field-filled-bg` / `--st-field-border` / `--st-field-underline` / `--st-field-shadow` / `--st-backdrop-filter` / `--st-field-focus-ring-opacity` / `--st-field-focus-shadow` / `--st-field-focus-color` / `--st-field-focus-gap` / `--st-field-focus-gap-color` / `--st-field-focus-glow-spread` / `--st-field-focus-glow-alpha` / `--st-field-focus-underline-height` / `--st-field-focus-underline-alpha` / `--st-field-underline-color` / `--st-disabled-opacity`
 - `color` 属性在宿主上写入 `--st-accent`：caret、focus 描边、filled 底线都消费它，皮肤可在此基础上换形态（如外侧光圈）
 - 暴露的 part（组件在 light DOM 时可用）：`part="focus-ring"` / `part="underline"` / `part="control"`
-- 皮肤不改变结构与交互范式（如浮动标签仍由组件自身决定，皮肤只管材质）
+- 皮肤不改变结构与交互范式（如 label 的位置由页面排版决定，皮肤只管材质）
 
 ## 注意事项与使用技巧
 
@@ -159,6 +159,7 @@ document.querySelector("st-input").addEventListener("input", (e) => {
 - 事件回调里读 `e.target.value` 安全（value 已反射到宿主 property）
 - 布尔属性 readonly 的 watch 同步是异步的，setAttribute 后稍等再断言
 - 宿主本身不可聚焦（无 tabindex），焦点在内部 `.native` input 上；自动化测试用真实点击聚焦
+- 组件不内置 label / 浮动标签：label 由页面排版承担（如外层说明文字 + `aria-label`），这样才能放进不同皮肤而不被 M3 的表单结构绑死
 - 无障碍：宿主上的 `aria-label` / `aria-labelledby` / `title` 会同步到内部 input（`st-input` 没有文字标签插槽）
 ## 验证页面
 

@@ -1,7 +1,7 @@
 ---
 name: "senti-ui"
 description: "Senti-UI component library knowledge base (ofa.js + Material Design 3, no build step). Invoke when the user asks about Senti-UI or st-* components, wants to build a web page/app UI with senti-ui, asks about st-button / st-input / st-dialog / toast etc., theming with M3 color tokens, or developing new components based on senti-ui."
-version: "1.1.0"
+version: "1.1.1"
 ---
 
 # Senti-UI 组件库使用指南
@@ -68,6 +68,7 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 | 多行输入框 | `st-textarea` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/textarea/textarea.html` |
 | 单选下拉框 | `st-select` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/select/select.html` |
 | 对话框 | `st-dialog` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/dialog.html` |
+| 侧边抽屉 | `st-drawer` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/drawer/drawer.html` |
 | 对话框命令式工具 | `alert/confirm/prompt` | `import alert from "https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/dialog/alert.js"` 等 |
 | 复选框 | `st-checkbox` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/checkbox/checkbox.html` |
 | 开关 | `st-switch` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/switch/switch.html` |
@@ -85,6 +86,7 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 | 标签栏 | `st-tab-bar` / `st-tab-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tabs/tab-bar.html` |
 | 导航栏 | `st-nav-bar` / `st-nav-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/navigation/nav-bar.html` |
 | 波纹 | `st-ripple` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/ripple/ripple.html` |
+| 代码块 | `st-code` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/code/code.html` |
 
 ## 必读：写法优先级（适用于所有组件文档）
 
@@ -101,7 +103,7 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 
 ## 其他关键模式
 
-1. **运行时状态不是标签属性**——`st-input`/`st-textarea`/`st-select`/`st-slider` 的 `value`，`st-dialog`/`st-tooltip` 的 `open` 等是运行时状态：JS 用 `el.value` / `el.open` 读写，`setAttribute("value")` 无效（初始值用 `default-value` 标签属性）
+1. **运行时状态不是标签属性**——`st-input`/`st-textarea`/`st-select`/`st-slider` 的 `value`，`st-dialog`/`st-drawer`/`st-tooltip` 的 `open` 等是运行时状态：JS 用 `el.value` / `el.open` 读写，`setAttribute("value")` 无效（初始值用 `default-value` 标签属性）
 2. 每个组件的完整属性表、插槽、事件、默认值与特有坑，见 [references/components.md](./references/components.md)
 
 深入阅读顺序建议：写页面前读 [references/usage-patterns.md](./references/usage-patterns.md)（ofa.js 数据绑定语法 + 消费方常见坑）；改主题读 [references/theming.md](./references/theming.md)；换材质读 [references/components/skin.md](./references/components/skin.md)；用具体组件前查 [references/components.md](./references/components.md) 的对应章节速查，需要完整属性表、默认值清单与更多示例时再读 [references/components/](./references/components/) 下该组件的详细文档（如 button.md、dialog.md——button.md 同时覆盖 button-group / split-button / icon-button）。

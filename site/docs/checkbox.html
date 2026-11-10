@@ -6,6 +6,8 @@
   <title>Checkbox — 组件文档 — Senti-UI</title>
   <meta name="description" content="Checkbox（st-checkbox）用法：复选框：选中 / 不确定 / 禁用 / 语义色。内部透明原生 checkbox 承载键盘。" />
   <meta name="theme-color" content="#0061A4" />
+  <link rel="canonical" href="https://senti.ofajs.com/site/docs/checkbox" />
+  <meta property="og:url" content="https://senti.ofajs.com/site/docs/checkbox" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
   <script type="module">
     import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
@@ -66,7 +68,7 @@
 
           <article class="doc-page">
             <header class="doc-hero">
-              <p class="doc-kicker">表单 · 5 / 21</p>
+              <p class="doc-kicker">表单 · 5 / 22</p>
               <h1>Checkbox <code>st-checkbox</code></h1>
               <p class="doc-lead">复选框：选中 / 不确定 / 禁用 / 语义色。checked 与 indeterminate 都是标签属性，ofa 页面用 attr: 绑定；点击文字也能切换，Space 键盘可用。</p>
               <div class="doc-links">
@@ -79,66 +81,91 @@
               <h2>基础状态</h2>
               <p class="doc-section-lead">无属性为未选中，<code>checked</code> 为选中，<code>indeterminate</code> 显示横线表示部分选中。indeterminate 只是视觉与语义状态，用户点击后会退出并变成选中；没有标签内容时文字区自动隐藏。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>st-checkbox</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>st-checkbox</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo1">
                   <st-checkbox>未选中</st-checkbox>
                   <st-checkbox checked>已选中</st-checkbox>
                   <st-checkbox indeterminate>不确定态</st-checkbox>
                   <st-checkbox></st-checkbox>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-checkbox&gt;未选中&lt;/st-checkbox&gt;
-&lt;st-checkbox checked&gt;已选中&lt;/st-checkbox&gt;
-&lt;st-checkbox indeterminate&gt;不确定态&lt;/st-checkbox&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>color 语义色</h2>
               <p class="doc-section-lead"><code>color</code> 同时作用于选中态底色、描边和对勾色，适合表达错误、成功等业务状态。它只影响选中态；未选中时边框恒为 on-surface-variant。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>color</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>color</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo2">
                   <st-checkbox color="error" checked>错误色</st-checkbox>
                   <st-checkbox color="success" checked>成功色</st-checkbox>
                   <st-checkbox color="tertiary" checked>三级色</st-checkbox>
                   <st-checkbox color="error" indeterminate>错误 + 不确定</st-checkbox>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-checkbox color="error" checked&gt;错误色&lt;/st-checkbox&gt;
-&lt;st-checkbox color="success" checked&gt;成功色&lt;/st-checkbox&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>disabled 组合</h2>
               <p class="doc-section-lead">disabled 阻断点击与键盘，并降低到 0.38 透明度。它可与 checked、indeterminate 任意组合，用来展示不可修改的已选结果或半选结果。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>disabled</code></div>
-                <div class="demo-stage">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>disabled</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage" attr:hidden="codeView.demo3">
                   <st-checkbox disabled>禁用未选</st-checkbox>
                   <st-checkbox disabled checked>禁用已选</st-checkbox>
                   <st-checkbox disabled indeterminate>禁用半选</st-checkbox>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-checkbox disabled&gt;禁用未选&lt;/st-checkbox&gt;
-&lt;st-checkbox disabled checked&gt;禁用已选&lt;/st-checkbox&gt;
-&lt;st-checkbox disabled indeterminate&gt;禁用半选&lt;/st-checkbox&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>分组多选与受控绑定</h2>
               <p class="doc-section-lead">每个选项的 checked 绑定到独立 data 字段，change 时把 <code>hasAttribute("checked")</code> 写回即可。标签文字属于点击热区，不需要再包 label；汇总文本由 getter 计算，不必额外维护一份状态。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>attr:checked / on:change</code></div>
-                <div class="demo-stage block">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>attr:checked / on:change</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo4">
                   <div class="row">
                     <st-checkbox attr:checked="apple" on:change="onApple">苹果</st-checkbox>
                     <st-checkbox attr:checked="banana" on:change="onBanana">香蕉</st-checkbox>
@@ -146,21 +173,26 @@
                   </div>
                   <span class="demo-note">已选：{{fruitSummary}}</span>
                 </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-checkbox attr:checked="apple" on:change="apple = $event.target.hasAttribute('checked')"&gt;
-  苹果
-&lt;/st-checkbox&gt;</code></pre>
-              </details>
             </section>
 
             <section class="doc-section">
               <h2>全选与 indeterminate</h2>
               <p class="doc-section-lead">父级复选框同时绑定 checked 与 indeterminate：全选时 checked，部分选中时 indeterminate，全不选时两者都为 false。子项变化后重算父级，父级点击则统一写入三个子项。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>全选 / 半选</code></div>
-                <div class="demo-stage block">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo5 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>全选 / 半选</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo5')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo5 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo5 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage block" attr:hidden="codeView.demo5">
                   <div class="row">
                     <st-checkbox attr:checked="allChecked" attr:indeterminate="allIndeterminate" on:change="toggleAll">全选</st-checkbox>
                   </div>
@@ -171,22 +203,26 @@
                   </div>
                   <span class="demo-note">状态：{{allChecked ? '已全选' : (allIndeterminate ? '部分选中' : '未选择')}} · 已选 {{checkedCount}} / 3</span>
                 </div>
-              </div>
-              <details class="snippet">
-                <summary>示例代码（父级同步）</summary>
-                <pre><code>&lt;st-checkbox attr:checked="allChecked" attr:indeterminate="allIndeterminate"
-  on:change="toggleAll"&gt;全选&lt;/st-checkbox&gt;
 
-&lt;!-- 子项 change 后重算：全选 → checked；部分 → indeterminate --&gt;</code></pre>
-              </details>
+                <st-code class="demo-code" attr:hidden="!codeView.demo5" lang="html" :code="demo5Code"></st-code>
+              </div>
             </section>
 
             <section class="doc-section">
               <h2>尺寸与 change 事件</h2>
               <p class="doc-section-lead">默认尺寸基于 em，改宿主 <code>font-size</code> 会同时缩放方框、对勾和文字间距。change 只在用户切换时派发，事件里读取属性即可得到最新状态。</p>
               <div class="demo">
-                <div class="demo-top"><span class="live"><i></i>LIVE</span><code>font-size / change</code></div>
-                <div class="demo-stage grid">
+                <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.demo6 ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>font-size / change</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo6')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.demo6 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.demo6 ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+                <div class="demo-stage grid" attr:hidden="codeView.demo6">
                   <div class="demo-cell">
                     <span class="demo-label">12px</span>
                     <st-checkbox style="font-size: 12px;" checked>小号</st-checkbox>
@@ -205,12 +241,9 @@
                   </div>
                 </div>
                 <span class="demo-note" style="grid-column: 1 / -1;">change 已触发 {{count}} 次</span>
+
+                <st-code class="demo-code" attr:hidden="!codeView.demo6" lang="html" :code="demo6Code"></st-code>
               </div>
-              <details class="snippet">
-                <summary>示例代码</summary>
-                <pre><code>&lt;st-checkbox style="font-size: 20px;" checked&gt;大号&lt;/st-checkbox&gt;
-&lt;st-checkbox on:change="count += 1"&gt;点我&lt;/st-checkbox&gt;</code></pre>
-              </details>
             </section>
 
             <div class="doc-cols">
@@ -247,6 +280,13 @@
 
         export default async () => ({
           data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false, demo6: false },
+            demo1Code: "<st-checkbox>未选中</st-checkbox>\n                  <st-checkbox checked>已选中</st-checkbox>\n                  <st-checkbox indeterminate>不确定态</st-checkbox>\n                  <st-checkbox></st-checkbox>",
+            demo2Code: "<st-checkbox color=\"error\" checked>错误色</st-checkbox>\n                  <st-checkbox color=\"success\" checked>成功色</st-checkbox>\n                  <st-checkbox color=\"tertiary\" checked>三级色</st-checkbox>\n                  <st-checkbox color=\"error\" indeterminate>错误 + 不确定</st-checkbox>",
+            demo3Code: "<st-checkbox disabled>禁用未选</st-checkbox>\n                  <st-checkbox disabled checked>禁用已选</st-checkbox>\n                  <st-checkbox disabled indeterminate>禁用半选</st-checkbox>",
+            demo4Code: "<div class=\"row\">\n                    <st-checkbox attr:checked=\"apple\" on:change=\"onApple\">苹果</st-checkbox>\n                    <st-checkbox attr:checked=\"banana\" on:change=\"onBanana\">香蕉</st-checkbox>\n                    <st-checkbox attr:checked=\"grape\" on:change=\"onGrape\">葡萄</st-checkbox>\n                  </div>\n                  <span class=\"demo-note\">已选：{{fruitSummary}}</span>",
+            demo5Code: "<div class=\"row\">\n                    <st-checkbox attr:checked=\"allChecked\" attr:indeterminate=\"allIndeterminate\" on:change=\"toggleAll\">全选</st-checkbox>\n                  </div>\n                  <div class=\"row\">\n                    <st-checkbox attr:checked=\"a\" on:change=\"onA\">选项 A</st-checkbox>\n                    <st-checkbox attr:checked=\"b\" on:change=\"onB\">选项 B</st-checkbox>\n                    <st-checkbox attr:checked=\"c\" on:change=\"onC\">选项 C</st-checkbox>\n                  </div>\n                  <span class=\"demo-note\">状态：{{allChecked ? '已全选' : (allIndeterminate ? '部分选中' : '未选择')}} · 已选 {{checkedCount}} / 3</span>",
+            demo6Code: "<div class=\"demo-cell\">\n                    <span class=\"demo-label\">12px</span>\n                    <st-checkbox style=\"font-size: 12px;\" checked>小号</st-checkbox>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">14px（默认）</span>\n                    <st-checkbox checked>默认</st-checkbox>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">20px</span>\n                    <st-checkbox style=\"font-size: 20px;\" checked>大号</st-checkbox>\n                  </div>\n                  <div class=\"demo-cell\">\n                    <span class=\"demo-label\">change 计数</span>\n                    <st-checkbox on:change=\"count += 1\">点我</st-checkbox>\n                  </div>",
             apple: true,
             banana: false,
             grape: false,
@@ -258,6 +298,9 @@
             count: 0,
           },
           proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
             get fruitSummary() {
               const picked = [this.apple && "苹果", this.banana && "香蕉", this.grape && "葡萄"].filter(Boolean);
               return picked.length ? picked.join("、") : "（未选择）";

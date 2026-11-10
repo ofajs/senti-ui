@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code · Senti-UI</title>
+  <meta name="description" content="Code（st-code）用法：HTML / JS / TS / CSS / Less / Sass 语法高亮、自动格式化、标题与一键复制。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="canonical" href="https://senti.ofajs.com/site/docs/code" />
+  <meta property="og:url" content="https://senti.ofajs.com/site/docs/code" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+</head>
+<body>
+  <o-app src="../app-config.js">
+    <template page>
+      <link rel="stylesheet" href="../docs.css" />
+      <link rel="stylesheet" href="../../packages/skin/m3.css" />
+      <link rel="stylesheet" href="../../packages/skin/apple.css" />
+      <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+      <link rel="stylesheet" href="../../packages/skin/windows.css" />
+      <link rel="stylesheet" href="../../packages/skin/cyberpunk.css" />
+
+      <article class="doc-page">
+        <header class="doc-hero">
+          <p class="doc-kicker">高级 · 23 / 23</p>
+          <h1>Code <code>st-code</code></h1>
+          <p class="doc-lead">
+            代码块：HTML / JS / TS / CSS / Less / Sass 语法高亮与自动格式化。默认只有代码本身；
+            加 frame 才出现浏览器外壳（圆点 / 文件名 / 复制）。内置高亮器与格式化器（js-beautify vendored），不请求外部 CDN。
+          </p>
+          <div class="doc-links">
+            <a href="../index.html">组件目录</a>
+            <a href="https://github.com/ofajs/senti-ui/blob/main/packages/code/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
+          </div>
+        </header>
+
+        <section class="doc-section">
+          <h2>HTML 与安全 template</h2>
+          <p class="doc-section-lead">
+            把源码放进 &lt;template&gt;：template 内容天然惰性，里面的 &lt;script&gt; 不会执行；组件读取后重新转义展示。
+            默认 auto 格式化会自动整理缩进与换行；下面这个示例加了 frame，所以显示浏览器外壳。
+          </p>
+          <div class="demo">
+            <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.html ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>lang="html"</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('html')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.html ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.html ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+            <div class="demo-stage block" attr:hidden="codeView.html">
+              <st-code lang="html" frame title="index.html">
+                <template>
+                  <div class="card"><h2>Hello</h2><p>代码会被自动格式化。</p></div>
+                  <script>alert("不会执行")</script>
+                </template>
+              </st-code>
+            </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.html" lang="html" :code="htmlDemoCode"></st-code>
+              </div>
+
+        </section>
+
+        <section class="doc-section">
+          <h2>JS / TS / CSS / Less / Sass</h2>
+          <p class="doc-section-lead">
+            语言由 lang 决定；写代码时不用手动对齐空格，组件会自动格式化。
+            这些示例没有 frame，所以只有代码本身，没有边框、底色和顶栏。
+            Sass 是缩进语法，自动格式化会把层级压平，所以只做去公共缩进。
+          </p>
+          <div class="demo">
+            <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.js ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>lang="js" / "ts"</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('js')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.js ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.js ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+            <div class="demo-stage block" attr:hidden="codeView.js">
+              <st-code lang="js">
+                <template>
+                  const greet=(name)=>{const message=`Hello, ${name}!`;return message;}
+                  console.log(greet("Senti"));
+                </template>
+              </st-code>
+              <st-code lang="ts">
+                <template>
+                  type User={id:number;name:string};
+                  const users:User[]=[];
+                  function first():User|null{return users[0]??null;}
+                </template>
+              </st-code>
+            </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.js" lang="html" :code="jsDemoCode"></st-code>
+              </div>
+          <div class="demo">
+            <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.css ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>lang="css" / "less" / "sass"</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('css')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.css ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.css ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+            <div class="demo-stage block" attr:hidden="codeView.css">
+              <st-code lang="css">
+                <template>
+                  .card{color:var(--md-sys-color-primary);border-radius:12px;}
+                </template>
+              </st-code>
+              <st-code lang="less">
+                <template>
+                  @brand:#0061a4;.card{color:@brand;&:hover{color:lighten(@brand,10%);}}
+                </template>
+              </st-code>
+              <st-code lang="sass">
+                <template>
+                  $brand: #0061a4
+                  .card
+                    color: $brand
+                </template>
+              </st-code>
+            </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.css" lang="html" :code="cssDemoCode"></st-code>
+              </div>
+        </section>
+
+        <section class="doc-section">
+          <h2>动态 code 数据与 copy 事件</h2>
+          <p class="doc-section-lead">
+            从接口 / 编辑器拿到的代码用 :code 绑定或 el.code 写入运行时数据（不是标签属性），不需要 template，也不会被当作 HTML 执行。
+            点击右上角复制按钮会派发 copy 事件。
+          </p>
+          <div class="demo">
+            <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.dynamic ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>:code / on:copy</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('dynamic')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.dynamic ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.dynamic ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+            <div class="demo-stage block" attr:hidden="codeView.dynamic">
+              <st-code
+                lang="js"
+                frame
+                title="dynamic.js"
+                :code="dynamicCode"
+                on:copy="bumpCopy"
+              ></st-code>
+              <st-button variant="outlined" on:click="nextSample">换一段</st-button>
+              <span class="demo-note">copy 次数：{{copyCount}}</span>
+            </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.dynamic" lang="html" :code="dynamicDemoCode"></st-code>
+              </div>
+
+        </section>
+
+        <section class="doc-section">
+          <h2>皮肤与长代码滚动</h2>
+          <p class="doc-section-lead">
+            代码块材质走 --st-code-* token；语法颜色仍来自 M3 角色。用 --st-code-max-height 控制内部滚动高度。
+          </p>
+          <div class="demo">
+            <div class="demo-top">
+                  <span class="live"><i></i>{{codeView.skin ? 'CODE' : 'LIVE'}}</span>
+                  <div class="demo-top-actions">
+                    <code>data-skin / max-height</code>
+                    <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('skin')">
+                      <iconify-icon slot="prefix" attr:icon="codeView.skin ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                      {{codeView.skin ? '查看示例' : '查看代码'}}
+                    </st-button>
+                  </div>
+                </div>
+            <div class="demo-stage block" attr:hidden="codeView.skin">
+              <div data-skin="apple">
+                <st-code lang="css" frame title="apple.css">
+                  <template>
+                    .card{background:color-mix(in srgb,var(--md-sys-color-surface) 50%,transparent);backdrop-filter:blur(18px);}
+                  </template>
+                </st-code>
+              </div>
+              <st-code lang="js" frame title="long.js" style="--st-code-max-height: 9em;">
+                <template>
+                  const rows=Array.from({length:40},(_,i)=>({id:i,label:`Row ${i+1}`}));
+                  console.log(rows.length);
+                </template>
+              </st-code>
+            </div>
+
+                <st-code class="demo-code" attr:hidden="!codeView.skin" lang="html" :code="skinDemoCode"></st-code>
+              </div>
+        </section>
+
+        <div class="doc-cols">
+          <div class="doc-block">
+            <h3>属性</h3>
+            <table class="api">
+              <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+              <tbody>
+                <tr><td><code>lang</code></td><td>"html" / "js" / "ts" / "css" / "less" / "sass"</td><td>"html"</td><td>高亮语言；支持 htm / javascript / typescript / scss 等别名</td></tr>
+                <tr><td><code>title</code></td><td>string</td><td>无</td><td>顶栏文件名 / 标题；缺省显示语言名</td></tr>
+                <tr><td><code>code</code></td><td>运行时状态（ofa data）</td><td>null</td><td>代码字符串，优先于 textarea / template；用 <code>:code</code> 或 <code>el.code</code> 写入，不是标签属性</td></tr>
+                <tr><td><code>format</code></td><td>"auto" / "off"</td><td>"auto"</td><td>自动格式化开关；Sass 始终只做去公共缩进</td></tr>
+                <tr><td><code>frame</code></td><td>boolean</td><td>无</td><td>加浏览器外壳：底色 / 边框 / 圆点 / 标题 / 复制按钮</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="doc-block">
+            <h3>插槽 / 事件 / 注意</h3>
+            <ul class="api-list">
+              <li>源码：<code>&lt;template&gt;</code>（推荐，惰性安全）或 <code>code</code> 属性；不要直接放 light DOM 子节点。</li>
+              <li>事件：<code>copy</code>（bubbles + composed）。</li>
+              <li>part：<code>shell</code> / <code>header</code> / <code>title</code> / <code>copy</code> / <code>body</code> / <code>pre</code> / <code>code</code>。</li>
+              <li>皮肤 token：<code>--st-code-bg</code> / <code>--st-code-header-bg</code> / <code>--st-code-border</code> / <code>--st-code-radius</code> / <code>--st-code-shadow</code> / <code>--st-code-padding</code> / <code>--st-code-font-size</code> / <code>--st-code-backdrop-filter</code> / <code>--st-code-max-height</code>。</li>
+              <li>布局：横向滚动不换行；需要换行用 <code>st-code::part(pre) { white-space: pre-wrap; }</code>。</li>
+            </ul>
+          </div>
+        </div>
+
+        <nav class="doc-pager" aria-label="上下篇">
+          <a class="pager-link" olink href="./tools.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Command tools</a>
+          <a class="pager-link pager-next" olink href="./index.html"><span>下一页</span>组件概览 <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
+        </nav>
+      </article>
+
+      <script>
+        export const parent = "./layout.html";
+
+        export default async () => ({
+          data: {
+            copyCount: 0,
+            dynamicCode: "const answer = 42;",
+            codeView: {
+              html: false,
+              js: false,
+              css: false,
+              dynamic: false,
+              skin: false,
+            },
+            htmlDemoCode: "<st-code lang=\"html\" frame title=\"index.html\">\n  <template>\n    <div class=\"card\"><h2>Hello</h2><p>代码会被自动格式化。</p></div>\n    <script>alert(\"不会执行\")<\/script>\n  </template>\n</st-code>",
+            jsDemoCode: "<st-code lang=\"js\">\n  <template>\n    const greet=(name)=>{const message=`Hello, ${name}!`;return message;}\n    console.log(greet(\"Senti\"));\n  </template>\n</st-code>\n\n<st-code lang=\"ts\">\n  <template>\n    type User={id:number;name:string};\n    const users:User[]=[];\n    function first():User|null{return users[0]??null;}\n  </template>\n</st-code>",
+            cssDemoCode: "<st-code lang=\"css\">\n  <template>\n    .card{color:var(--md-sys-color-primary);border-radius:12px;}\n  </template>\n</st-code>\n\n<st-code lang=\"less\">\n  <template>\n    @brand:#0061a4;.card{color:@brand;&:hover{color:lighten(@brand,10%);}}\n  </template>\n</st-code>\n\n<st-code lang=\"sass\">\n  <template>\n    $brand: #0061a4\n    .card\n      color: $brand\n  </template>\n</st-code>",
+            dynamicDemoCode: "<st-code lang=\"js\" frame title=\"dynamic.js\" :code=\"dynamicCode\" on:copy=\"bumpCopy\"></st-code>\n<st-button variant=\"outlined\" on:click=\"nextSample\">换一段</st-button>\n<span class=\"demo-note\">copy 次数：{{copyCount}}</span>\n\n<script>\n  export default async () => ({\n    data: {\n      copyCount: 0,\n      dynamicCode: \"const answer = 42;\",\n    },\n    proto: {\n      bumpCopy() {\n        this.copyCount += 1;\n      },\n      nextSample() {\n        this.dynamicCode = this.copyCount % 2\n          ? 'const message = \"Hello, Senti\";'\n          : \"const answer = 42;\";\n      },\n    },\n  });\n<\/script>",
+            skinDemoCode: "<div data-skin=\"apple\">\n  <st-code lang=\"css\" frame title=\"apple.css\">\n    <template>\n      .card{background:color-mix(in srgb,var(--md-sys-color-surface) 50%,transparent);backdrop-filter:blur(18px);}\n    </template>\n  </st-code>\n</div>\n\n<st-code lang=\"js\" frame title=\"long.js\" style=\"--st-code-max-height: 9em;\">\n  <template>\n    const rows=Array.from({length:40},(_,i)=>({id:i,label:`Row ${i+1}`}));\n    console.log(rows.length);\n  </template>\n</st-code>",
+          },
+          proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
+            bumpCopy() {
+              this.copyCount += 1;
+            },
+            nextSample() {
+              this.dynamicCode = this.copyCount % 2
+                ? 'const message = "Hello, Senti";'
+                : "const answer = 42;";
+            },
+          },
+        });
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin, getSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = Object.assign(window.__site || {}, { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu });
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

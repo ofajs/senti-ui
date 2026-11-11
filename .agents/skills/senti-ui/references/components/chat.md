@@ -173,6 +173,28 @@ chat.messages = chat.messages.map((m) =>
 - `prefers-reduced-motion: reduce` 下入场与光标动画压到近零；五套皮肤同时把 `--st-chat-enter-duration` 归零
 - 流式更新只改最后一条并保持 `id`，不要重建整表元素
 
+## 透明容器（只保留气泡材质）
+
+容器材质都在 `:host` 上，可原生 CSS 覆盖；气泡皮肤不变。注意：容器透明**不会**自动让气泡透明，气泡仍按当前皮肤 / 默认 M3 材质渲染：
+
+```html
+<st-chat style="height: 420px; background: transparent; border: 0; box-shadow: none; backdrop-filter: none;">
+  <st-chat-message from="assistant">只有气泡有材质。</st-chat-message>
+  <st-chat-message from="user">容器透明。</st-chat-message>
+</st-chat>
+```
+
+想让气泡本身也呈毛玻璃效果，在外层加 `data-skin="apple"`，或单独覆盖：
+
+```css
+#my-chat st-chat-message::part(bubble) {
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 40%, transparent);
+  backdrop-filter: blur(18px) saturate(180%);
+}
+```
+
+保留 header / footer 时，分隔线来自 `--st-chat-divider`；light DOM 下可用 `st-chat::part(header)` / `::part(footer)` 去掉边框，跨 shadow 时直接不写 header / footer 即可。
+
 ## 默认值（直接覆盖）
 
 | 项目 | 默认值 |

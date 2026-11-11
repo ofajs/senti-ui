@@ -66,6 +66,15 @@
           background: var(--md-sys-color-secondary-container);
           color: var(--md-sys-color-on-secondary-container);
         }
+        /* 透明容器示例：气泡也做得更透，叠在页面环境光上能看到 blurred 背景 */
+        #glass-chat st-chat-message::part(bubble) {
+          background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 40%, transparent);
+          backdrop-filter: blur(18px) saturate(180%);
+          -webkit-backdrop-filter: blur(18px) saturate(180%);
+        }
+        #glass-chat st-chat-message[from="user"]::part(bubble) {
+          background: color-mix(in srgb, var(--md-sys-color-primary-container) 52%, transparent);
+        }
       </style>
 
       <article class="doc-page">
@@ -268,6 +277,9 @@
           <p class="doc-section-lead">
             容器与气泡尺寸全部用 em：改 <code>font-size</code> 整体缩放；气泡颜色 / 圆角可用 <code>::part(bubble)</code> 覆写。
             皮肤只换材质：在容器外层写 <code>data-skin</code>，消息在 shadow 内也会通过 CSS 变量继承。
+            不需要容器底色时直接写 <code>background: transparent; border: 0; box-shadow: none;</code>；
+            容器透明不会自动让气泡透明——气泡仍按当前皮肤 / 默认 M3 材质渲染，想同时玻璃化可在外层加
+            <code>data-skin="apple"</code>，或用 <code>::part(bubble)</code> 单独调整背景与 backdrop-filter。
           </p>
           <div class="demo">
             <div class="demo-top">
@@ -300,6 +312,14 @@
                   <st-chat>
                     <st-chat-message from="assistant" name="Senti">扁平细描边材质。</st-chat-message>
                     <st-chat-message from="user" name="你">结构与键盘行为不变。</st-chat-message>
+                  </st-chat>
+                </div>
+                <div class="skin-card-mini" data-skin="apple">
+                  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+                  <span>background: transparent · apple</span>
+                  <st-chat id="glass-chat" style="background: transparent; border: 0; box-shadow: none; backdrop-filter: none;">
+                    <st-chat-message from="assistant" name="Senti">容器透明，气泡更透。</st-chat-message>
+                    <st-chat-message from="user" name="你">看到背后的环境光。</st-chat-message>
                   </st-chat>
                 </div>
               </div>
@@ -414,11 +434,20 @@ chat.scrollToEnd();`,
   st-chat-message::part(bubble) { border-radius: 6px; }
 </style>
 
-<!-- 局部皮肤：消息在 shadow 内也能继承 token -->
+<!-- 透明容器 + 玻璃气泡：容器融进页面，气泡保留皮肤材质 -->
 <div data-skin="apple">
   <link rel="stylesheet" href=".../packages/skin/apple.css">
-  <st-chat>…</st-chat>
-</div>`,
+  <st-chat id="glass-chat" style="background: transparent; border: 0; box-shadow: none; backdrop-filter: none;">
+    <st-chat-message from="assistant">只有气泡有材质。</st-chat-message>
+  </st-chat>
+</div>
+<style>
+  /* 想让气泡更透，可单独覆盖 part，不影响容器 */
+  #glass-chat st-chat-message::part(bubble) {
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 40%, transparent);
+    backdrop-filter: blur(18px) saturate(180%);
+  }
+</style>`,
           },
           proto: {
             toggleCode(key) {

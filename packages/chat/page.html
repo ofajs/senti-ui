@@ -253,6 +253,22 @@
   </section>
 
   <section class="stack">
+    <h3>透明容器 — 只保留消息气泡材质（直接覆盖 :host 原生 CSS）</h3>
+    <p class="note">
+      容器默认有一层底色，但不是必须的：<span class="code">background</span> / <span class="code">border</span> /
+      <span class="code">box-shadow</span> / <span class="code">backdrop-filter</span> 都定义在宿主上，写成透明即可让容器融进页面，消息气泡仍然保留自己的皮肤。
+    </p>
+    <st-chat style="height: 320px; background: transparent; border: 0; box-shadow: none; backdrop-filter: none;">
+      <st-chat-message from="assistant" name="Senti" time="15:10">
+        容器完全透明，只有这条气泡有材质。
+      </st-chat-message>
+      <st-chat-message from="user" name="你" time="15:11">
+        适合嵌在已有卡片或页面背景里的对话。
+      </st-chat-message>
+    </st-chat>
+  </section>
+
+  <section class="stack">
     <h3>皮肤 — 局部 data-skin（只改材质不改颜色，消息在组件 shadow 内也能继承）</h3>
     <div class="grid-2">
       <div class="skin-box" data-skin="apple">

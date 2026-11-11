@@ -164,13 +164,13 @@
   --st-chat-gap: .714em;
   --st-chat-header-padding: .643em .857em;
   --st-chat-footer-padding: .643em .857em;
-  --st-chat-assistant-bg: rgb(from var(--md-sys-color-surface-container-high) r g b / 0.62);
-  --st-chat-user-bg: rgb(from var(--md-sys-color-primary-container) r g b / 0.72);
+  --st-chat-assistant-bg: rgb(from var(--md-sys-color-surface-container-high) r g b / 0.48);
+  --st-chat-user-bg: rgb(from var(--md-sys-color-primary-container) r g b / 0.6);
   --st-chat-bubble-radius: 1.143em;
   --st-chat-bubble-tail-radius: .429em;
   --st-chat-bubble-padding: .643em .857em;
   --st-chat-bubble-border: color-mix(in srgb, var(--md-sys-color-outline) 14%, transparent);
-  --st-chat-bubble-backdrop-filter: blur(14px) saturate(160%);
+  --st-chat-bubble-backdrop-filter: blur(18px) saturate(180%);
   --st-chat-bubble-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
   --st-chat-avatar-size: 2.286em;
   --st-chat-jump-bg: rgb(from var(--md-sys-color-surface-container-high) r g b / 0.7);

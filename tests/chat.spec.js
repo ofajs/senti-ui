@@ -381,6 +381,29 @@ test("chat：新消息入场动画与 prefers-reduced-motion 降级", async ({ p
   expect(reduced.cursor).toBeLessThan(0.001);
 });
 
+test("chat：容器可透明，气泡材质保持不变", async ({ page }) => {
+  const state = await page.evaluate(() => {
+    const chat = document.querySelector("#chat-basic");
+    chat.style.cssText += "; background: transparent; border: 0; box-shadow: none; backdrop-filter: none;";
+    const cs = getComputedStyle(chat);
+    const bubble = document
+      .querySelector("#msg-assistant")
+      .shadowRoot.querySelector(".bubble");
+    return {
+      background: cs.backgroundColor,
+      border: cs.borderTopWidth,
+      shadow: cs.boxShadow,
+      backdrop: cs.backdropFilter,
+      bubbleBackground: getComputedStyle(bubble).backgroundColor,
+    };
+  });
+  expect(state.background).toBe("rgba(0, 0, 0, 0)");
+  expect(state.border).toBe("0px");
+  expect(state.shadow).toBe("none");
+  expect(state.backdrop).toBe("none");
+  expect(state.bubbleBackground).not.toBe("rgba(0, 0, 0, 0)");
+});
+
 test("chat：局部 data-skin 材质继承进组件 shadow（只改材质不改结构）", async ({ page }) => {
   const state = await page.evaluate(() => {
     const msg = document.querySelector("#msg-skin");

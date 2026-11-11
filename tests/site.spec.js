@@ -914,6 +914,24 @@ test("Chat 文档：5 个示例、三种数据流与 API 表", async ({ page }) 
   expect(overview.next).toContain("/site/docs/index.html");
   expect(overview.sideActive).toBe(1);
 
+  // 直接打开本页时，共享 header 依赖也必须在本页 template 内声明（SCSR）
+  await page.waitForFunction(
+    () => {
+      const layout = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".layout-nav")
+      );
+      const sr = layout?.shadowRoot;
+      return !!(
+        sr?.querySelector("#skin-menu")?.shadowRoot &&
+        sr?.querySelector(".theme-select")?.shadowRoot &&
+        sr?.querySelector("st-tooltip")?.shadowRoot &&
+        sr?.querySelector(".read-progress st-progress")?.shadowRoot
+      );
+    },
+    null,
+    { timeout: 20_000 }
+  );
+
   // 数组 API 示例：加载历史后 st-chat 内渲染出 3 条消息
   await page.waitForFunction(
     () => {

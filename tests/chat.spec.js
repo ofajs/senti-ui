@@ -146,6 +146,25 @@ test("chat-message：name/time/avatar/status/streaming/error 运行时属性同�
   expect(cleared.metaHidden).toBe(true);
 });
 
+test("chat-message：模板缩进的首尾空行不会撑高气泡", async ({ page }) => {
+  const state = await page.evaluate(() => {
+    const msg = document.querySelector("#msg-plain");
+    const sr = msg.shadowRoot;
+    const bubble = sr.querySelector(".bubble");
+    const content = sr.querySelector(".content");
+    return {
+      text: msg.textContent,
+      contentHeight: content.getBoundingClientRect().height,
+      bubbleHeight: bubble.getBoundingClientRect().height,
+      lineHeight: parseFloat(getComputedStyle(content).lineHeight),
+    };
+  });
+  // 正文首尾空白被裁掉，气泡高度接近一行正文 + padding，而不是多出多个空行
+  expect(state.text).toBe("无头部的消息");
+  expect(state.contentHeight).toBeLessThan(state.lineHeight * 1.5);
+  expect(state.bubbleHeight).toBeLessThan(state.lineHeight + 30);
+});
+
 test("chat：messages 数组 API（role 别名 / 空状态 / id 复用不重建节点）", async ({ page }) => {
   await page.evaluate(() => {
     const chat = document.querySelector("#chat-data");

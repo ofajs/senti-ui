@@ -44,6 +44,12 @@
       <l-m src="../../packages/avatar/avatar.html"></l-m>
       <l-m src="../../packages/input/input.html"></l-m>
       <l-m src="../../packages/code/code.html"></l-m>
+      <!-- header 在共享 layout 里：menu / select / tooltip / progress 也要在本页声明，
+           SCSR 直接打开本页时目标页 body 的 l-m 不会执行 -->
+      <l-m src="../../packages/menu/menu.html"></l-m>
+      <l-m src="../../packages/select/select.html"></l-m>
+      <l-m src="../../packages/tooltip/tooltip.html"></l-m>
+      <l-m src="../../packages/progress/progress.html"></l-m>
 
       <link rel="stylesheet" href="../docs.css" />
       <style>
@@ -94,7 +100,7 @@
               </div>
             </div>
             <div class="demo-stage chat-stage" attr:hidden="codeView.demo1">
-              <st-chat style="height: 560px;">
+              <st-chat style="height: 460px;">
                 <div slot="header" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
                   <strong style="font-size:13px;">Senti 助手</strong>
                   <span style="font-size:11px; color:var(--md-sys-color-on-surface-variant);">在线</span>
@@ -357,7 +363,7 @@
             streamDemo: false,
             streamText: "",
             errored: false,
-            demo1Code: `<st-chat style="height: 560px;">
+            demo1Code: `<st-chat style="height: 460px;">
   <div slot="header">Senti 助手</div>
   <st-chat-message from="system">今天 14:20</st-chat-message>
   <st-chat-message from="assistant" name="Senti" time="14:20">

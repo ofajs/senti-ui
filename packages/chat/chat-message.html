@@ -285,6 +285,30 @@
             .assignedNodes({ flatten: true })
             .some((node) => node.nodeType === 1 || node.textContent.trim() !== "");
 
+        // 模板缩进会在 slot 里留下首尾换行/空格，pre-wrap 会把它们当成真实空行。
+        // 只裁掉首尾空白（保留正文内部换行），避免每个消息气泡都被撑高。
+        const trimBoundaryWhitespace = (slot) => {
+          const nodes = slot.assignedNodes({ flatten: true });
+          if (!nodes.length) return;
+          for (let i = 0; i < nodes.length; i += 1) {
+            const node = nodes[i];
+            if (node.nodeType === 1) break;
+            if (node.nodeType !== 3) continue;
+            const next = node.textContent.replace(/^\s+/, "");
+            if (next !== node.textContent) node.textContent = next;
+            if (next !== "") break;
+          }
+          for (let i = nodes.length - 1; i >= 0; i -= 1) {
+            const node = nodes[i];
+            if (node.nodeType === 1) break;
+            if (node.nodeType !== 3) continue;
+            const next = node.textContent.replace(/\s+$/, "");
+            if (next !== node.textContent) node.textContent = next;
+            if (next !== "") break;
+          }
+        };
+        this._trimContent = () => trimBoundaryWhitespace(contentSlot);
+
         this._syncAvatar = () => {
           const slotFilled = hasContent(avatarSlot);
           const url = (this.avatar || "").trim();
@@ -327,6 +351,7 @@
           this._syncActions();
         });
         contentSlot.addEventListener("slotchange", () => {
+          this._trimContent();
           this._syncStreaming();
         });
 
@@ -348,6 +373,7 @@
           this._syncMeta();
           this._syncStatus();
           this._syncActions();
+          this._trimContent();
           this._syncStreaming();
         });
       },

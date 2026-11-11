@@ -147,6 +147,15 @@ const t = toast("已保存", { duration: 3000 }); // 返回 { close, el }；dura
 - 属性：`variant`（`elevated`(默认)/`filled`/`outlined`）、`interactive`（可点击：hover 抬升 + 波纹 + click 冒泡，内部原生 button 承载键盘焦点）
 - 插槽：默认（自由组合）；卡内放交互元素时避免 `interactive`
 
+## st-chat / st-chat-message 对话
+
+- `st-chat` 包裹消息：`auto-scroll`（`auto`(默认，贴底才跟随)/`always`/`off`）、`label`；插槽 `header` / `footer` / `empty`；必须给高度（`style="height:420px"`）才内部滚动
+- `st-chat-message` 属性：`from`（`assistant`(默认)/`user`/`system`）、`name`、`time`、`avatar`、`status`、`streaming`（流式光标/空内容呼吸点）、`error`；插槽 `avatar` / `actions`
+- 数据流三种：light DOM 组合、ofa `o-fill` + `fill-key="id"`（推荐；流式替换最后一条并保持 id）、宿主 `el.messages` 对象数组（纯文本，兼容 `from`/`role`）
+- `el.scrollToEnd({ smooth })` 滚到底部；`streaming` 内容为空时显示三个呼吸点；新消息自动入场动画
+- 示例：`<st-chat style="height:420px"><st-chat-message from="assistant" name="Senti" streaming>…</st-chat-message></st-chat>`
+- 皮肤 token：`--st-chat-*`；part：`viewport` / `list` / `header` / `footer` / `empty` / `scroll-button` 与 `avatar` / `bubble` / `meta` / `name` / `time` / `content` / `actions` / `status`
+
 ## st-badges 徽标
 
 - 点 / 数字（`max` 封顶显示 `N+`）/ 文字徽标，钉在默认插槽元素右上角，pointer-events none

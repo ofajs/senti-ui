@@ -127,6 +127,38 @@
   --st-card-border: transparent;
   --st-card-outline: var(--md-sys-color-outline-variant);
   --st-card-backdrop-filter: none;
+  /* 对话：容器 / 气泡 / 头像 / 入场 */
+  --st-chat-bg: var(--md-sys-color-surface-container-lowest);
+  --st-chat-border: transparent;
+  --st-chat-radius: var(--st-radius-lg);
+  --st-chat-shadow: var(--st-shadow-1);
+  --st-chat-backdrop-filter: none;
+  --st-chat-padding: 1em;
+  --st-chat-gap: .857em;
+  --st-chat-header-padding: .714em 1em;
+  --st-chat-footer-padding: .714em 1em;
+  --st-chat-header-bg: transparent;
+  --st-chat-divider: var(--md-sys-color-outline-variant);
+  --st-chat-empty-padding: 2em 1em;
+  --st-chat-system-radius: var(--st-radius-sm);
+  --st-chat-assistant-bg: var(--md-sys-color-surface-container-high);
+  --st-chat-user-bg: var(--md-sys-color-primary-container);
+  --st-chat-bubble-radius: 1.143em;
+  --st-chat-bubble-tail-radius: .286em;
+  --st-chat-bubble-padding: .714em 1em;
+  --st-chat-bubble-border: transparent;
+  --st-chat-bubble-shadow: none;
+  --st-chat-bubble-backdrop-filter: none;
+  --st-chat-bubble-max-width: 85%;
+  --st-chat-avatar-size: 2.286em;
+  --st-chat-avatar-radius: 50%;
+  --st-chat-avatar-gap: .643em;
+  --st-chat-avatar-bg: var(--md-sys-color-surface-container-highest);
+  --st-chat-jump-bg: var(--md-sys-color-surface-container-high);
+  --st-chat-jump-border: transparent;
+  --st-chat-jump-shadow: var(--st-shadow-2);
+  --st-chat-enter-duration: 260ms;
+  --st-chat-enter-distance: .571em;
   --st-select-popup-bg: var(--md-sys-color-surface-container);
   --st-select-popup-border: transparent;
   --st-select-popup-backdrop-filter: none;
@@ -201,5 +233,6 @@
     --st-drawer-enter-duration: 0s;
     --st-drawer-exit-duration: 0s;
     --st-skeleton-duration: 0s;
+    --st-chat-enter-duration: 0s;
   }
 }

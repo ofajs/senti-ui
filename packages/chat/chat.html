@@ -1,0 +1,371 @@
+<!--
+  st-chat — Senti-UI 对话容器（基于 ofa.js）
+  包裹 st-chat-message：滚动视口 / 头部 / 底部 / 空状态 / 回到底部按钮。
+  语义属性：auto-scroll(auto|always|off) / label（滚动区的可访问名称）
+  数据流：light DOM 直接组合，或 o-fill 绑定数组；也可给宿主 el.messages 赋对象数组（纯文本）。
+  视觉在 :host 上（em 尺寸），材质走 --st-chat-* 皮肤 token，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      height: 100%;
+      min-height: 0;
+      max-width: 100%;
+      overflow: hidden;
+      border: var(--st-border-width, 1px) solid var(--st-chat-border, transparent);
+      border-radius: var(--st-chat-radius, var(--st-radius-lg, 1.143em));
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
+      color: var(--md-sys-color-on-surface);
+      background: var(--st-chat-bg, var(--md-sys-color-surface-container-lowest));
+      box-shadow: var(--st-chat-shadow, var(--st-shadow-1, none));
+      backdrop-filter: var(--st-chat-backdrop-filter, none);
+      -webkit-backdrop-filter: var(--st-chat-backdrop-filter, none);
+    }
+
+    .header,
+    .footer {
+      flex: none;
+      box-sizing: border-box;
+      padding: var(--st-chat-header-padding, 0.714em 1em);
+      background: var(--st-chat-header-bg, transparent);
+      color: var(--md-sys-color-on-surface);
+    }
+    .header {
+      border-bottom: var(--st-border-width, 1px) solid var(--st-chat-divider, var(--md-sys-color-outline-variant));
+    }
+    .footer {
+      padding: var(--st-chat-footer-padding, 0.714em 1em);
+      border-top: var(--st-border-width, 1px) solid var(--st-chat-divider, var(--md-sys-color-outline-variant));
+    }
+
+    .scroller {
+      position: relative;
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    .viewport {
+      flex: 1;
+      box-sizing: border-box;
+      min-height: 0;
+      padding: var(--st-chat-padding, 1em);
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+    }
+    .viewport:focus-visible {
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: calc(-1 * var(--st-focus-ring-width, 2px));
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+    /* slot 默认 display: contents（浏览器 UA），消息保持块级排列；
+       o-fill 生成的消息也由消息自身的 margin 控制间距 */
+    slot { display: contents; }
+
+    .empty {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      padding: var(--st-chat-empty-padding, 2em 1em);
+      text-align: center;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .jump {
+      all: unset;
+      position: absolute;
+      left: 50%;
+      bottom: 0.857em;
+      z-index: 1;
+      box-sizing: border-box;
+      display: grid;
+      place-items: center;
+      width: 2.286em;
+      height: 2.286em;
+      transform: translateX(-50%);
+      border: var(--st-border-width, 1px) solid var(--st-chat-jump-border, transparent);
+      border-radius: 50%;
+      background: var(--st-chat-jump-bg, var(--md-sys-color-surface-container-high));
+      color: var(--md-sys-color-on-surface);
+      box-shadow: var(--st-chat-jump-shadow, var(--st-shadow-2, 0 0.143em 0.5em rgb(0 0 0 / 0.25)));
+      cursor: pointer;
+      transition: opacity var(--st-motion-duration-fast, 120ms) ease;
+    }
+    .jump:hover {
+      background: color-mix(
+        in srgb,
+        var(--st-chat-jump-bg, var(--md-sys-color-surface-container-high)) 88%,
+        var(--md-sys-color-on-surface)
+      );
+    }
+    .jump:focus-visible {
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: var(--st-focus-ring-offset, 2px);
+    }
+    .jump svg {
+      width: 1.143em;
+      height: 1.143em;
+    }
+
+    .header[hidden],
+    .footer[hidden],
+    .empty[hidden],
+    .jump[hidden] {
+      display: none;
+    }
+
+    /* 减少动态效果：动画/过渡压到近零，同时保留 animationend 等事件语义 */
+    @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+
+  <l-m src="./chat-message.html"></l-m>
+
+  <div class="header" part="header" hidden><slot name="header"></slot></div>
+
+  <div class="scroller">
+    <div class="viewport" part="viewport" role="log" aria-relevant="additions text" tabindex="0" attr:aria-label="label">
+      <div class="list" part="list">
+        <slot></slot>
+        <o-fill :value="messages" fill-key="id">
+          <st-chat-message
+            attr:from="$data.from"
+            attr:name="$data.name"
+            attr:time="$data.time"
+            attr:avatar="$data.avatar"
+            attr:status="$data.status"
+            attr:streaming="$data.streaming ? '' : null"
+            attr:error="$data.error ? '' : null"
+            >{{$data.content}}</st-chat-message
+          >
+        </o-fill>
+        <div class="empty" part="empty" hidden><slot name="empty"></slot></div>
+      </div>
+    </div>
+    <button class="jump" part="scroll-button" type="button" aria-label="滚动到最新消息" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 5v14M5 12l7 7 7-7" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="footer" part="footer" hidden><slot name="footer"></slot></div>
+
+  <script>
+    import "../color/st-color-init.js";
+
+    const FOLLOW_MODES = ["auto", "always", "off"];
+
+    export default async () => ({
+      tag: "st-chat",
+      attrs: {
+        autoScroll: "auto",
+        label: null,
+      },
+      // 数组模式的数据源：只渲染 content 纯文本；富内容仍用 light DOM 组合
+      data: { messages: [] },
+      watch: {
+        messages() {
+          this._syncEmpty?.();
+          this._scheduleFollow?.();
+        },
+        autoScroll() {
+          if (this.autoScroll === "always") this._scrollBottom?.(false);
+          this._updateJump?.();
+        },
+      },
+      ready() {
+        const ele = this.ele;
+        const sr = ele.shadowRoot;
+        const viewport = sr.querySelector(".viewport");
+        const list = sr.querySelector(".list");
+        const jump = sr.querySelector(".jump");
+        const empty = sr.querySelector(".empty");
+        const header = sr.querySelector(".header");
+        const footer = sr.querySelector(".footer");
+        const headerSlot = sr.querySelector('slot[name="header"]');
+        const footerSlot = sr.querySelector('slot[name="footer"]');
+        const emptySlot = sr.querySelector('slot[name="empty"]');
+        const contentSlot = sr.querySelector(".list > slot");
+
+        this._stick = true;
+        this._raf = 0;
+        this._reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+
+        const slotFilled = (slot) =>
+          slot
+            .assignedNodes({ flatten: true })
+            .some((node) => node.nodeType === 1 || node.textContent.trim() !== "");
+
+        const isAtBottom = () =>
+          viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight < 32;
+
+        const updateJump = () => {
+          const overflow = viewport.scrollHeight > viewport.clientHeight + 1;
+          jump.hidden = !overflow || isAtBottom();
+        };
+
+        this._updateJump = updateJump;
+
+        const scrollBottom = (smooth = false) => {
+          const behavior = smooth && !this._reduceMotion ? "smooth" : "auto";
+          if (behavior === "smooth") {
+            viewport.scrollTo({ top: viewport.scrollHeight, behavior });
+          } else {
+            viewport.scrollTop = viewport.scrollHeight;
+          }
+          this._stick = true;
+        };
+        this._scrollBottom = scrollBottom;
+
+        const followMode = () => (FOLLOW_MODES.includes(this.autoScroll) ? this.autoScroll : "auto");
+        this._shouldFollow = () => {
+          const mode = followMode();
+          return mode === "always" || (mode === "auto" && this._stick);
+        };
+
+        const scheduleFollow = () => {
+          if (this._raf) return;
+          this._raf = requestAnimationFrame(() => {
+            this._raf = 0;
+            if (this._shouldFollow()) scrollBottom(false);
+            updateJump();
+          });
+        };
+        this._scheduleFollow = scheduleFollow;
+
+        this._syncEmpty = () => {
+          const direct = ele.querySelectorAll("st-chat-message").length;
+          const hasMessages = (this.messages?.length || 0) + direct > 0;
+          empty.hidden = hasMessages || !slotFilled(emptySlot);
+        };
+
+        const syncSlots = () => {
+          header.hidden = !slotFilled(headerSlot);
+          footer.hidden = !slotFilled(footerSlot);
+        };
+
+        viewport.addEventListener(
+          "scroll",
+          () => {
+            this._stick = isAtBottom();
+            updateJump();
+          },
+          { passive: true }
+        );
+
+        jump.addEventListener("click", () => {
+          scrollBottom(true);
+          // 按钮即将隐藏时把焦点交还滚动区，避免焦点丢到 body
+          viewport.focus({ preventScroll: true });
+        });
+
+        [contentSlot, emptySlot].forEach((slot) => {
+          slot.addEventListener("slotchange", () => {
+            this._syncEmpty();
+            scheduleFollow();
+          });
+        });
+        [headerSlot, footerSlot].forEach((slot) => {
+          slot.addEventListener("slotchange", syncSlots);
+        });
+
+        // light DOM（声明式 / o-fill 子节点）与 shadow（数组模式 o-fill）都要观察
+        this._observer = new MutationObserver(() => {
+          this._syncEmpty();
+          scheduleFollow();
+        });
+        this._observer.observe(ele, { childList: true, subtree: true, characterData: true });
+        this._observer.observe(sr, { childList: true, subtree: true, characterData: true });
+
+        this._resizeObserver = new ResizeObserver(() => {
+          if (this._shouldFollow()) scrollBottom(false);
+          updateJump();
+        });
+        this._resizeObserver.observe(list);
+        this._resizeObserver.observe(viewport);
+
+        // 数组模式：宿主 el.messages 读写桥接到 ofa data（与 input/slider 的 value 同范式）
+        let preset = null;
+        let presetSet = false;
+        if (Object.prototype.hasOwnProperty.call(ele, "messages")) {
+          preset = ele.messages;
+          presetSet = true;
+        }
+        const normalize = (raw, index) => {
+          const item = raw && typeof raw === "object" ? raw : { content: raw };
+          const fromRaw = item.from ?? item.role;
+          const from = ["user", "assistant", "system"].includes(fromRaw) ? fromRaw : "assistant";
+          return {
+            id: item.id ?? index,
+            from,
+            name: item.name ?? null,
+            time: item.time ?? null,
+            avatar: item.avatar ?? null,
+            status: item.status ?? null,
+            content: item.content ?? item.text ?? "",
+            streaming: !!item.streaming,
+            error: !!item.error,
+          };
+        };
+        this._applyMessages = (value) => {
+          this.messages = (Array.isArray(value) ? value : []).map(normalize);
+          this._syncEmpty();
+          scheduleFollow();
+        };
+        Object.defineProperty(ele, "messages", {
+          configurable: true,
+          enumerable: true,
+          get: () => this.messages,
+          set: (value) => this._applyMessages(value),
+        });
+        // 非 ofa 环境（或自动化测试）的显式滚动入口
+        ele.scrollToEnd = (options = {}) => scrollBottom(options.smooth !== false);
+
+        if (presetSet) this._applyMessages(preset);
+
+        queueMicrotask(() => {
+          syncSlots();
+          this._syncEmpty();
+          // 初始定位到底部：等一帧布局后再来一次，覆盖字体/图片延迟撑高
+          scrollBottom(false);
+          requestAnimationFrame(() => scrollBottom(false));
+          this._initTimer = setTimeout(() => {
+            // 初次布局兜底；若用户已在 80ms 内向上滚动则不要抢回底部
+            if (this._stick) scrollBottom(false);
+            updateJump();
+          }, 80);
+        });
+      },
+      detached() {
+        this._observer?.disconnect();
+        this._resizeObserver?.disconnect();
+        if (this._raf) cancelAnimationFrame(this._raf);
+        clearTimeout(this._initTimer);
+      },
+    });
+  </script>
+</template>

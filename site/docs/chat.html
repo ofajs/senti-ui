@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat — 组件文档 — Senti-UI</title>
+  <meta name="description" content="Chat（st-chat / st-chat-message）用法：对话容器与消息气泡、三种数据流、流式输出、自动滚动、入场动画与皮肤。" />
+  <meta name="theme-color" content="#0061A4" />
+  <link rel="canonical" href="https://senti.ofajs.com/site/docs/chat" />
+  <meta property="og:url" content="https://senti.ofajs.com/site/docs/chat" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230061A4'/%3E%3Ccircle cx='32' cy='32' r='13' fill='white'/%3E%3C/svg%3E" />
+  <script type="module">
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+  </script>
+  <script src="../../packages/boot/st-boot.js"></script>
+  <link rel="stylesheet" href="../../packages/skin/m3.css" />
+  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+  <link rel="stylesheet" href="../../packages/skin/cyberpunk.css" />
+  <link rel="stylesheet" href="../../packages/skin/windows.css" />
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface); }
+    body { font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+    .nojs { max-width: 720px; margin: 0 auto; padding: 12vh 24px; font-size: 15px; line-height: 1.7; }
+    .nojs h1 { margin: 0 0 12px; font-size: 32px; }
+    .nojs a { color: var(--md-sys-color-primary, #0061a4); }
+  </style>
+</head>
+<body>
+  <noscript>
+    <div class="nojs">
+      <h1>Chat</h1>
+      <p>组件文档的示例与目录需要 JavaScript；也可以回到首页或查看 GitHub 源码。</p>
+      <p><a href="../index.html">组件目录</a> · <a href="https://github.com/ofajs/senti-ui">GitHub</a></p>
+    </div>
+  </noscript>
+
+  <o-app src="../app-config.js">
+    <template page>
+      <!-- 依赖放在 template 内：SCSR 切页时目标页 body 里的 <l-m> 不会执行 -->
+      <l-m src="../../packages/chat/chat.html"></l-m>
+      <l-m src="../../packages/button/button.html"></l-m>
+      <l-m src="../../packages/avatar/avatar.html"></l-m>
+      <l-m src="../../packages/input/input.html"></l-m>
+      <l-m src="../../packages/code/code.html"></l-m>
+      <!-- header 在共享 layout 里：menu / select / tooltip / progress 也要在本页声明，
+           SCSR 直接打开本页时目标页 body 的 l-m 不会执行 -->
+      <l-m src="../../packages/menu/menu.html"></l-m>
+      <l-m src="../../packages/select/select.html"></l-m>
+      <l-m src="../../packages/tooltip/tooltip.html"></l-m>
+      <l-m src="../../packages/progress/progress.html"></l-m>
+
+      <link rel="stylesheet" href="../docs.css" />
+      <style>
+        .chat-stage { display: block; }
+        .chat-stage st-chat { width: 100%; }
+        .chat-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+        .chat-state { font-size: 11px; color: var(--md-sys-color-on-surface-variant); }
+        .skin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; width: 100%; }
+        .skin-card-mini { padding: 10px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 12px; }
+        .skin-card-mini > span { display: block; margin-bottom: 6px; font: 10.5px ui-monospace, Menlo, monospace; color: var(--md-sys-color-on-surface-variant); }
+        .skin-card-mini st-chat { width: 100%; height: 220px; }
+        #custom-chat st-chat-message::part(bubble) { border-radius: 6px; }
+        #custom-chat st-chat-message[from="user"]::part(bubble) {
+          background: var(--md-sys-color-secondary-container);
+          color: var(--md-sys-color-on-secondary-container);
+        }
+        /* 透明容器示例：气泡也做得更透，叠在页面环境光上能看到 blurred 背景 */
+        #glass-chat st-chat-message::part(bubble) {
+          background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 40%, transparent);
+          backdrop-filter: blur(18px) saturate(180%);
+          -webkit-backdrop-filter: blur(18px) saturate(180%);
+        }
+        #glass-chat st-chat-message[from="user"]::part(bubble) {
+          background: color-mix(in srgb, var(--md-sys-color-primary-container) 52%, transparent);
+        }
+      </style>
+
+      <article class="doc-page">
+        <header class="doc-hero">
+          <p class="doc-kicker">高级 · 24 / 27</p>
+          <h1>Chat <code>st-chat</code></h1>
+          <p class="doc-lead">
+            AI 对话界面：<code>st-chat</code> 是消息的包裹容器（滚动、自动跟随、头/底栏、空状态、回到底部），
+            <code>st-chat-message</code> 是单条消息气泡。支持 light DOM、o-fill 与对象数组三种数据流，流式输出和新增消息都有动画。
+          </p>
+          <div class="doc-links">
+            <a href="../index.html">组件目录</a>
+            <a href="https://github.com/ofajs/senti-ui/blob/main/packages/chat/README.md" target="_blank" rel="noreferrer">GitHub README <iconify-icon icon="mdi:open-in-new"></iconify-icon></a>
+          </div>
+        </header>
+
+        <section class="doc-section">
+          <h2>结构、来源与插槽</h2>
+          <p class="doc-section-lead">
+            <code>from</code> 控制用户 / 助手 / 系统三种对齐与配色；<code>name</code>、<code>time</code>、<code>avatar</code> 组成消息头，
+            <code>avatar</code> 与 <code>actions</code> 是插槽。容器给出高度后内部才滚动；header / footer / empty 空时自动隐藏。
+          </p>
+          <div class="demo">
+            <div class="demo-top">
+              <span class="live"><i></i>{{codeView.demo1 ? 'CODE' : 'LIVE'}}</span>
+              <div class="demo-top-actions">
+                <code>from / slots</code>
+                <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo1')">
+                  <iconify-icon slot="prefix" attr:icon="codeView.demo1 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                  {{codeView.demo1 ? '查看示例' : '查看代码'}}
+                </st-button>
+              </div>
+            </div>
+            <div class="demo-stage chat-stage" attr:hidden="codeView.demo1">
+              <st-chat style="height: 460px;">
+                <div slot="header" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+                  <strong style="font-size:13px;">Senti 助手</strong>
+                  <span style="font-size:11px; color:var(--md-sys-color-on-surface-variant);">在线</span>
+                </div>
+                <st-chat-message from="system">今天 14:20</st-chat-message>
+                <st-chat-message from="assistant" name="Senti" time="14:20">
+                  <st-avatar slot="avatar">S</st-avatar>
+                  你好，我是 Senti。可以帮你写代码、整理文档，也可以一起讨论设计。
+                  <div slot="actions">
+                    <st-button variant="text">复制</st-button>
+                    <st-button variant="text">重新生成</st-button>
+                  </div>
+                </st-chat-message>
+                <st-chat-message from="user" name="你" time="14:21">帮我设计一个 AI 聊天界面的消息组件。</st-chat-message>
+                <st-chat-message from="assistant" name="Senti" time="14:21" streaming>
+                  正在整理答案，稍等……
+                </st-chat-message>
+                <div slot="footer" style="display:flex; gap:8px; align-items:center;">
+                  <st-input placeholder="输入消息…" aria-label="输入消息" style="flex:1;"></st-input>
+                  <st-button>发送</st-button>
+                </div>
+              </st-chat>
+            </div>
+            <st-code class="demo-code" attr:hidden="!codeView.demo1" lang="html" :code="demo1Code"></st-code>
+          </div>
+        </section>
+
+        <section class="doc-section">
+          <h2>数据流 A：页面状态 + o-fill</h2>
+          <p class="doc-section-lead">
+            消息数组放在页面 <code>data</code>，模板用 <code>o-fill</code> 渲染并加 <code>fill-key="id"</code>。
+            流式更新只替换最后一条并保持 <code>id</code>，节点复用，不会重播入场动画；容器在用户贴底时自动跟随。
+          </p>
+          <div class="demo">
+            <div class="demo-top">
+              <span class="live"><i></i>{{codeView.demo2 ? 'CODE' : 'LIVE'}}</span>
+              <div class="demo-top-actions">
+                <code>o-fill + fill-key</code>
+                <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo2')">
+                  <iconify-icon slot="prefix" attr:icon="codeView.demo2 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                  {{codeView.demo2 ? '查看示例' : '查看代码'}}
+                </st-button>
+              </div>
+            </div>
+            <div class="demo-stage chat-stage" attr:hidden="codeView.demo2">
+              <st-chat style="height: 360px;">
+                <div slot="header" style="display:flex; justify-content:space-between; gap:12px; align-items:center;">
+                  <strong style="font-size:13px;">o-fill 数据流</strong>
+                  <span class="chat-state">{{messages.length}} 条 · {{streaming ? '生成中' : '空闲'}}</span>
+                </div>
+                <o-fill :value="messages" fill-key="id">
+                  <st-chat-message
+                    attr:from="$data.from"
+                    attr:name="$data.name"
+                    attr:time="$data.time"
+                    attr:streaming="$data.streaming ? '' : null"
+                    attr:error="$data.error ? '' : null"
+                    >{{$data.content}}</st-chat-message
+                  >
+                </o-fill>
+                <div slot="empty">还没有消息，点下面的按钮开始。</div>
+                <div slot="footer" class="chat-actions" style="margin-top:0;">
+                  <st-button on:click="addUser">发送用户消息</st-button>
+                  <st-button variant="outlined" on:click="streamReply">流式回复</st-button>
+                  <st-button variant="text" on:click="resetMessages">清空</st-button>
+                </div>
+              </st-chat>
+            </div>
+            <st-code class="demo-code" attr:hidden="!codeView.demo2" lang="html" :code="demo2Code"></st-code>
+          </div>
+        </section>
+
+        <section class="doc-section">
+          <h2>数据流 B：el.messages 对象数组</h2>
+          <p class="doc-section-lead">
+            非 ofa 环境或 AI SDK 可以直接给宿主 <code>messages</code> 赋值（纯文本，兼容 <code>role</code> 字段）。
+            <code>auto-scroll</code> 的 auto / always / off 控制新内容是否把用户拉回底部；<code>scrollToEnd()</code> 可手动回到底部。
+          </p>
+          <div class="demo">
+            <div class="demo-top">
+              <span class="live"><i></i>{{codeView.demo3 ? 'CODE' : 'LIVE'}}</span>
+              <div class="demo-top-actions">
+                <code>messages / auto-scroll</code>
+                <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo3')">
+                  <iconify-icon slot="prefix" attr:icon="codeView.demo3 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                  {{codeView.demo3 ? '查看示例' : '查看代码'}}
+                </st-button>
+              </div>
+            </div>
+            <div class="demo-stage chat-stage" attr:hidden="codeView.demo3">
+              <st-chat id="api-chat" label="数组 API 对话" attr:auto-scroll="autoMode" style="height: 320px;">
+                <div slot="header" style="display:flex; justify-content:space-between; gap:12px; align-items:center;">
+                  <strong style="font-size:13px;">数组 API</strong>
+                  <span class="chat-state">auto-scroll: {{autoMode}}</span>
+                </div>
+                <div slot="empty">数组为空时显示 empty 插槽。</div>
+              </st-chat>
+              <div class="chat-actions">
+                <st-button variant="outlined" on:click="loadApi">加载历史</st-button>
+                <st-button variant="outlined" on:click="pushApi">追加用户消息</st-button>
+                <st-button on:click="streamApi">流式回复</st-button>
+                <st-button variant="text" on:click="scrollApi">回到底部</st-button>
+                <st-button variant="text" on:click="clearApi">清空</st-button>
+              </div>
+              <div class="chat-actions">
+                <span class="chat-state">auto-scroll</span>
+                <st-button attr:variant="autoMode === 'auto' ? 'filled' : 'outlined'" on:click="setAuto('auto')">auto</st-button>
+                <st-button attr:variant="autoMode === 'always' ? 'filled' : 'outlined'" on:click="setAuto('always')">always</st-button>
+                <st-button attr:variant="autoMode === 'off' ? 'filled' : 'outlined'" on:click="setAuto('off')">off</st-button>
+                <span class="chat-state">状态：{{apiState}}</span>
+              </div>
+            </div>
+            <st-code class="demo-code" attr:hidden="!codeView.demo3" lang="html" :code="demo3Code"></st-code>
+          </div>
+        </section>
+
+        <section class="doc-section">
+          <h2>流式、错误与空内容</h2>
+          <p class="doc-section-lead">
+            <code>streaming</code> 在正文尾部显示闪烁光标；正文为空时自动切成三个呼吸点，并给气泡加 <code>aria-busy</code>。
+            失败状态用 <code>error</code> 与 <code>status</code> 表达；新消息会从下方淡入。
+          </p>
+          <div class="demo">
+            <div class="demo-top">
+              <span class="live"><i></i>{{codeView.demo4 ? 'CODE' : 'LIVE'}}</span>
+              <div class="demo-top-actions">
+                <code>streaming / error</code>
+                <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo4')">
+                  <iconify-icon slot="prefix" attr:icon="codeView.demo4 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                  {{codeView.demo4 ? '查看示例' : '查看代码'}}
+                </st-button>
+              </div>
+            </div>
+            <div class="demo-stage chat-stage" attr:hidden="codeView.demo4">
+              <div class="chat-actions" style="margin-top:0; margin-bottom:12px;">
+                <st-button attr:variant="streamDemo ? 'filled' : 'outlined'" on:click="toggleStream">
+                  {{streamDemo ? '停止流式' : '开始流式'}}
+                </st-button>
+                <st-button variant="outlined" on:click="appendToken">追加一段文字</st-button>
+                <st-button variant="outlined" on:click="toggleError">切换错误态</st-button>
+              </div>
+              <st-chat style="height: 280px;">
+                <o-if :value="streamDemo || streamText">
+                  <st-chat-message
+                    from="assistant"
+                    name="Senti"
+                    attr:streaming="streamDemo ? '' : null"
+                    attr:status="streamDemo ? '正在输入…' : null"
+                    >{{streamText}}</st-chat-message
+                  >
+                </o-if>
+                <st-chat-message from="assistant" name="Senti" time="14:30" attr:error="errored ? '' : null" attr:status="errored ? '发送失败，请重试' : null">
+                  这条消息用来展示发送失败状态与重试操作。
+                  <div slot="actions"><st-button variant="text" color="error" on:click="toggleError">重试</st-button></div>
+                </st-chat-message>
+                <st-chat-message from="user" name="你" time="14:31">那再补充一点细节？</st-chat-message>
+              </st-chat>
+            </div>
+            <st-code class="demo-code" attr:hidden="!codeView.demo4" lang="html" :code="demo4Code"></st-code>
+          </div>
+        </section>
+
+        <section class="doc-section">
+          <h2>原生 CSS、part 与皮肤</h2>
+          <p class="doc-section-lead">
+            容器与气泡尺寸全部用 em：改 <code>font-size</code> 整体缩放；气泡颜色 / 圆角可用 <code>::part(bubble)</code> 覆写。
+            皮肤只换材质：在容器外层写 <code>data-skin</code>，消息在 shadow 内也会通过 CSS 变量继承。
+            不需要容器底色时直接写 <code>background: transparent; border: 0; box-shadow: none;</code>；
+            容器透明不会自动让气泡透明——气泡仍按当前皮肤 / 默认 M3 材质渲染，想同时玻璃化可在外层加
+            <code>data-skin="apple"</code>，或用 <code>::part(bubble)</code> 单独调整背景与 backdrop-filter。
+          </p>
+          <div class="demo">
+            <div class="demo-top">
+              <span class="live"><i></i>{{codeView.demo5 ? 'CODE' : 'LIVE'}}</span>
+              <div class="demo-top-actions">
+                <code>font-size / part / data-skin</code>
+                <st-button class="demo-code-toggle" variant="text" on:click="toggleCode('demo5')">
+                  <iconify-icon slot="prefix" attr:icon="codeView.demo5 ? 'mdi:eye-outline' : 'mdi:code-tags'"></iconify-icon>
+                  {{codeView.demo5 ? '查看示例' : '查看代码'}}
+                </st-button>
+              </div>
+            </div>
+            <div class="demo-stage chat-stage" attr:hidden="codeView.demo5">
+              <st-chat id="custom-chat" style="height: 250px; font-size: 15px; --st-chat-bubble-max-width: 78%; border-radius: 18px;">
+                <st-chat-message from="assistant" name="Senti" time="14:40">字号与气泡最大宽度由原生 CSS 控制。</st-chat-message>
+                <st-chat-message from="user" name="你" time="14:41">气泡圆角用 ::part(bubble) 覆写。</st-chat-message>
+              </st-chat>
+              <div class="skin-grid" style="margin-top:14px;">
+                <div class="skin-card-mini" data-skin="apple">
+                  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+                  <span>data-skin="apple"</span>
+                  <st-chat>
+                    <st-chat-message from="assistant" name="Senti">半透明毛玻璃材质。</st-chat-message>
+                    <st-chat-message from="user" name="你">颜色仍来自 M3。</st-chat-message>
+                  </st-chat>
+                </div>
+                <div class="skin-card-mini" data-skin="shadcn">
+                  <link rel="stylesheet" href="../../packages/skin/shadcn.css" />
+                  <span>data-skin="shadcn"</span>
+                  <st-chat>
+                    <st-chat-message from="assistant" name="Senti">扁平细描边材质。</st-chat-message>
+                    <st-chat-message from="user" name="你">结构与键盘行为不变。</st-chat-message>
+                  </st-chat>
+                </div>
+                <div class="skin-card-mini" data-skin="apple">
+                  <link rel="stylesheet" href="../../packages/skin/apple.css" />
+                  <span>background: transparent · apple</span>
+                  <st-chat id="glass-chat" style="background: transparent; border: 0; box-shadow: none; backdrop-filter: none;">
+                    <st-chat-message from="assistant" name="Senti">容器透明，气泡更透。</st-chat-message>
+                    <st-chat-message from="user" name="你">看到背后的环境光。</st-chat-message>
+                  </st-chat>
+                </div>
+              </div>
+            </div>
+            <st-code class="demo-code" attr:hidden="!codeView.demo5" lang="html" :code="demo5Code"></st-code>
+          </div>
+        </section>
+
+        <div class="doc-cols">
+          <div class="doc-block">
+            <h3>属性</h3>
+            <table class="api">
+              <thead><tr><th>属性</th><th>类型</th><th>默认</th><th>说明</th></tr></thead>
+              <tbody>
+                <tr><td><code>auto-scroll</code></td><td>"auto" | "always" | "off"</td><td>"auto"</td><td>新内容跟随策略；auto 只在用户贴底时跟随</td></tr>
+                <tr><td><code>label</code></td><td>string</td><td>无</td><td>滚动区可访问名称（aria-label）</td></tr>
+                <tr><td><code>from</code></td><td>"assistant" | "user" | "system"</td><td>"assistant"</td><td>st-chat-message：来源与左右对齐</td></tr>
+                <tr><td><code>name</code> / <code>time</code></td><td>string</td><td>无</td><td>消息头；两者都为空时隐藏</td></tr>
+                <tr><td><code>avatar</code></td><td>string（URL）</td><td>无</td><td>头像图片；也可用 avatar 插槽</td></tr>
+                <tr><td><code>status</code></td><td>string</td><td>无</td><td>气泡下方的状态文本</td></tr>
+                <tr><td><code>streaming</code></td><td>boolean</td><td>无</td><td>闪烁光标；内容为空时显示呼吸点</td></tr>
+                <tr><td><code>error</code></td><td>boolean</td><td>无</td><td>失败态：error 描边与状态文字</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="doc-block">
+            <h3>插槽 / 方法 / 注意</h3>
+            <ul class="api-list">
+              <li>st-chat 插槽：默认消息、<code>header</code>、<code>footer</code>、<code>empty</code>。</li>
+              <li>st-chat-message 插槽：默认正文、<code>avatar</code>、<code>actions</code>（空时隐藏）。</li>
+              <li>运行时：<code>el.messages = [...]</code>（纯文本数组）、<code>el.scrollToEnd({ smooth })</code>。</li>
+              <li>数据流：light DOM、<code>o-fill + fill-key="id"</code>、对象数组；流式更新保持 id，避免重播动画。</li>
+              <li>容器必须有高度；默认 <code>height: 100%</code>，可写 <code>style="height:420px"</code>。</li>
+              <li>消息在 shadow 内，<code>::part()</code> 仅 light DOM 可达；换肤用 <code>--st-chat-*</code> token。</li>
+              <li>可访问性：滚动区 <code>role="log"</code>，流式气泡 <code>aria-busy</code>，回到底部按钮有 aria-label。</li>
+              <li>减少动态效果：入场动画与光标在 <code>prefers-reduced-motion</code> 下压到近零。</li>
+            </ul>
+          </div>
+        </div>
+
+        <nav class="doc-pager" aria-label="上下篇">
+          <a class="pager-link" olink href="./code.html"><span>上一页</span><iconify-icon icon="mdi:arrow-left"></iconify-icon> Code</a>
+          <a class="pager-link pager-next" olink href="./index.html"><span>下一页</span>组件概览 <iconify-icon icon="mdi:arrow-right"></iconify-icon></a>
+        </nav>
+      </article>
+
+      <script>
+        export const parent = "./layout.html";
+
+        export default async () => ({
+          data: {
+            codeView: { demo1: false, demo2: false, demo3: false, demo4: false, demo5: false },
+            messages: [
+              { id: 1, from: "assistant", name: "Senti", time: "14:20", content: "你好，我是 Senti。这里是 o-fill 驱动的消息数组。" },
+              { id: 2, from: "user", name: "你", time: "14:21", content: "点“流式回复”看看生成中的光标。" },
+            ],
+            seq: 2,
+            streaming: false,
+            apiState: "空（点击“加载历史”）",
+            autoMode: "auto",
+            streamDemo: false,
+            streamText: "",
+            errored: false,
+            demo1Code: `<st-chat style="height: 460px;">
+  <div slot="header">Senti 助手</div>
+  <st-chat-message from="system">今天 14:20</st-chat-message>
+  <st-chat-message from="assistant" name="Senti" time="14:20">
+    <st-avatar slot="avatar">S</st-avatar>
+    你好，我是 Senti。
+    <div slot="actions"><st-button variant="text">复制</st-button></div>
+  </st-chat-message>
+  <st-chat-message from="user" name="你" time="14:21">帮我设计一个 AI 聊天界面。</st-chat-message>
+  <st-chat-message from="assistant" name="Senti" streaming>正在整理答案…</st-chat-message>
+  <div slot="footer"><st-input placeholder="输入消息…"></st-input></div>
+</st-chat>`,
+            demo2Code: `<st-chat style="height: 360px;">
+  <o-fill :value="messages" fill-key="id">
+    <st-chat-message
+      attr:from="$data.from"
+      attr:name="$data.name"
+      attr:time="$data.time"
+      attr:streaming="$data.streaming ? '' : null"
+      >{{$data.content}}</st-chat-message>
+  </o-fill>
+</st-chat>
+
+// 流式：替换最后一条，保持 id
+const next = this.messages.slice();
+next[next.length - 1] = { ...next[next.length - 1], content: text, streaming: true };
+this.messages = next;`,
+            demo3Code: `<st-chat id="api-chat" auto-scroll="auto" style="height: 320px;"></st-chat>
+
+const chat = document.querySelector("#api-chat");
+chat.messages = [
+  { id: "u1", role: "user", content: "你好" },
+  { id: "a1", role: "assistant", content: "你好，有什么可以帮你？" },
+];
+chat.scrollToEnd();`,
+            demo4Code: `<st-chat-message from="assistant" streaming></st-chat-message>
+<!-- 内容为空时显示三个呼吸点 -->
+<st-chat-message from="assistant" streaming>正在输出……</st-chat-message>
+<st-chat-message from="assistant" error status="发送失败，请重试">
+  这条消息发送失败了。
+  <div slot="actions"><st-button variant="text">重试</st-button></div>
+</st-chat-message>`,
+            demo5Code: `<st-chat style="height: 250px; font-size: 15px; --st-chat-bubble-max-width: 78%;">
+  <st-chat-message from="assistant">字号与气泡宽度由原生 CSS 控制。</st-chat-message>
+  <st-chat-message from="user">圆角用 ::part(bubble) 覆写。</st-chat-message>
+</st-chat>
+
+<style>
+  st-chat-message::part(bubble) { border-radius: 6px; }
+</style>
+
+<!-- 透明容器 + 玻璃气泡：容器融进页面，气泡保留皮肤材质 -->
+<div data-skin="apple">
+  <link rel="stylesheet" href=".../packages/skin/apple.css">
+  <st-chat id="glass-chat" style="background: transparent; border: 0; box-shadow: none; backdrop-filter: none;">
+    <st-chat-message from="assistant">只有气泡有材质。</st-chat-message>
+  </st-chat>
+</div>
+<style>
+  /* 想让气泡更透，可单独覆盖 part，不影响容器 */
+  #glass-chat st-chat-message::part(bubble) {
+    background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 40%, transparent);
+    backdrop-filter: blur(18px) saturate(180%);
+  }
+</style>`,
+          },
+          proto: {
+            toggleCode(key) {
+              this.codeView[key] = !this.codeView[key];
+            },
+            stamp() {
+              const d = new Date();
+              return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+            },
+            addUser() {
+              this.ask = (this.ask || 0) + 1;
+              this.messages = [
+                ...this.messages,
+                { id: ++this.seq, from: "user", name: "你", time: this.stamp(), content: `第 ${this.ask} 条用户消息（页面状态 → o-fill）。` },
+              ];
+            },
+            streamReply() {
+              if (this.streaming) return;
+              const full = "这是流式回复示例：消息数组只替换最后一条，id 保持不变，所以 o-fill 会复用同一个消息节点，只更新文字；st-chat 在底部时自动跟随，滚上去阅读时不会被拽回底部。";
+              let n = 0;
+              const id = ++this.seq;
+              this.messages = [
+                ...this.messages,
+                { id, from: "assistant", name: "Senti", time: this.stamp(), content: "", streaming: true },
+              ];
+              this.streaming = true;
+              clearInterval(this._timer);
+              this._timer = setInterval(() => {
+                n += 3;
+                const index = this.messages.findIndex((m) => m.id === id);
+                if (index < 0) {
+                  clearInterval(this._timer);
+                  this._timer = null;
+                  this.streaming = false;
+                  return;
+                }
+                const done = n >= full.length;
+                const next = this.messages.slice();
+                next[index] = { ...next[index], content: full.slice(0, n), streaming: !done };
+                this.messages = next;
+                if (done) {
+                  this.streaming = false;
+                  clearInterval(this._timer);
+                  this._timer = null;
+                }
+              }, 60);
+            },
+            resetMessages() {
+              clearInterval(this._timer);
+              this._timer = null;
+              this.streaming = false;
+              this.messages = [];
+            },
+            apiChat() {
+              return this.ele.shadowRoot.querySelector("#api-chat");
+            },
+            loadApi() {
+              this.apiChat().messages = [
+                { id: "a1", role: "assistant", name: "Senti", time: "15:00", content: "已加载 3 条历史消息（role 自动映射 from）。" },
+                { id: "a2", role: "user", name: "你", time: "15:01", content: "用数组 API 渲染纯文本消息。" },
+                { id: "a3", role: "assistant", name: "Senti", time: "15:02", content: "滚动模式由 auto-scroll 控制。" },
+              ];
+              this.apiState = "已加载 3 条";
+            },
+            pushApi() {
+              const chat = this.apiChat();
+              this.apiAsk = (this.apiAsk || 0) + 1;
+              chat.messages = [
+                ...chat.messages,
+                { id: `u${Date.now()}`, role: "user", name: "你", time: this.stamp(), content: `数组 API 用户消息 #${this.apiAsk}` },
+              ];
+              this.apiState = `共 ${chat.messages.length} 条`;
+            },
+            streamApi() {
+              const chat = this.apiChat();
+              if (this._apiTimer) return;
+              const full = "数组 API 的流式回复：每帧替换最后一条消息对象，id 不变，st-chat 内的 o-fill 会复用节点。auto-scroll=always 时即使滚上去也会被拉到底部；auto 模式只在底部时跟随。";
+              let n = 0;
+              const id = `s${Date.now()}`;
+              chat.messages = [
+                ...chat.messages,
+                { id, role: "assistant", name: "Senti", time: this.stamp(), content: "", streaming: true },
+              ];
+              this._apiTimer = setInterval(() => {
+                n += 4;
+                const list = chat.messages.slice();
+                const index = list.findIndex((m) => m.id === id);
+                if (index < 0) {
+                  clearInterval(this._apiTimer);
+                  this._apiTimer = null;
+                  return;
+                }
+                const done = n >= full.length;
+                list[index] = { ...list[index], content: full.slice(0, n), streaming: !done };
+                chat.messages = list;
+                this.apiState = done ? "流式完成" : `流式中 ${Math.min(n, full.length)}/${full.length}`;
+                if (done) {
+                  clearInterval(this._apiTimer);
+                  this._apiTimer = null;
+                }
+              }, 60);
+            },
+            scrollApi() {
+              this.apiChat().scrollToEnd();
+              this.apiState = "已调用 scrollToEnd()";
+            },
+            clearApi() {
+              clearInterval(this._apiTimer);
+              this._apiTimer = null;
+              this.apiChat().messages = [];
+              this.apiState = "已清空";
+            },
+            setAuto(mode) {
+              this.autoMode = mode;
+            },
+            toggleStream() {
+              this.streamDemo = !this.streamDemo;
+            },
+            appendToken() {
+              this.streamText += (this.streamText ? " " : "") + "又追加了一段文字。";
+              this.streamDemo = true;
+            },
+            toggleError() {
+              this.errored = !this.errored;
+            },
+          },
+          detached() {
+            clearInterval(this._timer);
+            clearInterval(this._apiTimer);
+          },
+        });
+      </script>
+    </template>
+  </o-app>
+
+  <script type="module">
+    import { setThemeMode, getThemeMode } from "../../packages/color/st-theme-mode.js";
+    import { setSkin, getSkin } from "../../packages/skin/st-skin.js";
+    import alert from "../../packages/dialog/alert.js";
+    import confirm from "../../packages/dialog/confirm.js";
+    import prompt from "../../packages/dialog/prompt.js";
+    import toast from "../../packages/snackbar/toast.js";
+    import contextMenu from "../../packages/menu/context-menu.js";
+    window.__site = Object.assign(window.__site || {}, { setThemeMode, getThemeMode, setSkin, getSkin, alert, confirm, prompt, toast, contextMenu });
+    window.__siteReady = true;
+  </script>
+</body>
+</html>

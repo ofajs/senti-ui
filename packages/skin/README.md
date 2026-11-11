@@ -7,7 +7,7 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 种子色、error、success、深浅色主题永远保持一致。皮肤改的是“同样颜色被呈现成什么材质”，
 不是“换成另一套配色”。
 
-已接入皮肤：全部交互与表面组件——`st-button` / `st-button-group` / `st-split-button` / `st-icon-button` / `st-input` / `st-textarea` / `st-select` / `st-card` / `st-dialog` / `st-drawer` / `st-menu` / `st-list` / `st-checkbox` / `st-switch` / `st-radio` / `st-slider` / `st-progress` / `st-tabs` / `st-navigation` / `st-tooltip` / `st-snackbar` / `st-badges` / `st-code` / `st-chip` / `st-avatar` / `st-skeleton`。未加载皮肤时每个 token 都回退到组件原有默认值。
+已接入皮肤：全部交互与表面组件——`st-button` / `st-button-group` / `st-split-button` / `st-icon-button` / `st-input` / `st-textarea` / `st-select` / `st-card` / `st-dialog` / `st-drawer` / `st-menu` / `st-list` / `st-checkbox` / `st-switch` / `st-radio` / `st-slider` / `st-progress` / `st-tabs` / `st-navigation` / `st-tooltip` / `st-snackbar` / `st-badges` / `st-code` / `st-chip` / `st-avatar` / `st-skeleton` / `st-chat`。未加载皮肤时每个 token 都回退到组件原有默认值。
 
 ## 依赖引入
 
@@ -137,6 +137,11 @@ html[data-skin="cyberpunk"] {
 | `--st-card-bg` / `--st-card-border` | `surface-container-low` / `transparent` | 卡片（filled/outlined 另有 `--st-card-filled-bg` / `--st-card-outlined-bg`） |
 | `--st-card-outline` | `outline-variant` | outlined 卡片描边 |
 | `--st-card-shadow` / `--st-card-shadow-hover` | `var(--st-shadow-1/2)` | 卡片默认 / hover |
+| `--st-chat-bg` / `--st-chat-border` | `surface-container-lowest` / `transparent` | 对话容器底色 / 描边 |
+| `--st-chat-radius` / `--st-chat-shadow` / `--st-chat-backdrop-filter` | `var(--st-radius-lg)` / `var(--st-shadow-1)` / `none` | 对话容器圆角 / 阴影 / 毛玻璃 |
+| `--st-chat-assistant-bg` / `--st-chat-user-bg` | `surface-container-high` / `primary-container` | 助手 / 用户气泡底色（颜色仍来自 M3 角色，皮肤只加透明度） |
+| `--st-chat-bubble-border` / `--st-chat-bubble-shadow` / `--st-chat-bubble-backdrop-filter` | `transparent` / `none` / `none` | 气泡描边 / 阴影 / 毛玻璃 |
+| `--st-chat-jump-bg` / `--st-chat-jump-border` / `--st-chat-jump-shadow` | `surface-container-high` / `transparent` / `var(--st-shadow-2)` | 回到底部按钮 |
 | `--st-select-popup-bg` / `--st-select-popup-border` | `surface-container` / `transparent` | 下拉弹层 |
 | `--st-snackbar-surface` / `--st-snackbar-on-surface` | `secondary` / `on-secondary` | 消息条默认底/字（`color` 属性仍优先） |
 | `--st-tooltip-bg` | `inverse-surface` | 提示气泡底 |
@@ -241,6 +246,12 @@ html[data-skin="cyberpunk"] {
 | `--st-chip-selected-bg` / `--st-chip-selected-color` / `--st-chip-state-hover` / `--st-chip-state-press` | `var(--st-accent)` 配对 / `var(--st-state-hover/press)` | chip 选中底/字与 state layer（颜色来自 `--st-accent`，皮肤不要写死颜色） |
 | `--st-avatar-size` / `--st-avatar-radius` / `--st-avatar-font-size` / `--st-avatar-bg` / `--st-avatar-color` | `2.286em` / `50%` / `0.5em` / `secondary-container` / `on-secondary-container` | 头像尺寸/圆角/文字字号/底/字 |
 | `--st-skeleton-color` / `--st-skeleton-duration` / `--st-skeleton-width` / `--st-skeleton-height` / `--st-skeleton-size` / `--st-skeleton-radius` | `surface-container-highest` / `1.6s` / `100%` / `1em` / `2.286em` / 按 shape | 骨架屏底色/呼吸时长/默认宽高（`--st-skeleton-height` rect 回退 `4.286em`、`--st-skeleton-radius` text/rect 分别回退 `0.286em`/`0.571em`） |
+| `--st-chat-padding` / `--st-chat-gap` / `--st-chat-empty-padding` | `1em` / `0.857em` / `2em 1em` | 对话滚动区内边距 / 消息间距 / 空状态内边距 |
+| `--st-chat-header-padding` / `--st-chat-footer-padding` / `--st-chat-header-bg` / `--st-chat-divider` | `0.714em 1em` / `0.714em 1em` / `transparent` / `outline-variant` | 对话头部 / 底部内边距、头部底色与分隔线 |
+| `--st-chat-bubble-radius` / `--st-chat-bubble-tail-radius` / `--st-chat-bubble-padding` / `--st-chat-bubble-max-width` | `1.143em` / `0.286em` / `0.714em 1em` / `85%` | 气泡圆角 / 指向角 / 内边距 / 最大宽度 |
+| `--st-chat-avatar-size` / `--st-chat-avatar-radius` / `--st-chat-avatar-gap` / `--st-chat-avatar-bg` | `2.286em` / `50%` / `0.643em` / `surface-container-highest` | 头像尺寸 / 圆角 / 与气泡间距 / 底色 |
+| `--st-chat-system-radius` | `var(--st-radius-sm)` | system 消息的轻量圆角 |
+| `--st-chat-enter-duration` / `--st-chat-enter-distance` | `260ms` / `0.571em` | 新消息入场时长 / 位移（减少动态效果时归零） |
 
 ### 颜色（由组件写入，皮肤不要覆盖）
 
@@ -263,6 +274,8 @@ html[data-skin="cyberpunk"] {
 | `st-code` | `shell` / `header` / `title` / `copy` / `body` / `pre` / `code` | 代码块外壳、顶栏、复制按钮、代码区 |
 | `st-chip` | `remove` | 尾部 ✕ 清除按钮 |
 | `st-avatar` | `image` | `src` 属性渲染的内部 `<img>` |
+| `st-chat` | `viewport` / `list` / `header` / `footer` / `empty` / `scroll-button` | 滚动区 / 消息列表 / 头尾栏 / 空状态 / 回到底部按钮 |
+| `st-chat-message` | `avatar` / `avatar-image` / `meta` / `name` / `time` / `bubble` / `content` / `actions` / `status` | 头像、消息头、气泡、正文与动作区 |
 
 仅当组件位于 light DOM（不在 `o-page` 等 shadow 内）时，`::part()` 才可达；
 跨 shadow 场景请使用 token。

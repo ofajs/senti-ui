@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>chat test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-color-init.js"></script>
+  <l-m src="/packages/chat/chat.html"></l-m>
+  <l-m src="/packages/button/button.html"></l-m>
+  <link rel="stylesheet" href="/packages/skin/apple.css" />
+  <style>
+    body { margin: 0; padding: 20px; font-family: system-ui, sans-serif; }
+    st-chat { height: 220px; }
+    #skin-wrap { padding: 12px; }
+  </style>
+</head>
+<body>
+  <st-chat id="chat-basic" label="基础对话">
+    <div slot="header">对话头</div>
+    <st-chat-message id="msg-system" from="system">系统消息</st-chat-message>
+    <st-chat-message id="msg-assistant" from="assistant" name="Senti" time="14:20">
+      助手第一条消息。
+      <div slot="actions"><st-button variant="text">复制</st-button></div>
+    </st-chat-message>
+    <st-chat-message id="msg-user" from="user" name="你" time="14:21">用户消息</st-chat-message>
+    <st-chat-message id="msg-streaming" from="assistant" name="Senti" streaming></st-chat-message>
+    <st-chat-message id="msg-error" from="assistant" name="Senti" error status="发送失败">失败消息</st-chat-message>
+    <st-chat-message id="msg-plain" from="assistant">
+
+      无头部的消息
+
+    </st-chat-message>
+    <st-chat-message id="msg-long" from="assistant">
+      这是一条比较长的消息，用来撑高对话容器，触发内部滚动。这是一条比较长的消息，用来撑高对话容器，触发内部滚动。这是一条比较长的消息，用来撑高对话容器，触发内部滚动。
+    </st-chat-message>
+    <st-chat-message id="msg-last" from="user" name="你">最后一条</st-chat-message>
+    <div slot="footer">对话底</div>
+  </st-chat>
+
+  <st-chat id="chat-data" label="数组对话" style="height: 200px;">
+    <div slot="empty">空状态</div>
+  </st-chat>
+
+  <st-chat id="chat-auto" label="自动滚动" style="height: 180px;"></st-chat>
+
+  <div id="skin-wrap" data-skin="apple">
+    <st-chat id="chat-skin" style="height: 160px;">
+      <st-chat-message id="msg-skin" from="assistant">皮肤消息</st-chat-message>
+    </st-chat>
+  </div>
+</body>
+</html>

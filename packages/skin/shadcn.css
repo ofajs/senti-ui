@@ -138,6 +138,28 @@
   --st-card-outlined-bg: var(--md-sys-color-surface);
   --st-card-border: var(--md-sys-color-outline-variant);
   --st-card-outline: var(--md-sys-color-outline-variant);
+  --st-chat-bg: var(--md-sys-color-surface);
+  --st-chat-border: var(--md-sys-color-outline-variant);
+  --st-chat-radius: .429em;
+  --st-chat-shadow: none;
+  --st-chat-padding: .857em;
+  --st-chat-gap: .571em;
+  --st-chat-header-padding: .571em .857em;
+  --st-chat-footer-padding: .571em .857em;
+  --st-chat-assistant-bg: var(--md-sys-color-surface-container);
+  --st-chat-user-bg: var(--md-sys-color-primary-container);
+  --st-chat-bubble-radius: .429em;
+  --st-chat-bubble-tail-radius: 0;
+  --st-chat-bubble-padding: .571em .786em;
+  --st-chat-bubble-border: var(--md-sys-color-outline-variant);
+  --st-chat-bubble-shadow: none;
+  --st-chat-avatar-gap: .571em;
+  --st-chat-avatar-bg: var(--md-sys-color-surface-container);
+  --st-chat-jump-bg: var(--md-sys-color-surface);
+  --st-chat-jump-border: var(--md-sys-color-outline-variant);
+  --st-chat-jump-shadow: var(--st-shadow-1);
+  --st-chat-enter-duration: 200ms;
+  --st-chat-enter-distance: .286em;
   --st-select-popup-bg: var(--md-sys-color-surface);
   --st-select-popup-border: var(--md-sys-color-outline-variant);
   --st-snackbar-radius: .429em;
@@ -205,5 +227,6 @@
     --st-drawer-enter-duration: 0s;
     --st-drawer-exit-duration: 0s;
     --st-skeleton-duration: 0s;
+    --st-chat-enter-duration: 0s;
   }
 }

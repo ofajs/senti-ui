@@ -33,7 +33,7 @@ const waitDocPage = (page, name) =>
     { timeout: 30_000 }
   );
 
-test("官网首页：29 张卡片 / 34 个标签 / 共享 SCSR 布局，无页面错误", async ({ page }) => {
+test("官网首页：30 张卡片 / 36 个标签 / 共享 SCSR 布局，无页面错误", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
 
@@ -83,12 +83,12 @@ test("官网首页：29 张卡片 / 34 个标签 / 共享 SCSR 布局，无页�
   expect(state.sharedHeader).toBe(true);
   expect(state.heading).toBe("语义组件，任意材质。");
   expect(state.eyebrow).toContain("AI-first 前端框架");
-  expect(state.tags).toHaveLength(34);
+  expect(state.tags).toHaveLength(36);
   expect(state.notReady).toEqual([]);
   expect(state.path).toBe("/site/");
   expect(state.templateRemoved).toBe(true);
   expect(state.sections).toEqual(["top", "components", "skins", "start"]);
-  expect(state.cards).toBe(29);
+  expect(state.cards).toBe(30);
   // 首页只列三个主流平台的系统 UI；shadcn / cyberpunk 在皮肤页
   expect(state.systemUiCards).toEqual([
     "Android · Material 3",
@@ -220,7 +220,7 @@ test("从主题页切回首页：首页组件依赖随 template 重新加载", a
       select: !!sr.querySelector("st-select")?.shadowRoot,
     };
   });
-  expect(state.cards).toBe(29);
+  expect(state.cards).toBe(30);
   expect(state.missing).toEqual([]);
   expect(state.buttonGroup).toBe(true);
   expect(state.select).toBe(true);
@@ -307,7 +307,7 @@ test("共享 header：文字导航 / 主题 / 对话框", async ({ page }) => {
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 26);
+    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 27);
   });
   expect(
     await page.evaluate(
@@ -410,7 +410,7 @@ test("组件文档：独立页 / 共享侧栏与 header / 页面切换动画", a
   expect(state.title).toContain("Input — 组件文档");
   expect(state.header).toBe(true);
   expect(state.pages).toBe(3);
-  expect(state.sideItems).toBe(27);
+  expect(state.sideItems).toBe(28);
   expect(state.active[0]).toContain("Input");
   expect(state.headerNav).toEqual([
     { variant: "text", active: true },
@@ -573,7 +573,7 @@ test("切页不挤动内容区：阅读进度条显隐不改变页面顶边", as
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 26);
+    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 27);
   });
   const docs = await metrics();
 
@@ -583,13 +583,13 @@ test("切页不挤动内容区：阅读进度条显隐不改变页面顶边", as
   expect(docs.barTop).toBeCloseTo(docs.headerBottom, 0);
 });
 
-test("组件文档首页：26 张卡片可进入独立页", async ({ page }) => {
+test("组件文档首页：27 张卡片可进入独立页", async ({ page }) => {
   await page.goto("/site/docs/index.html", { waitUntil: "networkidle", timeout: 60_000 });
   await page.waitForFunction(() => {
     const child = [...document.querySelectorAll("o-page")].find(
       (op) => op.shadowRoot && op.shadowRoot.querySelector(".docs-index")
     );
-    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 26);
+    return !!(child && child.shadowRoot.querySelectorAll(".docs-card").length === 27);
   });
   const overview = await page.evaluate(() => {
     const child = [...document.querySelectorAll("o-page")].find(
@@ -604,11 +604,11 @@ test("组件文档首页：26 张卡片可进入独立页", async ({ page }) => 
       })),
     };
   });
-  expect(overview.cards).toBe(26);
+  expect(overview.cards).toBe(27);
   expect(overview.groups).toEqual([
     { title: "基础组件 20", cards: 20 },
     { title: "辅助组件 5", cards: 5 },
-    { title: "高级组件 1", cards: 1 },
+    { title: "高级组件 2", cards: 2 },
   ]);
   await page.evaluate(() => {
     const child = [...document.querySelectorAll("o-page")].find(
@@ -883,6 +883,73 @@ test("Code 文档：5 个案例切换代码模式显示用法源码", async ({ p
     expect(mode.label).toBe("CODE");
     expect(mode.text).toContain("<st-code");
   }
+});
+
+test("Chat 文档：5 个示例、三种数据流与 API 表", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/site/docs/chat.html", { waitUntil: "domcontentloaded", timeout: 60_000 });
+  await waitDocPage(page, "Chat");
+
+  const overview = await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    const sr = child.shadowRoot;
+    return {
+      sections: sr.querySelectorAll(".doc-section").length,
+      demos: sr.querySelectorAll(".demo").length,
+      apiRows: sr.querySelectorAll(".api tbody tr").length,
+      prev: sr.querySelector(".pager-link:not(.pager-next)")?.getAttribute("href") || "",
+      next: sr.querySelector(".pager-next")?.getAttribute("href") || "",
+      sideActive: [...document.querySelectorAll("o-page")]
+        .find((op) => op.shadowRoot?.querySelector(".docs-side"))
+        ?.shadowRoot.querySelectorAll(".docs-side st-list-item.active").length,
+    };
+  });
+  expect(overview.sections).toBe(5);
+  expect(overview.demos).toBe(5);
+  expect(overview.apiRows).toBeGreaterThanOrEqual(8);
+  expect(overview.prev).toContain("/site/docs/code.html");
+  expect(overview.next).toContain("/site/docs/index.html");
+  expect(overview.sideActive).toBe(1);
+
+  // 数组 API 示例：加载历史后 st-chat 内渲染出 3 条消息
+  await page.waitForFunction(
+    () => {
+      const child = [...document.querySelectorAll("o-page")].find(
+        (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+      );
+      const btn = [...child.shadowRoot.querySelectorAll("st-button")].find(
+        (b) => b.textContent.trim() === "加载历史"
+      );
+      return !!btn?.shadowRoot?.querySelector(".native");
+    },
+    null,
+    { timeout: 20_000 }
+  );
+  await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    const btn = [...child.shadowRoot.querySelectorAll("st-button")].find(
+      (b) => b.textContent.trim() === "加载历史"
+    );
+    btn.shadowRoot.querySelector(".native").click();
+  });
+  await page.waitForTimeout(350);
+  const state = await page.evaluate(() => {
+    const child = [...document.querySelectorAll("o-page")].find(
+      (op) => op.shadowRoot && op.shadowRoot.querySelector(".doc-page")
+    );
+    const chat = child.shadowRoot.querySelector("#api-chat");
+    return {
+      messages: chat.shadowRoot.querySelectorAll("st-chat-message").length,
+      emptyHidden: chat.shadowRoot.querySelector(".empty").hidden,
+    };
+  });
+  expect(state).toEqual({ messages: 3, emptyHidden: true });
+  expect(errors).toEqual([]);
 });
 
 test("Ripple 文档：并列示例只触发被点的波纹（o-page 内绑定最近父元素）", async ({ page }) => {
@@ -1804,7 +1871,7 @@ test("文档侧栏按使用频率排序：Ripple 等低频组件靠后", async (
     };
   });
   expect(state.groups).toEqual(["基础", "表单", "反馈", "内容", "导航", "辅助", "高级"]);
-  const labels = state.items.map((x) => x.replace(/^(概览|Button|Input|Textarea|Select|Checkbox|Switch|Radio|Slider|Dialog|Menu|Snackbar|Progress|Card|Badges|List|Tabs|Navigation|Collapse|Tooltip|Ripple|Command tools|Code).*$/, "$1"));
+  const labels = state.items.map((x) => x.replace(/^(概览|Button|Input|Textarea|Select|Checkbox|Switch|Radio|Slider|Dialog|Menu|Snackbar|Progress|Card|Badges|List|Tabs|Navigation|Collapse|Tooltip|Ripple|Command tools|Code|Chat).*$/, "$1"));
   expect(labels[0]).toBe("概览");
   expect(labels[1]).toBe("Button");
   expect(labels.indexOf("Ripple")).toBeGreaterThan(labels.indexOf("Navigation"));
@@ -2175,7 +2242,7 @@ test("从手记切到文档：二级 layout 的 list / drawer 依赖随父页加
     };
   });
   expect(state.listUpgraded).toBe(true);
-  expect(state.items).toBe(27);
+  expect(state.items).toBe(28);
   expect(state.firstItemHeight).toBeGreaterThan(20);
   expect(state.drawerUpgraded).toBe(true);
 

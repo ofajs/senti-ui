@@ -137,6 +137,28 @@
   --st-card-border: color-mix(in srgb, var(--md-sys-color-outline) 38%, transparent);
   --st-card-outline: color-mix(in srgb, var(--md-sys-color-outline) 38%, transparent);
   --st-card-backdrop-filter: none;
+  --st-chat-bg: color-mix(in srgb, var(--md-sys-color-surface-container-low) 92%, transparent);
+  --st-chat-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
+  --st-chat-radius: .571em;
+  --st-chat-shadow: var(--st-shadow-1);
+  --st-chat-backdrop-filter: none;
+  --st-chat-padding: .857em;
+  --st-chat-gap: .714em;
+  --st-chat-header-padding: .571em .857em;
+  --st-chat-footer-padding: .571em .857em;
+  --st-chat-assistant-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 94%, transparent);
+  --st-chat-user-bg: color-mix(in srgb, var(--md-sys-color-primary-container) 94%, transparent);
+  --st-chat-bubble-radius: .571em;
+  --st-chat-bubble-tail-radius: .143em;
+  --st-chat-bubble-padding: .571em .786em;
+  --st-chat-bubble-border: color-mix(in srgb, var(--md-sys-color-outline) 30%, transparent);
+  --st-chat-bubble-shadow: none;
+  --st-chat-avatar-size: 2.286em;
+  --st-chat-jump-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 92%, transparent);
+  --st-chat-jump-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
+  --st-chat-jump-shadow: var(--st-shadow-2);
+  --st-chat-enter-duration: 220ms;
+  --st-chat-enter-distance: .429em;
   --st-select-popup-bg: rgb(from var(--md-sys-color-surface-container) r g b / 0.78);
   --st-select-popup-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
   --st-select-popup-backdrop-filter: blur(28px) saturate(120%);
@@ -209,5 +231,6 @@
     --st-drawer-enter-duration: 0s;
     --st-drawer-exit-duration: 0s;
     --st-skeleton-duration: 0s;
+    --st-chat-enter-duration: 0s;
   }
 }

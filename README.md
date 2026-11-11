@@ -93,6 +93,7 @@ For the longer rationale, see [Behavior Unified, Visual Identity Free](./site/no
 | Progress | `st-progress` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/progress/progress.html` |
 | Tooltip | `st-tooltip` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tooltip/tooltip.html` |
 | Card | `st-card` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/card/card.html` |
+| Chat | `st-chat` / `st-chat-message` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/chat/chat.html` |
 | Badges | `st-badges` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/badges/badges.html` |
 | Chip | `st-chip` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/chip/chip.html` |
 | Avatar | `st-avatar` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/avatar/avatar.html` |
@@ -110,7 +111,7 @@ Full docs (attribute tables, slots, events, default value lists) live in each pa
 
 ## Key Usage Patterns
 
-- **Runtime state is not a tag attribute** — `value` on `st-input`/`st-select`/`st-slider`, `open` on `st-dialog`/`st-drawer`/`st-tooltip` etc. are runtime state: read/write via `el.value` / `el.open` in JS (`setAttribute("value")` has no effect; use the `default-value` tag attribute for initial values)
+- **Runtime state is not a tag attribute** — `value` on `st-input`/`st-select`/`st-slider`, `open` on `st-dialog`/`st-drawer`/`st-tooltip`, `messages` on `st-chat` etc. are runtime state: read/write via `el.value` / `el.open` / `el.messages` in JS (`setAttribute("value")` has no effect; use the `default-value` tag attribute for initial values)
 - **Boolean attributes must be toggled via attributes** (`$("el").attr("disabled", "")` to set, `attr("disabled", null)` to remove) — assigning properties directly does not trigger updates
 - Imperative utils are promise-based and align with native semantics:
 

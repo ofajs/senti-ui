@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>markdown test fixture</title>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script type="module" src="/packages/color/st-color-init.js"></script>
+  <l-m src="/packages/markdown/markdown.html"></l-m>
+  <link rel="stylesheet" href="/packages/skin/apple.css" />
+  <style>
+    body { margin: 0; padding: 20px; font-family: system-ui, sans-serif; }
+    st-markdown { max-width: 760px; }
+  </style>
+</head>
+<body>
+  <st-markdown id="md-static">
+    <textarea hidden>
+# 一级标题
+
+这是 **粗体**、*斜体*、~~删除线~~、`行内代码` 与 [安全链接](https://example.com "示例")。
+
+## 列表
+
+- 无序一
+- 无序二
+  - 嵌套 A
+  - 嵌套 B
+- [x] 已完成
+- [ ] 未完成
+
+1. 有序一
+2. 有序二
+
+> 引用内容
+>
+> 第二段
+
+```js
+const answer = 42;
+console.log(answer);
+```
+
+| 左 | 中 | 右 |
+| :--- | :---: | ---: |
+| a | b | c |
+
+---
+
+<script>alert("nope")</script>
+
+[危险链接](javascript:alert(1))
+
+![安全图片](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAFgwJ/lK3Q6wAAAABJRU5ErkJggg==)
+    </textarea>
+  </st-markdown>
+
+  <st-markdown id="md-runtime"></st-markdown>
+  <st-markdown id="md-breaks" breaks>
+    <textarea hidden>第一行
+第二行</textarea>
+  </st-markdown>
+  <st-markdown id="md-plain">
+    <textarea hidden>第一行
+第二行</textarea>
+  </st-markdown>
+  <st-markdown id="md-template">
+    <template>## Template 标题</template>
+  </st-markdown>
+  <st-markdown id="md-default" default-value="## Default 标题"></st-markdown>
+  <st-markdown id="md-lang">
+    <textarea hidden>```python
+def greet(name):
+    return f"Hello, {name}"
+```
+
+```js
+const x = 1;
+```</textarea>
+  </st-markdown>
+  <st-markdown id="md-inline">
+    <textarea hidden>裸链接 https://ofajs.com/path，snake_case_value。</textarea>
+  </st-markdown>
+  <st-markdown id="md-copy">
+    <textarea hidden>```html
+<div>copy</div>
+```</textarea>
+  </st-markdown>
+  <st-markdown id="md-safe">
+    <textarea hidden>[危险](javascript:alert(1))
+[安全](https://example.com)</textarea>
+  </st-markdown>
+  <div data-skin="apple">
+    <st-markdown id="md-skin">
+      <textarea hidden>## Skin
+```js
+const skin = true;
+```</textarea>
+    </st-markdown>
+  </div>
+</body>
+</html>

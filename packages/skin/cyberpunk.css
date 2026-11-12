@@ -191,6 +191,21 @@
   --st-chat-jump-shadow: var(--st-shadow-2);
   --st-chat-enter-duration: 160ms;
   --st-chat-enter-distance: .308em;
+  --st-markdown-code-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 96%, transparent);
+  --st-markdown-code-head-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 96%, transparent);
+  --st-markdown-code-border: color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
+  --st-markdown-code-radius: 0;
+  --st-markdown-code-shadow: var(--st-shadow-1);
+  --st-markdown-code-backdrop-filter: none;
+  --st-markdown-code-font: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --st-markdown-inline-code-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 96%, transparent);
+  --st-markdown-table-border: color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent);
+  --st-markdown-table-head-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 96%, transparent);
+  --st-markdown-table-radius: 0;
+  --st-markdown-blockquote-border: color-mix(in srgb, var(--md-sys-color-primary) 65%, transparent);
+  --st-markdown-blockquote-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 90%, transparent);
+  --st-markdown-image-radius: 0;
+  --st-markdown-caret-duration: .8s;
   --st-select-popup-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 96%, transparent);
   --st-select-popup-border: color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
   --st-select-popup-backdrop-filter: none;
@@ -261,5 +276,6 @@
     --st-drawer-exit-duration: 0s;
     --st-skeleton-duration: 0s;
     --st-chat-enter-duration: 0s;
+    --st-markdown-caret-duration: 0s;
   }
 }

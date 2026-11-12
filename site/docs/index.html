@@ -71,7 +71,7 @@
               <p class="doc-kicker">DOCS / COMPONENTS</p>
               <h1>组件文档</h1>
               <p class="doc-lead">
-                27 个文档页、36 个标签的独立使用说明。按职责分为基础组件、辅助组件与高级组件：
+                28 个文档页、37 个标签的独立使用说明。按职责分为基础组件、辅助组件与高级组件：
                 每个组件一页，按场景拆分多组可交互示例，并附属性表、插槽 / 事件与示例代码。
                 header 与左侧组件目录由父页共享，切换组件时只替换右侧正文。
               </p>
@@ -279,9 +279,9 @@
               <header class="docs-group-head">
                 <div>
                   <p class="docs-group-kicker">ADVANCED</p>
-                  <h2>高级组件 <span>2</span></h2>
+                  <h2>高级组件 <span>3</span></h2>
                 </div>
-                <p class="docs-group-desc">在基础交互之上提供工程能力：代码展示、语法高亮、自动格式化与 AI 对话界面。</p>
+                <p class="docs-group-desc">在基础交互之上提供工程能力：代码展示、语法高亮、自动格式化、AI 对话与 Markdown 渲染。</p>
               </header>
               <div class="docs-cards">
           <st-card interactive class="docs-card" on:click="goDoc('code')">
@@ -296,6 +296,13 @@
             <h2>Chat</h2>
             <code>st-chat</code>
             <p>AI 对话容器与消息气泡：三种数据流、流式光标、自动跟随滚动、回到底部按钮与新消息入场动画；气泡可继承皮肤材质。</p>
+            <span class="more">查看用法 <iconify-icon icon="mdi:arrow-right"></iconify-icon></span>
+          </st-card>
+          <st-card interactive class="docs-card" on:click="goDoc('markdown')">
+            <span class="cat">高级</span>
+            <h2>Markdown</h2>
+            <code>st-markdown</code>
+            <p>AI 输出的 Markdown 渲染：标题 / 列表 / 表格 / 代码块，支持 value 增量填充、未闭合代码块与流式容错。</p>
             <span class="more">查看用法 <iconify-icon icon="mdi:arrow-right"></iconify-icon></span>
           </st-card>
               </div>

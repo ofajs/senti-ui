@@ -1,0 +1,160 @@
+# st-markdown Markdown 渲染组件
+
+基于 ofa.js 的 Markdown 渲染器，面向 AI 输出场景：支持增量填充、未闭合代码块 / 表格 / 行内标记的流式容错，自动生成标题、列表、代码块、表格、引用等结构化内容。
+
+## 依赖引入（使用前必须）
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+<l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/markdown/markdown.html"></l-m>
+```
+
+代码高亮复用 `packages/code/highlight.js`，由组件内部自动加载，不需要额外引入 `st-code`。
+
+## 最小示例
+
+```html
+<!-- 静态内容：直接写在默认插槽 -->
+<st-markdown>
+  ## 标题
+
+  - 第一项
+  - 第二项
+
+  `行内代码` 与 **加粗**
+</st-markdown>
+
+<!-- 运行时内容（推荐用于 AI 输出） -->
+<st-markdown id="answer" streaming></st-markdown>
+```
+
+```js
+const md = document.querySelector("#answer");
+md.value = "## 开始回答\n\n";
+md.appendMarkdown("这是流式追加的 **Markdown** 内容。");
+```
+
+## 语义属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `default-value` | string | 无 | 初始源码；优先级高于 `<textarea>` / `<template>` / 默认插槽 |
+| `streaming` | boolean | 无 | 流式输出中：末尾显示光标、`aria-busy="true"`；增量渲染本身不依赖它 |
+| `breaks` | boolean | 无 | 段内单个换行也渲染为 `<br>`；默认按标准 Markdown 视为空格 |
+
+## 运行时状态与方法
+
+| API | 说明 |
+|-----|------|
+| `el.value` | 当前 Markdown 源码（运行时状态，不是标签属性）。赋值后在下一帧合并渲染 |
+| `el.appendMarkdown(delta)` | 追加一段源码并合并渲染；适合 token 流。没有用 `append`，避免覆盖 DOM 原生方法 |
+| `el.value = ""` | 清空内容 |
+
+```js
+const md = document.querySelector("st-markdown");
+md.value = "# 标题\n\n正文";
+md.appendMarkdown("\n\n```js\nconsole.log('stream')\n```");
+```
+
+**初始源码优先级**：运行时 `value`（在升级前赋值）> `default-value` > `<textarea>` > `<template>` > 默认插槽文本。
+
+包含 `<` 或代码块的静态内容建议用 `<textarea hidden>`（RCDATA，不会被浏览器解析成 HTML）：
+
+````html
+<st-markdown>
+  <textarea hidden>
+# 代码示例
+
+```html
+<div>hello</div>
+```
+  </textarea>
+</st-markdown>
+````
+
+## 事件
+
+| 事件 | 说明 |
+|------|------|
+| `copy` | 点击代码块的「复制」且写入剪贴板成功后派发，`detail: { code, lang }`，`bubbles` + `composed` |
+
+## 支持的 Markdown
+
+- 标题 `#` ~ `######`
+- 段落、段内换行（`breaks` 控制）、硬换行（行尾两个空格或反斜杠）
+- 无序 / 有序列表、嵌套列表、任务列表 `- [ ]` / `- [x]`
+- 引用 `>`
+- 围栏代码块 ` ```lang ` / `~~~lang`，带语言标签与复制按钮；HTML / JS / TS / CSS / Less / Sass 复用 `st-code` 的高亮逻辑，其他语言按纯文本展示
+- 表格（含 `:---` / `---:` / `:---:` 对齐）
+- 分割线
+- 行内代码、**粗体**、*斜体*、~~删除线~~
+- 链接、图片、`<https://...>` 与裸 `https://...` 自动链接
+- 转义字符 `\*` 等
+
+原始 HTML 不解析，按普通文本转义；链接 / 图片地址经过协议白名单校验（`http` / `https` / `mailto` / `tel` / 相对地址；图片额外允许 `data:image/png|jpeg|gif|webp`）。
+
+## 流式渲染
+
+- 每次 `value` 更新只在 `requestAnimationFrame` 中渲染一次，连续 token 不会逐条触发重排
+- 未闭合的围栏代码块会渲染到输入末尾；闭合后同一块代码继续更新
+- 未完成的表格、链接、粗体等标记先按字面文本显示，标记完整后变成对应元素
+- 内容替换后父级 `st-chat` / `st-chat-message` 的滚动跟随与流式光标照常工作
+- `streaming` 只负责光标与 `aria-busy`；**放在 `st-chat-message` 内时建议只给 message 设 `streaming`**，避免两个光标
+
+与 `st-chat` 组合：
+
+```html
+<st-chat-message from="assistant" name="Senti" streaming>
+  <st-markdown :value="answer"></st-markdown>
+</st-chat-message>
+```
+
+此时 `st-markdown` 不设 `streaming`，由 `st-chat-message` 显示光标；Markdown 仍会随 `answer` 增量渲染。
+
+## 默认样式（直接覆盖即可）
+
+| 项目 | 默认值 |
+|------|--------|
+| 字号 / 行高 | `14px` / `1.7`（改 `font-size` 整体缩放） |
+| 块间距 | `0.857em` |
+| 代码块 | `surface-container-high` 底、`surface-container-highest` 顶栏、`0.857em` 圆角、`0.857em 1em` 内边距 |
+| 行内代码 | `surface-container-high` 底、`0.286em` 圆角 |
+| 表格 | `outline-variant` 分隔线、表头 `surface-container-high` |
+| 引用 | 主色 55% 与 outline-variant 混合的左边线 |
+| 链接 | `primary` 色、下划线 |
+| 图片 | 不超出容器宽度、默认圆角 |
+
+## 皮肤 token 与 part
+
+材质 token：`--st-markdown-line-height` / `--st-markdown-gap` / `--st-markdown-heading-gap` /
+`--st-markdown-heading-bottom` / `--st-markdown-list-indent` / `--st-markdown-blockquote-width` /
+`--st-markdown-blockquote-border` / `--st-markdown-blockquote-bg` / `--st-markdown-blockquote-radius` /
+`--st-markdown-code-bg` / `--st-markdown-code-head-bg` / `--st-markdown-code-border` /
+`--st-markdown-code-radius` / `--st-markdown-code-padding` / `--st-markdown-code-shadow` /
+`--st-markdown-code-backdrop-filter` / `--st-markdown-code-font` / `--st-markdown-code-font-size` /
+`--st-markdown-inline-code-bg` / `--st-markdown-inline-code-padding` / `--st-markdown-inline-code-radius` /
+`--st-markdown-copy-radius` / `--st-markdown-table-border` / `--st-markdown-table-head-bg` /
+`--st-markdown-table-radius` / `--st-markdown-table-padding` / `--st-markdown-table-font-size` /
+`--st-markdown-image-radius` / `--st-markdown-caret-duration`。
+
+part：`content` / `p` / `h1` ~ `h6` / `ul` / `ol` / `li` / `blockquote` / `hr` / `pre` / `code` /
+`inline-code` / `code-block` / `code-head` / `code-lang` / `copy` / `table-wrap` / `table` / `thead` /
+`tbody` / `tr` / `th` / `td` / `link` / `link-label` / `image` / `strong` / `em` / `del` / `br` /
+`task-box` / `task-body` / `cursor`。
+
+`::part()` 只在 light DOM 可达；跨 `o-page` / `o-app` shadow 时用 token。
+
+## 注意事项与使用技巧
+
+- **原始 HTML 不执行**：`<div>`、`<script>` 等按文本显示，避免 AI 输出注入
+- **代码高亮复用 `st-code`**：共享 [highlight.js](../code/highlight.js) 的高亮逻辑，支持 HTML / JS / TS / CSS / Less / Sass；Python / JSON / Bash 等未支持语言按纯文本展示，不会错误套用 HTML 规则
+- **链接安全**：仅允许安全协议；`javascript:` / `vbscript:` / 非图片 `data:` 链接会退化为普通文本（保留链接文字）
+- **初始内容用 `<textarea hidden>`**：默认插槽里的 `<div>` 会被浏览器当 HTML 解析；`textarea` 是 RCDATA，能原样保留 `<`
+- **流式更新优先用 `el.value` / `appendMarkdown()`**：不要在每次 token 里重建 `st-markdown` 节点
+- **`streaming` 与 `st-chat-message` 的光标二选一**：两者同时开启会出现两个光标
+- **段内换行**：默认按标准 Markdown 合并为空格；聊天场景想保留单换行就加 `breaks`
+- **代码块复制**：依赖 `navigator.clipboard`，失败时回退 `execCommand`；剪贴板权限失败不派发 `copy`
+
+## 验证页面
+
+`index.html`（直接访问 `/packages/markdown/`），覆盖完整语法、流式填充、`breaks`、安全转义、复制、CSS/part 与皮肤。

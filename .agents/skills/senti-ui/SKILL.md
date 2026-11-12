@@ -1,7 +1,7 @@
 ---
 name: "senti-ui"
 description: "Senti-UI component library knowledge base (ofa.js + Material Design 3, no build step). Invoke when the user asks about Senti-UI or st-* components, wants to build a web page/app UI with senti-ui, asks about st-button / st-input / st-dialog / toast etc., theming with M3 color tokens, or developing new components based on senti-ui."
-version: "1.1.3"
+version: "1.1.4"
 ---
 
 # Senti-UI 组件库使用指南
@@ -44,7 +44,7 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 
 ## 皮肤（材质层）
 
-同一批组件可切换材质而不换颜色：`m3`（默认）/ `apple`（毛玻璃）/ `windows`（Windows 11 / Fluent：Mica + Acrylic）/ `shadcn`（扁平）/ `cyberpunk`（零圆角、等宽字、霓虹发光）。皮肤只改圆角、密度、边框、阴影、毛玻璃、焦点环、动效、波纹；**颜色仍然全部来自 M3 角色**（种子色 / error / success 保留）。全部交互与表面组件均已接入（按钮/输入/选择/卡片/对话/对话框/菜单/列表/选择控件/滑块/进度/标签/导航/提示/消息条/徽标）。
+同一批组件可切换材质而不换颜色：`m3`（默认）/ `apple`（毛玻璃）/ `windows`（Windows 11 / Fluent：Mica + Acrylic）/ `shadcn`（扁平）/ `cyberpunk`（零圆角、等宽字、霓虹发光）。皮肤只改圆角、密度、边框、阴影、毛玻璃、焦点环、动效、波纹；**颜色仍然全部来自 M3 角色**（种子色 / error / success 保留）。全部交互与表面组件均已接入（按钮/输入/选择/卡片/对话/Markdown/对话框/菜单/列表/选择控件/滑块/进度/标签/导航/提示/消息条/徽标）。
 
 ```html
 <html data-skin="apple">
@@ -80,6 +80,7 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 | 提示 | `st-tooltip` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/tooltip/tooltip.html` |
 | 卡片 | `st-card` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/card/card.html` |
 | 对话 | `st-chat` / `st-chat-message` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/chat/chat.html` |
+| Markdown | `st-markdown` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/markdown/markdown.html` |
 | 徽标 | `st-badges` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/badges/badges.html` |
 | 折叠容器 | `st-collapse` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/collapse/collapse.html` |
 | 列表 | `st-list` / `st-list-item` | `https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/list/list.html` |

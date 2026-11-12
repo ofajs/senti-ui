@@ -93,6 +93,7 @@
         <l-m src="../packages/drawer/drawer.html"></l-m>
         <l-m src="../packages/code/code.html"></l-m>
         <l-m src="../packages/chat/chat.html"></l-m>
+        <l-m src="../packages/markdown/markdown.html"></l-m>
         <l-m src="../packages/checkbox/checkbox.html"></l-m>
         <l-m src="../packages/switch/switch.html"></l-m>
         <l-m src="../packages/radio/radio.html"></l-m>
@@ -1124,6 +1125,11 @@
       max-width: 320px;
       height: 150px;
     }
+    .comp-preview st-markdown {
+      width: 100%;
+      max-width: 320px;
+      font-size: 12px;
+    }
     .comp-preview-nav {
       padding: 14px;
     }
@@ -1391,14 +1397,14 @@
         <p class="eyebrow"><span class="dot"></span>ofa.js v5 · AI-first 前端框架 · zero build</p>
         <h1>语义组件，<br /><span class="grad">任意材质。</span></h1>
         <p class="lead">
-          26 个模块、36 个标签，全部可交互。属性只表达语义，颜色只走 M3，材质交给皮肤。
+          27 个模块、37 个标签，全部可交互。属性只表达语义，颜色只走 M3，材质交给皮肤。
           下面每一张卡片都是真实组件，不是截图。
         </p>
       </div>
       <div class="intro-side">
         <div class="intro-stats">
-          <div><strong>26</strong><span>组件模块</span></div>
-          <div><strong>36</strong><span>自定义标签</span></div>
+          <div><strong>27</strong><span>组件模块</span></div>
+          <div><strong>37</strong><span>自定义标签</span></div>
           <div><strong>3</strong><span>内置材质</span></div>
           <div><strong>0</strong><span>构建步骤</span></div>
         </div>
@@ -1414,7 +1420,7 @@
     <section class="catalog" id="components">
       <div class="catalog-head">
         <div>
-          <p class="section-kicker">CATALOG / 30 CARDS</p>
+          <p class="section-kicker">CATALOG / 31 CARDS</p>
           <h2>所有组件</h2>
           <p class="catalog-desc">卡片里的组件可以直接点、输入、开合；每张卡片右下角 <iconify-icon icon="mdi:arrow-top-right"></iconify-icon> 进入该组件的完整文档与验收页。</p>
         </div>
@@ -1835,6 +1841,27 @@
           <div class="comp-foot">
             <div class="comp-id"><h3>Chat</h3><code>st-chat</code></div>
             <a class="comp-link" href="./docs/chat.html" rel="noreferrer" aria-label="Chat 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
+          </div>
+        </article>
+
+        <article class="comp">
+          <div class="comp-preview">
+            <st-markdown>
+              <textarea hidden>## Markdown
+
+**AI 输出** 直接渲染为标题、列表与代码块。
+
+- 增量填充
+- 表格 / 引用
+
+```js
+const answer = 42;
+```</textarea>
+            </st-markdown>
+          </div>
+          <div class="comp-foot">
+            <div class="comp-id"><h3>Markdown</h3><code>st-markdown</code></div>
+            <a class="comp-link" href="./docs/markdown.html" rel="noreferrer" aria-label="Markdown 文档"><iconify-icon icon="mdi:arrow-top-right"></iconify-icon></a>
           </div>
         </article>
 

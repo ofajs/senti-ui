@@ -1,6 +1,6 @@
 # st-code 代码展示组件
 
-基于 ofa.js 的轻量代码块：语法高亮、自动格式化。支持 HTML / JS / TS / CSS / Less / Sass，内置高亮器，不依赖 highlight.js 或任何外部 CDN。
+基于 ofa.js 的轻量代码块：语法高亮、自动格式化。支持 HTML / JS / TS / CSS / Less / Sass，内置高亮器（`highlight.js`，同时被 `st-markdown` 复用），不依赖 highlight.js 或任何外部 CDN。
 
 **默认只有代码本身**：无边框、无阴影、无底色、无顶栏。需要浏览器窗口式的包裹（圆点 / 文件名 / 复制按钮）时加 `frame`。
 

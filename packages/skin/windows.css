@@ -159,6 +159,18 @@
   --st-chat-jump-shadow: var(--st-shadow-2);
   --st-chat-enter-duration: 220ms;
   --st-chat-enter-distance: .429em;
+  --st-markdown-code-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 94%, transparent);
+  --st-markdown-code-head-bg: color-mix(in srgb, var(--md-sys-color-surface-container) 94%, transparent);
+  --st-markdown-code-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
+  --st-markdown-code-radius: .571em;
+  --st-markdown-code-shadow: var(--st-shadow-1);
+  --st-markdown-code-backdrop-filter: none;
+  --st-markdown-inline-code-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 90%, transparent);
+  --st-markdown-table-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
+  --st-markdown-table-head-bg: color-mix(in srgb, var(--md-sys-color-surface-container-high) 92%, transparent);
+  --st-markdown-table-radius: .571em;
+  --st-markdown-image-radius: .571em;
+  --st-markdown-caret-duration: 1s;
   --st-select-popup-bg: rgb(from var(--md-sys-color-surface-container) r g b / 0.78);
   --st-select-popup-border: color-mix(in srgb, var(--md-sys-color-outline) 35%, transparent);
   --st-select-popup-backdrop-filter: blur(28px) saturate(120%);
@@ -232,5 +244,6 @@
     --st-drawer-exit-duration: 0s;
     --st-skeleton-duration: 0s;
     --st-chat-enter-duration: 0s;
+    --st-markdown-caret-duration: 0s;
   }
 }

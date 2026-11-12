@@ -160,6 +160,18 @@
   --st-chat-jump-shadow: var(--st-shadow-1);
   --st-chat-enter-duration: 200ms;
   --st-chat-enter-distance: .286em;
+  --st-markdown-code-bg: var(--md-sys-color-surface);
+  --st-markdown-code-head-bg: var(--md-sys-color-surface-container);
+  --st-markdown-code-border: var(--md-sys-color-outline-variant);
+  --st-markdown-code-radius: .429em;
+  --st-markdown-code-shadow: none;
+  --st-markdown-code-backdrop-filter: none;
+  --st-markdown-inline-code-bg: var(--md-sys-color-surface-container);
+  --st-markdown-table-border: var(--md-sys-color-outline-variant);
+  --st-markdown-table-head-bg: var(--md-sys-color-surface-container);
+  --st-markdown-table-radius: .429em;
+  --st-markdown-image-radius: .429em;
+  --st-markdown-caret-duration: 1s;
   --st-select-popup-bg: var(--md-sys-color-surface);
   --st-select-popup-border: var(--md-sys-color-outline-variant);
   --st-snackbar-radius: .429em;
@@ -228,5 +240,6 @@
     --st-drawer-exit-duration: 0s;
     --st-skeleton-duration: 0s;
     --st-chat-enter-duration: 0s;
+    --st-markdown-caret-duration: 0s;
   }
 }

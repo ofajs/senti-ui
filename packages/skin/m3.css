@@ -159,6 +159,36 @@
   --st-chat-jump-shadow: var(--st-shadow-2);
   --st-chat-enter-duration: 260ms;
   --st-chat-enter-distance: .571em;
+  /* Markdown 渲染 */
+  --st-markdown-line-height: 1.7;
+  --st-markdown-gap: .857em;
+  --st-markdown-heading-gap: 1.429em;
+  --st-markdown-heading-bottom: .571em;
+  --st-markdown-list-indent: 1.429em;
+  --st-markdown-blockquote-width: .214em;
+  --st-markdown-blockquote-border: color-mix(in srgb, var(--md-sys-color-primary) 55%, var(--md-sys-color-outline-variant));
+  --st-markdown-blockquote-bg: transparent;
+  --st-markdown-blockquote-radius: var(--st-radius-xs);
+  --st-markdown-code-bg: var(--md-sys-color-surface-container-high);
+  --st-markdown-code-head-bg: var(--md-sys-color-surface-container-highest);
+  --st-markdown-code-border: transparent;
+  --st-markdown-code-radius: var(--st-radius-md);
+  --st-markdown-code-padding: .857em 1em;
+  --st-markdown-code-shadow: none;
+  --st-markdown-code-backdrop-filter: none;
+  --st-markdown-code-font: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --st-markdown-code-font-size: .857em;
+  --st-markdown-inline-code-bg: var(--md-sys-color-surface-container-high);
+  --st-markdown-inline-code-padding: .143em .357em;
+  --st-markdown-inline-code-radius: var(--st-radius-xs);
+  --st-markdown-copy-radius: var(--st-radius-xs);
+  --st-markdown-table-border: var(--md-sys-color-outline-variant);
+  --st-markdown-table-head-bg: var(--md-sys-color-surface-container-high);
+  --st-markdown-table-radius: var(--st-radius-sm);
+  --st-markdown-table-padding: .5em .714em;
+  --st-markdown-table-font-size: .929em;
+  --st-markdown-image-radius: var(--st-radius-md);
+  --st-markdown-caret-duration: 1s;
   --st-select-popup-bg: var(--md-sys-color-surface-container);
   --st-select-popup-border: transparent;
   --st-select-popup-backdrop-filter: none;
@@ -234,5 +264,6 @@
     --st-drawer-exit-duration: 0s;
     --st-skeleton-duration: 0s;
     --st-chat-enter-duration: 0s;
+    --st-markdown-caret-duration: 0s;
   }
 }

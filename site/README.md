@@ -1,6 +1,6 @@
 # Senti-UI 官网首页（site/）
 
-官网首页把 26 个组件模块（36 个 `st-*` 标签）全部摆在一页里，按「动作 / 输入 / 反馈 / 内容 / 导航」分区展示；组件文档是每个组件一个独立 SCSR 页，按场景拆分多组可交互示例；手记则记录组件库背后的设计取舍与材质系统思考。三者共用同一套 header / footer 与皮肤、深浅色主题。
+官网首页把 27 个组件模块（37 个 `st-*` 标签）全部摆在一页里，按「动作 / 输入 / 反馈 / 内容 / 导航」分区展示；组件文档是每个组件一个独立 SCSR 页，按场景拆分多组可交互示例；手记则记录组件库背后的设计取舍与材质系统思考。三者共用同一套 header / footer 与皮肤、深浅色主题。
 
 采用 **ofa.js v5 + scsr**（Symphony Client-Server Rendering）：每个 URL 都是可直接访问的真实文档，站内跳转走 o-app 路由（真实路径，非 hash），而不是 hash 路由。
 
@@ -23,8 +23,8 @@ site/
   skins.html       # 主题页：五张主题卡（材质 + 官方配色）+ 改色/加色（parent = "./layout.html"）
   docs/
     layout.html    # 二级父页：左侧组件目录 / 移动端左侧抽屉 + <slot>（parent 指向上级 layout）
-    index.html     # 文档概览：27 张卡片，按基础 / 辅助 / 高级分组（parent = "./layout.html"）
-    button.html    # 每个组件一页（共 27 页，均 parent = "./layout.html"）
+    index.html     # 文档概览：28 张卡片，按基础 / 辅助 / 高级分组（parent = "./layout.html"）
+    button.html    # 每个组件一页（共 28 页，均 parent = "./layout.html"）
     input.html
     ...
   docs.css         # 文档页共用的 shadow 样式表
@@ -93,9 +93,9 @@ site/
 - 共享 header（来自 `layout.html`）：文档 / 皮肤 / 手记文字切换（组件目录即首页，点品牌回首页）、自动 / 浅色 / 深色（`st-select` + 随模式变化的 Iconify 图标）、GitHub
 - **图标统一走 Iconify Web Component**（`iconify-icon`，由 `layout.html` 注入 `code.iconify.design` 的 2.1.0 脚本）：header、首页 CTA / 文档链接 / 图标按钮、皮肤页与文档导航都用 `<iconify-icon icon="mdi:...">`，不再用 emoji / Unicode 箭头；`st-select` 的闭合态会显示选中项的图标（选项里的图标元素同步到 label 前）；组件库内部用 CSS 绘制的对勾、箭头、关闭按钮不引入外部图标依赖
 - 紧凑 intro：标题、一句话说明、统计数据、组件文档 / 源码 / AI Skill 下载入口（`senti-ui-skill.zip`，Claude Code / ZCode 可直接加载）
-- **30 张组件卡片**（`CATALOG / 30 CARDS`）：每张卡片 = 真实组件预览 + 名称 + 标签 + 站内文档 ↗
+- **31 张组件卡片**（`CATALOG / 31 CARDS`）：每张卡片 = 真实组件预览 + 名称 + 标签 + 站内文档 ↗
   - 预览区可交互：按钮、输入、选择、开关、滑块、标签栏、导航、折叠、对话框、菜单、Toast 等都能直接操作
-  - 覆盖 26 个模块、36 个 `st-*` 标签，以及 toast / alert / confirm / prompt / contextMenu 命令式工具
+  - 覆盖 27 个模块、37 个 `st-*` 标签，以及 toast / alert / confirm / prompt / contextMenu 命令式工具
 - 三张局部 `data-skin` 系统 UI 卡：Android Material 3 / Apple 毛玻璃 / Windows 11 同页对比；每张卡用 `previewThemes` 写入平台默认 `--md-sys-color-*`，不跟随站点当前主题色；shadcn 与 Cyberpunk 仍在独立的 `skins.html` 选用
 - 快速开始：安装代码、复制、文档入口
 - 深浅色切换（`st-select` → `setThemeMode`）、皮肤切换（`setSkin`）
@@ -106,10 +106,10 @@ site/
 
 旧的根目录 `docs/` 已删除，文档全部在 `site/docs/`。每个组件一个独立 SCSR 页面，全部共用 `layout.html` 和文档侧栏：
 
-- `/site/docs/index.html`：27 张组件卡片概览，分为「基础组件 20」「辅助组件 5」与「高级组件 2」
+- `/site/docs/index.html`：28 张组件卡片概览，分为「基础组件 20」「辅助组件 5」与「高级组件 3」
   - 基础组件：按钮、表单控件、反馈、内容与导航，承担完整业务流程
   - 辅助组件：波纹、折叠、提示，在基础组件之上做锦上添花
-  - 高级组件：代码展示（st-code）与 AI 对话（st-chat / st-chat-message），提供语法高亮、自动格式化、三种消息数据流与流式交互
+  - 高级组件：代码展示（st-code）、AI 对话（st-chat / st-chat-message）与 Markdown 渲染（st-markdown），提供语法高亮、三种消息数据流与流式 Markdown
 - `/site/docs/{button,input,...,navigation}.html`：每个组件一页，包含
   - 一句话说明、分类、标签、上一页 / 下一页
   - 可交互的真实组件示例
@@ -197,14 +197,14 @@ npm test
 
 烟雾用例检查：
 
-- `/site/` 目录直开：30 张卡片、36 个 `st-*` 全部升级、无页面错误、`template[page]` 已被 scsr 移除、页面内没有 `/docs/` 链接；
+- `/site/` 目录直开：31 张卡片、37 个 `st-*` 全部升级、无页面错误、`template[page]` 已被 scsr 移除、页面内没有 `/docs/` 链接；
 - 皮肤 / 主题 / 对话框交互；
 - 共享 layout：首页两个 `o-page`（layout + 子页）、header 文字导航 / 材质快捷菜单 / 主题 / 回到首页，品牌标记与 favicon 一致；移动端（≤760px）横向导航收进右侧抽屉，抽屉可切到组件目录 / 文档 / 皮肤 / 手记并高亮当前栏目；
 - 组件文档：三层 `o-page`（site layout + docs layout + 组件页）、侧栏只有一份、每页 4 组以上示例、侧栏切换、移动端组件目录抽屉跟随当前页、上一页 / 下一页、阅读进度、页面切换动画；
 - 滚动外壳：`body` 不滚动、内部 `.site-scroll` 滚动、`overscroll-behavior-y: none`，header / 侧栏固定，阅读进度随内部滚动更新，路由切换复位；
 - 固定弹层：页面动画结束后 `transform` 必须回到 `none`，对话框遮罩覆盖整个视口；
 - 皮肤页改色：种子色实时重算 CSS token、加色生成四配对 token、可用色块按角色分组、分白天 / 黑夜面板展示且色块可复制、色块模式展示当前角色色 + 自定义色的音调盘且随改色更新、刷新后持久化、恢复默认清空配置；
-- 文档首页 27 张卡片进入独立页；
+- 文档首页 28 张卡片进入独立页；
 - 卡片右下角进入对应 `docs/{id}.html`，header 保持共享；
 - 禁用 JavaScript 时 `<noscript>` 兜底可见。
 

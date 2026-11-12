@@ -156,6 +156,15 @@ const t = toast("已保存", { duration: 3000 }); // 返回 { close, el }；dura
 - 示例：`<st-chat style="height:420px"><st-chat-message from="assistant" name="Senti" streaming>…</st-chat-message></st-chat>`
 - 皮肤 token：`--st-chat-*`；part：`viewport` / `list` / `header` / `footer` / `empty` / `scroll-button` 与 `avatar` / `bubble` / `meta` / `name` / `time` / `content` / `actions` / `status`
 
+## st-markdown Markdown 渲染
+
+- 属性：`default-value`、`streaming`（光标 + `aria-busy`）、`breaks`（段内单换行转 `<br>`）
+- 运行时：`el.value`（Markdown 源码）、`el.appendMarkdown(delta)`；初始源码优先级 value > default-value > textarea > template > 默认插槽
+- 支持标题 / 列表（含嵌套、任务）/ 引用 / 围栏代码块（语言标签 + 复制）/ GFM 表格 / 行内代码 / 粗斜删除线 / 链接图片 / 自动链接；原始 HTML 转义，链接协议白名单
+- 流式：rAF 合并渲染；未闭合代码块渲染到末尾，未完成表格 / 行内标记先按字面显示；`copy` 事件 detail `{code, lang}`
+- 示例：`<st-markdown :value="answer"></st-markdown>`；在 st-chat-message 内只给 message 设 `streaming`
+- 皮肤 token：`--st-markdown-*`；part：`content` / `p` / `h1`–`h6` / `pre` / `code` / `copy` / `table` 等
+
 ## st-badges 徽标
 
 - 点 / 数字（`max` 封顶显示 `N+`）/ 文字徽标，钉在默认插槽元素右上角，pointer-events none

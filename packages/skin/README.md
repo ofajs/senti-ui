@@ -7,7 +7,7 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 种子色、error、success、深浅色主题永远保持一致。皮肤改的是“同样颜色被呈现成什么材质”，
 不是“换成另一套配色”。
 
-已接入皮肤：全部交互与表面组件——`st-button` / `st-button-group` / `st-split-button` / `st-icon-button` / `st-input` / `st-textarea` / `st-select` / `st-card` / `st-dialog` / `st-drawer` / `st-menu` / `st-list` / `st-checkbox` / `st-switch` / `st-radio` / `st-slider` / `st-progress` / `st-tabs` / `st-navigation` / `st-tooltip` / `st-snackbar` / `st-badges` / `st-code` / `st-chip` / `st-avatar` / `st-skeleton` / `st-chat`。未加载皮肤时每个 token 都回退到组件原有默认值。
+已接入皮肤：全部交互与表面组件——`st-button` / `st-button-group` / `st-split-button` / `st-icon-button` / `st-input` / `st-textarea` / `st-select` / `st-card` / `st-dialog` / `st-drawer` / `st-menu` / `st-list` / `st-checkbox` / `st-switch` / `st-radio` / `st-slider` / `st-progress` / `st-tabs` / `st-navigation` / `st-tooltip` / `st-snackbar` / `st-badges` / `st-code` / `st-chip` / `st-avatar` / `st-skeleton` / `st-chat` / `st-markdown`。未加载皮肤时每个 token 都回退到组件原有默认值。
 
 ## 依赖引入
 
@@ -142,6 +142,11 @@ html[data-skin="cyberpunk"] {
 | `--st-chat-assistant-bg` / `--st-chat-user-bg` | `surface-container-high` / `primary-container` | 助手 / 用户气泡底色（颜色仍来自 M3 角色，皮肤只加透明度） |
 | `--st-chat-bubble-border` / `--st-chat-bubble-shadow` / `--st-chat-bubble-backdrop-filter` | `transparent` / `none` / `none` | 气泡描边 / 阴影 / 毛玻璃 |
 | `--st-chat-jump-bg` / `--st-chat-jump-border` / `--st-chat-jump-shadow` | `surface-container-high` / `transparent` / `var(--st-shadow-2)` | 回到底部按钮 |
+| `--st-markdown-code-bg` / `--st-markdown-code-head-bg` / `--st-markdown-code-border` | `surface-container-high` / `surface-container-highest` / `transparent` | Markdown 代码块 / 顶栏 / 描边 |
+| `--st-markdown-code-radius` / `--st-markdown-code-padding` / `--st-markdown-code-shadow` / `--st-markdown-code-backdrop-filter` | `var(--st-radius-md)` / `.857em 1em` / `none` / `none` | 代码块圆角 / 内边距 / 阴影 / 毛玻璃 |
+| `--st-markdown-table-border` / `--st-markdown-table-head-bg` / `--st-markdown-table-radius` | `outline-variant` / `surface-container-high` / `var(--st-radius-sm)` | Markdown 表格描边 / 表头 / 圆角 |
+| `--st-markdown-blockquote-border` / `--st-markdown-blockquote-bg` / `--st-markdown-blockquote-radius` | 主色与 outline-variant 混合 / `transparent` / `var(--st-radius-xs)` | 引用左边线 / 底色 / 圆角 |
+| `--st-markdown-caret-duration` | `1s` | 流式光标闪烁周期（减少动态效果时归零） |
 | `--st-select-popup-bg` / `--st-select-popup-border` | `surface-container` / `transparent` | 下拉弹层 |
 | `--st-snackbar-surface` / `--st-snackbar-on-surface` | `secondary` / `on-secondary` | 消息条默认底/字（`color` 属性仍优先） |
 | `--st-tooltip-bg` | `inverse-surface` | 提示气泡底 |
@@ -252,6 +257,10 @@ html[data-skin="cyberpunk"] {
 | `--st-chat-avatar-size` / `--st-chat-avatar-radius` / `--st-chat-avatar-gap` / `--st-chat-avatar-bg` | `2.286em` / `50%` / `0.643em` / `surface-container-highest` | 头像尺寸 / 圆角 / 与气泡间距 / 底色 |
 | `--st-chat-system-radius` | `var(--st-radius-sm)` | system 消息的轻量圆角 |
 | `--st-chat-enter-duration` / `--st-chat-enter-distance` | `260ms` / `0.571em` | 新消息入场时长 / 位移（减少动态效果时归零） |
+| `--st-markdown-line-height` / `--st-markdown-gap` / `--st-markdown-list-indent` | `1.7` / `.857em` / `1.429em` | Markdown 行高 / 块间距 / 列表缩进 |
+| `--st-markdown-heading-gap` / `--st-markdown-heading-bottom` / `--st-markdown-table-padding` / `--st-markdown-table-font-size` | `1.429em` / `.571em` / `.5em .714em` / `.929em` | 标题间距 / 表格密度 / 表格字号 |
+| `--st-markdown-inline-code-bg` / `--st-markdown-inline-code-padding` / `--st-markdown-inline-code-radius` | `surface-container-high` / `.143em .357em` / `var(--st-radius-xs)` | 行内代码材质 |
+| `--st-markdown-code-font` / `--st-markdown-code-font-size` / `--st-markdown-copy-radius` / `--st-markdown-image-radius` | 等宽栈 / `.857em` / `var(--st-radius-xs)` / `var(--st-radius-md)` | 代码字体 / 字号 / 复制按钮圆角 / 图片圆角 |
 
 ### 颜色（由组件写入，皮肤不要覆盖）
 
@@ -276,6 +285,7 @@ html[data-skin="cyberpunk"] {
 | `st-avatar` | `image` | `src` 属性渲染的内部 `<img>` |
 | `st-chat` | `viewport` / `list` / `header` / `footer` / `empty` / `scroll-button` | 滚动区 / 消息列表 / 头尾栏 / 空状态 / 回到底部按钮 |
 | `st-chat-message` | `avatar` / `avatar-image` / `meta` / `name` / `time` / `bubble` / `content` / `actions` / `status` | 头像、消息头、气泡、正文与动作区 |
+| `st-markdown` | `content` / `p` / `h1`–`h6` / `ul` / `ol` / `li` / `blockquote` / `hr` / `pre` / `code` / `inline-code` / `code-block` / `code-head` / `code-lang` / `copy` / `table-wrap` / `table` / `thead` / `tbody` / `tr` / `th` / `td` / `link` / `image` / `strong` / `em` / `del` / `br` / `task-box` / `task-body` / `cursor` | Markdown 各语义元素与代码复制按钮 |
 
 仅当组件位于 light DOM（不在 `o-page` 等 shadow 内）时，`::part()` 才可达；
 跨 shadow 场景请使用 token。

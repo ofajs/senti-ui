@@ -50,6 +50,7 @@ test("markdown：标题 / 列表 / 任务 / 引用 / 代码块 / 表格 / 行内
         lang: code?.querySelector(".code-lang")?.textContent,
         text: code?.querySelector("pre code")?.textContent,
         copy: !!code?.querySelector(".copy"),
+        highlighted: !!code?.querySelector("pre code .tk-keyword"),
       },
       table: {
         align: th.map((cell) => cell.style.textAlign),
@@ -81,6 +82,7 @@ test("markdown：标题 / 列表 / 任务 / 引用 / 代码块 / 表格 / 行内
     lang: "JS",
     text: "const answer = 42;\nconsole.log(answer);",
     copy: true,
+    highlighted: true,
   });
   expect(state.table).toEqual({
     align: ["left", "center", "right"],
@@ -91,6 +93,25 @@ test("markdown：标题 / 列表 / 任务 / 引用 / 代码块 / 表格 / 行内
   expect(state.image).toContain("data:image/png");
   expect(state.scriptElements).toBe(0);
   expect(state.rawHtmlText).toBe(true);
+});
+
+test("markdown：支持的语言复用 st-code 高亮，未知语言保持纯文本", async ({ page }) => {
+  const state = await page.evaluate(() => {
+    const blocks = [...document.querySelector("#md-lang").shadowRoot.querySelectorAll(".code-block")];
+    return blocks.map((block) => ({
+      lang: block.querySelector(".code-lang")?.textContent,
+      text: block.querySelector("pre code")?.textContent,
+      tokens: block.querySelectorAll("pre code [class^='tk-']").length,
+    }));
+  });
+  expect(state[0]).toEqual({
+    lang: "PYTHON",
+    text: 'def greet(name):\n    return f"Hello, {name}"',
+    tokens: 0,
+  });
+  expect(state[1].lang).toBe("JS");
+  expect(state[1].text).toBe("const x = 1;");
+  expect(state[1].tokens).toBeGreaterThan(0);
 });
 
 test("markdown：运行时 value / appendMarkdown / 流式未闭合代码块", async ({ page }) => {

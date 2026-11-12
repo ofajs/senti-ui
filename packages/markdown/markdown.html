@@ -166,6 +166,23 @@
       font-size: 1em;
     }
 
+    /* 代码块复用 st-code 的 token 结构，配色仍来自 M3 角色 */
+    .tk-keyword,
+    .tk-tag,
+    .tk-atrule,
+    .tk-selector { color: var(--md-sys-color-primary); }
+    .tk-string,
+    .tk-entity { color: var(--md-sys-color-success, var(--md-sys-color-tertiary)); }
+    .tk-number,
+    .tk-color,
+    .tk-variable,
+    .tk-type { color: var(--md-sys-color-tertiary); }
+    .tk-comment { color: var(--md-sys-color-on-surface-variant); font-style: italic; }
+    .tk-function,
+    .tk-attr,
+    .tk-property { color: var(--md-sys-color-secondary); }
+    .tk-punct { color: var(--md-sys-color-on-surface-variant); }
+
     .table-wrap {
       overflow-x: auto;
       overscroll-behavior-x: contain;

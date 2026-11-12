@@ -9,6 +9,8 @@
 <l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/markdown/markdown.html"></l-m>
 ```
 
+代码高亮复用 `packages/code/highlight.js`，由组件内部自动加载，不需要额外引入 `st-code`。
+
 ## 最小示例
 
 ```html
@@ -82,7 +84,7 @@ md.appendMarkdown("\n\n```js\nconsole.log('stream')\n```");
 - 段落、段内换行（`breaks` 控制）、硬换行（行尾两个空格或反斜杠）
 - 无序 / 有序列表、嵌套列表、任务列表 `- [ ]` / `- [x]`
 - 引用 `>`
-- 围栏代码块 ` ```lang ` / `~~~lang`，带语言标签与复制按钮
+- 围栏代码块 ` ```lang ` / `~~~lang`，带语言标签与复制按钮；HTML / JS / TS / CSS / Less / Sass 复用 `st-code` 的高亮逻辑，其他语言按纯文本展示
 - 表格（含 `:---` / `---:` / `:---:` 对齐）
 - 分割线
 - 行内代码、**粗体**、*斜体*、~~删除线~~
@@ -145,7 +147,7 @@ part：`content` / `p` / `h1` ~ `h6` / `ul` / `ol` / `li` / `blockquote` / `hr` 
 ## 注意事项与使用技巧
 
 - **原始 HTML 不执行**：`<div>`、`<script>` 等按文本显示，避免 AI 输出注入
-- **不内置语法高亮**：代码块提供语言标签、复制按钮和等宽排版；需要高亮时可在业务侧替换为 `st-code`
+- **代码高亮复用 `st-code`**：共享 [highlight.js](../code/highlight.js) 的高亮逻辑，支持 HTML / JS / TS / CSS / Less / Sass；Python / JSON / Bash 等未支持语言按纯文本展示，不会错误套用 HTML 规则
 - **链接安全**：仅允许安全协议；`javascript:` / `vbscript:` / 非图片 `data:` 链接会退化为普通文本（保留链接文字）
 - **初始内容用 `<textarea hidden>`**：默认插槽里的 `<div>` 会被浏览器当 HTML 解析；`textarea` 是 RCDATA，能原样保留 `<`
 - **流式更新优先用 `el.value` / `appendMarkdown()`**：不要在每次 token 里重建 `st-markdown` 节点

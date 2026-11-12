@@ -67,6 +67,16 @@ console.log(answer);
     <template>## Template 标题</template>
   </st-markdown>
   <st-markdown id="md-default" default-value="## Default 标题"></st-markdown>
+  <st-markdown id="md-lang">
+    <textarea hidden>```python
+def greet(name):
+    return f"Hello, {name}"
+```
+
+```js
+const x = 1;
+```</textarea>
+  </st-markdown>
   <st-markdown id="md-inline">
     <textarea hidden>裸链接 https://ofajs.com/path，snake_case_value。</textarea>
   </st-markdown>

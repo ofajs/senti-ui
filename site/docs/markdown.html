@@ -326,7 +326,7 @@ const styled = true;
               <li>流式：未闭合代码块渲染到末尾，未完成表格 / 行内标记先按字面显示。</li>
               <li>初始内容含 <code>&lt;</code> 时用 <code>&lt;textarea hidden&gt;</code>（RCDATA），避免浏览器解析成 HTML。</li>
               <li>与 st-chat-message 组合时只给 message 设 <code>streaming</code>，避免双光标。</li>
-              <li>不内置语法高亮；代码块提供语言标签、复制与等宽排版。</li>
+              <li>代码块复用 st-code 高亮（HTML / JS / TS / CSS / Less / Sass）；其他语言按纯文本展示。</li>
               <li>part：<code>content</code> / <code>p</code> / <code>h1</code>–<code>h6</code> / <code>pre</code> / <code>code</code> / <code>copy</code> / <code>table</code> 等。</li>
             </ul>
           </div>

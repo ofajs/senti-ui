@@ -5,6 +5,8 @@
  * 支持：标题 / 段落 / 有序与无序列表（含嵌套、任务列表）/ 引用 / 围栏代码块 /
  * 表格 / 分割线 / 行内代码 / 粗体 / 斜体 / 删除线 / 链接 / 图片 / 自动链接。
  *
+ * 代码块复用 ../code/highlight.js 的高亮逻辑（html/js/ts/css/less/sass）。
+ *
  * 流式容错：未闭合的围栏代码块渲染到文末；未闭合的行内标记按字面文本输出；
  * 未完整的表格先按段落显示，补齐分隔行后再变成表格。
  */
@@ -43,6 +45,8 @@ const LANG_LABEL = {
   diff: "DIFF",
   http: "HTTP",
 };
+
+import { resolveLang, highlight } from "../code/highlight.js";
 
 const isBlank = (line) => !line || !line.trim();
 
@@ -719,7 +723,10 @@ function renderCodeBlock(block, ctx) {
 
   const pre = el(ctx.doc, "pre", "pre");
   const code = el(ctx.doc, "code", "code");
-  code.textContent = block.code;
+  const highlightLang = resolveLang(block.lang);
+  const highlighted = highlightLang ? highlight(block.code, highlightLang) : null;
+  if (highlighted !== null) code.innerHTML = highlighted;
+  else code.textContent = block.code;
   pre.appendChild(code);
   wrapper.appendChild(head);
   wrapper.appendChild(pre);

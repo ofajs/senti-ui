@@ -100,16 +100,17 @@ test("官网首页：31 张卡片 / 37 个标签 / 共享 SCSR 布局，无页�
   expect(state.legacyDocsLinks).toBe(0);
   expect(errors).toEqual([]);
 
-  await page.reload({ waitUntil: "networkidle" });
+  await page.reload({ waitUntil: "domcontentloaded" });
   await waitHome(page);
   expect(await page.evaluate(() => location.pathname)).toBe("/site/");
 });
 
 test("首页三张系统 UI 卡使用平台默认配色，不跟随站点主题色", async ({ page }) => {
-  await page.goto("/site/", { waitUntil: "networkidle", timeout: 60_000 });
+  await page.goto("/site/", { waitUntil: "domcontentloaded", timeout: 60_000 });
   await waitHome(page);
+  await page.waitForFunction(() => window.__site?.setThemeMode);
   await page.evaluate(() => window.__site.setThemeMode("dark"));
-  await page.reload({ waitUntil: "networkidle" });
+  await page.reload({ waitUntil: "domcontentloaded" });
   await waitHome(page);
 
   const readCards = () =>
@@ -142,7 +143,7 @@ test("首页三张系统 UI 卡使用平台默认配色，不跟随站点主题�
   // 切到 Cyberpunk 荧光绿主题后，三张卡仍使用各自平台默认配色
   await page.waitForFunction(() => window.__siteTheme?.applyThemePreset);
   await page.evaluate(() => window.__siteTheme.applyThemePreset("cyberpunk"));
-  await page.reload({ waitUntil: "networkidle" });
+  await page.reload({ waitUntil: "domcontentloaded" });
   await waitHome(page);
   await page.waitForFunction(() => {
     const child = [...document.querySelectorAll("o-page")].find(
@@ -1575,7 +1576,7 @@ test("Cyberpunk 在自动 + 系统深色下不改成显式深色", async ({ page
 test("主题预览：刷新和切页后仍按各自官方配色渲染", async ({ page }) => {
   await page.goto("/site/skins.html", { waitUntil: "networkidle", timeout: 60_000 });
   await page.evaluate(() => localStorage.clear());
-  await page.reload({ waitUntil: "networkidle", timeout: 60_000 });
+  await page.reload({ waitUntil: "domcontentloaded", timeout: 60_000 });
   await page.locator(".skin-card").first().waitFor({ state: "visible" });
 
   // 选 shadcn，再把站点切到其他页面并刷新，最后从 header 回皮肤页
@@ -1586,7 +1587,7 @@ test("主题预览：刷新和切页后仍按各自官方配色渲染", async ({
     .toBe("shadcn");
 
   await page.goto("/site/docs/button.html", { waitUntil: "networkidle", timeout: 60_000 });
-  await page.reload({ waitUntil: "networkidle", timeout: 60_000 });
+  await page.reload({ waitUntil: "domcontentloaded", timeout: 60_000 });
   await page.locator(".layout-nav st-button").filter({ hasText: "皮肤" }).click();
   await page.waitForURL("**/site/skins.html", { timeout: 30_000 });
   await page.locator(".skin-card").first().waitFor({ state: "visible" });
@@ -2028,7 +2029,7 @@ test("皮肤页：M3 改色与加色（种子色 / 自定义变量 / 持久化 /
     .toMatch(/^#[0-9a-f]{6}$/);
 
   // 刷新后配置仍在
-  await page.reload({ waitUntil: "networkidle" });
+  await page.reload({ waitUntil: "domcontentloaded" });
   await page.locator(".color-lab").waitFor({ state: "visible" });
   await expect(page.locator(".custom-row")).toHaveCount(1);
   await expect(page.locator(".hex-input")).toHaveValue("#b3261e");

@@ -36,6 +36,7 @@ test("chat：容器插槽 / 三种 from / 左右对齐 / 头部与 actions / str
       .querySelector("#msg-error")
       .shadowRoot.querySelector(".bubble");
     const rootStyle = getComputedStyle(document.documentElement);
+    const viewportStyle = getComputedStyle(viewport);
     return {
       role: viewport.getAttribute("role"),
       ariaLabel: viewport.getAttribute("aria-label"),
@@ -44,6 +45,9 @@ test("chat：容器插槽 / 三种 from / 左右对齐 / 头部与 actions / str
       emptyHidden: sr.querySelector(".empty").hidden,
       assistantLeft: assistant.left - viewportRect.left,
       userRight: viewportRect.right - user.right,
+      padLeft: parseFloat(viewportStyle.paddingLeft),
+      padRight: parseFloat(viewportStyle.paddingRight),
+      scrollbarWidth: viewport.offsetWidth - viewport.clientWidth,
       userLeft: user.left,
       assistantRight: assistant.right,
       meta: document.querySelector("#msg-assistant").shadowRoot.querySelector(".meta").innerText,
@@ -68,8 +72,9 @@ test("chat：容器插槽 / 三种 from / 左右对齐 / 头部与 actions / str
   expect(state.emptyHidden).toBe(true);
   // assistant 靠左、user 靠右
   expect(state.userLeft).toBeGreaterThan(state.assistantRight);
-  expect(state.userRight).toBeLessThan(20);
-  expect(state.assistantLeft).toBeLessThan(20);
+  // 右边缘 = 内边距 + 纵向滚动条宽度（CI 的经典滚动条会占 15px）
+  expect(state.userRight).toBeLessThanOrEqual(state.padRight + state.scrollbarWidth + 2);
+  expect(state.assistantLeft).toBeLessThan(state.padLeft + 2);
   expect(state.meta).toContain("Senti");
   expect(state.meta).toContain("14:20");
   expect(state.actionsHidden).toBe(false);

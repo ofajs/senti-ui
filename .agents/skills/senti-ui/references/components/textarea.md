@@ -7,7 +7,7 @@
 ## 依赖引入（使用前必须）
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+<script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js@5/dist/ofa.min.mjs" type="module"></script>
 <l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/textarea/textarea.html"></l-m>
 ```
 

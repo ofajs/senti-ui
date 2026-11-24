@@ -1,0 +1,382 @@
+<!--
+  st-markdown — Senti-UI Markdown 渲染组件（基于 ofa.js）
+  语义属性：streaming（流式输出中，显示光标 + aria-busy）/ breaks（段内单换行转 <br>）
+  运行时状态：value（字符串，el.value 读写）；方法：appendMarkdown(delta)
+  初始内容：default-value 属性 / <textarea> / <template> / 默认插槽文本（按优先级）
+  安全：原始 HTML 按文本转义；链接与图片地址做协议白名单校验
+  视觉在 :host 上（em 尺寸），材质走 --st-markdown-* 皮肤 token，见 README.md
+-->
+<template component>
+  <style>
+    :host {
+      display: block;
+      min-width: 0;
+      max-width: 100%;
+      font-size: var(--st-font-size, 14px);
+      font-family: var(--st-font, inherit);
+      line-height: var(--st-markdown-line-height, 1.7);
+      color: inherit;
+      overflow-wrap: anywhere;
+    }
+
+    slot { display: none; }
+
+    .content {
+      min-width: 0;
+    }
+    .content > :first-child { margin-top: 0; }
+    .content > :last-of-type { margin-bottom: 0; }
+
+    h1, h2, h3, h4, h5, h6 {
+      margin: var(--st-markdown-heading-gap, 1.429em) 0 var(--st-markdown-heading-bottom, 0.571em);
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      color: inherit;
+    }
+    h1 { font-size: 1.714em; }
+    h2 { font-size: 1.429em; }
+    h3 { font-size: 1.214em; }
+    h4 { font-size: 1.071em; }
+    h5, h6 { font-size: 1em; }
+
+    p, ul, ol, blockquote, .table-wrap, .code-block {
+      margin: 0 0 var(--st-markdown-gap, 0.857em);
+    }
+
+    ul, ol {
+      padding-inline-start: var(--st-markdown-list-indent, 1.429em);
+    }
+    li + li { margin-top: 0.286em; }
+    li > p { margin: 0; }
+    li > .code-block,
+    li > .table-wrap { margin-block: 0.429em 0; }
+
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5em;
+      list-style: none;
+    }
+    .task-box {
+      flex: none;
+      width: 1em;
+      height: 1em;
+      margin: 0.35em 0 0;
+      accent-color: var(--md-sys-color-primary);
+    }
+    .task-body { min-width: 0; }
+    .task-body > :first-child { margin-top: 0; }
+    .task-body > :last-child { margin-bottom: 0; }
+
+    blockquote {
+      padding: 0.214em 0 0.214em 1em;
+      border-inline-start: var(--st-markdown-blockquote-width, 0.214em) solid
+        var(--st-markdown-blockquote-border, color-mix(in srgb, var(--md-sys-color-primary) 55%, var(--md-sys-color-outline-variant)));
+      border-radius: 0 var(--st-markdown-blockquote-radius, var(--st-radius-xs, 0.286em))
+        var(--st-markdown-blockquote-radius, var(--st-radius-xs, 0.286em)) 0;
+      background: var(--st-markdown-blockquote-bg, transparent);
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    a {
+      color: var(--md-sys-color-primary);
+      text-decoration: underline;
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.16em;
+    }
+
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+    del { text-decoration: line-through; opacity: 0.75; }
+
+    code {
+      font-family: var(--st-markdown-code-font, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+      font-size: var(--st-markdown-code-font-size, 0.857em);
+    }
+    .content :not(pre) > code,
+    .content > p > code {
+      padding: var(--st-markdown-inline-code-padding, 0.143em 0.357em);
+      border-radius: var(--st-markdown-inline-code-radius, var(--st-radius-xs, 0.286em));
+      background: var(--st-markdown-inline-code-bg, var(--md-sys-color-surface-container-high));
+      white-space: pre-wrap;
+    }
+
+    .code-block {
+      overflow: hidden;
+      border: var(--st-border-width, 1px) solid var(--st-markdown-code-border, transparent);
+      border-radius: var(--st-markdown-code-radius, var(--st-radius-md, 0.857em));
+      background: var(--st-markdown-code-bg, var(--md-sys-color-surface-container-high));
+      box-shadow: var(--st-markdown-code-shadow, none);
+      backdrop-filter: var(--st-markdown-code-backdrop-filter, none);
+      -webkit-backdrop-filter: var(--st-markdown-code-backdrop-filter, none);
+    }
+    .code-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.714em;
+      padding: 0.357em 0.714em;
+      border-bottom: 1px solid var(--st-markdown-code-border, transparent);
+      background: var(--st-markdown-code-head-bg, var(--md-sys-color-surface-container-highest));
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    .code-lang {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font: 0.786em/1.4 var(--st-markdown-code-font, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .copy {
+      all: unset;
+      flex: none;
+      padding: 0.143em 0.5em;
+      border-radius: var(--st-markdown-copy-radius, var(--st-radius-xs, 0.286em));
+      color: var(--md-sys-color-primary);
+      font-size: 0.786em;
+      line-height: 1.5;
+      cursor: pointer;
+      transition: background-color var(--st-motion-duration, 0.15s) ease;
+    }
+    .copy:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
+    .copy:focus-visible {
+      outline: var(--st-focus-ring-width, 2px) var(--st-focus-ring-style, solid)
+        var(--st-focus-ring-color, var(--md-sys-color-on-surface));
+      outline-offset: 1px;
+    }
+
+    pre {
+      margin: 0;
+      padding: var(--st-markdown-code-padding, 0.857em 1em);
+      overflow: auto;
+      overscroll-behavior: contain;
+      color: var(--md-sys-color-on-surface);
+      font-size: var(--st-markdown-code-font-size, 0.857em);
+      line-height: 1.65;
+      tab-size: 2;
+    }
+    pre code {
+      display: block;
+      padding: 0;
+      background: transparent;
+      white-space: pre;
+      font-size: 1em;
+    }
+
+    /* 代码块复用 st-code 的 token 结构，配色仍来自 M3 角色 */
+    .tk-keyword,
+    .tk-tag,
+    .tk-atrule,
+    .tk-selector { color: var(--md-sys-color-primary); }
+    .tk-string,
+    .tk-entity { color: var(--md-sys-color-success, var(--md-sys-color-tertiary)); }
+    .tk-number,
+    .tk-color,
+    .tk-variable,
+    .tk-type { color: var(--md-sys-color-tertiary); }
+    .tk-comment { color: var(--md-sys-color-on-surface-variant); font-style: italic; }
+    .tk-function,
+    .tk-attr,
+    .tk-property { color: var(--md-sys-color-secondary); }
+    .tk-punct { color: var(--md-sys-color-on-surface-variant); }
+
+    .table-wrap {
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      border: var(--st-border-width, 1px) solid var(--st-markdown-table-border, transparent);
+      border-radius: var(--st-markdown-table-radius, var(--st-radius-sm, 0.5em));
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--st-markdown-table-font-size, 0.929em);
+      line-height: 1.55;
+    }
+    th, td {
+      padding: var(--st-markdown-table-padding, 0.5em 0.714em);
+      text-align: start;
+      vertical-align: top;
+      border-bottom: 1px solid var(--st-markdown-table-border, var(--md-sys-color-outline-variant));
+    }
+    thead th {
+      background: var(--st-markdown-table-head-bg, var(--md-sys-color-surface-container-high));
+      font-weight: 600;
+    }
+    tbody tr:last-child td { border-bottom: 0; }
+
+    hr {
+      margin: var(--st-markdown-gap, 0.857em) 0;
+      border: 0;
+      border-top: 1px solid var(--md-sys-color-outline-variant);
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 0.429em 0;
+      border-radius: var(--st-markdown-image-radius, var(--st-radius-md, 0.857em));
+    }
+
+    .cursor {
+      display: none;
+      width: 0.429em;
+      height: 1.05em;
+      margin-left: 0.143em;
+      border-radius: 0.071em;
+      background: currentColor;
+      vertical-align: -0.143em;
+      animation: st-markdown-cursor var(--st-markdown-caret-duration, 1s) steps(1, end) infinite;
+    }
+    :host([streaming]) .cursor { display: inline-block; }
+
+    @keyframes st-markdown-cursor {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    /* 减少动态效果：动画/过渡压到近零，同时保留 animationend 等事件语义 */
+    @media (prefers-reduced-motion: reduce) {
+      :host,
+      :host * {
+        animation-delay: 0s !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+
+  <div class="content" part="content" aria-busy="false">
+    <span class="cursor" part="cursor" aria-hidden="true"></span>
+  </div>
+  <slot></slot>
+
+  <script>
+    import "../color/st-color-init.js";
+    import { renderMarkdown } from "./parser.js";
+
+    export default async () => ({
+      tag: "st-markdown",
+      attrs: {
+        defaultValue: null,
+        breaks: null,
+        streaming: null,
+      },
+      data: { value: "" },
+      watch: {
+        value() {
+          this._scheduleRender?.();
+        },
+        breaks() {
+          this._scheduleRender?.();
+        },
+        streaming() {
+          this._syncBusy?.();
+        },
+      },
+      ready() {
+        const ele = this.ele;
+        const sr = ele.shadowRoot;
+        const content = sr.querySelector(".content");
+        const cursor = sr.querySelector(".cursor");
+
+        const placeCursor = (root) => {
+          let node = root.lastElementChild;
+          while (node && /^(UL|OL|BLOCKQUOTE|LI|DIV)$/.test(node.tagName)) {
+            const next = node.lastElementChild;
+            if (!next || next.matches(".code-block, .table-wrap")) break;
+            node = next;
+          }
+          if (node && /^(P|H[1-6]|LI|TH|TD|DIV)$/.test(node.tagName)) {
+            node.appendChild(cursor);
+          } else {
+            root.appendChild(cursor);
+          }
+        };
+
+        this._render = () => {
+          const fragment = renderMarkdown(this.value || "", {
+            breaks: this.breaks !== null,
+            onCopy: (code, lang) => {
+              ele.dispatchEvent(
+                new CustomEvent("copy", {
+                  detail: { code, lang },
+                  bubbles: true,
+                  composed: true,
+                })
+              );
+            },
+          });
+          content.replaceChildren(fragment);
+          placeCursor(content);
+          this._syncBusy();
+        };
+
+        this._scheduleRender = () => {
+          if (this._raf) return;
+          this._raf = requestAnimationFrame(() => {
+            this._raf = 0;
+            this._render();
+          });
+        };
+
+        this._syncBusy = () => {
+          const streaming = this.streaming !== null;
+          content.setAttribute("aria-busy", streaming ? "true" : "false");
+          ele.setAttribute("aria-busy", streaming ? "true" : "false");
+        };
+
+        // 初始源码优先级：运行时 value > default-value > <textarea> > <template> > 默认插槽文本
+        let preset = null;
+        let hasPreset = false;
+        if (Object.prototype.hasOwnProperty.call(ele, "value")) {
+          preset = ele.value;
+          hasPreset = true;
+        }
+
+        const textarea = ele.querySelector(":scope > textarea");
+        const template = ele.querySelector(":scope > template");
+        let initial = "";
+        if (hasPreset) {
+          initial = preset;
+        } else if (this.defaultValue !== null) {
+          initial = this.defaultValue;
+        } else if (textarea) {
+          // textarea 是 RCDATA：内部标签不会被解析，适合包含 < 的 Markdown / 代码
+          initial = textarea.value;
+          textarea.hidden = true;
+        } else if (template) {
+          initial =
+            template.content.querySelector("*") ? template.innerHTML : template.content.textContent;
+        } else {
+          initial = ele.textContent || "";
+        }
+
+        // 宿主 value：运行时状态，写后合并到下一帧渲染（流式高频更新不会每 token 重排）
+        Object.defineProperty(ele, "value", {
+          configurable: true,
+          enumerable: true,
+          get: () => this.value,
+          set: (value) => {
+            this.value = String(value ?? "");
+          },
+        });
+        ele.appendMarkdown = (delta) => {
+          this.value = String(this.value || "") + String(delta ?? "");
+        };
+
+        this.value = String(initial ?? "");
+        queueMicrotask(() => {
+          this._render();
+        });
+      },
+      detached() {
+        if (this._raf) cancelAnimationFrame(this._raf);
+      },
+    });
+  </script>
+</template>

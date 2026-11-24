@@ -5,7 +5,7 @@
 ## 引入
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+<script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js@5/dist/ofa.min.mjs" type="module"></script>
 <l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/drawer/drawer.html"></l-m>
 ```
 

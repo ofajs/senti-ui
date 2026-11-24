@@ -1,0 +1,316 @@
+<!-- st-markdown 验收页，由同目录 index.html 通过 <o-page> 加载 -->
+<template page>
+  <style>
+    :host {
+      display: grid;
+      gap: 32px;
+      padding: 40px;
+      align-content: start;
+      max-width: 1080px;
+    }
+    h3 {
+      margin: 0;
+      font-size: 14px;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    p.note {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .state {
+      font-size: 13px;
+      color: var(--md-sys-color-on-surface-variant);
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--md-sys-color-surface-container-high);
+    }
+    .code { font-family: ui-monospace, monospace; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+    .box {
+      padding: 16px;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: 12px;
+      background: var(--md-sys-color-surface-container-low);
+    }
+    .box-label {
+      display: block;
+      margin-bottom: 8px;
+      font: 11px ui-monospace, Menlo, monospace;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    #styled-md::part(code-block) {
+      border-color: color-mix(in srgb, var(--md-sys-color-primary) 42%, transparent);
+    }
+    .chat-md st-markdown { font-size: 13px; }
+  </style>
+
+  <section>
+    <h3>完整语法 — 标题 / 列表 / 引用 / 代码块 / 表格 / 行内标记</h3>
+    <p class="note">静态内容写在 <span class="code">&lt;textarea hidden&gt;</span> 里，包含 &lt; 的代码块会原样保留；渲染结果自动转义原始 HTML。</p>
+    <st-markdown id="static-md">
+      <textarea hidden>
+# Markdown 渲染
+
+这是一段 **粗体**、*斜体*、~~删除线~~ 与 `行内代码`。也可以有 [安全链接](https://example.com) 和自动链接 <https://ofajs.com>。
+
+## 列表
+
+- 第一项
+- 第二项
+  - 嵌套项 A
+  - 嵌套项 B
+- [x] 已完成任务
+- [ ] 未完成任务
+
+## 引用与代码
+
+> 引用里的 **Markdown** 同样会渲染。
+>
+> 第二段引用。
+
+```js
+const answer = 42;
+console.log("streaming markdown", answer);
+```
+
+## 表格
+
+| 能力 | 状态 | 说明 |
+| --- | :---: | --- |
+| 标题 | ✅ | h1 – h6 |
+| 代码块 | ✅ | 语言标签 + 复制 |
+| 表格 | ✅ | 对齐与横向滚动 |
+
+---
+
+原始 HTML 会以文本显示：<span>not html</span>
+      </textarea>
+    </st-markdown>
+  </section>
+
+  <section>
+    <h3>流式填充 — 未闭合代码块 / 表格 / 行内标记的容错</h3>
+    <p class="note">每次 <span class="code">el.value</span> / <span class="code">appendMarkdown()</span> 更新只在下一帧合并渲染；未闭合的 ``` 会渲染到文末，补齐后才闭合。</p>
+    <div class="row">
+      <st-button on:click="startStream">开始流式</st-button>
+      <st-button variant="outlined" on:click="appendOne">追加一段</st-button>
+      <st-button variant="text" on:click="resetStream">清空</st-button>
+      <span class="state">streaming：<span class="code">{{streaming}}</span>｜字符：<span class="code">{{streamText.length}}</span></span>
+    </div>
+    <div class="box">
+      <span class="box-label">live preview</span>
+      <st-markdown id="stream-md" attr:streaming="streaming ? '' : null" :value="streamText"></st-markdown>
+    </div>
+  </section>
+
+  <section>
+    <h3>AI 对话内使用 — Markdown 放在 st-chat-message 里</h3>
+    <p class="note">把 <span class="code">streaming</span> 放在消息上，<span class="code">st-markdown</span> 只负责增量渲染，避免两个光标。</p>
+    <st-chat class="chat-md" style="height: 360px;">
+      <div slot="header" style="font-size: 13px; font-weight: 600;">Senti 助手</div>
+      <st-chat-message from="assistant" name="Senti" time="10:00" attr:streaming="streaming ? '' : null">
+        <st-markdown :value="streamText"></st-markdown>
+      </st-chat-message>
+      <st-chat-message from="user" name="你" time="10:01">继续。</st-chat-message>
+    </st-chat>
+  </section>
+
+  <section>
+    <h3>breaks — 段内单换行是否保留</h3>
+    <div class="grid-2">
+      <div class="box">
+        <span class="box-label">默认（单换行 = 空格）</span>
+        <st-markdown>
+          <textarea hidden>
+第一行
+第二行
+          </textarea>
+        </st-markdown>
+      </div>
+      <div class="box">
+        <span class="box-label">breaks（单换行 = &lt;br&gt;）</span>
+        <st-markdown breaks>
+          <textarea hidden>
+第一行
+第二行
+          </textarea>
+        </st-markdown>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3>安全 — 原始 HTML / javascript: 链接 / 图片地址</h3>
+    <p class="note">原始 HTML 会转义；不安全协议的链接退化为普通文字，不写入 href。</p>
+    <div class="box">
+      <st-markdown id="safe-md">
+        <textarea hidden>
+<script>alert("nope")</script>
+
+[危险链接](javascript:alert("nope"))
+
+[安全链接](https://example.com)
+
+![危险图片](javascript:alert("nope"))
+        </textarea>
+      </st-markdown>
+    </div>
+  </section>
+
+  <section>
+    <h3>原生 CSS / part / 皮肤</h3>
+    <div class="grid-2">
+      <div class="box">
+        <span class="box-label">font-size: 16px + ::part(code-block)</span>
+        <st-markdown id="styled-md" style="font-size: 16px;">
+          <textarea hidden>
+## 定制
+
+字号与代码块描边由页面 CSS 控制。
+
+```js
+const styled = true;
+```
+          </textarea>
+        </st-markdown>
+      </div>
+      <div class="box" data-skin="apple">
+        <link rel="stylesheet" href="../skin/apple.css" />
+        <span class="box-label">data-skin="apple"</span>
+        <st-markdown>
+          <textarea hidden>
+## 毛玻璃
+
+代码块与表格继承 `--st-markdown-*` 材质 token。
+
+> 颜色仍然来自 M3。
+          </textarea>
+        </st-markdown>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3>复制与键盘</h3>
+    <p class="note">代码块右上角「复制」是原生 button，可 Tab 聚焦、Enter/Space 触发；复制成功后派发 <span class="code">copy</span> 事件（detail 带 code / lang）。</p>
+    <div class="row">
+      <st-button variant="outlined" on:click="focusCopy">聚焦代码块复制按钮</st-button>
+      <span class="state">copy 事件：<span class="code">{{copyCount}}</span></span>
+    </div>
+    <st-markdown on:copy="onCopy">
+      <textarea hidden>
+```html
+<div class="hello">copy me</div>
+```
+      </textarea>
+    </st-markdown>
+  </section>
+
+  <section>
+    <h3>TypeScript / Python / 未知语言代码块</h3>
+    <st-markdown id="lang-md">
+      <textarea hidden>
+```ts
+interface User { id: number; name: string }
+const user: User = { id: 1, name: "Senti" };
+```
+
+```python
+def greet(name: str) -> str:
+    return f"Hello, {name}"
+```
+
+```text
+plain code block
+```
+      </textarea>
+    </st-markdown>
+  </section>
+
+  <script>
+    const CHUNKS = [
+      "# 流式 Markdown\n\n",
+      "这是逐段填充的 **Markdown**，",
+      "还没闭合的代码块会先渲染到文末。\n\n",
+      "```js\n",
+      "const answer = 42;\n",
+      "console.log(answer);\n",
+      "```\n\n",
+      "| 能力 | 状态 |\n",
+      "| --- | :---: |\n",
+      "| 代码块 | ✅ |\n",
+      "| 表格 | ✅ |\n",
+      "| 增量渲染 | ✅ |\n",
+    ];
+
+    export default async () => ({
+      data: {
+        streamText: "",
+        streaming: false,
+        streamIndex: 0,
+        copyCount: 0,
+      },
+      proto: {
+        startStream() {
+          clearInterval(this._timer);
+          this.streamText = "";
+          this.streamIndex = 0;
+          this.streaming = true;
+          this._timer = setInterval(() => this.nextChunk(), 110);
+        },
+        nextChunk() {
+          if (this.streamIndex >= CHUNKS.length) {
+            this.streaming = false;
+            clearInterval(this._timer);
+            this._timer = null;
+            return;
+          }
+          this.streamText += CHUNKS[this.streamIndex++];
+          if (this.streamIndex >= CHUNKS.length) {
+            this.streaming = false;
+            clearInterval(this._timer);
+            this._timer = null;
+          }
+        },
+        appendOne() {
+          if (this.streamIndex >= CHUNKS.length) return;
+          this.streaming = true;
+          this.streamText += CHUNKS[this.streamIndex++];
+        },
+        resetStream() {
+          clearInterval(this._timer);
+          this._timer = null;
+          this.streamText = "";
+          this.streamIndex = 0;
+          this.streaming = false;
+        },
+        onCopy(e) {
+          this.copyCount += 1;
+          this.lastCopy = e.detail?.code || "";
+        },
+        focusCopy() {
+          const btn = this.ele.shadowRoot
+            .querySelector("#static-md")
+            .shadowRoot.querySelector(".copy");
+          btn?.focus();
+        },
+      },
+      detached() {
+        clearInterval(this._timer);
+      },
+    });
+  </script>
+</template>

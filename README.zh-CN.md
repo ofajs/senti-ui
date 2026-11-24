@@ -52,7 +52,7 @@ AI 让重新写一个组件变得便宜，但让所有组件保持同一种行�
 <html>
 <head>
   <meta charset="utf-8" />
-  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js@5/dist/ofa.min.mjs" type="module"></script>
 </head>
 <body>
   <!-- 按需引入组件（用哪个引哪个） -->

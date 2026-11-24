@@ -178,6 +178,19 @@
   --st-chat-jump-shadow: var(--st-shadow-2);
   --st-chat-enter-duration: 300ms;
   --st-chat-enter-distance: .429em;
+  --st-markdown-code-bg: rgb(from var(--md-sys-color-surface-container-high) r g b / 0.5);
+  --st-markdown-code-head-bg: rgb(from var(--md-sys-color-surface-container) r g b / 0.46);
+  --st-markdown-code-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
+  --st-markdown-code-radius: .857em;
+  --st-markdown-code-shadow: var(--st-shadow-1);
+  --st-markdown-code-backdrop-filter: blur(18px) saturate(180%);
+  --st-markdown-inline-code-bg: rgb(from var(--md-sys-color-surface-container-high) r g b / 0.55);
+  --st-markdown-table-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
+  --st-markdown-table-head-bg: rgb(from var(--md-sys-color-surface-container-high) r g b / 0.5);
+  --st-markdown-table-radius: .857em;
+  --st-markdown-blockquote-bg: rgb(from var(--md-sys-color-surface-container-high) r g b / 0.3);
+  --st-markdown-image-radius: .857em;
+  --st-markdown-caret-duration: 1s;
   --st-select-popup-bg: rgb(from var(--md-sys-color-surface-container) r g b / 0.48);
   --st-select-popup-border: color-mix(in srgb, var(--md-sys-color-outline) 18%, transparent);
   --st-select-popup-backdrop-filter: blur(18px) saturate(180%);
@@ -251,5 +264,6 @@
     --st-drawer-exit-duration: 0s;
     --st-skeleton-duration: 0s;
     --st-chat-enter-duration: 0s;
+    --st-markdown-caret-duration: 0s;
   }
 }

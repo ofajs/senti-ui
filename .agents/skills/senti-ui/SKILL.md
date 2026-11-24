@@ -27,7 +27,7 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 <html>
 <head>
   <meta charset="utf-8" />
-  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+  <script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js@5/dist/ofa.min.mjs" type="module"></script>
 </head>
 <body>
   <!-- 按需引入组件（l-m 会异步加载并注册自定义元素） -->
@@ -39,6 +39,7 @@ Senti-UI 是**面向 AI 设计**的 UI 组件库：基于 ofa.js（Web Component
 ```
 
 - 每个 `l-m` 引入一个组件文件，用哪个引哪个；组件内部会自动 import 颜色初始化模块（`st-color-init.js`）注入 `--md-sys-color-*` 体系，无需额外配置
+- 上面引的是 **ofa.js v5 核心**（`.../ofa.js@5/dist/ofa.min.mjs`）。要 hash 路由或真实路径站点时，另引 ofa.js 插件包，**它们各有自己的 v5 地址**（router / scsr / plugins/*），必须在核心之后加载，见 [references/usage-patterns.md](./references/usage-patterns.md) 的部署说明
 - 深浅色主题默认跟随系统；强制用 `<html class="st-light">` / `<html class="st-dark">`
 - **写任何自定义颜色前先读 [references/theming.md](./references/theming.md)**：完整 token 清单（34 个 token，含 success 扩展角色）、对比度调整（contrast -1 ~ 1，正值霓虹/游戏、负值可爱/柔和主题）、文字/背景配对规则（如 `primary` 底配 `on-primary` 字）、深浅色自动适配原理、种子色与自定义变量（`--brand` 四配对）的三种配置方式
 

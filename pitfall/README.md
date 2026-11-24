@@ -22,7 +22,7 @@
 
 | ID | 主题 | 文件 |
 | --- | --- | --- |
-| `#0` | ofa.js CDN 不锁版本 | [0-cdn-unpinned-ofa.md](./0-cdn-unpinned-ofa.md) |
+| `#0` | ofa.js CDN 用 `@5`，不锁补丁版本 | [0-cdn-unpinned-ofa.md](./0-cdn-unpinned-ofa.md) |
 | `#1` | 布尔属性默认值用 `null`，不用 `false` | [1-boolean-attr-null-default.md](./1-boolean-attr-null-default.md) |
 | `#2` | 布尔属性转发到内部原生元素用属性绑定 `:disabled="..."` | [2-boolean-attr-binding.md](./2-boolean-attr-binding.md) |
 | `#3` | JS 修改组件状态用 `setAttribute` / `removeAttribute` | [3-setattr-vs-property.md](./3-setattr-vs-property.md) |

@@ -12,7 +12,7 @@ Senti-UI 的组件只负责**语义与行为**（标签、属性、事件、键�
 ## 依赖引入
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js/dist/ofa.min.mjs" type="module"></script>
+<script src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js@5/dist/ofa.min.mjs" type="module"></script>
 <l-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/button.html"></l-m>
 
 <!-- 方式 A：静态指定皮肤（首帧即目标皮肤，无闪切） -->

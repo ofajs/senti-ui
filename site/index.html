@@ -24,8 +24,8 @@
 
   <!-- 运行时：ofa.js v5 + scsr 桥接（同一模块内按顺序加载，scsr 必须在 ofa 之后） -->
   <script type="module">
-    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
-    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@5/dist/ofa.min.mjs";
+    import "https://cdn.jsdelivr.net/gh/ofajs/ofa.js@5/packages/scsr/dist/scsr.min.mjs";
   </script>
   <!-- 首帧主题引导（同步、禁缓存路径由 npm run dev 提供） -->
   <script src="../packages/boot/st-boot.js"></script>
@@ -1998,7 +1998,7 @@ const answer = 42;
               copied: false,
               glass: false,
               installCode:
-                '\x3Cscript src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs" type="module">\x3C/script>\n' +
+                '\x3Cscript src="https://cdn.jsdelivr.net/gh/ofajs/ofa.js@5/dist/ofa.min.mjs" type="module">\x3C/script>\n' +
                 '\x3Cscript src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/boot/st-boot.js">\x3C/script>\n' +
                 '\x3Cl-m src="https://cdn.jsdelivr.net/gh/ofajs/senti-ui/packages/button/button.html">\x3C/l-m>\n\n' +
                 '\x3Cst-button color="error">Delete\x3C/st-button>',

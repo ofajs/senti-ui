@@ -56,8 +56,8 @@ site/
   </o-app>
 
   <script type="module">
-    import "…/ofa.js@refs/heads/v5/dist/ofa.min.mjs";
-    import "…/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs";
+    import "…/ofa.js@5/dist/ofa.min.mjs";
+    import "…/ofa.js@5/packages/scsr/dist/scsr.min.mjs";
   </script>
 </body>
 ```
@@ -134,16 +134,16 @@ SCSR 把整页内容内联在 `template[page]` 里。**template 在脚本执行�
 
 ## 运行时版本
 
-本页使用 **ofa.js v5 分支**：
+本页使用 **ofa.js v5（jsDelivr `@5`）+ scsr 插件**：
 
 ```
-https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/dist/ofa.min.mjs
-https://cdn.jsdelivr.net/gh/ofajs/ofa.js@refs/heads/v5/packages/scsr/dist/scsr.min.mjs
+https://cdn.jsdelivr.net/gh/ofajs/ofa.js@5/dist/ofa.min.mjs
+https://cdn.jsdelivr.net/gh/ofajs/ofa.js@5/packages/scsr/dist/scsr.min.mjs
 ```
 
 scsr 必须在 ofa.js 之后加载；本站把两者放在同一个 module 的连续 import 中保证顺序。语法遵循 `ofajs-docs-v5` 技能（`o-if` / `o-fill` / `attr:` / `sync:` / `on:`，页面 `<script>` 在 `template[page]` 内）。
 
-与 `docs/`（现有组件文档站，o-router hash 路由）不同，本页是真实路径 + SCSR 的前向验证场景。若 v5 分支升级导致行为变化，优先修组件、再更新本页；组件级兼容问题（如子项升级时序）应沉淀到 [pitfall/](../pitfall/README.md)。
+与 `docs/`（现有组件文档站，o-router hash 路由）不同，本页是真实路径 + SCSR 的前向验证场景。若 ofa.js 5.x 升级导致行为变化，优先修组件、再更新本页；组件级兼容问题（如子项升级时序）应沉淀到 [pitfall/](../pitfall/README.md)。
 
 ## 组件覆盖
 

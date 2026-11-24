@@ -52,5 +52,10 @@ Senti-UI 基于 ofa.js。在 ofa 页面（`<o-page>` / `<o-app>`）内用模板�
 ## 5. 部署说明
 
 - 无构建：任意静态服务器直接部署即可；`l-m src` 与 ES import 必须写**完整 URL**（或与你的部署路径一致的绝对路径 `/packages/...`）
-- 颜色在 JS 执行后生效，有极短未上色闪烁；主题体系依赖 CDN 上的 material-color-utilities
+- **ofa.js 的插件包各有自己的 v5 地址，不要套用核心的 `.../ofa.js@5/dist/...`**；插件是桥接包，必须写在核心之后（挂接页面已加载的全局 `$`），UMD 版把 `.min.mjs` 换成 `.min.js`：
+  - hash 路由 `o-router`：`https://cdn.jsdelivr.net/gh/ofajs/ofa.js@5/packages/router/dist/router.min.mjs`
+  - 真实路径 SCSR（多 HTML 站点）：`https://cdn.jsdelivr.net/gh/ofajs/ofa.js@5/packages/scsr/dist/scsr.min.mjs`
+  - 可选插件 formdata / inject-host / body-ghost / global-link：`https://cdn.jsdelivr.net/gh/ofajs/ofa.js@5/packages/plugins/{name}/dist/{name}.min.mjs`
+  - 只用 `<o-page>` / `<o-app>` 渲染单页时**不需要**任何插件包
+- 颜色在 JS 执行后生效，有极短未上色闪烁；主题体系使用本地 vendored 的 material-color-utilities（无外部 CDN 依赖）
 - 预览本地静态页面时务必用禁缓存的静态服务器（如 `npx http-server -c-1`），否则改完文件浏览器继续用旧模块，表现为"改了没生效"
